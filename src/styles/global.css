@@ -1,0 +1,41 @@
+:root {
+  --ink: #4a3f6b;
+  --ink-soft: #5e4d8c;
+  --ink-muted: #7a6e9e;
+  --ink-faint: #a79bc8;
+  --purple: #8e7cc3;
+  --purple-deep: #6c55a3;
+  --pink: #e39fc4;
+  --pink-deep: #b95f92;
+  --lilac-border: #e3d6f5;
+  --gold: #d9a93c;
+  --gold-deep: #c99a2e;
+  --gold-border: #f3e2b4;
+  --night-start: #2b2a57;
+  --night-end: #1a1b3a;
+  --night-border: #4a4880;
+  --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,402 @@
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.home-header__lumi {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  flex: none;
+  filter: drop-shadow(0 8px 12px rgba(94, 77, 140, 0.25));
+}
+
+.home-header__bubble {
+  background: #fff;
+  border: 2px solid var(--lilac-border);
+  border-radius: 22px 22px 22px 4px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: 0 4px 0 rgba(142, 124, 195, 0.3);
+}
+
+.home-header__greeting {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.home-header__quote {
+  font-size: 13.5px;
+  color: var(--ink-muted);
+  font-weight: 700;
+}
+
+.home-header__spacer {
+  flex: 1;
+}
+
+.points-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 2px solid var(--gold-border);
+  color: var(--gold-deep);
+  font-weight: 800;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 rgba(240, 199, 94, 0.45);
+  white-space: nowrap;
+}
+
+.home-row {
+  display: grid;
+  gap: 16px;
+}
+
+.home-row--top {
+  grid-template-columns: 1.4fr 1fr;
+}
+
+.home-row--bottom {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.home-row__spacer {
+  flex: 1;
+}
+
+.card {
+  border-radius: 26px;
+  padding: 20px;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+/* mirror hour card */
+.card--mirror {
+  background: #fff;
+  border: 2px solid var(--lilac-border);
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 6px 0 rgba(142, 124, 195, 0.3);
+}
+
+.card--mirror__icon {
+  width: 60px;
+  height: 60px;
+  flex: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #efe7fb, #fbe9f3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--purple);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(142, 124, 195, 0.3);
+}
+
+.card--mirror__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.card--mirror__body .card-label {
+  color: var(--ink-faint);
+}
+
+.card--mirror__time {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(90deg, var(--purple-deep), var(--pink-deep));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card--mirror__sub {
+  font-size: 13px;
+  color: var(--ink-muted);
+  font-weight: 700;
+}
+
+.cta {
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.cta--gradient {
+  background: linear-gradient(90deg, var(--purple), var(--pink));
+  box-shadow: 0 4px 0 var(--purple-deep);
+}
+
+/* daily card */
+.card--daily {
+  background: linear-gradient(150deg, var(--night-start), var(--night-end));
+  border: 2px solid var(--night-border);
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 0 rgba(26, 27, 58, 0.35);
+}
+
+.card--daily__star {
+  position: absolute;
+  font-size: 12px;
+}
+
+.card--daily__star--1 {
+  top: 12px;
+  right: 16px;
+  color: #f5e6a8;
+  font-size: 16px;
+}
+
+.card--daily__star--2 {
+  top: 34px;
+  right: 44px;
+  color: #b7a8e0;
+  font-size: 10px;
+}
+
+.card--daily__star--3 {
+  bottom: 12px;
+  right: 24px;
+  color: #7ec8e3;
+  font-size: 12px;
+}
+
+.card-label--night {
+  color: #c9bceb;
+}
+
+.card--daily__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.card--daily__sub {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+/* meditation card */
+.card--meditation {
+  background: #dff3e8;
+  border: 2px solid #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 5px 0 rgba(111, 162, 135, 0.35);
+}
+
+.card-label--meditation {
+  color: #5e9179;
+}
+
+.card--meditation__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: #3e5a4c;
+}
+
+.card--meditation__sub {
+  font-size: 13px;
+  color: #6e8a7b;
+  font-weight: 700;
+}
+
+.card--meditation__action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #4f8a6b;
+}
+
+.card--meditation__play {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #fff;
+  color: #4f8a6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  box-shadow: 0 3px 0 rgba(79, 138, 107, 0.35);
+}
+
+/* journal card */
+.card--journal {
+  background: #fbe3ef;
+  border: 2px solid #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 5px 0 rgba(199, 123, 164, 0.35);
+}
+
+.card-label--journal {
+  color: #c06e9c;
+}
+
+.card--journal__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: #6b3a55;
+  line-height: 1.35;
+}
+
+.cta--journal {
+  margin-top: auto;
+  align-self: flex-start;
+  background: #fff;
+  color: var(--pink-deep);
+  font-weight: 800;
+  font-size: 13.5px;
+  padding: 9px 18px;
+  box-shadow: 0 3px 0 rgba(185, 95, 146, 0.35);
+}
+
+/* moon card */
+.card--moon {
+  background: #dce9fa;
+  border: 2px solid #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  box-shadow: 0 5px 0 rgba(123, 141, 187, 0.35);
+}
+
+.card-label--moon {
+  color: #6d80b0;
+}
+
+.card--moon__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.card--moon__disc {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 999px;
+  background: #fdf6dc;
+  box-shadow:
+    inset -11px 0 0 #ebdca6,
+    0 3px 0 rgba(123, 141, 187, 0.35);
+  border: 2px solid #fff;
+}
+
+.card--moon__title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: #3e4b6b;
+}
+
+.card--moon__sub {
+  font-size: 12.5px;
+  color: #6d80b0;
+  font-weight: 700;
+}
+
+/* points bar */
+.points-bar {
+  background: #fff;
+  border: 2px solid var(--lilac-border);
+  border-radius: 26px;
+  padding: 16px 26px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 5px 0 rgba(142, 124, 195, 0.3);
+}
+
+.points-bar__icon {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 999px;
+  background: #fff3d6;
+  border: 2px solid var(--gold-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 16px;
+}
+
+.points-bar__label {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.points-bar__track {
+  flex: 1;
+  height: 12px;
+  border-radius: 999px;
+  background: #f1ecfa;
+  border: 2px solid var(--lilac-border);
+  overflow: hidden;
+}
+
+.points-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--purple), var(--pink));
+}
+
+.points-bar__text {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .home-row--top,
+  .home-row--bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .points-bar__text {
+    display: none;
+  }
+}

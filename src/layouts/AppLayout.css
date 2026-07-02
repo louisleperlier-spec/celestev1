@@ -1,0 +1,24 @@
+.app-layout {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #cfe4f9 0%, #e8dff6 55%, #fbe9f3 100%);
+  color: var(--ink);
+}
+
+.app-layout__main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 30px 40px;
+}
+
+@media (max-width: 860px) {
+  .app-layout {
+    flex-direction: column;
+  }
+}
