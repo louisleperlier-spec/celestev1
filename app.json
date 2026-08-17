@@ -54,6 +54,19 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5e0de7d1-3c1c-47ce-8bc1-db57bd0a6cf5"
+      }
+    },
+    "owner": "leaderprinces-team",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5e0de7d1-3c1c-47ce-8bc1-db57bd0a6cf5"
     }
   }
 }

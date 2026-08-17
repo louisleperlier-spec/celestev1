@@ -64,6 +64,22 @@ npm install
 npx expo start -c        # scanner le QR avec Expo Go pour tout sauf la synchro Apple Santé
 ```
 
+### Aperçu à distance (EAS Update)
+
+Le projet est lié à `@leaderprinces-team/lume-hydration` sur EAS, avec `runtimeVersion` en
+politique `sdkVersion` (pour rester ouvrable dans Expo Go — à repasser en `appVersion` le jour
+où l'app tourne sur un dev client / build custom). Pour publier un nouvel aperçu ouvrable
+directement dans Expo Go, sans passer par un serveur Metro joignable (utile si Metro tourne
+dans un environnement sans accès réseau au téléphone) :
+
+```bash
+EXPO_TOKEN=<token> npx eas-cli update --branch preview --environment preview \
+  --message "..." --non-interactive
+```
+
+La commande imprime un `manifestPermalink` par plateforme — `https://u.expo.dev/update/<id>`,
+ouvrable directement dans Expo Go (lien ou QR).
+
 Vérification après modif :
 
 ```bash
