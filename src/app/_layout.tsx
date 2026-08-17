@@ -1,0 +1,31 @@
+import '@/lib/i18n';
+
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+import { Colors } from '@/constants/theme';
+import { HydrationProvider } from '@/features/hydration/hydration-context';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+export default function RootLayout() {
+  useEffect(() => {
+    void SplashScreen.hideAsync();
+  }, []);
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.background }}>
+      <HydrationProvider>
+        <StatusBar style="light" />
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="add-entry" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+        </Stack>
+      </HydrationProvider>
+    </GestureHandlerRootView>
+  );
+}
