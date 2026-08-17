@@ -1,21 +1,41 @@
 import { Platform } from 'react-native';
 
-import * as HealthKit from '@kingstinct/react-native-healthkit';
+import type * as HealthKitModule from '@kingstinct/react-native-healthkit';
 
 /**
  * Pont Apple Santé — un seul type suivi : l'eau bue (HKQuantityTypeIdentifierDietaryWater).
  *
  * ⚠️ Nécessite un build natif (dev client / EAS), PAS Expo Go — HealthKit est un module natif.
- * Toutes les fonctions se dégradent en no-op silencieux hors iOS ou sans build natif, pour que
- * le reste de l'app (saisie manuelle, notes, tendances) reste utilisable partout.
+ * `@kingstinct/react-native-healthkit` instancie son binding natif dès son import (Nitro
+ * `createHybridObject` throw si le natif n'est pas enregistré) : un `import` statique planterait
+ * donc l'app au démarrage dans Expo Go. On charge le module en lazy via `require`, sous `try/catch`,
+ * uniquement quand on en a besoin — jamais au chargement du bundle.
  */
 
 const WATER_IDENTIFIER = 'HKQuantityTypeIdentifierDietaryWater' as const;
 const WATER_UNIT = 'mL' as const;
 const LUME_METADATA_KEY = 'LumeEntryId';
 
+let cachedModule: typeof HealthKitModule | null | undefined;
+
+function loadHealthKit(): typeof HealthKitModule | null {
+  if (cachedModule !== undefined) return cachedModule;
+  if (Platform.OS !== 'ios') {
+    cachedModule = null;
+    return cachedModule;
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    cachedModule = require('@kingstinct/react-native-healthkit') as typeof HealthKitModule;
+  } catch {
+    cachedModule = null;
+  }
+  return cachedModule;
+}
+
 export function isHealthKitSupported(): boolean {
-  if (Platform.OS !== 'ios') return false;
+  const HealthKit = loadHealthKit();
+  if (!HealthKit) return false;
   try {
     return HealthKit.isHealthDataAvailable();
   } catch {
@@ -24,7 +44,8 @@ export function isHealthKitSupported(): boolean {
 }
 
 export async function requestHealthAuthorization(): Promise<boolean> {
-  if (!isHealthKitSupported()) return false;
+  const HealthKit = loadHealthKit();
+  if (!HealthKit || !isHealthKitSupported()) return false;
   try {
     return await HealthKit.requestAuthorization({
       toShare: [WATER_IDENTIFIER],
@@ -41,7 +62,8 @@ export async function writeWaterSampleToHealth(
   volumeMl: number,
   date: Date,
 ): Promise<string | null> {
-  if (!isHealthKitSupported()) return null;
+  const HealthKit = loadHealthKit();
+  if (!HealthKit || !isHealthKitSupported()) return null;
   try {
     const sample = await HealthKit.saveQuantitySample(
       WATER_IDENTIFIER,
@@ -58,7 +80,8 @@ export async function writeWaterSampleToHealth(
 }
 
 export async function deleteWaterSampleFromHealth(uuid: string): Promise<void> {
-  if (!isHealthKitSupported()) return;
+  const HealthKit = loadHealthKit();
+  if (!HealthKit || !isHealthKitSupported()) return;
   try {
     await HealthKit.deleteObjects(WATER_IDENTIFIER, { uuid });
   } catch {
@@ -76,7 +99,8 @@ export interface HealthWaterSample {
 
 /** Lit tous les échantillons "eau" d'Apple Santé sur la période — toutes sources confondues. */
 export async function readWaterSamples(startDate: Date, endDate: Date): Promise<HealthWaterSample[]> {
-  if (!isHealthKitSupported()) return [];
+  const HealthKit = loadHealthKit();
+  if (!HealthKit || !isHealthKitSupported()) return [];
   try {
     const samples = await HealthKit.queryQuantitySamples(WATER_IDENTIFIER, {
       filter: { date: { startDate, endDate } },
