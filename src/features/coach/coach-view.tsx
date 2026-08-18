@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -159,12 +158,6 @@ export function CoachView() {
               </View>
               <View style={styles.heroImageWrap}>
                 <Image source={HYDRATION_IMAGE} style={styles.heroImage} resizeMode="cover" />
-                <LinearGradient
-                  colors={[Colors.surfaceElevated, 'transparent']}
-                  start={{ x: 0, y: 0.5 }}
-                  end={{ x: 1, y: 0.5 }}
-                  style={styles.heroImageFade}
-                />
               </View>
             </View>
             <View style={styles.heroFooter}>
@@ -383,32 +376,25 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     gap: Spacing.two,
-    overflow: 'hidden',
   },
   heroRow: {
     flexDirection: 'row',
-    alignItems: 'stretch',
+    alignItems: 'center',
+    gap: Spacing.three,
   },
   heroTextCol: {
     flex: 1,
     gap: Spacing.two,
-    paddingRight: Spacing.two,
   },
   heroImageWrap: {
-    width: 92,
-    marginVertical: -Spacing.three,
-    marginRight: -Spacing.three,
+    width: 76,
+    height: 76,
+    borderRadius: Radius.lg,
+    overflow: 'hidden',
   },
   heroImage: {
     width: '100%',
     height: '100%',
-  },
-  heroImageFade: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: 40,
   },
   heroLabelRow: {
     flexDirection: 'row',
