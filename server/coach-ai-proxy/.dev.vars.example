@@ -1,0 +1,6 @@
+# Copy this file to `.dev.vars` for local `wrangler dev` testing only.
+# `.dev.vars` is gitignored — never commit real values.
+# In production (real deployment), these are set with `wrangler secret put`, not this file.
+
+GEMINI_API_KEY=your-gemini-api-key-from-aistudio.google.com
+CLIENT_TOKEN=any-long-random-string-you-make-up

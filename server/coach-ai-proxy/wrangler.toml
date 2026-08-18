@@ -1,0 +1,7 @@
+name = "lume-coach-ai-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets (GEMINI_API_KEY, CLIENT_TOKEN) are NEVER set here — see README.md.
+# Set them with `npx wrangler secret put GEMINI_API_KEY` / `CLIENT_TOKEN` instead.
