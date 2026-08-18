@@ -48,6 +48,12 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 - Les couleurs A/B/C (`gradeA/B/C`) restent fixes quel que soit le thème — le vert de succès
   ne doit jamais changer de sens.
 - SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI.
+- **Exception scoped au Coach** (`src/features/coach/coach-theme.ts`) : les cartes recommandées
+  (recette/activité/récupération) ont une couleur par catégorie (dégradé `expo-linear-gradient` +
+  icône, pas de vraie photo — licence non résolue) au lieu du mono-accent strict. C'est une
+  dérogation volontaire et délimitée, décidée pour ce tab uniquement ; le reste de l'app (Accueil,
+  Journal, Tendances, Réglages, Paywall) reste mono-accent. Ne pas réutiliser `CATEGORY_GRADIENT`/
+  `CATEGORY_TINT`/`STREAK_COLOR` en dehors de `src/features/coach/`.
 
 ## Premium (RevenueCat)
 

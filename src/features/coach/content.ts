@@ -9,24 +9,27 @@ import type { SFSymbol } from 'sf-symbols-typescript';
 
 export type ContentCategory = 'recipe' | 'activity' | 'recovery';
 
+export type ContentTag = 'antiBloating' | 'energy' | 'light' | 'short' | 'outdoor' | 'breathing' | 'sleep';
+
 export interface ContentItem {
   id: string;
   category: ContentCategory;
   icon: SFSymbol;
   durationMinutes: number;
   premium: boolean;
+  tags: ContentTag[];
 }
 
 export const RECOMMENDED_CONTENT: ContentItem[] = [
-  { id: 'recipe1', category: 'recipe', icon: 'leaf.fill', durationMinutes: 5, premium: false },
-  { id: 'recipe2', category: 'recipe', icon: 'sparkles', durationMinutes: 3, premium: false },
-  { id: 'recipe3', category: 'recipe', icon: 'cup.and.saucer.fill', durationMinutes: 5, premium: true },
-  { id: 'activity1', category: 'activity', icon: 'figure.walk', durationMinutes: 15, premium: false },
-  { id: 'activity2', category: 'activity', icon: 'figure.flexibility', durationMinutes: 8, premium: false },
-  { id: 'activity3', category: 'activity', icon: 'figure.mind.and.body', durationMinutes: 10, premium: true },
-  { id: 'recovery1', category: 'recovery', icon: 'wind', durationMinutes: 4, premium: false },
-  { id: 'recovery2', category: 'recovery', icon: 'moon.zzz.fill', durationMinutes: 6, premium: false },
-  { id: 'recovery3', category: 'recovery', icon: 'bed.double.fill', durationMinutes: 10, premium: true },
+  { id: 'recipe1', category: 'recipe', icon: 'leaf.fill', durationMinutes: 5, premium: false, tags: ['antiBloating', 'light'] },
+  { id: 'recipe2', category: 'recipe', icon: 'sparkles', durationMinutes: 3, premium: false, tags: ['energy', 'light'] },
+  { id: 'recipe3', category: 'recipe', icon: 'cup.and.saucer.fill', durationMinutes: 5, premium: true, tags: ['antiBloating', 'energy'] },
+  { id: 'activity1', category: 'activity', icon: 'figure.walk', durationMinutes: 15, premium: false, tags: ['short', 'outdoor'] },
+  { id: 'activity2', category: 'activity', icon: 'figure.flexibility', durationMinutes: 8, premium: false, tags: ['short'] },
+  { id: 'activity3', category: 'activity', icon: 'figure.mind.and.body', durationMinutes: 10, premium: true, tags: ['short'] },
+  { id: 'recovery1', category: 'recovery', icon: 'wind', durationMinutes: 4, premium: false, tags: ['breathing', 'short'] },
+  { id: 'recovery2', category: 'recovery', icon: 'moon.zzz.fill', durationMinutes: 6, premium: false, tags: ['sleep'] },
+  { id: 'recovery3', category: 'recovery', icon: 'bed.double.fill', durationMinutes: 10, premium: true, tags: ['sleep', 'breathing'] },
 ];
 
 export function contentForCategory(category: ContentCategory): ContentItem[] {
@@ -36,3 +39,15 @@ export function contentForCategory(category: ContentCategory): ContentItem[] {
 export function findContentItem(id: string): ContentItem | undefined {
   return RECOMMENDED_CONTENT.find((item) => item.id === id);
 }
+
+export const CATEGORY_LABEL_KEY: Record<ContentCategory, string> = {
+  recipe: 'coach.recipeCategory',
+  activity: 'coach.activityCategory',
+  recovery: 'coach.recoveryCategory',
+};
+
+export const CATEGORY_TAGS: Record<ContentCategory, ContentTag[]> = {
+  recipe: ['antiBloating', 'energy', 'light'],
+  activity: ['short', 'outdoor'],
+  recovery: ['breathing', 'sleep'],
+};

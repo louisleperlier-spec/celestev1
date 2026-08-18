@@ -8,13 +8,7 @@ import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/features/premium/theme-context';
 import { Screen } from '@/ui/components/Screen';
 
-import { ContentItem } from './content';
-
-const CATEGORY_LABEL_KEY: Record<ContentItem['category'], string> = {
-  recipe: 'coach.recipeCategory',
-  activity: 'coach.activityCategory',
-  recovery: 'coach.recoveryCategory',
-};
+import { CATEGORY_LABEL_KEY, ContentItem } from './content';
 
 interface CoachContentViewProps {
   item: ContentItem;

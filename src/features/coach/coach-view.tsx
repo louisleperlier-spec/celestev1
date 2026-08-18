@@ -1,6 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
+import type { SFSymbol } from 'sf-symbols-typescript';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -10,11 +11,16 @@ import { useHydration } from '@/features/hydration/hydration-context';
 import { usePremiumGate } from '@/features/premium/use-premium-gate';
 import { useTheme } from '@/features/premium/theme-context';
 import { Card } from '@/ui/components/Card';
+import { GradeBadge } from '@/ui/components/GradeBadge';
 import { Screen } from '@/ui/components/Screen';
 
 import { CoachCopy, getCoachCopy } from './ai-copy';
-import { ContentItem, RECOMMENDED_CONTENT } from './content';
+import { loadBookmarks, toggleBookmark } from './bookmarks';
+import { CATEGORY_LABEL_KEY, ContentCategory, ContentItem, contentForCategory } from './content';
+import { STREAK_COLOR } from './coach-theme';
+import { computeWeeklyInsight } from './insight';
 import { loadManualMissionState, saveManualMissionState } from './mission-state';
+import { PhotoCard } from './photo-card';
 import {
   choosePriorityAction,
   buildMissions,
@@ -23,14 +29,21 @@ import {
   Mission,
   ManualMissionState,
   PriorityAction,
+  PriorityActionKind,
 } from './rules-engine';
+import { computeStreak } from './streak';
 
 const GOOD_TARGET = 85;
+const CATEGORIES: ContentCategory[] = ['recipe', 'activity', 'recovery'];
 
-const CATEGORY_LABEL_KEY: Record<ContentItem['category'], string> = {
-  recipe: 'coach.recipeCategory',
-  activity: 'coach.activityCategory',
-  recovery: 'coach.recoveryCategory',
+const ACTION_ICON: Record<PriorityActionKind, SFSymbol> = {
+  drink: 'drop.fill',
+  diversify: 'arrow.triangle.2.circlepath',
+  spreadOut: 'timer',
+  startEarlier: 'sunrise.fill',
+  reduceLate: 'moon.fill',
+  maintain: 'checkmark.seal.fill',
+  moveBody: 'figure.walk',
 };
 
 function actionParams(action: PriorityAction) {
@@ -41,11 +54,15 @@ export function CoachView() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const { todayStats } = useHydration();
+  const { todayStats, statsForLastDays } = useHydration();
   const { isPremium, guard } = usePremiumGate();
 
   const action = useMemo(() => choosePriorityAction(todayStats), [todayStats]);
   const potential = useMemo(() => computeScorePotential(todayStats, action), [todayStats, action]);
+
+  const weekStats = useMemo(() => statsForLastDays(7), [statsForLastDays]);
+  const streak = useMemo(() => computeStreak(weekStats), [weekStats]);
+  const insight = useMemo(() => computeWeeklyInsight(weekStats), [weekStats]);
 
   const [copy, setCopy] = useState<CoachCopy | null>(null);
   useEffect(() => {
@@ -63,6 +80,11 @@ export function CoachView() {
   const [manual, setManual] = useState<ManualMissionState>(DEFAULT_MANUAL_MISSION_STATE);
   useEffect(() => {
     void loadManualMissionState().then(setManual);
+  }, []);
+
+  const [bookmarks, setBookmarks] = useState<string[]>([]);
+  useEffect(() => {
+    void loadBookmarks().then(setBookmarks);
   }, []);
 
   const missions = useMemo(() => buildMissions(todayStats, manual), [todayStats, manual]);
@@ -93,13 +115,26 @@ export function CoachView() {
     router.push({ pathname: '/coach-content', params: { id: item.id } });
   };
 
+  const handleToggleBookmark = (id: string) => {
+    void Haptics.selectionAsync();
+    void toggleBookmark(id, bookmarks).then(setBookmarks);
+  };
+
   const explanation = copy?.priorityExplanation ?? t(`coach.fallback.${action.kind}`, actionParams(action));
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>{t('coach.greeting')}</Text>
+          <View style={styles.headerTop}>
+            <Text style={styles.greeting}>{t('coach.greeting')}</Text>
+            {streak > 0 && (
+              <View style={styles.streakPill}>
+                <SymbolView name="flame.fill" size={13} tintColor={STREAK_COLOR} />
+                <Text style={[styles.streakText, { color: STREAK_COLOR }]}>{t('coach.streakDays', { count: streak })}</Text>
+              </View>
+            )}
+          </View>
           <Text style={styles.subtitle}>
             {todayStats.globalScore < GOOD_TARGET
               ? t('coach.subtitleGoalBelow', { target: GOOD_TARGET })
@@ -110,7 +145,12 @@ export function CoachView() {
         <View style={styles.heroWrap}>
           <View style={[styles.halo, { backgroundColor: theme.accent, shadowColor: theme.accent }]} />
           <Card elevated style={styles.heroCard}>
-            <Text style={styles.heroLabel}>{t('coach.priorityTitle')}</Text>
+            <View style={styles.heroLabelRow}>
+              <View style={[styles.heroIconCircle, { backgroundColor: theme.accentSoft }]}>
+                <SymbolView name={ACTION_ICON[action.kind]} size={16} tintColor={theme.accent} />
+              </View>
+              <Text style={styles.heroLabel}>{t('coach.priorityTitle')}</Text>
+            </View>
             <Text style={styles.heroAction}>{t(`coach.action.${action.kind}`, actionParams(action))}</Text>
             <Text style={styles.heroExplanation}>{explanation}</Text>
             <View style={styles.heroFooter}>
@@ -132,24 +172,28 @@ export function CoachView() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('coach.recommendedTitle')}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendedRow}>
-            {RECOMMENDED_CONTENT.map((item) => {
-              const locked = item.premium && !isPremium;
-              return (
-                <Pressable key={item.id} onPress={() => openContent(item)} style={styles.contentCard}>
-                  <View style={styles.contentCardTop}>
-                    <SymbolView name={item.icon} size={20} tintColor={theme.accent} />
-                    {locked && <SymbolView name="lock.fill" size={14} tintColor={Colors.textMuted} />}
-                  </View>
-                  <Text style={styles.contentCategory}>{t(CATEGORY_LABEL_KEY[item.category])}</Text>
-                  <Text style={styles.contentTitle} numberOfLines={2}>
-                    {t(`coach.content.${item.id}.title`)}
-                  </Text>
-                  <Text style={styles.contentDuration}>{t('coach.detailDuration', { minutes: item.durationMinutes })}</Text>
+          {CATEGORIES.map((category) => (
+            <View key={category} style={styles.categoryGroup}>
+              <View style={styles.categoryGroupHeader}>
+                <Text style={styles.categoryGroupTitle}>{t(CATEGORY_LABEL_KEY[category])}</Text>
+                <Pressable onPress={() => router.push({ pathname: '/coach-list', params: { category } })} hitSlop={8}>
+                  <Text style={[styles.seeAllLink, { color: theme.accent }]}>{t('coach.seeAll')}</Text>
                 </Pressable>
-              );
-            })}
-          </ScrollView>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendedRow}>
+                {contentForCategory(category).map((item) => (
+                  <PhotoCard
+                    key={item.id}
+                    item={item}
+                    locked={item.premium && !isPremium}
+                    bookmarked={bookmarks.includes(item.id)}
+                    onPress={() => openContent(item)}
+                    onToggleBookmark={() => handleToggleBookmark(item.id)}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+          ))}
 
           <Pressable onPress={() => guard(() => {})} style={styles.planTeaser}>
             <View style={styles.planTeaserIcon}>
@@ -199,6 +243,7 @@ export function CoachView() {
             <Card elevated style={styles.potentialCard}>
               <View style={styles.potentialNumbers}>
                 <Text style={styles.potentialCurrent}>{Math.round(potential.current)}</Text>
+                <GradeBadge grade={todayStats.globalGrade} size="sm" />
                 <SymbolView name="arrow.right" size={18} tintColor={Colors.textMuted} />
                 <Text style={[styles.potentialTarget, { color: theme.accent }]}>{Math.round(potential.potential)}</Text>
               </View>
@@ -221,6 +266,20 @@ export function CoachView() {
               <Text style={styles.potentialEncouragement}>{t('coach.potentialEncouragement', { potential: Math.round(potential.potential) })}</Text>
             </Card>
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('coach.insightTitle')}</Text>
+          <Card style={styles.insightCard}>
+            <View style={[styles.insightIconCircle, { backgroundColor: theme.accentSoft }]}>
+              <SymbolView name="chart.line.uptrend.xyaxis" size={16} tintColor={theme.accent} />
+            </View>
+            <Text style={styles.insightText}>
+              {insight
+                ? t('coach.insightBody', { metric: t(`metrics.${insight.metric}`), avg: insight.averageScore })
+                : t('coach.insightEmpty')}
+            </Text>
+          </Card>
         </View>
 
         <View style={styles.section}>
@@ -248,9 +307,29 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
     gap: Spacing.half,
   },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   greeting: {
     color: Colors.text,
     fontSize: FontSize.title2,
+    fontWeight: '700',
+  },
+  streakPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 5,
+  },
+  streakText: {
+    fontSize: FontSize.caption,
     fontWeight: '700',
   },
   subtitle: {
@@ -278,6 +357,18 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     gap: Spacing.two,
+  },
+  heroLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  heroIconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heroLabel: {
     color: Colors.textMuted,
@@ -336,39 +427,26 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.4,
   },
-  recommendedRow: {
+  categoryGroup: {
     gap: Spacing.two,
-    paddingRight: Spacing.three,
   },
-  contentCard: {
-    width: 150,
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    padding: Spacing.three,
-    gap: Spacing.one,
-  },
-  contentCardTop: {
+  categoryGroupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  contentCategory: {
-    color: Colors.textMuted,
-    fontSize: FontSize.caption,
-    fontWeight: '600',
-    marginTop: Spacing.one,
-  },
-  contentTitle: {
+  categoryGroupTitle: {
     color: Colors.text,
     fontSize: FontSize.footnote,
     fontWeight: '700',
   },
-  contentDuration: {
-    color: Colors.textMuted,
+  seeAllLink: {
     fontSize: FontSize.caption,
-    fontFamily: Fonts.mono,
+    fontWeight: '700',
+  },
+  recommendedRow: {
+    gap: Spacing.two,
+    paddingRight: Spacing.three,
   },
   planTeaser: {
     flexDirection: 'row',
@@ -474,6 +552,24 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: FontSize.footnote,
     textAlign: 'center',
+  },
+  insightCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
+  insightIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  insightText: {
+    flex: 1,
+    color: Colors.textSecondary,
+    fontSize: FontSize.footnote,
+    lineHeight: 20,
   },
   whyCard: {
     gap: Spacing.two,
