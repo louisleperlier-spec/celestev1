@@ -52,7 +52,7 @@ sans la carte de synchro active.
 
 ## Stack
 
-Expo SDK 57 (pinné — voir `AGENTS.md`) · expo-router · TypeScript · `react-native-svg` (anneau
+Expo SDK 54 (pinné — voir `AGENTS.md`) · expo-router · TypeScript · `react-native-svg` (anneau
 de score, graphiques) · `@react-native-async-storage/async-storage` (persistance locale) ·
 `i18next`/`react-i18next` (FR par défaut, EN en repli) · SF Symbols (`expo-symbols`) pour toute
 l'iconographie.

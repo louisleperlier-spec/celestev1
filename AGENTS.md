@@ -5,7 +5,7 @@ métrique + une note globale /100, 3 écrans (Accueil, Journal, Tendances), sync
 
 ## SDK Expo pinné
 
-- **SDK 57** (`expo@~57.0.14`). Ne JAMAIS upgrader sans raison explicite — Expo Go plafonne
+- **SDK 54** (`expo@^54.0.0`). Ne JAMAIS upgrader sans raison explicite — Expo Go plafonne
   souvent une version en retard. Si l'app ne s'ouvre pas sur Expo Go du client, vérifier
   d'abord la version d'Expo Go de son téléphone avant de toucher au SDK.
 - Aligner toute lib Expo avec `npx expo install <pkg>`, jamais `npm install` seul (mauvaise
