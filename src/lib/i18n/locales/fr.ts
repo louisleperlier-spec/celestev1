@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Lume' },
-  tabs: { home: 'Accueil', journal: 'Journal', trends: 'Tendances', scan: 'Scan' },
+  tabs: { home: 'Accueil', journal: 'Journal', trends: 'Tendances' },
   grade: { a: 'A', b: 'B', c: 'C' },
   metrics: {
     volume: 'Volume',
@@ -73,28 +73,5 @@ export default {
     healthDescription:
       "Lume lit et écrit tes prises d'eau dans Apple Santé, pour que toutes tes apps de suivi restent alignées.",
     close: 'Fermer',
-    scanSection: 'Photos de Scan',
-    scanStorageCount_zero: 'Aucune photo stockée',
-    scanStorageCount_one: '{{count}} photo · {{size}}',
-    scanStorageCount_other: '{{count}} photos · {{size}}',
-    scanDeleteAll: 'Supprimer toutes mes photos',
-    scanDeleteAllConfirmTitle: 'Supprimer toutes les photos ?',
-    scanDeleteAllConfirmBody: 'Cette action est définitive. Toutes tes photos de Scan seront supprimées de cet appareil.',
-    scanDeleteAllConfirmAction: 'Supprimer',
-    scanDeleteAllCancel: 'Annuler',
-  },
-  scan: {
-    privacy: {
-      title: 'Tes photos restent sur ton téléphone',
-      body: "Lume enregistre tes photos localement, sur cet appareil uniquement. Elles ne sont jamais envoyées sur un serveur, jamais partagées, jamais analysées ailleurs que sur ton iPhone. Tu peux les supprimer à tout moment.",
-      acknowledge: "J'ai compris",
-      later: 'Plus tard',
-    },
-    permission: {
-      request: 'Autoriser la caméra',
-      denied: 'Active l’accès caméra dans Réglages pour utiliser Scan.',
-      openSettings: 'Ouvrir les réglages',
-      ready: 'Accès caméra activé — la capture guidée arrive à la prochaine étape.',
-    },
   },
 } as const;

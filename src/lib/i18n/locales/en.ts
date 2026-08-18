@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Lume' },
-  tabs: { home: 'Home', journal: 'Journal', trends: 'Trends', scan: 'Scan' },
+  tabs: { home: 'Home', journal: 'Journal', trends: 'Trends' },
   grade: { a: 'A', b: 'B', c: 'C' },
   metrics: {
     volume: 'Volume',
@@ -73,28 +73,5 @@ export default {
     healthDescription:
       'Lume reads and writes your water intake in Apple Health, so all your tracking apps stay in sync.',
     close: 'Close',
-    scanSection: 'Scan photos',
-    scanStorageCount_zero: 'No photos stored',
-    scanStorageCount_one: '{{count}} photo · {{size}}',
-    scanStorageCount_other: '{{count}} photos · {{size}}',
-    scanDeleteAll: 'Delete all my photos',
-    scanDeleteAllConfirmTitle: 'Delete all photos?',
-    scanDeleteAllConfirmBody: 'This is permanent. All your Scan photos will be removed from this device.',
-    scanDeleteAllConfirmAction: 'Delete',
-    scanDeleteAllCancel: 'Cancel',
-  },
-  scan: {
-    privacy: {
-      title: 'Your photos stay on your phone',
-      body: 'Lume stores your photos locally, on this device only. They are never sent to a server, never shared, never analyzed anywhere but on your iPhone. You can delete them at any time.',
-      acknowledge: 'Got it',
-      later: 'Later',
-    },
-    permission: {
-      request: 'Allow camera access',
-      denied: 'Turn on camera access in Settings to use Scan.',
-      openSettings: 'Open Settings',
-      ready: 'Camera access enabled — guided capture lands in the next step.',
-    },
   },
 } as const;
