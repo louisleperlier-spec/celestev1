@@ -1,13 +1,12 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
 
 import { CATEGORY_LABEL_KEY, ContentItem } from './content';
-import { CATEGORY_GRADIENT, CATEGORY_TINT } from './coach-theme';
+import { CATEGORY_IMAGE, CATEGORY_TINT } from './coach-theme';
 
 interface PhotoCardProps {
   item: ContentItem;
@@ -25,11 +24,11 @@ export function PhotoCard({ item, locked, bookmarked, onPress, onToggleBookmark,
 
   return (
     <Pressable onPress={onPress} style={[styles.card, isFull && styles.cardFull]}>
-      <LinearGradient
-        colors={CATEGORY_GRADIENT[item.category]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <ImageBackground
+        source={CATEGORY_IMAGE[item.category]}
+        resizeMode="cover"
         style={[styles.photo, isFull && styles.photoFull]}>
+        <View style={styles.photoScrim} />
         <View style={styles.photoTopRow}>
           <View style={styles.categoryPill}>
             <Text style={styles.categoryPillText}>{t(CATEGORY_LABEL_KEY[item.category])}</Text>
@@ -38,13 +37,12 @@ export function PhotoCard({ item, locked, bookmarked, onPress, onToggleBookmark,
             <SymbolView name={bookmarked ? 'bookmark.fill' : 'bookmark'} size={14} tintColor="#FFFFFF" />
           </Pressable>
         </View>
-        <SymbolView name={item.icon} size={isFull ? 40 : 30} tintColor="rgba(255,255,255,0.55)" style={styles.photoIcon} />
         {locked && (
           <View style={styles.lockOverlay}>
             <SymbolView name="lock.fill" size={18} tintColor="#FFFFFF" />
           </View>
         )}
-      </LinearGradient>
+      </ImageBackground>
 
       <View style={styles.body}>
         <Text style={styles.title} numberOfLines={isFull ? 1 : 2}>
@@ -89,6 +87,10 @@ const styles = StyleSheet.create({
     height: '100%',
     width: 110,
   },
+  photoScrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.22)',
+  },
   photoTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -114,9 +116,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.32)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  photoIcon: {
-    alignSelf: 'center',
   },
   lockOverlay: {
     ...StyleSheet.absoluteFillObject,

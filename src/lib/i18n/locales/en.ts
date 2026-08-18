@@ -197,19 +197,19 @@ export default {
     },
     content: {
       recipe1: {
-        title: 'Lemon-mint infusion',
-        subtitle: 'Flavoured water, no added sugar',
-        body: 'Squeeze a lemon wedge and a few mint leaves into a jug of cold water. Let it infuse for 10 minutes — a simple way to mix things up without leaving plain water behind.',
+        title: 'Salmon, avocado & quinoa bowl',
+        subtitle: 'A full meal, ready in 20 minutes',
+        body: 'Cook the quinoa while the salmon roasts in the oven (400°F/200°C, 12-15 min). Spoon the quinoa into a bowl, top with the flaked salmon, sliced cucumber and fanned avocado, then finish with a drizzle of olive oil and lemon juice.',
       },
       recipe2: {
-        title: 'Fruity sparkling water',
-        subtitle: 'A bit of fizz, no soda',
-        body: 'Mix sparkling water with a few citrus or cucumber slices. The fizz can make it easier to drink more through the day.',
+        title: 'Quick cucumber-avocado salad',
+        subtitle: 'Fresh and water-rich, ready in 10 minutes',
+        body: 'Thinly slice the cucumber and dice the avocado, add a little sliced red onion and chopped mint, then dress with olive oil and lime juice. Cucumber is about 95% water — handy on days you want variety without leaving plain water behind.',
       },
       recipe3: {
-        title: 'Cucumber-mint smoothie',
-        subtitle: 'A hydrating break by the spoonful',
-        body: 'Blend cucumber, a few mint leaves and ice-cold water. A different texture to vary your intake, meant to be savoured rather than gulped.',
+        title: 'Avocado-cucumber-mint gazpacho',
+        subtitle: 'A cold soup you drink by the spoonful',
+        body: 'Blend an avocado, a peeled cucumber and a few mint leaves with lemon juice and ice-cold water until smooth. Chill for at least 30 minutes before serving — perfect on a hot day.',
       },
       activity1: {
         title: 'Digestive walk',
@@ -241,6 +241,29 @@ export default {
         subtitle: '10 minutes to let the day go',
         body: 'A settled moment, sitting or lying down, to release the tension built up during the day. Do it whenever you feel the need, no pressure.',
       },
+    },
+    sleep: {
+      entryTitle: 'Sleep Dashboard',
+      entrySubtitle: 'Real tracking via Apple Health',
+      title: 'Sleep',
+      subtitle: 'Real data from Apple Health',
+      unsupportedTitle: 'Not available here',
+      unsupportedBody:
+        'Reading sleep from Apple Health needs a native build (not Expo Go). Come back once the native build is installed.',
+      connectTitle: 'Connect Apple Health',
+      connectBody: 'Lume can read the sleep data recorded by your iPhone or Apple Watch.',
+      connectCta: 'Connect Apple Health',
+      connecting: 'Connecting…',
+      loading: 'Loading…',
+      emptyTitle: 'No data yet',
+      emptyBody:
+        "Nothing found in Apple Health over the last 7 days. Check that an Apple Watch or a sleep-tracking app is recording your nights.",
+      averageLabel: 'Average over 7 nights',
+      chartTitle: 'Duration per night',
+      lastNightTitle: 'Last night',
+      bedTimeLabel: 'Bedtime',
+      wakeTimeLabel: 'Wake time',
+      durationValue: '{{h}}h {{m}}',
     },
     scoreInfo: {
       title: 'Understand my score',

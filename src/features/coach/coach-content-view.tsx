@@ -2,13 +2,13 @@ import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
-import { useTheme } from '@/features/premium/theme-context';
 import { Screen } from '@/ui/components/Screen';
 
 import { CATEGORY_LABEL_KEY, ContentItem } from './content';
+import { CATEGORY_IMAGE } from './coach-theme';
 
 interface CoachContentViewProps {
   item: ContentItem;
@@ -17,7 +17,6 @@ interface CoachContentViewProps {
 export function CoachContentView({ item }: CoachContentViewProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const theme = useTheme();
 
   return (
     <Screen>
@@ -27,9 +26,7 @@ export function CoachContentView({ item }: CoachContentViewProps) {
           <Text style={styles.backLabel}>{t('coach.detailBack')}</Text>
         </Pressable>
 
-        <View style={[styles.iconCircle, { backgroundColor: theme.accentSoft }]}>
-          <SymbolView name={item.icon} size={28} tintColor={theme.accent} />
-        </View>
+        <Image source={CATEGORY_IMAGE[item.category]} style={styles.banner} resizeMode="cover" />
 
         <Text style={styles.category}>{t(CATEGORY_LABEL_KEY[item.category])}</Text>
         <Text style={styles.title}>{t(`coach.content.${item.id}.title`)}</Text>
@@ -61,13 +58,11 @@ const styles = StyleSheet.create({
     fontSize: FontSize.footnote,
     fontWeight: '600',
   },
-  iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.two,
+  banner: {
+    width: '100%',
+    height: 160,
+    borderRadius: Radius.lg,
+    marginBottom: Spacing.three,
   },
   category: {
     color: Colors.textMuted,

@@ -10,6 +10,7 @@ import { useTheme } from '@/features/premium/theme-context';
 import { Screen } from '@/ui/components/Screen';
 
 import { loadBookmarks, toggleBookmark } from './bookmarks';
+import { CATEGORY_TINT } from './coach-theme';
 import { CATEGORY_LABEL_KEY, CATEGORY_TAGS, ContentCategory, ContentItem, ContentTag, contentForCategory } from './content';
 import { PhotoCard } from './photo-card';
 
@@ -61,6 +62,14 @@ export function CoachListView({ category }: CoachListViewProps) {
         <Text style={styles.title}>{t(CATEGORY_LABEL_KEY[category])}</Text>
         <View style={styles.backButton} />
       </View>
+
+      {category === 'recovery' && (
+        <Pressable onPress={() => router.push('/sleep-dashboard')} style={styles.sleepLink}>
+          <SymbolView name="moon.zzz.fill" size={14} tintColor={CATEGORY_TINT.recovery} />
+          <Text style={[styles.sleepLinkText, { color: CATEGORY_TINT.recovery }]}>{t('coach.sleep.entryTitle')}</Text>
+          <SymbolView name="chevron.right" size={12} tintColor={CATEGORY_TINT.recovery} />
+        </Pressable>
+      )}
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
         {filters.map((f) => {
@@ -114,6 +123,17 @@ const styles = StyleSheet.create({
   title: {
     color: Colors.text,
     fontSize: FontSize.title3,
+    fontWeight: '700',
+  },
+  sleepLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+    marginTop: Spacing.three,
+    alignSelf: 'flex-start',
+  },
+  sleepLinkText: {
+    fontSize: FontSize.footnote,
     fontWeight: '700',
   },
   filterRow: {

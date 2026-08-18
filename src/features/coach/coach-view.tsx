@@ -1,10 +1,11 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import type { SFSymbol } from 'sf-symbols-typescript';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
 import { useHydration } from '@/features/hydration/hydration-context';
@@ -17,7 +18,7 @@ import { Screen } from '@/ui/components/Screen';
 import { CoachCopy, getCoachCopy } from './ai-copy';
 import { loadBookmarks, toggleBookmark } from './bookmarks';
 import { CATEGORY_LABEL_KEY, ContentCategory, ContentItem, contentForCategory } from './content';
-import { STREAK_COLOR } from './coach-theme';
+import { CATEGORY_TINT, HYDRATION_IMAGE, STREAK_COLOR } from './coach-theme';
 import { computeWeeklyInsight } from './insight';
 import { loadManualMissionState, saveManualMissionState } from './mission-state';
 import { PhotoCard } from './photo-card';
@@ -145,14 +146,27 @@ export function CoachView() {
         <View style={styles.heroWrap}>
           <View style={[styles.halo, { backgroundColor: theme.accent, shadowColor: theme.accent }]} />
           <Card elevated style={styles.heroCard}>
-            <View style={styles.heroLabelRow}>
-              <View style={[styles.heroIconCircle, { backgroundColor: theme.accentSoft }]}>
-                <SymbolView name={ACTION_ICON[action.kind]} size={16} tintColor={theme.accent} />
+            <View style={styles.heroRow}>
+              <View style={styles.heroTextCol}>
+                <View style={styles.heroLabelRow}>
+                  <View style={[styles.heroIconCircle, { backgroundColor: theme.accentSoft }]}>
+                    <SymbolView name={ACTION_ICON[action.kind]} size={16} tintColor={theme.accent} />
+                  </View>
+                  <Text style={styles.heroLabel}>{t('coach.priorityTitle')}</Text>
+                </View>
+                <Text style={styles.heroAction}>{t(`coach.action.${action.kind}`, actionParams(action))}</Text>
+                <Text style={styles.heroExplanation}>{explanation}</Text>
               </View>
-              <Text style={styles.heroLabel}>{t('coach.priorityTitle')}</Text>
+              <View style={styles.heroImageWrap}>
+                <Image source={HYDRATION_IMAGE} style={styles.heroImage} resizeMode="cover" />
+                <LinearGradient
+                  colors={[Colors.surfaceElevated, 'transparent']}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={styles.heroImageFade}
+                />
+              </View>
             </View>
-            <Text style={styles.heroAction}>{t(`coach.action.${action.kind}`, actionParams(action))}</Text>
-            <Text style={styles.heroExplanation}>{explanation}</Text>
             <View style={styles.heroFooter}>
               <View style={[styles.potentialBadge, { backgroundColor: theme.accentSoft }]}>
                 <SymbolView name="arrow.up.forward" size={12} tintColor={theme.accent} />
@@ -192,6 +206,18 @@ export function CoachView() {
                   />
                 ))}
               </ScrollView>
+              {category === 'recovery' && (
+                <Pressable onPress={() => router.push('/sleep-dashboard')} style={styles.planTeaser}>
+                  <View style={[styles.planTeaserIcon, { backgroundColor: `${CATEGORY_TINT.recovery}26` }]}>
+                    <SymbolView name="moon.zzz.fill" size={18} tintColor={CATEGORY_TINT.recovery} />
+                  </View>
+                  <View style={styles.planTeaserText}>
+                    <Text style={styles.planTeaserTitle}>{t('coach.sleep.entryTitle')}</Text>
+                    <Text style={styles.planTeaserSubtitle}>{t('coach.sleep.entrySubtitle')}</Text>
+                  </View>
+                  <SymbolView name="chevron.right" size={14} tintColor={Colors.textMuted} />
+                </Pressable>
+              )}
             </View>
           ))}
 
@@ -357,6 +383,32 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     gap: Spacing.two,
+    overflow: 'hidden',
+  },
+  heroRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  heroTextCol: {
+    flex: 1,
+    gap: Spacing.two,
+    paddingRight: Spacing.two,
+  },
+  heroImageWrap: {
+    width: 92,
+    marginVertical: -Spacing.three,
+    marginRight: -Spacing.three,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroImageFade: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 40,
   },
   heroLabelRow: {
     flexDirection: 'row',

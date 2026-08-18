@@ -199,19 +199,19 @@ export default {
     },
     content: {
       recipe1: {
-        title: 'Infusion citron-menthe',
-        subtitle: 'Une eau parfumée, sans sucre ajouté',
-        body: 'Presse un quartier de citron et quelques feuilles de menthe dans une carafe d’eau fraîche. Laisse infuser 10 minutes au frais — une façon simple de varier les plaisirs sans sortir de l’eau.',
+        title: 'Bowl saumon, avocat et quinoa',
+        subtitle: 'Un repas complet, prêt en 20 minutes',
+        body: 'Fais cuire le quinoa pendant que le saumon rôtit au four (200°C, 12 à 15 min). Dans un bol, dispose le quinoa, le saumon effeuillé, des rondelles de concombre et de l’avocat en éventail, puis arrose d’un filet d’huile d’olive et de jus de citron.',
       },
       recipe2: {
-        title: 'Eau pétillante fruitée',
-        subtitle: 'Un peu de peps, sans soda',
-        body: 'Mélange de l’eau pétillante avec quelques rondelles d’agrumes ou de concombre. Le côté pétillant peut aider à en boire plus volontiers dans la journée.',
+        title: 'Salade concombre-avocat minute',
+        subtitle: 'Fraîche et riche en eau, prête en 10 minutes',
+        body: 'Coupe le concombre en fines rondelles et l’avocat en dés, ajoute un peu d’oignon rouge émincé et de menthe ciselée, puis arrose d’huile d’olive et de jus de citron vert. Le concombre est composé à 95 % d’eau — pratique les jours où tu veux varier sans sortir de l’eau pure.',
       },
       recipe3: {
-        title: 'Smoothie concombre-menthe',
-        subtitle: 'Une pause hydratante à boire à la cuillère',
-        body: 'Mixe du concombre, quelques feuilles de menthe et de l’eau glacée. Une texture différente pour varier tes apports, à savourer plutôt qu’à avaler d’un trait.',
+        title: 'Gaspacho avocat-concombre-menthe',
+        subtitle: 'Une soupe froide à boire à la cuillère',
+        body: 'Mixe un avocat, un concombre pelé et quelques feuilles de menthe avec du jus de citron et de l’eau bien fraîche, jusqu’à obtenir une texture lisse. Laisse reposer 30 minutes au frais avant de servir — parfait les jours de forte chaleur.',
       },
       activity1: {
         title: 'Marche digestive',
@@ -243,6 +243,29 @@ export default {
         subtitle: '10 minutes pour relâcher la journée',
         body: 'Un temps posé, assis ou allongé, pour relâcher les tensions accumulées dans la journée. À faire quand tu en ressens le besoin, sans pression.',
       },
+    },
+    sleep: {
+      entryTitle: 'Dashboard sommeil',
+      entrySubtitle: 'Suivi réel via Apple Santé',
+      title: 'Sommeil',
+      subtitle: 'Données réelles depuis Apple Santé',
+      unsupportedTitle: 'Indisponible ici',
+      unsupportedBody:
+        'La lecture du sommeil Apple Santé demande un build natif (pas Expo Go). Reviens ici une fois le build natif installé.',
+      connectTitle: 'Connecte Apple Santé',
+      connectBody: 'Lume peut lire tes données de sommeil enregistrées par ton iPhone ou ta Apple Watch.',
+      connectCta: 'Connecter Apple Santé',
+      connecting: 'Connexion…',
+      loading: 'Chargement…',
+      emptyTitle: 'Aucune donnée pour le moment',
+      emptyBody:
+        "Rien trouvé dans Apple Santé sur les 7 derniers jours. Vérifie qu'un Apple Watch ou une app de suivi du sommeil enregistre bien tes nuits.",
+      averageLabel: 'Moyenne sur 7 nuits',
+      chartTitle: 'Durée par nuit',
+      lastNightTitle: 'Dernière nuit',
+      bedTimeLabel: 'Coucher',
+      wakeTimeLabel: 'Réveil',
+      durationValue: '{{h}} h {{m}}',
     },
     scoreInfo: {
       title: 'Comprendre mon score',

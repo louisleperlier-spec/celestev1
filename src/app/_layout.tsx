@@ -31,6 +31,7 @@ export default function RootLayout() {
               <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
               <Stack.Screen name="coach-content" options={{ presentation: 'modal' }} />
               <Stack.Screen name="coach-list" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="sleep-dashboard" options={{ presentation: 'modal' }} />
               <Stack.Screen name="score-info" options={{ presentation: 'modal' }} />
             </Stack>
           </HydrationProvider>
