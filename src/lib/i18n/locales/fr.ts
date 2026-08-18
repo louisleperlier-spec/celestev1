@@ -73,5 +73,15 @@ export default {
     healthDescription:
       "Lume lit et écrit tes prises d'eau dans Apple Santé, pour que toutes tes apps de suivi restent alignées.",
     close: 'Fermer',
+    reminderSection: 'Rappel quotidien',
+    reminderDescription: "Une notification pour penser à t'hydrater, à l'heure de ton choix.",
+    reminderEnable: 'Activer le rappel',
+    reminderEnabled: 'Rappel activé à {{time}}',
+    reminderTimeLabel: 'Heure du rappel',
+    reminderPermissionDenied: 'Autorise les notifications dans Réglages pour activer le rappel.',
+  },
+  reminders: {
+    title: 'Lume',
+    body: "Pense à boire de l'eau aujourd'hui.",
   },
 } as const;

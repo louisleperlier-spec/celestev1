@@ -73,5 +73,15 @@ export default {
     healthDescription:
       'Lume reads and writes your water intake in Apple Health, so all your tracking apps stay in sync.',
     close: 'Close',
+    reminderSection: 'Daily reminder',
+    reminderDescription: 'A notification to remember to hydrate, at the time of your choice.',
+    reminderEnable: 'Enable reminder',
+    reminderEnabled: 'Reminder set for {{time}}',
+    reminderTimeLabel: 'Reminder time',
+    reminderPermissionDenied: 'Allow notifications in Settings to enable the reminder.',
+  },
+  reminders: {
+    title: 'Lume',
+    body: 'Remember to drink water today.',
   },
 } as const;
