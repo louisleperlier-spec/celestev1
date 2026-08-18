@@ -49,6 +49,14 @@
           "NSHealthShareUsageDescription": "Lume lit tes prises d'eau dans Apple Santé pour calculer ton score d'hydratation.",
           "NSHealthUpdateUsageDescription": "Lume enregistre tes prises d'eau dans Apple Santé pour rester synchronisé avec tes autres apps."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Lume utilise la caméra pour enregistrer ta photo quotidienne, stockée uniquement sur ton appareil, afin que tu puisses comparer ton évolution.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
       ]
     ],
     "experiments": {
