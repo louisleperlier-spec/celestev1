@@ -4,8 +4,10 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 
-import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
-import { todayKey } from '@/lib/date';
+import { FontSize, Fonts, Spacing } from '@/constants/theme';
+import { usePremiumGate } from '@/features/premium/use-premium-gate';
+import { useTheme } from '@/features/premium/theme-context';
+import { addDays, dateKey, todayKey } from '@/lib/date';
 import { GradeBadge } from '@/ui/components/GradeBadge';
 import { EntryRow } from '@/ui/components/EntryRow';
 import { Screen } from '@/ui/components/Screen';
@@ -19,14 +21,17 @@ interface Section {
   data: HydrationEntry[];
 }
 
-const HISTORY_DAYS = 30;
+const HISTORY_DAYS = 365;
+const FREE_HISTORY_DAYS = 7;
 
 export function JournalView() {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
+  const { isPremium } = usePremiumGate();
   const { statsForLastDays, deleteEntry } = useHydration();
 
-  const sections = useMemo<Section[]>(() => {
+  const allSections = useMemo<Section[]>(() => {
     const days = statsForLastDays(HISTORY_DAYS).slice().reverse();
     return days
       .filter((day) => day.entries.length > 0)
@@ -36,6 +41,10 @@ export function JournalView() {
         data: [...day.entries].sort((a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime()),
       }));
   }, [statsForLastDays, t]);
+
+  const freeCutoff = useMemo(() => dateKey(addDays(new Date(), -(FREE_HISTORY_DAYS - 1))), []);
+  const sections = isPremium ? allSections : allSections.filter((s) => s.stats.date >= freeCutoff);
+  const hasMoreHistory = !isPremium && allSections.some((s) => s.stats.date < freeCutoff);
 
   const confirmDelete = (entry: HydrationEntry) => {
     Alert.alert(t('journal.delete'), undefined, [
@@ -47,16 +56,16 @@ export function JournalView() {
   return (
     <Screen>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('journal.title')}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{t('journal.title')}</Text>
         <Pressable style={styles.addButton} onPress={() => router.push('/add-entry')} hitSlop={12}>
-          <SymbolView name="plus.circle.fill" size={26} tintColor={Colors.accent} />
+          <SymbolView name="plus.circle.fill" size={26} tintColor={theme.accent} />
         </Pressable>
       </View>
 
       {sections.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>{t('journal.empty')}</Text>
-          <Text style={styles.emptyHint}>{t('journal.emptyHint')}</Text>
+          <Text style={[styles.emptyTitle, { color: theme.text }]}>{t('journal.empty')}</Text>
+          <Text style={[styles.emptyHint, { color: theme.textMuted }]}>{t('journal.emptyHint')}</Text>
         </View>
       ) : (
         <SectionList
@@ -65,13 +74,24 @@ export function JournalView() {
           renderItem={({ item }) => <EntryRow entry={item} onDelete={() => confirmDelete(item)} />}
           renderSectionHeader={({ section }) => (
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{section.title}</Text>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>{section.title}</Text>
               <View style={styles.sectionMeta}>
-                <Text style={styles.sectionTotal}>{t('journal.total', { total: section.stats.totalMl })}</Text>
+                <Text style={[styles.sectionTotal, { color: theme.textMuted }]}>
+                  {t('journal.total', { total: section.stats.totalMl })}
+                </Text>
                 <GradeBadge grade={section.stats.globalGrade} size="sm" />
               </View>
             </View>
           )}
+          ListFooterComponent={
+            hasMoreHistory ? (
+              <Pressable style={styles.lockCard} onPress={() => router.push('/paywall')}>
+                <SymbolView name="lock.fill" size={16} tintColor={theme.accent} />
+                <Text style={[styles.lockText, { color: theme.textSecondary }]}>{t('journal.historyLockedHint')}</Text>
+                <Text style={[styles.lockAction, { color: theme.accent }]}>{t('journal.unlockHistory')}</Text>
+              </Pressable>
+            ) : null
+          }
           stickySectionHeadersEnabled={false}
           contentContainerStyle={styles.listContent}
           removeClippedSubviews
@@ -97,7 +117,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three,
   },
   title: {
-    color: Colors.text,
     fontSize: FontSize.title2,
     fontWeight: '700',
   },
@@ -115,7 +134,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.two,
   },
   sectionTitle: {
-    color: Colors.text,
     fontSize: FontSize.callout,
     fontWeight: '700',
     textTransform: 'capitalize',
@@ -126,7 +144,6 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   sectionTotal: {
-    color: Colors.textMuted,
     fontSize: FontSize.footnote,
     fontFamily: Fonts.mono,
   },
@@ -138,12 +155,23 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.six,
   },
   emptyTitle: {
-    color: Colors.text,
     fontSize: FontSize.callout,
     fontWeight: '600',
   },
   emptyHint: {
-    color: Colors.textMuted,
     fontSize: FontSize.footnote,
+  },
+  lockCard: {
+    alignItems: 'center',
+    gap: Spacing.one,
+    paddingVertical: Spacing.five,
+  },
+  lockText: {
+    fontSize: FontSize.footnote,
+    textAlign: 'center',
+  },
+  lockAction: {
+    fontSize: FontSize.footnote,
+    fontWeight: '700',
   },
 });

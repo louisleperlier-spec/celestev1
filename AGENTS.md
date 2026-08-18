@@ -24,24 +24,44 @@ métrique + une note globale /100, 3 écrans (Accueil, Journal, Tendances), sync
 
 ```
 src/
-  app/            routes expo-router — (tabs)/ (Accueil, Journal, Tendances) + add-entry, settings (modales)
-  features/       cœur métier : hydration/ (types, scoring, storage, contexte React)
+  app/            routes expo-router — (tabs)/ (Accueil, Journal, Tendances) + add-entry, settings, paywall (modales)
+  features/
+    hydration/    cœur métier : types, scoring, storage, contexte React, boissons personnalisées, objectif adaptatif
+    reminders/    rappels quotidiens locaux (expo-notifications, aucun backend)
+    premium/      RevenueCat (purchases.ts, contexte usePremium), thèmes d'accent, écran paywall
   services/       accès externe : health/ (HealthKit)
   ui/components/  design system (Screen, Card, Button, ScoreRing, GradeBadge, MetricCard, EntryRow, BarChart…)
   lib/            i18n, date/id helpers
-  constants/      theme.ts — SOURCE UNIQUE DE VÉRITÉ du look (fond noir, accent vert)
+  constants/      theme.ts — SOURCE de vérité du fond noir + tokens invariants (texte, notes A/B/C…)
 ```
 
-Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-view.tsx`.
+Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-view.tsx` (ou
+`premium/paywall-view.tsx`).
 
 ## Design
 
-- **Mono-thème, volontairement** : `src/constants/theme.ts` n'a qu'une palette (pas de
-  variante claire) — c'est l'identité de marque, pas un oubli. Toute couleur passe par
-  `Colors.*`, jamais en dur dans un composant.
-- Un seul accent (`Colors.accent`, vert). Les couleurs A/B/C (`gradeA/B/C`) sont la seule
-  autre famille de couleurs sémantiques de l'app.
+- **Mono-surface, volontairement** : fond noir, un seul accent affiché à la fois — c'est
+  l'identité de marque, pas un oubli. `src/constants/theme.ts` reste la source des tokens
+  invariants (texte, surfaces, notes A/B/C) ; **l'accent seul varie** selon le thème choisi
+  (premium), via `useTheme()` (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*`
+  en dur. Toute couleur passe par un token, jamais en dur dans un composant.
+- Les couleurs A/B/C (`gradeA/B/C`) restent fixes quel que soit le thème — le vert de succès
+  ne doit jamais changer de sens.
 - SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI.
+
+## Premium (RevenueCat)
+
+- `react-native-purchases` est un module natif : **ne fonctionne pas dans Expo Go** (comme
+  HealthKit). Chargé en lazy/try-catch (`src/features/premium/purchases.ts`), no-op sans
+  `EXPO_PUBLIC_REVENUECAT_API_KEY` ni build natif — `usePremium().isPremium` reste `false`.
+- Entitlement unique : `"premium"`. Verrouillé derrière : historique > 7 jours + Tendances 30
+  jours, plusieurs rappels, objectif adaptatif, boissons personnalisées, thèmes non-défaut.
+- Geste standard pour verrouiller un bouton : `usePremiumGate().guard(action)` — exécute
+  `action` si premium, sinon ouvre `/paywall`.
+- Paywall (`src/features/premium/paywall-view.tsx`) : prix réels via l'offering RevenueCat
+  quand disponible, sinon repli statique (`paywall.monthlyPriceFallback`/`annualPriceFallback`
+  dans les locales) — à garder alignés sur les prix réels une fois les produits créés sur
+  App Store Connect + RevenueCat.
 
 ## Score d'hydratation
 

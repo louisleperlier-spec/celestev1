@@ -1,8 +1,11 @@
+import { SymbolView } from 'expo-symbols';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
+import { useTheme } from '@/features/premium/theme-context';
+import { usePremiumGate } from '@/features/premium/use-premium-gate';
 import { Card } from '@/ui/components/Card';
 import { BarChart, BarChartDatum } from '@/ui/components/BarChart';
 import { MetricCard } from '@/ui/components/MetricCard';
@@ -23,6 +26,8 @@ type Period = (typeof PERIODS)[number];
 
 export function TrendsView() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const { isPremium, guard } = usePremiumGate();
   const { statsForLastDays, settings } = useHydration();
   const [period, setPeriod] = useState<Period>(7);
 
@@ -46,24 +51,40 @@ export function TrendsView() {
     key: d.date,
     label: shortDayLabel(d.date),
     value: d.hydratingMl,
-    color: d.hydratingMl >= d.goalMl ? Colors.gradeA : Colors.accentSoft,
+    color: d.hydratingMl >= d.goalMl ? Colors.gradeA : theme.accentSoft,
   }));
 
   const metricAverages = useMemo(() => computeMetricAverages(activeDays), [activeDays]);
+
+  const onSelectPeriod = (p: Period) => {
+    if (p === 30 && !isPremium) {
+      guard(() => setPeriod(p));
+      return;
+    }
+    setPeriod(p);
+  };
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('trends.title')}</Text>
-          <View style={styles.segmented}>
-            {PERIODS.map((p) => (
-              <Pressable key={p} onPress={() => setPeriod(p)} style={[styles.segment, period === p && styles.segmentActive]}>
-                <Text style={[styles.segmentText, period === p && styles.segmentTextActive]}>
-                  {t(p === 7 ? 'trends.period7' : 'trends.period30')}
-                </Text>
-              </Pressable>
-            ))}
+          <View style={[styles.segmented, { backgroundColor: Colors.surface }]}>
+            {PERIODS.map((p) => {
+              const active = period === p;
+              const locked = p === 30 && !isPremium;
+              return (
+                <Pressable
+                  key={p}
+                  onPress={() => onSelectPeriod(p)}
+                  style={[styles.segment, active && { backgroundColor: theme.accentSoft }]}>
+                  {locked && <SymbolView name="lock.fill" size={10} tintColor={theme.textMuted} />}
+                  <Text style={[styles.segmentText, active && { color: theme.accent }]}>
+                    {t(p === 7 ? 'trends.period7' : 'trends.period30')}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
@@ -165,7 +186,6 @@ const styles = StyleSheet.create({
   },
   segmented: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
     borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -173,20 +193,17 @@ const styles = StyleSheet.create({
   },
   segment: {
     flex: 1,
+    flexDirection: 'row',
     paddingVertical: Spacing.two,
     borderRadius: Radius.sm,
     alignItems: 'center',
-  },
-  segmentActive: {
-    backgroundColor: Colors.accentSoft,
+    justifyContent: 'center',
+    gap: 4,
   },
   segmentText: {
     color: Colors.textMuted,
     fontSize: FontSize.footnote,
     fontWeight: '600',
-  },
-  segmentTextActive: {
-    color: Colors.accent,
   },
   statsRow: {
     flexDirection: 'row',

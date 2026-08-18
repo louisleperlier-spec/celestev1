@@ -1,9 +1,10 @@
-export type DrinkType = 'water' | 'tea' | 'coffee' | 'juice' | 'soda' | 'other';
+export type BuiltInDrinkType = 'water' | 'tea' | 'coffee' | 'juice' | 'soda' | 'other';
+export type DrinkType = BuiltInDrinkType | 'custom';
 
-export const DRINK_TYPES: readonly DrinkType[] = ['water', 'tea', 'coffee', 'juice', 'soda', 'other'];
+export const DRINK_TYPES: readonly BuiltInDrinkType[] = ['water', 'tea', 'coffee', 'juice', 'soda', 'other'];
 
 /** Part de la boisson qui hydrate réellement (le café/l'alcool hydratent moins qu'un volume égal d'eau). */
-export const HYDRATION_FACTOR: Record<DrinkType, number> = {
+export const HYDRATION_FACTOR: Record<BuiltInDrinkType, number> = {
   water: 1,
   tea: 0.95,
   coffee: 0.85,
@@ -13,7 +14,7 @@ export const HYDRATION_FACTOR: Record<DrinkType, number> = {
 };
 
 /** Boissons qui pèsent négativement sur la note Qualité au-delà d'une petite part du volume total. */
-export const LOWERS_QUALITY: readonly DrinkType[] = ['coffee', 'soda'];
+export const LOWERS_QUALITY: readonly BuiltInDrinkType[] = ['coffee', 'soda'];
 
 export type EntrySource = 'manual' | 'healthkit';
 
@@ -25,6 +26,18 @@ export interface HydrationEntry {
   source: EntrySource;
   /** UUID de l'échantillon HealthKit correspondant, quand Lume l'a écrit dans Apple Santé. */
   healthUUID?: string;
+  /** Renseignés uniquement quand drinkType === 'custom' — copiés depuis la boisson personnalisée au moment de la saisie. */
+  customDrinkName?: string;
+  customHydrationFactor?: number; // 0-1
+  customLowersQuality?: boolean;
+}
+
+/** Boisson personnalisée (premium) — définie une fois, réutilisable pour chaque entrée. */
+export interface CustomDrink {
+  id: string;
+  name: string;
+  hydrationFactor: number; // 0-1
+  lowersQuality: boolean;
 }
 
 export type Grade = 'A' | 'B' | 'C';
@@ -57,9 +70,11 @@ export interface DayStats {
 export interface HydrationSettings {
   dailyGoalMl: number;
   healthSyncEnabled: boolean;
+  adaptiveGoalEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: HydrationSettings = {
   dailyGoalMl: 2000,
   healthSyncEnabled: false,
+  adaptiveGoalEnabled: false,
 };

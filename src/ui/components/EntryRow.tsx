@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 
-import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
+import { FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
 import { HydrationEntry } from '@/features/hydration/types';
+import { useTheme } from '@/features/premium/theme-context';
 
 import { DrinkIcon } from './DrinkIcon';
 
@@ -15,30 +16,32 @@ interface EntryRowProps {
 
 export function EntryRow({ entry, onDelete }: EntryRowProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const time = new Date(entry.loggedAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
   const fromHealth = entry.source === 'healthkit';
+  const label = entry.drinkType === 'custom' ? entry.customDrinkName ?? t('drink.other') : t(`drink.${entry.drinkType}`);
 
   return (
     <View style={styles.row}>
-      <View style={styles.iconWrap}>
+      <View style={[styles.iconWrap, { backgroundColor: theme.accentSoft }]}>
         <DrinkIcon type={entry.drinkType} />
       </View>
       <View style={styles.info}>
-        <Text style={styles.label}>{t(`drink.${entry.drinkType}`)}</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
         <View style={styles.metaRow}>
-          <Text style={styles.meta}>{time}</Text>
+          <Text style={[styles.meta, { color: theme.textMuted }]}>{time}</Text>
           {fromHealth && (
             <View style={styles.healthTag}>
-              <SymbolView name="heart.fill" size={10} tintColor={Colors.accent} />
-              <Text style={styles.healthTagText}>{t('journal.fromHealth')}</Text>
+              <SymbolView name="heart.fill" size={10} tintColor={theme.accent} />
+              <Text style={[styles.healthTagText, { color: theme.textMuted }]}>{t('journal.fromHealth')}</Text>
             </View>
           )}
         </View>
       </View>
-      <Text style={styles.volume}>{entry.volumeMl} ml</Text>
+      <Text style={[styles.volume, { color: theme.text }]}>{entry.volumeMl} ml</Text>
       {!fromHealth && onDelete && (
         <Pressable onPress={onDelete} hitSlop={12} style={styles.deleteButton}>
-          <SymbolView name="trash" size={16} tintColor={Colors.textMuted} />
+          <SymbolView name="trash" size={16} tintColor={theme.textMuted} />
         </Pressable>
       )}
     </View>
@@ -56,7 +59,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Radius.md,
-    backgroundColor: Colors.accentSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -65,7 +67,6 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   label: {
-    color: Colors.text,
     fontSize: FontSize.body,
     fontWeight: '600',
   },
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   meta: {
-    color: Colors.textMuted,
     fontSize: FontSize.footnote,
     fontFamily: Fonts.mono,
   },
@@ -85,11 +85,9 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   healthTagText: {
-    color: Colors.textMuted,
     fontSize: 11,
   },
   volume: {
-    color: Colors.text,
     fontFamily: Fonts.mono,
     fontSize: FontSize.body,
     fontWeight: '600',

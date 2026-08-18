@@ -4,7 +4,7 @@ import type { SFSymbol } from 'sf-symbols-typescript';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Colors } from '@/constants/theme';
+import { useTheme } from '@/features/premium/theme-context';
 
 const ICONS: Record<string, SFSymbol> = {
   index: 'house.fill',
@@ -14,16 +14,17 @@ const ICONS: Record<string, SFSymbol> = {
 
 export default function TabsLayout() {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: Colors.accent,
-        tabBarInactiveTintColor: Colors.textMuted,
+        tabBarActiveTintColor: theme.accent,
+        tabBarInactiveTintColor: theme.textMuted,
         tabBarStyle: {
-          backgroundColor: Colors.background,
-          borderTopColor: Colors.border,
+          backgroundColor: theme.background,
+          borderTopColor: theme.border,
         },
         tabBarIcon: ({ color, size }) => <SymbolView name={ICONS[route.name]} size={size} tintColor={color} />,
       })}>

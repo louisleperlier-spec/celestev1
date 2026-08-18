@@ -2,35 +2,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
 import i18n from '@/lib/i18n';
+import { generateId } from '@/lib/id';
 
 /**
- * Rappel quotidien local — aucune infrastructure serveur, juste une notification programmée
- * sur l'appareil via expo-notifications. Pas de push distante : Lume n'a pas de backend.
+ * Rappels quotidiens locaux — aucune infrastructure serveur, juste des notifications
+ * programmées sur l'appareil via expo-notifications. Pas de push distante : Lume n'a pas de
+ * backend. Gratuit : 1 rappel. Premium : plusieurs (la limite se gère côté UI, pas ici).
  */
 
-export interface ReminderSettings {
-  enabled: boolean;
+export interface Reminder {
+  id: string;
   hour: number;
   minute: number;
+  notificationId: string;
 }
 
-export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = { enabled: false, hour: 9, minute: 0 };
+const REMINDERS_KEY = 'lume.reminders.v1';
 
-const SETTINGS_KEY = 'lume.reminder.settings.v1';
-const NOTIFICATION_ID_KEY = 'lume.reminder.notificationId.v1';
-
-export async function loadReminderSettings(): Promise<ReminderSettings> {
-  const raw = await AsyncStorage.getItem(SETTINGS_KEY);
-  if (!raw) return DEFAULT_REMINDER_SETTINGS;
+export async function listReminders(): Promise<Reminder[]> {
+  const raw = await AsyncStorage.getItem(REMINDERS_KEY);
+  if (!raw) return [];
   try {
-    return { ...DEFAULT_REMINDER_SETTINGS, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEFAULT_REMINDER_SETTINGS;
+    return [];
   }
 }
 
-async function saveReminderSettings(settings: ReminderSettings): Promise<void> {
-  await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+async function saveIndex(reminders: readonly Reminder[]): Promise<void> {
+  await AsyncStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
 }
 
 export async function requestReminderPermission(): Promise<boolean> {
@@ -42,36 +43,29 @@ export async function requestReminderPermission(): Promise<boolean> {
   return result.granted || result.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
 }
 
-async function cancelExistingReminder(): Promise<void> {
-  const id = await AsyncStorage.getItem(NOTIFICATION_ID_KEY);
-  if (!id) return;
-  await Notifications.cancelScheduledNotificationAsync(id).catch(() => {});
-  await AsyncStorage.removeItem(NOTIFICATION_ID_KEY);
-}
-
-/** Active (ou reprogramme) le rappel quotidien à l'heure donnée. Retourne false si la permission est refusée. */
-export async function enableReminder(hour: number, minute: number): Promise<boolean> {
+/** Ajoute un rappel quotidien à l'heure donnée. Retourne null si la permission est refusée. */
+export async function addReminder(hour: number, minute: number): Promise<Reminder | null> {
   const granted = await requestReminderPermission();
-  if (!granted) {
-    await saveReminderSettings({ enabled: false, hour, minute });
-    return false;
-  }
+  if (!granted) return null;
 
-  await cancelExistingReminder();
-  const id = await Notifications.scheduleNotificationAsync({
+  const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title: i18n.t('reminders.title'),
       body: i18n.t('reminders.body'),
     },
     trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
   });
-  await AsyncStorage.setItem(NOTIFICATION_ID_KEY, id);
-  await saveReminderSettings({ enabled: true, hour, minute });
-  return true;
+
+  const reminder: Reminder = { id: generateId('reminder'), hour, minute, notificationId };
+  const reminders = await listReminders();
+  await saveIndex([...reminders, reminder]);
+  return reminder;
 }
 
-export async function disableReminder(): Promise<void> {
-  await cancelExistingReminder();
-  const current = await loadReminderSettings();
-  await saveReminderSettings({ ...current, enabled: false });
+export async function removeReminder(id: string): Promise<void> {
+  const reminders = await listReminders();
+  const target = reminders.find((r) => r.id === id);
+  if (!target) return;
+  await Notifications.cancelScheduledNotificationAsync(target.notificationId).catch(() => {});
+  await saveIndex(reminders.filter((r) => r.id !== id));
 }

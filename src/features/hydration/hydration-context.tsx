@@ -10,9 +10,16 @@ import {
   writeWaterSampleToHealth,
 } from '@/services/health/healthkit';
 
+import { computeAdaptiveGoal } from './adaptive-goal';
 import { computeDayStats } from './scoring';
 import * as repo from './storage-repository';
 import { DayStats, DrinkType, HydrationEntry, HydrationSettings, DEFAULT_SETTINGS } from './types';
+
+export interface CustomDrinkInput {
+  name: string;
+  hydrationFactor: number;
+  lowersQuality: boolean;
+}
 
 interface HydrationContextValue {
   ready: boolean;
@@ -24,9 +31,10 @@ interface HydrationContextValue {
   todayStats: DayStats;
   statsForDate: (key: string) => DayStats;
   statsForLastDays: (count: number) => DayStats[];
-  addEntry: (volumeMl: number, drinkType: DrinkType, loggedAt?: Date) => Promise<void>;
+  addEntry: (volumeMl: number, drinkType: DrinkType, loggedAt?: Date, customDrink?: CustomDrinkInput) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setDailyGoal: (goalMl: number) => Promise<void>;
+  setAdaptiveGoalEnabled: (enabled: boolean) => Promise<void>;
   enableHealthSync: () => Promise<boolean>;
   disableHealthSync: () => Promise<void>;
   syncWithHealth: () => Promise<void>;
@@ -104,13 +112,20 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
   }, [ready, settings.healthSyncEnabled]);
 
   const addEntry = useCallback(
-    async (volumeMl: number, drinkType: DrinkType, loggedAt: Date = new Date()) => {
+    async (volumeMl: number, drinkType: DrinkType, loggedAt: Date = new Date(), customDrink?: CustomDrinkInput) => {
       const entry: HydrationEntry = {
         id: generateId(),
         volumeMl,
         drinkType,
         loggedAt: loggedAt.toISOString(),
         source: 'manual',
+        ...(drinkType === 'custom' && customDrink
+          ? {
+              customDrinkName: customDrink.name,
+              customHydrationFactor: customDrink.hydrationFactor,
+              customLowersQuality: customDrink.lowersQuality,
+            }
+          : {}),
       };
       const next = [...entries, entry];
       persistEntries(next);
@@ -150,6 +165,15 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
     [settings],
   );
 
+  const setAdaptiveGoalEnabled = useCallback(
+    async (enabled: boolean) => {
+      const next = { ...settings, adaptiveGoalEnabled: enabled };
+      setSettings(next);
+      await repo.saveSettings(next);
+    },
+    [settings],
+  );
+
   const enableHealthSync = useCallback(async () => {
     const granted = await requestHealthAuthorization();
     const next = { ...settings, healthSyncEnabled: granted };
@@ -180,6 +204,18 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
 
   const todayStats = useMemo(() => statsForDate(todayKey()), [statsForDate]);
 
+  useEffect(() => {
+    if (!ready || !settings.adaptiveGoalEnabled) return;
+    const recentDays = statsForLastDays(14);
+    const suggested = computeAdaptiveGoal(recentDays, settings.dailyGoalMl);
+    if (suggested !== settings.dailyGoalMl) {
+      void setDailyGoal(suggested);
+    }
+    // Ne recalcule que quand l'activation change ou que de nouvelles entrées arrivent —
+    // pas à chaque changement de dailyGoalMl (ce serait la valeur qu'on vient d'écrire).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, settings.adaptiveGoalEnabled, entries]);
+
   const value: HydrationContextValue = {
     ready,
     entries,
@@ -193,6 +229,7 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
     addEntry,
     deleteEntry,
     setDailyGoal,
+    setAdaptiveGoalEnabled,
     enableHealthSync,
     disableHealthSync,
     syncWithHealth,

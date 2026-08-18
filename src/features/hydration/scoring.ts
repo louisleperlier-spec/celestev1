@@ -1,5 +1,17 @@
 import { DayMetrics, DayStats, Grade, HYDRATION_FACTOR, HydrationEntry, LOWERS_QUALITY, MetricScore } from './types';
 
+const DEFAULT_CUSTOM_HYDRATION_FACTOR = 0.85;
+
+function hydrationFactorFor(entry: HydrationEntry): number {
+  if (entry.drinkType === 'custom') return entry.customHydrationFactor ?? DEFAULT_CUSTOM_HYDRATION_FACTOR;
+  return HYDRATION_FACTOR[entry.drinkType];
+}
+
+function lowersQualityFor(entry: HydrationEntry): boolean {
+  if (entry.drinkType === 'custom') return entry.customLowersQuality ?? false;
+  return LOWERS_QUALITY.includes(entry.drinkType);
+}
+
 /**
  * Moteur de notation — pur, testable, sans dépendance à React ni au storage.
  * 4 métriques (Volume, Régularité, Timing, Qualité) donnent chacune une note 0-100 + une lettre
@@ -27,7 +39,7 @@ function toMetric(score: number): MetricScore {
 }
 
 export function hydratingVolume(entries: readonly HydrationEntry[]): number {
-  return entries.reduce((sum, e) => sum + e.volumeMl * HYDRATION_FACTOR[e.drinkType], 0);
+  return entries.reduce((sum, e) => sum + e.volumeMl * hydrationFactorFor(e), 0);
 }
 
 export function totalVolume(entries: readonly HydrationEntry[]): number {
@@ -103,9 +115,7 @@ export function computeQualityMetric(entries: readonly HydrationEntry[]): Metric
   if (entries.length === 0) return toMetric(0);
 
   const total = totalVolume(entries);
-  const lowQualityMl = entries
-    .filter((e) => LOWERS_QUALITY.includes(e.drinkType))
-    .reduce((sum, e) => sum + e.volumeMl, 0);
+  const lowQualityMl = entries.filter(lowersQualityFor).reduce((sum, e) => sum + e.volumeMl, 0);
   const ratio = total > 0 ? lowQualityMl / total : 0;
   const overshoot = Math.max(0, ratio - QUALITY_ALLOWANCE_RATIO);
   const score = 100 - (overshoot / (1 - QUALITY_ALLOWANCE_RATIO)) * 100;

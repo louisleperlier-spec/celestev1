@@ -1,6 +1,9 @@
 /**
- * Lume — source unique de vérité du look : fond noir, accent vert, un seul accent.
- * L'app est volontairement mono-thème (pas de variante claire) : c'est l'identité de la marque.
+ * Lume — source unique de vérité du look : fond noir, un seul accent à la fois.
+ * L'app reste mono-thème (pas de variante claire) — seul l'ACCENT peut changer, via les thèmes
+ * premium (`src/features/premium/themes.ts`). `Colors.accent*` ci-dessous est la valeur par
+ * défaut (Menthe) ; les écrans qui doivent réagir au thème choisi passent par `useTheme()`
+ * plutôt que d'importer `Colors` en dur.
  */
 
 import { Platform } from 'react-native';

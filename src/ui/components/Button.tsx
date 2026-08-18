@@ -1,7 +1,8 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 
-import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
+import { FontSize, Radius, Spacing } from '@/constants/theme';
+import { useTheme } from '@/features/premium/theme-context';
 
 interface ButtonProps {
   label: string;
@@ -13,28 +14,30 @@ interface ButtonProps {
 }
 
 export function Button({ label, onPress, variant = 'primary', disabled, loading, style }: ButtonProps) {
+  const theme = useTheme();
+
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'ghost' && styles.ghost,
-        variant === 'danger' && styles.danger,
+        variant === 'primary' && { backgroundColor: theme.accent },
+        variant === 'ghost' && [styles.ghost, { borderColor: theme.border }],
+        variant === 'danger' && { backgroundColor: theme.dangerSoft },
         (disabled || loading) && styles.disabled,
         pressed && !disabled && styles.pressed,
         style,
       ]}>
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? Colors.background : Colors.accent} />
+        <ActivityIndicator color={variant === 'primary' ? theme.background : theme.accent} />
       ) : (
         <Text
           style={[
             styles.label,
             variant === 'primary' && styles.labelPrimary,
-            variant === 'ghost' && styles.labelGhost,
-            variant === 'danger' && styles.labelDanger,
+            variant === 'ghost' && { color: theme.text },
+            variant === 'danger' && { color: theme.danger },
           ]}>
           {label}
         </Text>
@@ -51,16 +54,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
   },
-  primary: {
-    backgroundColor: Colors.accent,
-  },
   ghost: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  danger: {
-    backgroundColor: Colors.dangerSoft,
   },
   disabled: {
     opacity: 0.4,
@@ -74,11 +70,5 @@ const styles = StyleSheet.create({
   },
   labelPrimary: {
     color: '#000000',
-  },
-  labelGhost: {
-    color: Colors.text,
-  },
-  labelDanger: {
-    color: Colors.danger,
   },
 });

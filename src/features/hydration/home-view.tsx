@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
+import { useTheme } from '@/features/premium/theme-context';
 import { Button } from '@/ui/components/Button';
 import { Card } from '@/ui/components/Card';
 import { DrinkIcon } from '@/ui/components/DrinkIcon';
@@ -18,6 +19,7 @@ import { useHydration } from './hydration-context';
 export function HomeView() {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const { todayStats, addEntry, healthSupported, settings, syncing, lastSyncedAt, enableHealthSync, syncWithHealth } =
     useHydration();
 
@@ -63,7 +65,7 @@ export function HomeView() {
               <Text style={styles.quickAddText}>{t('home.addBottle')}</Text>
             </Pressable>
             <Pressable style={styles.quickAddButton} onPress={() => router.push('/add-entry')}>
-              <SymbolView name="plus.circle.fill" size={22} tintColor={Colors.accent} />
+              <SymbolView name="plus.circle.fill" size={22} tintColor={theme.accent} />
               <Text style={styles.quickAddText}>{t('home.addCustom')}</Text>
             </Pressable>
           </View>
@@ -85,7 +87,7 @@ export function HomeView() {
 
         <Card style={styles.healthCard}>
           <View style={styles.healthHeader}>
-            <SymbolView name="heart.fill" size={18} tintColor={Colors.accent} />
+            <SymbolView name="heart.fill" size={18} tintColor={theme.accent} />
             <Text style={styles.healthTitle}>{t('home.healthTitle')}</Text>
           </View>
 
