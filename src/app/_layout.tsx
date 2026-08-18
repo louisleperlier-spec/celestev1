@@ -29,6 +29,8 @@ export default function RootLayout() {
               <Stack.Screen name="add-entry" options={{ presentation: 'modal' }} />
               <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
               <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="coach-content" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="score-info" options={{ presentation: 'modal' }} />
             </Stack>
           </HydrationProvider>
         </PremiumProvider>

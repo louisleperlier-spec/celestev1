@@ -9,6 +9,7 @@ import { useTheme } from '@/features/premium/theme-context';
 const ICONS: Record<string, SFSymbol> = {
   index: 'house.fill',
   journal: 'book.fill',
+  coach: 'target',
   trends: 'chart.line.uptrend.xyaxis',
 };
 
@@ -30,6 +31,7 @@ export default function TabsLayout() {
       })}>
       <Tabs.Screen name="index" options={{ title: t('tabs.home') }} />
       <Tabs.Screen name="journal" options={{ title: t('tabs.journal') }} />
+      <Tabs.Screen name="coach" options={{ title: t('tabs.coach') }} />
       <Tabs.Screen name="trends" options={{ title: t('tabs.trends') }} />
     </Tabs>
   );
