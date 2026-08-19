@@ -42,7 +42,12 @@ function buildUserPrompt(action: PriorityAction, today: DayStats): string {
     .join('\n');
 }
 
-export async function getCoachCopy(action: PriorityAction, today: DayStats): Promise<CoachCopy> {
+/**
+ * `isPremium` gate : la reformulation IA (appel Gemini via le backend) est un avantage premium —
+ * les utilisateurs gratuits reçoivent directement le texte de repli déterministe, jamais moins
+ * fonctionnel, juste moins personnalisé. Voir AGENTS.md "Premium (RevenueCat)".
+ */
+export async function getCoachCopy(action: PriorityAction, today: DayStats, isPremium: boolean): Promise<CoachCopy> {
   const date = todayKey();
   const cacheKey = `${CACHE_KEY_PREFIX}${date}`;
 
@@ -59,10 +64,11 @@ export async function getCoachCopy(action: PriorityAction, today: DayStats): Pro
     }
   }
 
-  const provider = getAiProvider();
-  const aiText = await provider
-    .generate({ systemPrompt: COACH_AI_SYSTEM_PROMPT, userPrompt: buildUserPrompt(action, today) })
-    .catch(() => null);
+  const aiText = isPremium
+    ? await getAiProvider()
+        .generate({ systemPrompt: COACH_AI_SYSTEM_PROMPT, userPrompt: buildUserPrompt(action, today) })
+        .catch(() => null)
+    : null;
 
   const copy: CoachCopy = aiText
     ? { date, priorityExplanation: aiText, source: 'ai' }

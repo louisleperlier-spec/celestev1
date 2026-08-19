@@ -67,7 +67,7 @@ export function CoachView() {
   const [copy, setCopy] = useState<CoachCopy | null>(null);
   useEffect(() => {
     let cancelled = false;
-    void getCoachCopy(action, todayStats).then((result) => {
+    void getCoachCopy(action, todayStats, isPremium).then((result) => {
       if (!cancelled) setCopy(result);
     });
     return () => {
@@ -75,7 +75,7 @@ export function CoachView() {
     };
     // Régénère seulement quand l'action choisie change de nature — pas à chaque re-render de todayStats.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action.kind, action.targetMl, action.deadlineHour]);
+  }, [action.kind, action.targetMl, action.deadlineHour, isPremium]);
 
   const [manual, setManual] = useState<ManualMissionState>(DEFAULT_MANUAL_MISSION_STATE);
   useEffect(() => {
@@ -200,7 +200,7 @@ export function CoachView() {
                 ))}
               </ScrollView>
               {category === 'recovery' && (
-                <Pressable onPress={() => router.push('/sleep-dashboard')} style={styles.planTeaser}>
+                <Pressable onPress={() => guard(() => router.push('/sleep-dashboard'))} style={styles.planTeaser}>
                   <View style={[styles.planTeaserIcon, { backgroundColor: `${CATEGORY_TINT.recovery}26` }]}>
                     <SymbolView name="moon.zzz.fill" size={18} tintColor={CATEGORY_TINT.recovery} />
                   </View>
@@ -208,7 +208,7 @@ export function CoachView() {
                     <Text style={styles.planTeaserTitle}>{t('coach.sleep.entryTitle')}</Text>
                     <Text style={styles.planTeaserSubtitle}>{t('coach.sleep.entrySubtitle')}</Text>
                   </View>
-                  <SymbolView name="chevron.right" size={14} tintColor={Colors.textMuted} />
+                  {!isPremium && <SymbolView name="lock.fill" size={14} tintColor={Colors.textMuted} />}
                 </Pressable>
               )}
             </View>

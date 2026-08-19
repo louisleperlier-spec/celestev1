@@ -62,7 +62,9 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   HealthKit). Chargé en lazy/try-catch (`src/features/premium/purchases.ts`), no-op sans
   `EXPO_PUBLIC_REVENUECAT_API_KEY` ni build natif — `usePremium().isPremium` reste `false`.
 - Entitlement unique : `"premium"`. Verrouillé derrière : historique > 7 jours + Tendances 30
-  jours, plusieurs rappels, objectif adaptatif, boissons personnalisées, thèmes non-défaut.
+  jours, plusieurs rappels, objectif adaptatif, boissons personnalisées, thèmes non-défaut,
+  Dashboard sommeil (lecture HealthKit sommeil), reformulation IA du Coach (Gemini — la version
+  gratuite garde le texte de repli déterministe, jamais moins fonctionnelle).
 - Geste standard pour verrouiller un bouton : `usePremiumGate().guard(action)` — exécute
   `action` si premium, sinon ouvre `/paywall`.
 - Paywall (`src/features/premium/paywall-view.tsx`) : prix réels via l'offering RevenueCat

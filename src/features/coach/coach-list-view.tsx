@@ -64,10 +64,14 @@ export function CoachListView({ category }: CoachListViewProps) {
       </View>
 
       {category === 'recovery' && (
-        <Pressable onPress={() => router.push('/sleep-dashboard')} style={styles.sleepLink}>
+        <Pressable onPress={() => guard(() => router.push('/sleep-dashboard'))} style={styles.sleepLink}>
           <SymbolView name="moon.zzz.fill" size={14} tintColor={CATEGORY_TINT.recovery} />
           <Text style={[styles.sleepLinkText, { color: CATEGORY_TINT.recovery }]}>{t('coach.sleep.entryTitle')}</Text>
-          <SymbolView name="chevron.right" size={12} tintColor={CATEGORY_TINT.recovery} />
+          {isPremium ? (
+            <SymbolView name="chevron.right" size={12} tintColor={CATEGORY_TINT.recovery} />
+          ) : (
+            <SymbolView name="lock.fill" size={12} tintColor={CATEGORY_TINT.recovery} />
+          )}
         </Pressable>
       )}
 

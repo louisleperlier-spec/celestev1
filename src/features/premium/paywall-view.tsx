@@ -8,10 +8,15 @@ import { FontSize, Radius, Spacing } from '@/constants/theme';
 import { Button } from '@/ui/components/Button';
 import { Screen } from '@/ui/components/Screen';
 
+import { annualSavingsPercent, trialDaysFor } from './plan-pricing';
 import { usePremium } from './premium-context';
 import { useTheme } from './theme-context';
 
 type PlanId = 'monthly' | 'annual';
+
+const MONTHLY_TRIAL_DAYS_FALLBACK = 7;
+const ANNUAL_TRIAL_DAYS_FALLBACK = 14;
+const ANNUAL_SAVINGS_FALLBACK = 50;
 
 export function PaywallView() {
   const { t } = useTranslation();
@@ -26,6 +31,10 @@ export function PaywallView() {
 
   const monthlyPrice = monthlyPackage?.product.priceString ?? t('paywall.monthlyPriceFallback');
   const annualPrice = annualPackage?.product.priceString ?? t('paywall.annualPriceFallback');
+
+  const monthlyTrialDays = trialDaysFor(monthlyPackage) ?? MONTHLY_TRIAL_DAYS_FALLBACK;
+  const annualTrialDays = trialDaysFor(annualPackage) ?? ANNUAL_TRIAL_DAYS_FALLBACK;
+  const savingsPercent = annualSavingsPercent(monthlyPackage, annualPackage) ?? ANNUAL_SAVINGS_FALLBACK;
 
   const onSubscribe = async () => {
     const pkg = selectedPlan === 'monthly' ? monthlyPackage : annualPackage;
@@ -54,10 +63,10 @@ export function PaywallView() {
 
   const benefits = [
     t('paywall.benefitHistory'),
-    t('paywall.benefitReminders'),
-    t('paywall.benefitAdaptiveGoal'),
-    t('paywall.benefitCustomDrinks'),
-    t('paywall.benefitThemes'),
+    t('paywall.benefitHealthSync'),
+    t('paywall.benefitCoachAI'),
+    t('paywall.benefitRemindersAdaptive'),
+    t('paywall.benefitDrinksThemes'),
   ];
 
   return (
@@ -93,7 +102,7 @@ export function PaywallView() {
             label={t('paywall.monthly')}
             price={monthlyPrice}
             perUnit={t('paywall.perMonth')}
-            trialLabel={t('paywall.trialLabel')}
+            trialLabel={t('paywall.trialLabel', { days: monthlyTrialDays })}
           />
           <PlanCard
             selected={selectedPlan === 'annual'}
@@ -101,8 +110,9 @@ export function PaywallView() {
             label={t('paywall.annual')}
             price={annualPrice}
             perUnit={t('paywall.perYear')}
-            trialLabel={t('paywall.trialLabel')}
-            badge={t('paywall.saveBadge')}
+            trialLabel={t('paywall.trialLabel', { days: annualTrialDays })}
+            badge={t('paywall.bestValueBadge')}
+            savingsLabel={t('paywall.saveBadge', { percent: savingsPercent })}
           />
         </View>
 
@@ -125,9 +135,10 @@ interface PlanCardProps {
   perUnit: string;
   trialLabel: string;
   badge?: string;
+  savingsLabel?: string;
 }
 
-function PlanCard({ selected, onPress, label, price, perUnit, trialLabel, badge }: PlanCardProps) {
+function PlanCard({ selected, onPress, label, price, perUnit, trialLabel, badge, savingsLabel }: PlanCardProps) {
   const theme = useTheme();
 
   return (
@@ -139,14 +150,17 @@ function PlanCard({ selected, onPress, label, price, perUnit, trialLabel, badge 
         selected && { backgroundColor: theme.accentSoft },
       ]}>
       {badge && (
-        <View style={[styles.badge, { backgroundColor: theme.accent }]}>
-          <Text style={styles.badgeText}>{badge}</Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.badge, { backgroundColor: theme.accent }]}>
+            <Text style={styles.badgeText}>{badge}</Text>
+          </View>
         </View>
       )}
       <Text style={[styles.planLabel, { color: theme.text }]}>{label}</Text>
       <View style={styles.planPriceRow}>
         <Text style={[styles.planPrice, { color: theme.text }]}>{price}</Text>
         <Text style={[styles.planPriceUnit, { color: theme.textMuted }]}>{perUnit}</Text>
+        {savingsLabel && <Text style={[styles.savingsLabel, { color: theme.accent }]}>{savingsLabel}</Text>}
       </View>
       <Text style={[styles.planTrial, { color: theme.accent }]}>{trialLabel}</Text>
     </Pressable>
@@ -216,10 +230,14 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     gap: Spacing.one,
   },
-  badge: {
+  badgeRow: {
     position: 'absolute',
     top: -10,
     right: Spacing.two,
+    flexDirection: 'row',
+    gap: 4,
+  },
+  badge: {
     paddingHorizontal: Spacing.two,
     paddingVertical: 3,
     borderRadius: Radius.full,
@@ -242,6 +260,10 @@ const styles = StyleSheet.create({
   },
   planPrice: {
     fontSize: FontSize.title3,
+    fontWeight: '700',
+  },
+  savingsLabel: {
+    fontSize: FontSize.caption,
     fontWeight: '700',
   },
   planPriceUnit: {
