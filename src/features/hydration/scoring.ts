@@ -18,7 +18,7 @@ function lowersQualityFor(entry: HydrationEntry): boolean {
  * A/B/C, combinées en une note globale /100 pondérée.
  */
 
-const WEIGHTS = {
+export const WEIGHTS = {
   volume: 0.4,
   regularity: 0.2,
   timing: 0.15,

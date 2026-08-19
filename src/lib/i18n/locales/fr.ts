@@ -107,6 +107,94 @@ export default {
     title: 'Lume',
     body: "Pense à boire de l'eau aujourd'hui.",
   },
+  onboarding: {
+    continue: 'Continuer',
+    welcome: {
+      tagline: "Suis ton hydratation jour après jour — des notes claires, pas de jugement.",
+      cta: 'Commencer',
+    },
+    goal: {
+      title: "Qu'est-ce qui compte le plus pour toi ?",
+      subtitle: 'On adapte le Coach en fonction de ta réponse.',
+      options: {
+        consistency: {
+          label: 'Boire plus régulièrement',
+          description: 'Éviter les journées en dents de scie',
+        },
+        energy: {
+          label: "Avoir plus d'énergie",
+          description: 'Moins de coups de fatigue dans la journée',
+        },
+        sleep: {
+          label: 'Mieux dormir',
+          description: "Une hydratation qui n'empiète pas sur tes nuits",
+        },
+        tracking: {
+          label: 'Suivre mes progrès sérieusement',
+          description: 'Des notes claires, jour après jour',
+        },
+      },
+    },
+    weight: {
+      title: 'Ton poids',
+      subtitle: 'Pour une première estimation de ton objectif — ajustable à tout moment dans Réglages.',
+      invalid: 'Entre un poids entre 30 et 250 kg.',
+    },
+    activity: {
+      title: "Ton niveau d'activité",
+      subtitle: 'Ça ajuste légèrement ton objectif quotidien.',
+      options: {
+        sedentary: {
+          label: 'Plutôt sédentaire',
+          description: 'Peu de mouvement dans la journée',
+        },
+        moderate: {
+          label: 'Modérément actif',
+          description: 'Quelques marches ou activités régulières',
+        },
+        active: {
+          label: 'Très actif',
+          description: 'Sport régulier ou métier physique',
+        },
+      },
+    },
+    sleep: {
+      title: 'Tes nuits, en général',
+      subtitle: "Le Coach garde un œil sur tes prises d'eau en soirée.",
+      options: {
+        short: {
+          label: 'Moins de 6 h',
+          description: 'Des nuits courtes, souvent',
+        },
+        average: {
+          label: '6 à 8 h',
+          description: 'Un rythme de sommeil classique',
+        },
+        long: {
+          label: 'Plus de 8 h',
+          description: 'Des nuits longues et régulières',
+        },
+      },
+    },
+    health: {
+      title: 'Connecte Apple Santé',
+      subtitle: 'Lume lit et écrit tes prises d’eau dans Apple Santé, pour rester aligné avec tes autres apps.',
+      connect: 'Connecter Apple Santé',
+      connected: 'Connecté',
+      skip: 'Plus tard',
+    },
+    reveal: {
+      title: 'Ton objectif du jour',
+      goalHint: 'Une première estimation — ajustable à tout moment dans Réglages.',
+      focusLine: {
+        consistency: 'On va t’aider à répartir tes prises dans la journée plutôt que tout d’un coup.',
+        energy: "Une hydratation régulière : un des leviers les plus simples contre les coups de fatigue.",
+        sleep: 'On misera sur des prises plus tôt dans la journée, pour ne pas empiéter sur tes nuits.',
+        tracking: 'Chaque jour, une note claire sur 4 métriques : Volume, Régularité, Timing, Qualité.',
+      },
+      cta: 'Découvrir Lume',
+    },
+  },
   paywall: {
     title: 'Lume Premium',
     subtitle: 'Débloque le suivi complet de ton hydratation.',

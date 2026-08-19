@@ -27,6 +27,7 @@ src/
   app/            routes expo-router — (tabs)/ (Accueil, Journal, Tendances) + add-entry, settings, paywall (modales)
   features/
     hydration/    cœur métier : types, scoring, storage, contexte React, boissons personnalisées, objectif adaptatif
+    onboarding/   parcours 7 écrans au premier lancement (voir section dédiée ci-dessous)
     reminders/    rappels quotidiens locaux (expo-notifications, aucun backend)
     premium/      RevenueCat (purchases.ts, contexte usePremium), thèmes d'accent, écran paywall
   services/       accès externe : health/ (HealthKit)
@@ -55,6 +56,25 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   uniquement ; le reste de l'app (Accueil, Journal, Tendances, Réglages, Paywall) reste
   mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_IMAGE`/`HYDRATION_IMAGE`/
   `STREAK_COLOR` en dehors de `src/features/coach/`.
+
+## Onboarding (premier lancement)
+
+- `src/features/onboarding/` : 7 écrans (Bienvenue → Objectif → Poids → Activité → Sommeil → Apple
+  Santé → Révélation) affichés une seule fois avant `(tabs)`. Route `src/app/onboarding.tsx`
+  (`Stack.Screen` en `fullScreenModal`, `gestureEnabled: false`) ; le gate est dans
+  `src/app/_layout.tsx` via `shouldShowOnboarding()` (`onboarding-storage.ts`), qui pose le flag
+  `lume.onboarding.completed.v1` et — pour ne jamais forcer un utilisateur déjà actif (mise à jour
+  de l'app) — le pose aussi silencieusement si des entrées ou des réglages non-défaut existent déjà.
+- L'estimation d'objectif initial (`goal-estimate.ts`, poids/activité/sommeil → ml) est un repère de
+  bien-être courant (30-35 ml/kg + bonus activité), explicitement non médical, immédiatement
+  ajustable dans Réglages et remplacé par l'objectif adaptatif (premium) dès qu'assez de données
+  réelles existent. L'écran de révélation finale montre cet objectif réel (persisté via
+  `setDailyGoal`) et les vraies pondérations du score (`WEIGHTS` exporté de `scoring.ts`) — jamais
+  un score ou une note projetée inventée, puisqu'aucune donnée n'existe encore à ce stade.
+- L'étape Apple Santé appelle le vrai `enableHealthSync()` (donc `requestHealthAuthorization`) ;
+  no-op silencieux hors build natif comme partout ailleurs (voir section HealthKit).
+- Dernier écran → `router.replace('/(tabs)')` puis `router.push('/paywall')` : ouvre le VRAI
+  paywall déjà livré (5 bénéfices réels), jamais une liste de features réinventée pour l'onboarding.
 
 ## Premium (RevenueCat)
 

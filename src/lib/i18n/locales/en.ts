@@ -107,6 +107,94 @@ export default {
     title: 'Lume',
     body: 'Remember to drink water today.',
   },
+  onboarding: {
+    continue: 'Continue',
+    welcome: {
+      tagline: 'Track your hydration day after day — clear grades, no judgment.',
+      cta: 'Get started',
+    },
+    goal: {
+      title: 'What matters most to you?',
+      subtitle: "We'll tailor the Coach to your answer.",
+      options: {
+        consistency: {
+          label: 'Drink more regularly',
+          description: 'Avoid up-and-down days',
+        },
+        energy: {
+          label: 'Have more energy',
+          description: 'Fewer energy dips during the day',
+        },
+        sleep: {
+          label: 'Sleep better',
+          description: "Hydration that doesn't spill into your nights",
+        },
+        tracking: {
+          label: 'Track my progress seriously',
+          description: 'Clear grades, day after day',
+        },
+      },
+    },
+    weight: {
+      title: 'Your weight',
+      subtitle: 'For a first goal estimate — adjustable anytime in Settings.',
+      invalid: 'Enter a weight between 30 and 250 kg.',
+    },
+    activity: {
+      title: 'Your activity level',
+      subtitle: 'This slightly adjusts your daily goal.',
+      options: {
+        sedentary: {
+          label: 'Mostly sedentary',
+          description: 'Little movement during the day',
+        },
+        moderate: {
+          label: 'Moderately active',
+          description: 'Regular walks or activities',
+        },
+        active: {
+          label: 'Very active',
+          description: 'Regular sport or a physical job',
+        },
+      },
+    },
+    sleep: {
+      title: 'Your nights, generally',
+      subtitle: 'The Coach keeps an eye on evening drinks.',
+      options: {
+        short: {
+          label: 'Less than 6h',
+          description: 'Often short nights',
+        },
+        average: {
+          label: '6 to 8h',
+          description: 'A typical sleep pattern',
+        },
+        long: {
+          label: 'More than 8h',
+          description: 'Long, regular nights',
+        },
+      },
+    },
+    health: {
+      title: 'Connect Apple Health',
+      subtitle: 'Lume reads and writes your water intake to Apple Health, so your other apps stay in sync.',
+      connect: 'Connect Apple Health',
+      connected: 'Connected',
+      skip: 'Later',
+    },
+    reveal: {
+      title: "Today's goal",
+      goalHint: 'A first estimate — adjustable anytime in Settings.',
+      focusLine: {
+        consistency: "We'll help you spread your drinks through the day instead of all at once.",
+        energy: 'Regular hydration: one of the simplest levers against energy dips.',
+        sleep: "We'll focus on earlier drinks in the day, so they don't spill into your nights.",
+        tracking: 'Every day, a clear grade on 4 metrics: Volume, Regularity, Timing, Quality.',
+      },
+      cta: 'Discover Lume',
+    },
+  },
   paywall: {
     title: 'Lume Premium',
     subtitle: 'Unlock the full hydration tracking experience.',
