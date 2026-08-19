@@ -102,6 +102,7 @@ export default {
     customDrinksAdd: '+ Ajouter depuis Journal',
     themeSection: 'Thème',
     themeDescription: "Change la couleur d'accent de l'app.",
+    replayOnboarding: "Revoir l'introduction",
   },
   reminders: {
     title: 'Lume',

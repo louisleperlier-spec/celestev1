@@ -254,6 +254,10 @@ export function SettingsView() {
             })}
           </View>
         </Card>
+
+        <Pressable onPress={() => router.push('/onboarding')} style={styles.replayButton} hitSlop={12}>
+          <Text style={styles.replayText}>{t('settings.replayOnboarding')}</Text>
+        </Pressable>
       </ScrollView>
     </Screen>
   );
@@ -325,6 +329,16 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: Spacing.six,
+  },
+  replayButton: {
+    alignItems: 'center',
+    marginTop: Spacing.two,
+    padding: Spacing.two,
+  },
+  replayText: {
+    color: Colors.textSecondary,
+    fontSize: FontSize.footnote,
+    fontWeight: '600',
   },
   presetsRow: {
     flexDirection: 'row',
