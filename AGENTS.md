@@ -87,6 +87,14 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 - `server/` est un projet Node séparé (son propre `package.json`, `tsconfig.json`, déployé via
   `wrangler`) — exclu du `tsconfig.json` racine et du bundle Expo, jamais importé depuis `src/`.
 
+## Landing page (support URL App Store)
+
+`web/` est une page statique indépendante (pas de build, pas de React Native) déployée sur
+Netlify — voir `web/README.md`. Elle sert uniquement à couvrir le champ **Support URL**
+obligatoire d'App Store Connect (formulaire de contact via Netlify Forms, aucun backend).
+`netlify.toml` à la racine pointe dessus (`publish = "web"`). Complètement séparé de `src/` et
+`server/` — jamais importé par l'app, jamais buildé par Expo.
+
 ## Score d'hydratation
 
 Le moteur pur est dans `src/features/hydration/scoring.ts` (zéro dépendance React, testable

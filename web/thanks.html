@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Message envoyé — Lume</title>
+<link rel="icon" href="/assets/icon-32.png" />
+<style>
+  :root {
+    --background: #000000;
+    --surface: #0E1512;
+    --text: #F4FBF6;
+    --text-secondary: rgba(244, 251, 246, 0.64);
+    --accent: #33E38F;
+    --border: rgba(255, 255, 255, 0.09);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  }
+  body {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    max-width: 420px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 40px 28px;
+  }
+  .dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(51, 227, 143, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 20px;
+    color: var(--accent);
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0 0 8px;
+  }
+  p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 24px;
+  }
+  a {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="dot">✓</div>
+    <h1>Message envoyé</h1>
+    <p>Merci — on te répond dès que possible.</p>
+    <a href="/">← Retour à l'accueil</a>
+  </div>
+</body>
+</html>
