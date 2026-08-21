@@ -14,7 +14,8 @@
       "supportsTablet": false,
       "infoPlist": {
         "NSHealthShareUsageDescription": "Lume lit tes prises d'eau dans Apple Santé pour calculer ton score d'hydratation.",
-        "NSHealthUpdateUsageDescription": "Lume enregistre tes prises d'eau dans Apple Santé pour rester synchronisé avec tes autres apps."
+        "NSHealthUpdateUsageDescription": "Lume enregistre tes prises d'eau dans Apple Santé pour rester synchronisé avec tes autres apps.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
