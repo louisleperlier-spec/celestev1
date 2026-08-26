@@ -1,0 +1,37 @@
+# === Secrets (le cœur du produit — ne JAMAIS committer) ===
+.recette/
+secrets.env
+*.secrets.env
+.env
+.env.*
+!.env.example
+*.p8
+*.mobileprovision
+*.keystore
+serviceAccountKey*.json
+
+# === Dépendances / build ===
+node_modules/
+.next/
+out/
+dist/
+build/
+.expo/
+.expo-shared/
+*.tsbuildinfo
+
+# === OS / éditeurs ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Verrous runtime Claude Code (ne jamais livrer)
+.claude/*.lock

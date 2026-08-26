@@ -1,0 +1,11 @@
+{
+  "name": "la-recette",
+  "version": "0.1.0",
+  "description": "Construis une app iOS complète (app + backend + paywall + landing SEO/GEO + prep App Store) de A à Z, 100% piloté par Claude. Zéro code : tu expliques ton idée, La Recette fait le reste.",
+  "author": {
+    "name": "Minos",
+    "url": "https://x.com/minosdevs"
+  },
+  "homepage": "https://minosdevs.app",
+  "keywords": ["ios", "expo", "supabase", "app-store", "no-code", "saas"]
+}
