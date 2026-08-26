@@ -24,9 +24,9 @@ export function Button({ label, variant = 'primary', style, disabled, ...rest }:
           borderColor: theme.border,
         },
         variant === 'frost' && {
-          backgroundColor: 'rgba(255,255,255,0.16)',
+          backgroundColor: theme.frostSurface,
           borderWidth: StyleSheet.hairlineWidth,
-          borderColor: 'rgba(255,255,255,0.5)',
+          borderColor: theme.frostBorder,
         },
         disabled && { opacity: 0.4 },
         state.pressed && !disabled && { opacity: 0.85 },
@@ -36,7 +36,7 @@ export function Button({ label, variant = 'primary', style, disabled, ...rest }:
       <Text
         style={[
           styles.label,
-          { color: variant === 'ghost' ? theme.text : '#FFFFFF' },
+          { color: variant === 'ghost' ? theme.text : variant === 'frost' ? theme.onFrost : '#FFFFFF' },
         ]}>
         {label}
       </Text>

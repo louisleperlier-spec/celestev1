@@ -33,7 +33,7 @@ export function NightSkyBackdrop({ starCount = 46 }: { starCount?: number }) {
   const stars = useStars(starCount);
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, styles.noPointerEvents]}>
       <LinearGradient
         colors={NightSky[mode]}
         start={{ x: 0.15, y: 0 }}
@@ -59,3 +59,7 @@ export function NightSkyBackdrop({ starCount = 46 }: { starCount?: number }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  noPointerEvents: { pointerEvents: 'none' },
+});

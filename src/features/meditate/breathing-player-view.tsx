@@ -8,6 +8,7 @@ import { Button } from '@/ui/components/button';
 import { NightSkyBackdrop } from '@/ui/components/backdrop';
 import { Screen } from '@/ui/components/screen';
 import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { PHASE_LABEL, type BreathingTechnique } from '@/lib/breathing';
 import { addPoints } from '@/lib/storage';
 
@@ -16,6 +17,7 @@ const CIRCLE_MAX = 220;
 
 export function BreathingPlayerView({ technique }: { technique: BreathingTechnique }) {
   const router = useRouter();
+  const theme = useTheme();
   const [running, setRunning] = useState(false);
   const [cycle, setCycle] = useState(1);
   const [stepIndex, setStepIndex] = useState(0);
@@ -95,7 +97,12 @@ export function BreathingPlayerView({ technique }: { technique: BreathingTechniq
         </ThemedText>
 
         <View style={styles.circleWrap}>
-          <Animated.View style={[styles.circle, circleStyle]}>
+          <Animated.View
+            style={[
+              styles.circle,
+              circleStyle,
+              { backgroundColor: theme.frostSurface, borderColor: theme.frostBorder },
+            ]}>
             {running && (
               <>
                 <ThemedText type="heading" themeColor="text">
@@ -142,9 +149,7 @@ const styles = StyleSheet.create({
     height: CIRCLE_MAX + Spacing.five,
   },
   circle: {
-    backgroundColor: 'rgba(255,255,255,0.14)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
   },

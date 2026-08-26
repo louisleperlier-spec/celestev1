@@ -10,6 +10,7 @@ import { NightSkyBackdrop } from '@/ui/components/backdrop';
 import { Screen } from '@/ui/components/screen';
 import { SectionLabel } from '@/ui/components/section-label';
 import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { getDailyCard } from '@/lib/daily-card';
 import { getMoonPhase } from '@/lib/moon';
 import { getNextMirrorHour } from '@/lib/mirror-hours';
@@ -32,6 +33,7 @@ function formatCountdown(minutes: number) {
 
 export function HomeView() {
   const router = useRouter();
+  const theme = useTheme();
   const [now] = useState(() => new Date());
   const [cardRevealed, setCardRevealed] = useState(false);
   const flip = useSharedValue(0);
@@ -81,15 +83,15 @@ export function HomeView() {
           <Pressable
             accessibilityLabel="Profil"
             onPress={() => router.push('/profil')}
-            style={styles.profileButton}>
-            <IconSymbol name="person.crop.circle" size={30} color="#FFFFFF" />
+            style={[styles.profileButton, { backgroundColor: theme.frostSurface }]}>
+            <IconSymbol name="person.crop.circle" size={30} color={theme.onFrost} />
           </Pressable>
         </Animated.View>
 
         <FrostCard style={styles.mirrorCard}>
           <View style={styles.row}>
-            <View style={styles.mirrorIcon}>
-              <IconSymbol name="sparkles" size={20} color="#FFFFFF" />
+            <View style={[styles.mirrorIcon, { backgroundColor: theme.frostSurface }]}>
+              <IconSymbol name="sparkles" size={20} color={theme.onFrost} />
             </View>
             <View style={{ flex: 1 }}>
               <SectionLabel>Prochaine heure miroir</SectionLabel>
@@ -104,27 +106,29 @@ export function HomeView() {
         </FrostCard>
 
         <Pressable onPress={revealCard}>
-          <FrostCard style={styles.dailyCard}>
+          <FrostCard>
             <SectionLabel>Ta carte du jour</SectionLabel>
-            <Animated.View style={[styles.cardFace, frontStyle]}>
-              <ThemedText type="hero" themeColor="text" style={{ marginTop: Spacing.two }}>
-                Touche pour révéler ✦
-              </ThemedText>
-              <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.half }}>
-                Une intention t'attend
-              </ThemedText>
-            </Animated.View>
-            <Animated.View style={[styles.cardFace, backStyle]}>
-              <ThemedText themeColor="accent" style={styles.cardSymbol}>
-                {card.symbol}
-              </ThemedText>
-              <ThemedText type="hero" themeColor="text" style={{ marginTop: Spacing.two }}>
-                {card.title}
-              </ThemedText>
-              <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.half }}>
-                {card.message}
-              </ThemedText>
-            </Animated.View>
+            <View style={styles.dailyCardBody}>
+              <Animated.View style={[styles.cardFace, frontStyle]}>
+                <ThemedText type="hero" themeColor="text">
+                  Touche pour révéler ✦
+                </ThemedText>
+                <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.half }}>
+                  Une intention t'attend
+                </ThemedText>
+              </Animated.View>
+              <Animated.View style={[styles.cardFace, backStyle]}>
+                <ThemedText themeColor="accent" style={styles.cardSymbol}>
+                  {card.symbol}
+                </ThemedText>
+                <ThemedText type="hero" themeColor="text" style={{ marginTop: Spacing.two }}>
+                  {card.title}
+                </ThemedText>
+                <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.half }}>
+                  {card.message}
+                </ThemedText>
+              </Animated.View>
+            </View>
           </FrostCard>
         </Pressable>
 
@@ -181,7 +185,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.14)',
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
   mirrorIcon: {
@@ -190,11 +193,10 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.14)',
   },
   mirrorCard: {},
-  dailyCard: { minHeight: 128, justifyContent: 'center' },
-  cardFace: { position: 'absolute', left: Spacing.three, right: Spacing.three, top: Spacing.three + 18 },
+  dailyCardBody: { minHeight: 88, marginTop: Spacing.two, justifyContent: 'center' },
+  cardFace: { position: 'absolute', left: 0, right: 0, top: 0 },
   cardSymbol: { fontSize: 28 },
   grid: { flexDirection: 'row', gap: Spacing.three },
   gridItem: { flex: 1 },

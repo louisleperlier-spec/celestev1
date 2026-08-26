@@ -8,6 +8,7 @@ import { IconSymbol } from '@/ui/components/icon-symbol';
 import { NightSkyBackdrop } from '@/ui/components/backdrop';
 import { Screen } from '@/ui/components/screen';
 import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 
 const BENEFITS = [
   'Toutes les méditations guidées',
@@ -18,6 +19,7 @@ const BENEFITS = [
 
 export function PaywallView() {
   const router = useRouter();
+  const theme = useTheme();
 
   function handleSubscribe() {
     Alert.alert(
@@ -48,7 +50,7 @@ export function PaywallView() {
         <FrostCard style={{ marginTop: Spacing.five, gap: Spacing.two }}>
           {BENEFITS.map((benefit) => (
             <View key={benefit} style={styles.benefitRow}>
-              <IconSymbol name="checkmark" size={16} color="#FFFFFF" />
+              <IconSymbol name="checkmark" size={16} color={theme.onFrost} />
               <ThemedText themeColor="text" style={{ marginLeft: Spacing.two, flex: 1 }}>
                 {benefit}
               </ThemedText>

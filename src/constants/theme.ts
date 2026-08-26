@@ -23,6 +23,10 @@ export const Colors = {
     success: '#2FA36B',
     danger: '#D9544D',
     overlay: 'rgba(17,16,36,0.42)',
+    // Contenu posé sur une surface "frost" (NightSkyBackdrop) — l'aube est claire, donc verre clair + texte sombre.
+    onFrost: '#1C1B2E',
+    frostSurface: 'rgba(255,255,255,0.55)',
+    frostBorder: 'rgba(28,27,46,0.12)',
   },
   dark: {
     background: '#0E0C1B',
@@ -40,6 +44,10 @@ export const Colors = {
     success: '#5BC08C',
     danger: '#FF6B61',
     overlay: 'rgba(4,3,14,0.66)',
+    // Contenu posé sur une surface "frost" — ciel nocturne, donc verre sombre + texte clair.
+    onFrost: '#FFFFFF',
+    frostSurface: 'rgba(255,255,255,0.14)',
+    frostBorder: 'rgba(255,255,255,0.4)',
   },
 } as const;
 
