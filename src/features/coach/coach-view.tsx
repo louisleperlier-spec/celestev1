@@ -171,7 +171,7 @@ export function CoachView() {
                 onPress={handleActionCta}
                 style={[styles.ctaButton, { backgroundColor: theme.accent }]}
                 accessibilityLabel={t('coach.actionCta')}>
-                <Text style={styles.ctaLabel}>{t('coach.actionCta')}</Text>
+                <Text style={[styles.ctaLabel, { color: theme.accentText }]}>{t('coach.actionCta')}</Text>
               </Pressable>
             </View>
           </Card>
@@ -451,7 +451,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ctaLabel: {
-    color: '#000000',
     fontSize: FontSize.footnote,
     fontWeight: '700',
   },

@@ -246,7 +246,7 @@ export function SettingsView() {
                       styles.swatch,
                       { backgroundColor: option.accent, borderColor: active ? theme.text : 'transparent' },
                     ]}>
-                    {active && <SymbolView name="checkmark" size={14} tintColor="#000000" />}
+                    {active && <SymbolView name="checkmark" size={14} tintColor={option.onAccent} />}
                   </View>
                   <Text style={styles.swatchLabel}>{option.label}</Text>
                 </Pressable>

@@ -10,6 +10,7 @@ import { useHydration } from '@/features/hydration/hydration-context';
 import { WEIGHTS } from '@/features/hydration/scoring';
 import { useTheme } from '@/features/premium/theme-context';
 import { Button } from '@/ui/components/Button';
+import { Mascot } from '@/ui/components/Mascot';
 import { Screen } from '@/ui/components/Screen';
 
 import { estimateDailyGoalMl } from './goal-estimate';
@@ -153,10 +154,10 @@ function WelcomeStep() {
   const theme = useTheme();
   return (
     <View style={styles.centered}>
-      <View style={[styles.heroIcon, { backgroundColor: theme.accentSoft }]}>
-        <SymbolView name="drop.fill" size={36} tintColor={theme.accent} />
-      </View>
-      <Text style={[styles.title, { color: theme.text }]}>{t('app.name')}</Text>
+      <Mascot pose="wave" size={128} />
+      <Text style={[styles.title, { color: theme.text, marginTop: Spacing.three }]}>
+        {t('onboarding.welcome.greeting', { app: t('app.name') })}
+      </Text>
       <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{t('onboarding.welcome.tagline')}</Text>
     </View>
   );
@@ -298,7 +299,10 @@ function RevealStep({ goalFocus, estimatedGoal }: { goalFocus: GoalFocus | null;
 
   return (
     <View style={styles.centered}>
-      <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{t('onboarding.reveal.title')}</Text>
+      <Mascot pose="sit" size={96} />
+      <Text style={[styles.subtitle, { color: theme.textSecondary, marginTop: Spacing.two }]}>
+        {t('onboarding.reveal.title')}
+      </Text>
       <View style={styles.goalNumberRow}>
         <Text style={[styles.goalNumber, { color: theme.text }]}>{estimatedGoal}</Text>
         <Text style={[styles.goalUnit, { color: theme.textMuted }]}>ml</Text>
@@ -399,14 +403,6 @@ const styles = StyleSheet.create({
   centered: {
     alignItems: 'center',
     gap: Spacing.two,
-  },
-  heroIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: Radius.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.two,
   },
   title: {
     fontSize: FontSize.title1,

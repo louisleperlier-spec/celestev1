@@ -39,7 +39,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <PremiumProvider>
           <HydrationProvider>
-            <StatusBar style="light" />
+            <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />

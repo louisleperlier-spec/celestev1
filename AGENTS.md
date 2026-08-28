@@ -41,11 +41,19 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 
 ## Design
 
-- **Mono-surface, volontairement** : fond noir, un seul accent affiché à la fois — c'est
-  l'identité de marque, pas un oubli. `src/constants/theme.ts` reste la source des tokens
-  invariants (texte, surfaces, notes A/B/C) ; **l'accent seul varie** selon le thème choisi
-  (premium), via `useTheme()` (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*`
-  en dur. Toute couleur passe par un token, jamais en dur dans un composant.
+- **Fond clair et doux, mascotte, un seul accent affiché à la fois** : identité repensée autour
+  d'une goutte souriante (`src/ui/components/Mascot.tsx`, SVG, sans asset externe) sur un fond
+  lavande pâle (`#F3F0FC`) — c'est l'identité de marque actuelle, pas un thème parmi d'autres.
+  `src/constants/theme.ts` reste la source des tokens invariants (fond, surfaces, texte, notes
+  A/B/C, couleur fixe de la mascotte) ; **l'accent seul varie** selon le thème choisi (premium),
+  via `useTheme()` (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur.
+  Lavande est l'accent par défaut (gratuit) ; Menthe/Azur/Corail/Violet sont réservés au premium
+  (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur dans un
+  composant.
+- **`theme.accentText`** : chaque thème d'accent définit sa propre couleur de texte lisible
+  dessus (`onAccent` dans `themes.ts` — blanc sur les accents saturés comme Lavande, sombre sur
+  les accents clairs comme Menthe). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond
+  `theme.accent` — toujours `theme.accentText`.
 - Les couleurs A/B/C (`gradeA/B/C`) restent fixes quel que soit le thème — le vert de succès
   ne doit jamais changer de sens.
 - SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI.
@@ -56,6 +64,9 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   uniquement ; le reste de l'app (Accueil, Journal, Tendances, Réglages, Paywall) reste
   mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_IMAGE`/`HYDRATION_IMAGE`/
   `STREAK_COLOR` en dehors de `src/features/coach/`.
+- Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) restent
+  sur l'ancienne identité (fond noir) — pas encore régénérés avec la nouvelle DA claire/mascotte.
+  À refaire visuellement avant la sortie publique (hors portée d'une session code-only).
 
 ## Onboarding (premier lancement)
 

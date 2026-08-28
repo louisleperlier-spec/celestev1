@@ -38,6 +38,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       accent: accentTheme.accent,
       accentStrong: accentTheme.accentStrong,
       accentSoft: accentTheme.accentSoft,
+      accentText: accentTheme.onAccent,
     };
   }, [accentThemeId]);
 

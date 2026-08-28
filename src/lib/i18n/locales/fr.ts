@@ -111,6 +111,7 @@ export default {
   onboarding: {
     continue: 'Continuer',
     welcome: {
+      greeting: 'Bonjour, bienvenue sur {{app}} !',
       tagline: "Suis ton hydratation jour après jour — des notes claires, pas de jugement.",
       cta: 'Commencer',
     },

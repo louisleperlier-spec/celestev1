@@ -152,7 +152,7 @@ function PlanCard({ selected, onPress, label, price, perUnit, trialLabel, badge,
       {badge && (
         <View style={styles.badgeRow}>
           <View style={[styles.badge, { backgroundColor: theme.accent }]}>
-            <Text style={styles.badgeText}>{badge}</Text>
+            <Text style={[styles.badgeText, { color: theme.accentText }]}>{badge}</Text>
           </View>
         </View>
       )}
@@ -243,7 +243,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
   },
   badgeText: {
-    color: '#000000',
     fontSize: 11,
     fontWeight: '700',
   },

@@ -84,7 +84,7 @@ export function CoachListView({ category }: CoachListViewProps) {
               key={f}
               onPress={() => setFilter(f)}
               style={[styles.chip, active && { backgroundColor: theme.accent, borderColor: theme.accent }]}>
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
+              <Text style={[styles.chipText, active && { color: theme.accentText }]}>{label}</Text>
             </Pressable>
           );
         })}
@@ -156,9 +156,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: FontSize.footnote,
     fontWeight: '600',
-  },
-  chipTextActive: {
-    color: '#000000',
   },
   list: {
     gap: Spacing.two,

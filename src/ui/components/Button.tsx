@@ -30,12 +30,12 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
         style,
       ]}>
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? theme.background : theme.accent} />
+        <ActivityIndicator color={variant === 'primary' ? theme.accentText : theme.accent} />
       ) : (
         <Text
           style={[
             styles.label,
-            variant === 'primary' && styles.labelPrimary,
+            variant === 'primary' && { color: theme.accentText },
             variant === 'ghost' && { color: theme.text },
             variant === 'danger' && { color: theme.danger },
           ]}>
@@ -67,8 +67,5 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FontSize.body,
     fontWeight: '600',
-  },
-  labelPrimary: {
-    color: '#000000',
   },
 });
