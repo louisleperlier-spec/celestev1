@@ -15,24 +15,24 @@ import { useCheckIns } from '@/lib/checkins-store';
 
 function MetricTile({ value, label }: { value: string | null; label: string }) {
   const theme = useTheme();
-  if (value === null) {
-    return (
-      <View style={[styles.metricTile, styles.metricTileEmpty, { borderColor: theme.borderStrong }]}>
-        <ThemedText type="small" themeColor="textTertiary" style={styles.metricEmptyLabel}>
-          Ajoute ta première mesure
-        </ThemedText>
-      </View>
-    );
-  }
+  const isEmpty = value === null;
   return (
-    <Card style={styles.metricTile}>
-      <ThemedText type="displayMedium" style={[styles.metricValue, { color: theme.primary }]}>
-        {value}
+    <View
+      style={[
+        styles.metricTile,
+        isEmpty
+          ? { borderColor: theme.borderStrong, borderWidth: 1.5, borderStyle: 'dashed' }
+          : { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: StyleSheet.hairlineWidth },
+      ]}>
+      <ThemedText
+        type="displayMedium"
+        style={[styles.metricValue, { color: isEmpty ? theme.textTertiary : theme.primary }]}>
+        {value ?? '—'}
       </ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
         {label}
       </ThemedText>
-    </Card>
+    </View>
   );
 }
 
@@ -131,14 +131,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   metricsRow: { flexDirection: 'row', gap: Spacing.sm },
-  metricTile: { flex: 1, alignItems: 'center', gap: 4, minHeight: 86, justifyContent: 'center' },
-  metricTileEmpty: {
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
+  metricTile: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+    minHeight: 86,
+    justifyContent: 'center',
     borderRadius: Radius.card,
     paddingHorizontal: Spacing.xs,
+    paddingVertical: Spacing.sm,
   },
-  metricEmptyLabel: { textAlign: 'center' },
   metricValue: { fontSize: 22, lineHeight: 26 },
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   cta: { marginTop: Spacing.sm },

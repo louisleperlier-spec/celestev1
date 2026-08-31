@@ -89,10 +89,10 @@ export const Elevation = {
   },
   glow: {
     shadowColor: '#3B82F6',
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
+    shadowOpacity: 0.55,
+    shadowRadius: 32,
     shadowOffset: { width: 0, height: 0 },
-    elevation: 6,
+    elevation: 8,
   },
 } as const;
 

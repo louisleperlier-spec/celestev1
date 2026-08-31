@@ -12,10 +12,11 @@ type Props = {
   strokeWidth?: number;
 };
 
-export function ScoreRing({ value, size = 220, strokeWidth = 18 }: Props) {
+export function ScoreRing({ value, size = 220, strokeWidth = 16 }: Props) {
   const theme = useTheme();
   const animatedValue = useAnimatedNumber(value);
-  const radius = (size - strokeWidth) / 2;
+  const arcWidth = strokeWidth + 2;
+  const radius = (size - arcWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.max(0, Math.min(100, animatedValue));
   const dashOffset = circumference * (1 - clamped / 100);
@@ -42,7 +43,7 @@ export function ScoreRing({ value, size = 220, strokeWidth = 18 }: Props) {
           cy={size / 2}
           r={radius}
           stroke="url(#scoreRingGradient)"
-          strokeWidth={strokeWidth}
+          strokeWidth={arcWidth}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
           strokeDashoffset={dashOffset}

@@ -21,7 +21,7 @@ export function PillarBar({ pillar, value }: Props) {
   return (
     <View style={styles.row}>
       <View style={[styles.iconWrap, { backgroundColor: withAlpha(theme.primary, 0.12) }]}>
-        <Ionicons name={pillar.icon} size={16} color={theme.primary} />
+        <Ionicons name={pillar.icon} size={18} color={theme.primary} />
       </View>
       <View style={styles.middle}>
         <View style={styles.labelRow}>
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   iconWrap: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     borderRadius: Radius.tile,
     alignItems: 'center',
     justifyContent: 'center',

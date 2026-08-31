@@ -43,12 +43,10 @@ export default function HomeScreen() {
           <View style={styles.ringWrap}>
             <ScoreRing value={todayScore.total} />
             {delta !== 0 && (
-              <View style={styles.deltaWrap}>
-                <PillBadge
-                  label={`${delta > 0 ? '+' : ''}${delta} pts depuis hier`}
-                  color={delta > 0 ? theme.primary : theme.textSecondary}
-                />
-              </View>
+              <PillBadge
+                label={`${delta > 0 ? '+' : ''}${delta} pts depuis hier`}
+                color={delta > 0 ? theme.primary : theme.textSecondary}
+              />
             )}
           </View>
 
@@ -95,11 +93,7 @@ const styles = StyleSheet.create({
   ringWrap: {
     alignItems: 'center',
     marginTop: Spacing.sm,
-    marginBottom: Spacing.xs,
     gap: Spacing.sm,
-  },
-  deltaWrap: {
-    marginTop: Spacing.xs,
   },
   card: {
     alignSelf: 'stretch',

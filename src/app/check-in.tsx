@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.sm,
   },
-  body: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.xl },
+  body: { alignItems: 'center', gap: Spacing.lg, paddingTop: Spacing.base },
   question: { fontSize: 18, textAlign: 'center' },
   missionBlock: { alignItems: 'center', gap: Spacing.xs },
   missionIcon: {
