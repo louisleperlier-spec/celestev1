@@ -25,28 +25,24 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="journal"
+        name="plan"
         options={{
-          title: 'Journal',
-          tabBarIcon: ({ color, size }) => <Ionicons name="book" size={size} color={color} />,
+          title: 'Plan',
+          tabBarIcon: ({ color, size }) => <Ionicons name="document-text" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="coach"
+        name="scan"
         options={{
-          title: 'Coach',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="sparkles" size={size} color={color} />
-          ),
+          title: 'Scan',
+          tabBarIcon: ({ color, size }) => <Ionicons name="scan" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="tendances"
+        name="progres"
         options={{
-          title: 'Tendances',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trending-up" size={size} color={color} />
-          ),
+          title: 'Progrès',
+          tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart" size={size} color={color} />,
         }}
       />
     </Tabs>

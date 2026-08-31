@@ -1,17 +1,15 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Onboarding } from '@/components/onboarding';
-import { EntriesProvider } from '@/lib/entries-store';
+import { CheckInsProvider } from '@/lib/checkins-store';
 import { loadJSON, saveJSON, StorageKeys } from '@/lib/storage';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -30,18 +28,19 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <EntriesProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <CheckInsProvider>
+        <ThemeProvider value={DarkTheme}>
           {onboarded ? (
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="add-entry" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="check-in" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="add-scan" options={{ presentation: 'modal' }} />
             </Stack>
           ) : (
             <Onboarding onDone={finishOnboarding} />
           )}
         </ThemeProvider>
-      </EntriesProvider>
+      </CheckInsProvider>
     </GestureHandlerRootView>
   );
 }

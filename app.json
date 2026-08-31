@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "selfmax",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "bundleIdentifier": "com.selfmax.app",
       "supportsTablet": false
@@ -14,7 +14,7 @@
     "android": {
       "package": "com.selfmax.app",
       "adaptiveIcon": {
-        "backgroundColor": "#4C1D95",
+        "backgroundColor": "#08090D",
         "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false
@@ -28,9 +28,16 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#4C1D95",
+          "backgroundColor": "#08090D",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 220
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SelfMax utilise tes photos pour suivre visuellement tes progrès physiques, uniquement sur cet appareil.",
+          "cameraPermission": "SelfMax utilise l'appareil photo pour prendre une photo de progression, uniquement sur cet appareil."
         }
       ]
     ],

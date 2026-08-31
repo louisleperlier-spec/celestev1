@@ -1,21 +1,33 @@
 # SelfMax 🚀
 
-**Le contraire du lookmaxing.** On maxe pas juste le physique, on maxe *toi* : sommeil, sport,
-discipline, nutrition, mindset. Chaque jour tu logges tes actions dans ces 5 domaines, l'app
-calcule ton **Self Score /100**, te coache sur ton point faible du moment, et suit tes progrès.
+**Le contraire du lookmaxing.** On ne maxe pas juste le physique, on maxe *toi*, en entier :
+Physique, Apparence, Énergie, Discipline, Mental. Une mission par pilier chaque jour, un check-in
+(Manquée / Partielle / Terminée), et un **Max Score /100** calculé en continu à partir de ta
+régularité — plus un suivi manuel de tes mesures et photos de progression.
 
-MVP construit avec **Expo (React Native) + expo-router**, 100% local (AsyncStorage, aucun compte,
-aucun backend) pour aller vite. Pas de paywall dans ce MVP — objectif : sortir vite, itérer ensuite.
+MVP construit avec **Expo (React Native) + expo-router**, dark-only, 100% local (AsyncStorage,
+aucun compte, aucun backend) pour aller vite. Pas de paywall dans ce MVP — objectif : sortir vite,
+itérer ensuite.
 
 ## Fonctionnalités
 
-- **Accueil** — Self Score du jour (anneau /100 + grade A-D), barre par catégorie, ajout rapide.
-- **Journal** — sélecteur de semaine, liste des entrées du jour, suppression, total.
-- **Coach** — recommandation ciblée sur ta catégorie la plus faible + conseils du jour.
-- **Tendances** — bascule 7j/30j, score moyen, bons jours, série actuelle, courbe d'évolution,
-  répartition des scores (donut A/B/C/D).
-- **Ajout d'entrée** (modal) — 5 catégories × 4 presets d'effort (+5/+10/+15/+20 pts).
-- **Onboarding** au premier lancement.
+- **Accueil** — Max Score du jour (anneau /100 + delta vs hier), série actuelle (streak +
+  historique 7 jours), barre par pilier.
+- **Plan** — vue Jour (missions du jour + statut, conseil du jour, CTA "Démarrer ma journée"),
+  Semaine (score par jour) et Mois (score moyen, bons jours).
+- **Check-in** (modal) — pour une mission donnée : Manquée / Partielle / Terminée + note optionnelle.
+- **Scan** — suivi manuel du poids, masse grasse, tour de taille + photo de progression locale.
+  Pas d'analyse IA dans ce MVP (aucune fausse promesse) — c'est indiqué clairement dans l'écran.
+- **Progrès** — évolution du Max Score (courbe 7 jours), répartition des piliers (radar), historique
+  des scans (onglet Corps), Performances en placeholder pour la v1.1.
+- **Onboarding** au premier lancement (pas de photo de tiers, tout est illustré en interne).
+
+### Comment le Max Score est calculé
+
+Chaque pilier a un score 0-100 = moyenne glissante de ses check-ins sur les 14 derniers jours
+(Terminée = 100, Partielle = 50, Manquée = 0 ; les jours sans check-in ne comptent pas contre toi).
+Le **Max Score** est la moyenne des 5 piliers. La **série** compte les jours consécutifs avec au
+moins une mission non manquée.
 
 ## Développer / prévisualiser
 
@@ -29,9 +41,10 @@ Scanne le QR code avec l'app **Expo Go** sur ton iPhone, ou lance un simulateur 
 ## Où en est le projet pour l'App Store
 
 Le code est **fonctionnel et validé** (typecheck + lint + export iOS/web sans erreur, parcours testé
-écran par écran). Il reste des étapes qui **nécessitent ton compte Apple/Expo et des clics humains**
-(2FA, formulaires App Store Connect) — impossibles à automatiser depuis cet environnement. Voici
-exactement quoi faire, dans l'ordre, ce soir :
+écran par écran : onboarding → check-in → Plan → Accueil → Scan → Progrès). Il reste des étapes qui
+**nécessitent ton compte Apple/Expo et des clics humains** (2FA, formulaires App Store Connect) —
+impossibles à automatiser depuis cet environnement. Voici exactement quoi faire, dans l'ordre, ce
+soir :
 
 ### 1. Connecte-toi à Expo (une fois)
 
@@ -82,16 +95,17 @@ n'est pas déjà fait, puis renseigne :
   encadrer proprement avec `node scripts/generate-assets.mjs screenshots --in ./raw --lang fr` une
   fois que tu as les brutes.
 - **Politique de confidentialité (URL obligatoire)** — l'app ne collecte **aucune donnée** (tout
-  reste sur l'appareil, aucun compte, aucun réseau). Héberge le texte ci-dessous n'importe où (une
-  page de ton site, un Gist) et colle l'URL dans App Store Connect :
+  reste sur l'appareil, aucun compte, aucun réseau, y compris les photos de scan). Héberge le texte
+  ci-dessous n'importe où (une page de ton site, un Gist) et colle l'URL dans App Store Connect :
 
   > SelfMax ne collecte, ne transmet et ne stocke aucune donnée personnelle sur un serveur.
-  > Toutes les données que tu saisis (tes actions quotidiennes) restent uniquement sur ton appareil,
-  > dans le stockage local de l'application. Aucun compte, aucun tracking, aucun partage avec des
-  > tiers.
+  > Toutes les données que tu saisis (missions, check-ins, mesures, photos de progression) restent
+  > uniquement sur ton appareil, dans le stockage local de l'application. Aucun compte, aucun
+  > tracking, aucun partage avec des tiers.
 
 - **Catégorie** : Santé et forme, ou Style de vie.
-- **Classification d'âge** : 4+ (aucun contenu sensible).
+- **Classification d'âge** : 4+ (aucun contenu sensible ; l'app ne fait aucune évaluation
+  automatique de l'apparence physique — tout est déclaratif par l'utilisateur).
 - Choisis le build envoyé à l'étape 4, remplis les infos de review, puis **Soumettre pour
   validation**.
 
@@ -108,18 +122,22 @@ lendemain ou surlendemain.
 
 ```
 src/
-├─ app/                    # routes expo-router
-│  ├─ _layout.tsx          # gate onboarding + Stack racine
-│  ├─ (tabs)/               # Accueil, Journal, Coach, Tendances
-│  └─ add-entry.tsx        # modal d'ajout d'une action
-├─ components/             # ScoreRing, CategoryBar, DonutChart, TrendLineChart, ...
-├─ constants/               # theme (couleurs clair/sombre), categories (5 domaines + presets)
-└─ lib/                    # types, score engine, storage (AsyncStorage), tips, dates
+├─ app/
+│  ├─ _layout.tsx          # gate onboarding + Stack racine (dark-only)
+│  ├─ (tabs)/               # Accueil, Plan, Scan, Progrès
+│  ├─ check-in.tsx         # modal : statut d'une mission (Manquée/Partielle/Terminée)
+│  └─ add-scan.tsx         # modal : nouvelle mesure + photo
+├─ components/             # ScoreRing, PillarBar, StreakRow, MissionCard, RadarChart, TrendLineChart
+├─ constants/              # theme (dark/blue), piliers (5), missions (1 par pilier)
+└─ lib/                    # types, score engine (moyenne glissante), storage, check-ins store, tips
 ```
 
 ## Prochaines étapes (v1.1+)
 
+- Personnalisation des missions par objectif (perte de gras / prise de masse / discipline pure...).
 - Paywall / abonnement (RevenueCat) si tu veux monétiser.
 - Compte + sync cloud (Supabase) pour ne pas perdre les données à la désinstallation.
-- Notifications de rappel quotidien.
+- Notifications de rappel quotidien + rappel de check-in.
+- Analyse photo assistée (mesures approximatives) — à traiter avec précaution (précision, guidelines
+  santé Apple) plutôt qu'une "IA" qui invente des chiffres.
 - Vrais screenshots App Store + description marketing.

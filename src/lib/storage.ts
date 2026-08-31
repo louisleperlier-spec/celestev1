@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEYS = {
-  entries: 'selfmax:entries:v1',
+  checkIns: 'selfmax:checkins:v1',
+  scans: 'selfmax:scans:v1',
   onboarded: 'selfmax:onboarded:v1',
 } as const;
 

@@ -1,45 +1,49 @@
 /**
- * Palette et tokens de style de SelfMax. Deux modes (clair / sombre), pilotés par
- * `useColorScheme()`. Le violet est la couleur de marque ("self-maxing" = ambition,
- * énergie), l'ambre sert aux récompenses/streaks.
+ * SelfMax est une app dark-only (comme la plupart des apps de coaching physique/discipline) :
+ * fond quasi-noir, accent bleu unique. `Colors.light` reste défini pour une bascule future,
+ * mais `useTheme()` renvoie toujours `Colors.dark` aujourd'hui — voir src/hooks/use-theme.ts.
  */
 
 import { Platform } from 'react-native';
 
 export const Colors = {
+  dark: {
+    text: '#F5F6FA',
+    textSecondary: '#8B8FA3',
+    background: '#08090D',
+    backgroundElement: '#15171F',
+    backgroundSelected: '#1F2230',
+    card: '#12141C',
+    border: '#22242F',
+    primary: '#3B82F6',
+    primaryLight: '#132038',
+    accent: '#FBBF24',
+    accentLight: '#2B2412',
+    success: '#22C55E',
+    successLight: '#123320',
+    warning: '#F59E0B',
+    warningLight: '#332510',
+    danger: '#EF4444',
+    dangerLight: '#331414',
+  },
   light: {
-    text: '#14121C',
-    textSecondary: '#6B6578',
-    background: '#FAF9FC',
-    backgroundElement: '#F1EEF6',
-    backgroundSelected: '#E7E1F3',
+    text: '#0B0C10',
+    textSecondary: '#6B6F7D',
+    background: '#F5F6FA',
+    backgroundElement: '#ECEDF4',
+    backgroundSelected: '#DDE1F2',
     card: '#FFFFFF',
-    border: '#E9E5F1',
-    primary: '#6D28D9',
-    primaryLight: '#EDE6FB',
-    accent: '#F59E0B',
+    border: '#E4E6EF',
+    primary: '#2563EB',
+    primaryLight: '#E4ECFE',
+    accent: '#D97706',
     accentLight: '#FEF3E2',
     success: '#16A34A',
     successLight: '#E3F7EA',
     warning: '#D97706',
+    warningLight: '#FEF3E2',
     danger: '#DC2626',
-  },
-  dark: {
-    text: '#F5F3FA',
-    textSecondary: '#A8A2B8',
-    background: '#0E0C14',
-    backgroundElement: '#1B1826',
-    backgroundSelected: '#272233',
-    card: '#181521',
-    border: '#2A2536',
-    primary: '#A78BFA',
-    primaryLight: '#241D38',
-    accent: '#FBBF24',
-    accentLight: '#2B2412',
-    success: '#4ADE80',
-    successLight: '#12271A',
-    warning: '#FBBF24',
-    danger: '#F87171',
+    dangerLight: '#FCE8E8',
   },
 } as const;
 

@@ -1,103 +1,74 @@
-import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/card';
-import { CategoryBar } from '@/components/category-bar';
-import { PillButton } from '@/components/pill-button';
-import { QuickAddTile } from '@/components/quick-add-tile';
+import { PillarBar } from '@/components/pillar-bar';
 import { ScoreRing } from '@/components/score-ring';
+import { StreakRow } from '@/components/streak-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { CATEGORIES } from '@/constants/categories';
+import { PILLARS } from '@/constants/piliers';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { useEntries } from '@/lib/entries-store';
-import { computeCurrentStreak, computeDayScore, GRADE_LABEL } from '@/lib/score';
-import { todayKey } from '@/lib/date';
+import { addDays } from '@/lib/date';
+import { useCheckIns } from '@/lib/checkins-store';
+import { computeCurrentStreak, computeDayScore } from '@/lib/score';
 
 export default function HomeScreen() {
   const theme = useTheme();
-  const router = useRouter();
-  const { entries } = useEntries();
+  const { checkIns } = useCheckIns();
 
-  const dateKey = todayKey();
-  const todayEntries = useMemo(
-    () => entries.filter((e) => e.dateKey === dateKey),
-    [entries, dateKey]
-  );
-  const dayScore = useMemo(() => computeDayScore(dateKey, todayEntries), [dateKey, todayEntries]);
-  const streak = useMemo(() => computeCurrentStreak(entries, new Date()), [entries]);
+  const today = useMemo(() => new Date(), []);
+  const yesterday = useMemo(() => addDays(today, -1), [today]);
 
-  const gradeColor =
-    dayScore.grade === 'A'
-      ? theme.success
-      : dayScore.grade === 'B'
-        ? theme.primary
-        : dayScore.grade === 'C'
-          ? theme.warning
-          : theme.danger;
+  const todayScore = useMemo(() => computeDayScore(checkIns, today), [checkIns, today]);
+  const yesterdayScore = useMemo(() => computeDayScore(checkIns, yesterday), [checkIns, yesterday]);
+  const delta = todayScore.total - yesterdayScore.total;
+  const streak = useMemo(() => computeCurrentStreak(checkIns, today), [checkIns, today]);
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeArea}>
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
-            <View>
-              <ThemedText themeColor="textSecondary">Bonjour 👋</ThemedText>
-              <ThemedText type="title" style={styles.appName}>
-                SelfMax
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.brand}>
+            SELFMAX
+          </ThemedText>
+
+          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
+            MAX SCORE
+          </ThemedText>
+
+          <View style={styles.ringWrap}>
+            <ScoreRing value={todayScore.total} color={theme.primary} />
+            {delta !== 0 && (
+              <ThemedText type="smallBold" style={{ color: theme.primary, marginTop: Spacing.two }}>
+                {delta > 0 ? '+' : ''}
+                {delta} pts depuis hier
               </ThemedText>
-            </View>
-            {streak > 0 && (
-              <View style={[styles.streakBadge, { backgroundColor: theme.accentLight }]}>
-                <ThemedText type="smallBold" style={{ color: theme.accent }}>
-                  🔥 {streak} j
-                </ThemedText>
-              </View>
             )}
           </View>
 
-          <Card style={styles.scoreCard}>
-            <ThemedText type="smallBold" themeColor="textSecondary">
-              Ton Self Score du jour
-            </ThemedText>
-            <ScoreRing value={dayScore.total} color={gradeColor} sublabel={dayScore.grade} />
-            <ThemedText type="smallBold" style={{ color: gradeColor }}>
-              {GRADE_LABEL[dayScore.grade]}
-            </ThemedText>
+          <Card style={styles.card}>
+            <View style={styles.streakHeader}>
+              <ThemedText type="smallBold" themeColor="textSecondary">
+                SÉRIE ACTUELLE
+              </ThemedText>
+              <ThemedText type="smallBold">🔥 {streak} j</ThemedText>
+            </View>
+            <StreakRow checkIns={checkIns} today={today} />
+          </Card>
 
+          <Card style={styles.card}>
+            <ThemedText type="smallBold" themeColor="textSecondary" style={styles.pillarsLabel}>
+              PILIERS
+            </ThemedText>
             <View style={styles.bars}>
-              {CATEGORIES.map((c) => (
-                <CategoryBar key={c.id} category={c} points={dayScore.byCategory[c.id]} />
+              {PILLARS.map((p) => (
+                <PillarBar key={p.id} pillar={p} value={todayScore.byPillar[p.id]} />
               ))}
             </View>
           </Card>
-
-          <View style={styles.sectionHeader}>
-            <ThemedText type="smallBold">Ajout rapide</ThemedText>
-          </View>
-          <View style={styles.grid}>
-            {CATEGORIES.map((c) => (
-              <QuickAddTile
-                key={c.id}
-                category={c}
-                points={dayScore.byCategory[c.id]}
-                onPress={() =>
-                  router.push({ pathname: '/add-entry', params: { category: c.id } })
-                }
-              />
-            ))}
-          </View>
-
-          <PillButton
-            title="+ Ajouter une entrée"
-            onPress={() => router.push('/add-entry')}
-            style={styles.cta}
-          />
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
@@ -112,41 +83,35 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
     paddingHorizontal: Spacing.four,
     paddingBottom: BottomTabInset + Spacing.four,
-    gap: Spacing.four,
+    gap: Spacing.three,
+    alignItems: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  brand: {
+    alignSelf: 'flex-start',
+    letterSpacing: 1,
     marginTop: Spacing.two,
   },
-  appName: {
-    fontSize: 30,
-    lineHeight: 34,
+  sectionLabel: {
+    letterSpacing: 1,
+    marginTop: Spacing.two,
   },
-  streakBadge: {
-    paddingHorizontal: Spacing.three,
-    paddingVertical: 8,
-    borderRadius: 999,
-  },
-  scoreCard: {
+  ringWrap: {
     alignItems: 'center',
-    gap: Spacing.three,
+    marginBottom: Spacing.two,
   },
-  bars: {
+  card: {
     alignSelf: 'stretch',
     gap: Spacing.three,
-    marginTop: Spacing.two,
   },
-  sectionHeader: {
-    marginTop: Spacing.two,
-  },
-  grid: {
+  streakHeader: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  cta: {
-    marginTop: Spacing.two,
+  pillarsLabel: {
+    letterSpacing: 1,
+  },
+  bars: {
+    gap: Spacing.three,
   },
 });

@@ -2,39 +2,33 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import type { CategoryMeta } from '@/constants/categories';
+import type { PillarMeta } from '@/constants/piliers';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
-  category: CategoryMeta;
-  points: number; // 0-20
-  max?: number;
+  pillar: PillarMeta;
+  value: number; // 0-100
 };
 
-export function CategoryBar({ category, points, max = 20 }: Props) {
+export function PillarBar({ pillar, value }: Props) {
   const theme = useTheme();
-  const pct = Math.max(0, Math.min(1, points / max));
+  const pct = Math.max(0, Math.min(1, value / 100));
 
   return (
     <View style={styles.row}>
-      <View style={[styles.iconWrap, { backgroundColor: category.colorLight }]}>
-        <Ionicons name={category.icon} size={16} color={category.color} />
+      <View style={[styles.iconWrap, { backgroundColor: theme.backgroundElement }]}>
+        <Ionicons name={pillar.icon} size={16} color={theme.primary} />
       </View>
       <View style={styles.middle}>
         <View style={styles.labelRow}>
-          <ThemedText type="smallBold">{category.label}</ThemedText>
+          <ThemedText type="smallBold">{pillar.label}</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            {points}/{max}
+            {value}/100
           </ThemedText>
         </View>
         <View style={[styles.track, { backgroundColor: theme.backgroundElement }]}>
-          <View
-            style={[
-              styles.fill,
-              { width: `${pct * 100}%`, backgroundColor: category.color },
-            ]}
-          />
+          <View style={[styles.fill, { width: `${pct * 100}%`, backgroundColor: theme.primary }]} />
         </View>
       </View>
     </View>
