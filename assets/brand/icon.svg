@@ -1,0 +1,22 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F4EEFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Trois barres de progression montantes ("self-maxing") -->
+  <rect x="300" y="560" width="110" height="220" rx="28" fill="url(#bar)" opacity="0.55"/>
+  <rect x="457" y="460" width="110" height="320" rx="28" fill="url(#bar)" opacity="0.8"/>
+  <rect x="614" y="330" width="110" height="450" rx="28" fill="url(#bar)"/>
+
+  <!-- Étoile / spark au sommet -->
+  <path d="M669 190 L690 245 L745 266 L690 287 L669 342 L648 287 L593 266 L648 245 Z" fill="#FDE68A"/>
+</svg>
