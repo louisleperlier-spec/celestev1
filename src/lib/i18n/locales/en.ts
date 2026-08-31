@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Lume' },
-  tabs: { home: 'Home', journal: 'Journal', trends: 'Trends', coach: 'Coach' },
+  tabs: { home: 'Home', journal: 'Journal', trends: 'Trends', coach: 'Coach', team: 'Team' },
   grade: { a: 'A', b: 'B', c: 'C' },
   metrics: {
     volume: 'Volume',
@@ -370,5 +370,37 @@ export default {
       timingBody: 'Starting early in the day and avoiding drinks too concentrated in the evening.',
       outro: "The Coach relies only on these 4 metrics and today's data — never on an external estimate.",
     },
+  },
+  team: {
+    unsupportedTitle: 'Team not available here',
+    unsupportedBody: 'The Team tab needs a native build with the backend configured. Come back once the native build is installed.',
+    name: {
+      title: 'How do you want to appear?',
+      subtitle: 'Visible to your team members.',
+      placeholder: 'Your first name or nickname',
+    },
+    empty: {
+      title: 'Join or create a team',
+      subtitle: 'Track your streak and level with other people.',
+      create: 'Create a team',
+      join: 'Join with a code',
+    },
+    create: {
+      placeholder: 'Team name',
+      cta: 'Create team',
+      doneTitle: 'Team created',
+      doneBody: 'Share this code to invite people: {{code}}',
+    },
+    join: {
+      placeholder: 'CODE',
+      cta: 'Join',
+      notFound: 'No team found with this code.',
+    },
+    error: 'Something went wrong, try again.',
+    tabMembers: 'Members',
+    tabLeaderboard: 'Leaderboard',
+    solo: 'No one else yet — invite your team.',
+    streakDays: '{{count}}d',
+    inviteMessage: 'Join my team on Lume with code {{code}}!',
   },
 } as const;

@@ -11,6 +11,7 @@ const ICONS: Record<string, SFSymbol> = {
   journal: 'book.fill',
   coach: 'target',
   trends: 'chart.line.uptrend.xyaxis',
+  team: 'person.3.fill',
 };
 
 export default function TabsLayout() {
@@ -33,6 +34,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="journal" options={{ title: t('tabs.journal') }} />
       <Tabs.Screen name="coach" options={{ title: t('tabs.coach') }} />
       <Tabs.Screen name="trends" options={{ title: t('tabs.trends') }} />
+      <Tabs.Screen name="team" options={{ title: t('tabs.team') }} />
     </Tabs>
   );
 }

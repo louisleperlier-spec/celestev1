@@ -1,6 +1,6 @@
 export default {
   app: { name: 'Lume' },
-  tabs: { home: 'Accueil', journal: 'Journal', trends: 'Tendances', coach: 'Coach' },
+  tabs: { home: 'Accueil', journal: 'Journal', trends: 'Tendances', coach: 'Coach', team: 'Équipe' },
   grade: { a: 'A', b: 'B', c: 'C' },
   metrics: {
     volume: 'Volume',
@@ -372,5 +372,38 @@ export default {
       timingBody: 'Le fait de démarrer tôt dans la journée et d’éviter de trop concentrer tes prises le soir.',
       outro: 'Le Coach s’appuie uniquement sur ces 4 métriques et tes données du jour — jamais sur une estimation externe.',
     },
+  },
+  team: {
+    unsupportedTitle: 'Équipe indisponible ici',
+    unsupportedBody:
+      "L'onglet Équipe demande un build natif avec le backend configuré. Reviens ici une fois le build natif installé.",
+    name: {
+      title: 'Comment veux-tu apparaître ?',
+      subtitle: 'Visible par les membres de ton équipe.',
+      placeholder: 'Ton prénom ou pseudo',
+    },
+    empty: {
+      title: 'Rejoins ou crée une équipe',
+      subtitle: 'Suis ta série et ton niveau avec d’autres personnes.',
+      create: 'Créer une équipe',
+      join: 'Rejoindre avec un code',
+    },
+    create: {
+      placeholder: "Nom de l'équipe",
+      cta: "Créer l'équipe",
+      doneTitle: 'Équipe créée',
+      doneBody: 'Partage ce code pour inviter : {{code}}',
+    },
+    join: {
+      placeholder: 'CODE',
+      cta: 'Rejoindre',
+      notFound: 'Aucune équipe avec ce code.',
+    },
+    error: "Une erreur est survenue, réessaie.",
+    tabMembers: 'Membres',
+    tabLeaderboard: 'Classement',
+    solo: 'Personne d’autre pour le moment — invite ton équipe.',
+    streakDays: '{{count}} j',
+    inviteMessage: 'Rejoins mon équipe sur Lume avec le code {{code}} !',
   },
 } as const;
