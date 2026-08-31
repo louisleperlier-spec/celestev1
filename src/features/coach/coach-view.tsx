@@ -12,6 +12,7 @@ import { usePremiumGate } from '@/features/premium/use-premium-gate';
 import { useTheme } from '@/features/premium/theme-context';
 import { Card } from '@/ui/components/Card';
 import { GradeBadge } from '@/ui/components/GradeBadge';
+import { Mascot } from '@/ui/components/Mascot';
 import { Screen } from '@/ui/components/Screen';
 
 import { CoachCopy, getCoachCopy } from './ai-copy';
@@ -21,7 +22,6 @@ import { CATEGORY_TINT, HYDRATION_IMAGE, STREAK_COLOR } from './coach-theme';
 import { computeWeeklyInsight } from './insight';
 import { loadManualMissionState, saveManualMissionState } from './mission-state';
 import { PhotoCard } from './photo-card';
-import { ROUTINES } from './routines';
 import {
   choosePriorityAction,
   buildMissions,
@@ -36,7 +36,6 @@ import { computeStreak } from './streak';
 
 const GOOD_TARGET = 85;
 const CATEGORIES: ContentCategory[] = ['recipe', 'activity', 'recovery'];
-const REWARD_MILESTONES = [7, 15, 30] as const;
 
 const ACTION_ICON: Record<PriorityActionKind, SFSymbol> = {
   drink: 'drop.fill',
@@ -70,10 +69,6 @@ export function CoachView() {
     () => weekStats.filter((d) => d.entries.length > 0 && d.hydratingMl >= d.goalMl).length,
     [weekStats],
   );
-
-  // Les séries > 7 jours demandent l'historique 30 jours, verrouillé en Premium (comme Tendances).
-  const monthStats = useMemo(() => (isPremium ? statsForLastDays(30) : []), [isPremium, statsForLastDays]);
-  const longStreak = useMemo(() => (isPremium ? computeStreak(monthStats) : streak), [isPremium, monthStats, streak]);
 
   const [copy, setCopy] = useState<CoachCopy | null>(null);
   useEffect(() => {
@@ -139,12 +134,17 @@ export function CoachView() {
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <Text style={styles.greeting}>{t('coach.greeting')}</Text>
-            {streak > 0 && (
-              <View style={styles.streakPill}>
-                <SymbolView name="flame.fill" size={13} tintColor={STREAK_COLOR} />
-                <Text style={[styles.streakText, { color: STREAK_COLOR }]}>{t('coach.streakDays', { count: streak })}</Text>
+            <View style={styles.headerTopRight}>
+              {streak > 0 && (
+                <View style={styles.streakPill}>
+                  <SymbolView name="flame.fill" size={13} tintColor={STREAK_COLOR} />
+                  <Text style={[styles.streakText, { color: STREAK_COLOR }]}>{t('coach.streakDays', { count: streak })}</Text>
+                </View>
+              )}
+              <View style={styles.avatarCircle}>
+                <Mascot pose="sit" size={28} />
               </View>
-            )}
+            </View>
           </View>
           <Text style={styles.subtitle}>
             {todayStats.globalScore < GOOD_TARGET
@@ -298,78 +298,20 @@ export function CoachView() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('coach.weeklyChallengeTitle')}</Text>
-          <Card elevated style={styles.challengeCard}>
-            <View style={styles.challengeHeader}>
-              <SymbolView name="trophy.fill" size={20} tintColor="#E0A63E" />
-              <Text style={styles.challengeName}>{t('coach.weeklyChallengeName')}</Text>
+        <Pressable onPress={() => router.push('/challenge')}>
+          <Card elevated style={styles.challengeTeaser}>
+            <View style={styles.challengeTeaserIcon}>
+              <SymbolView name="trophy.fill" size={22} tintColor="#E0A63E" />
             </View>
-            <View style={styles.challengeTrack}>
-              <View
-                style={[
-                  styles.challengeFill,
-                  { width: `${Math.max(4, (weeklyChallengeDays / 7) * 100)}%`, backgroundColor: theme.accent },
-                ]}
-              />
+            <View style={styles.challengeTeaserText}>
+              <Text style={styles.challengeTeaserTitle}>{t('coach.weeklyChallengeTitle')}</Text>
+              <Text style={styles.challengeTeaserSubtitle}>
+                {t('coach.weeklyChallengeName')} · {t('coach.weeklyChallengeProgress', { done: weeklyChallengeDays, total: 7 })}
+              </Text>
             </View>
-            <Text style={styles.challengeProgress}>
-              {t('coach.weeklyChallengeProgress', { done: weeklyChallengeDays, total: 7 })}
-            </Text>
+            <SymbolView name="chevron.right" size={14} tintColor={Colors.textMuted} />
           </Card>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('coach.rewardsTitle')}</Text>
-          <View style={styles.rewardsRow}>
-            {REWARD_MILESTONES.map((days) => {
-              const locked = days > 7 && !isPremium;
-              const unlocked = !locked && longStreak >= days;
-              return (
-                <Pressable
-                  key={days}
-                  onPress={locked ? () => guard(() => {}) : undefined}
-                  disabled={!locked}
-                  style={styles.rewardCard}>
-                  <View style={[styles.rewardIconCircle, unlocked && { backgroundColor: theme.accentSoft }]}>
-                    <SymbolView
-                      name={unlocked ? 'checkmark.seal.fill' : locked ? 'lock.fill' : 'circle'}
-                      size={18}
-                      tintColor={unlocked ? theme.accent : Colors.textMuted}
-                    />
-                  </View>
-                  <Text style={styles.rewardDays}>{t(`coach.reward${days}Title`)}</Text>
-                  <Text style={styles.rewardLabel}>{t(`coach.reward${days}Label`)}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
-          {!isPremium && <Text style={styles.rewardsHint}>{t('coach.rewardsPremiumHint')}</Text>}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('coach.routinesTitle')}</Text>
-          <View style={styles.routinesList}>
-            {ROUTINES.map((routine) => (
-              <Pressable
-                key={routine.id}
-                onPress={() => router.push({ pathname: '/routine', params: { id: routine.id } })}
-                style={styles.routineRow}>
-                <View style={[styles.routineIconCircle, { backgroundColor: theme.accentSoft }]}>
-                  <SymbolView name={routine.icon} size={18} tintColor={theme.accent} />
-                </View>
-                <View style={styles.routineInfo}>
-                  <Text style={styles.routineTitle}>{t(`coach.routines.${routine.id}.title`)}</Text>
-                  <Text style={styles.routineSubtitle}>
-                    {t(`coach.routines.${routine.id}.subtitle`)} · {t('coach.routines.stepsCount', { count: routine.stepCount })} ·{' '}
-                    {t('coach.detailDuration', { minutes: routine.durationMinutes })}
-                  </Text>
-                </View>
-                <SymbolView name="chevron.right" size={14} tintColor={Colors.textMuted} />
-              </Pressable>
-            ))}
-          </View>
-        </View>
+        </Pressable>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('coach.insightTitle')}</Text>
@@ -434,6 +376,46 @@ const styles = StyleSheet.create({
   streakText: {
     fontSize: FontSize.caption,
     fontWeight: '700',
+  },
+  headerTopRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  avatarCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  challengeTeaser: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
+  challengeTeaserIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: 'rgba(224, 166, 62, 0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  challengeTeaserText: {
+    flex: 1,
+    gap: 2,
+  },
+  challengeTeaserTitle: {
+    color: Colors.text,
+    fontSize: FontSize.body,
+    fontWeight: '700',
+  },
+  challengeTeaserSubtitle: {
+    color: Colors.textMuted,
+    fontSize: FontSize.caption,
   },
   subtitle: {
     color: Colors.textSecondary,
@@ -673,103 +655,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: FontSize.footnote,
     textAlign: 'center',
-  },
-  challengeCard: {
-    gap: Spacing.two,
-  },
-  challengeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  challengeName: {
-    color: Colors.text,
-    fontSize: FontSize.body,
-    fontWeight: '700',
-  },
-  challengeTrack: {
-    height: 8,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceElevated,
-    overflow: 'hidden',
-  },
-  challengeFill: {
-    height: '100%',
-    borderRadius: Radius.full,
-  },
-  challengeProgress: {
-    color: Colors.textSecondary,
-    fontSize: FontSize.footnote,
-    fontWeight: '600',
-  },
-  rewardsRow: {
-    flexDirection: 'row',
-    gap: Spacing.two,
-  },
-  rewardCard: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.lg,
-    paddingVertical: Spacing.three,
-  },
-  rewardIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rewardDays: {
-    color: Colors.text,
-    fontSize: FontSize.footnote,
-    fontWeight: '700',
-  },
-  rewardLabel: {
-    color: Colors.textMuted,
-    fontSize: 11,
-    textAlign: 'center',
-  },
-  rewardsHint: {
-    color: Colors.textMuted,
-    fontSize: FontSize.caption,
-    textAlign: 'center',
-  },
-  routinesList: {
-    gap: Spacing.two,
-  },
-  routineRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.lg,
-    padding: Spacing.three,
-  },
-  routineIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  routineInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  routineTitle: {
-    color: Colors.text,
-    fontSize: FontSize.body,
-    fontWeight: '700',
-  },
-  routineSubtitle: {
-    color: Colors.textMuted,
-    fontSize: FontSize.caption,
   },
   insightCard: {
     flexDirection: 'row',

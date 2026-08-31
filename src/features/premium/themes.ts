@@ -1,5 +1,5 @@
 /**
- * Thèmes premium — Lume reste noir/mono-surface, seul l'accent change. Le vert Menthe reste
+ * Thèmes premium — Lume reste clair/mono-surface, seul l'accent change. Le vert Menthe reste
  * l'identité par défaut (gratuit) ; les autres teintes sont réservées au premium. `onAccent` est
  * la couleur de texte à utiliser sur un fond de cette couleur (varie selon la luminosité de
  * l'accent — blanc sur les teintes saturées, sombre sur les teintes claires).
@@ -20,10 +20,10 @@ export const ACCENT_THEMES: readonly AccentTheme[] = [
   {
     id: 'mint',
     label: 'Menthe',
-    accent: '#33E38F',
-    accentStrong: '#1FBE73',
-    accentSoft: 'rgba(51, 227, 143, 0.14)',
-    onAccent: '#12331F',
+    accent: '#2ECC71',
+    accentStrong: '#25A85D',
+    accentSoft: 'rgba(46, 204, 113, 0.12)',
+    onAccent: '#FFFFFF',
   },
   {
     id: 'azure',

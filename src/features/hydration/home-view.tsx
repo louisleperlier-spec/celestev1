@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/features/premium/theme-context';
@@ -11,10 +11,10 @@ import { Button } from '@/ui/components/Button';
 import { Card } from '@/ui/components/Card';
 import { DrinkIcon } from '@/ui/components/DrinkIcon';
 import { GradeBadge } from '@/ui/components/GradeBadge';
+import { Mascot } from '@/ui/components/Mascot';
 import { MetricCard } from '@/ui/components/MetricCard';
 import { Screen } from '@/ui/components/Screen';
 import { ScoreRing } from '@/ui/components/ScoreRing';
-import { Sparkline } from '@/ui/components/Sparkline';
 
 import { useHydration } from './hydration-context';
 
@@ -22,50 +22,82 @@ export function HomeView() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const {
-    todayStats,
-    addEntry,
-    healthSupported,
-    settings,
-    syncing,
-    lastSyncedAt,
-    enableHealthSync,
-    syncWithHealth,
-    statsForLastDays,
-  } = useHydration();
+  const { todayStats, addEntry, healthSupported, settings, syncing, lastSyncedAt, enableHealthSync, syncWithHealth } =
+    useHydration();
 
   const quickAdd = (volumeMl: number) => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     void addEntry(volumeMl, 'water');
   };
 
-  const weekStats = statsForLastDays(7);
-  const weekScores = weekStats.map((d) => (d.entries.length > 0 ? d.globalScore : 0));
+  const isGoodGrade = todayStats.globalGrade === 'A' || todayStats.globalGrade === 'B';
+  const goalRatio = todayStats.goalMl > 0 ? Math.min(1, todayStats.hydratingMl / todayStats.goalMl) : 0;
+
+  const onShareScore = () => {
+    void Share.share({
+      message: t('home.shareMessage', { score: todayStats.globalScore, grade: todayStats.globalGrade }),
+    });
+  };
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View>
+          <Pressable onPress={() => router.push('/settings')} hitSlop={12} style={styles.iconButton} accessibilityLabel={t('home.menu')}>
+            <SymbolView name="line.3.horizontal" size={18} tintColor={Colors.textSecondary} />
+          </Pressable>
+          <View style={styles.headerCenter}>
             <Text style={styles.greeting}>{t('home.greeting')}</Text>
             <Text style={styles.appName}>{t('app.name')}</Text>
           </View>
           <Pressable
             onPress={() => router.push('/settings')}
             hitSlop={12}
-            style={styles.settingsButton}
+            style={styles.iconButton}
             accessibilityLabel={t('home.settings')}>
-            <SymbolView name="gearshape.fill" size={20} tintColor={Colors.textSecondary} />
+            <SymbolView name="bell.fill" size={18} tintColor={Colors.textSecondary} />
           </Pressable>
         </View>
 
-        <View style={styles.ringSection}>
-          <ScoreRing score={todayStats.globalScore} grade={todayStats.globalGrade} />
-          <Text style={styles.scoreLabel}>{t('home.scoreLabel')}</Text>
-          <Text style={styles.goalProgress}>
-            {t('home.goalProgress', { current: todayStats.hydratingMl, goal: todayStats.goalMl })}
+        <Card elevated style={styles.scoreCard}>
+          <View style={styles.scoreCardHeader}>
+            <Text style={styles.scoreCardTitle}>{t('home.scoreCardTitle')}</Text>
+            <Pressable onPress={onShareScore} hitSlop={10}>
+              <SymbolView name="square.and.arrow.up" size={16} tintColor={Colors.textMuted} />
+            </Pressable>
+          </View>
+
+          <View style={styles.ringWrap}>
+            <ScoreRing score={todayStats.globalScore} grade={todayStats.globalGrade} />
+            <View style={styles.ringMascot}>
+              <Mascot pose="sit" size={40} />
+            </View>
+          </View>
+
+          <GradeBadge grade={todayStats.globalGrade} size="md" />
+
+          <Text style={styles.encouragementTitle}>
+            {isGoodGrade ? t('home.encouragementGoodTitle') : t('home.encouragementBadTitle')}
           </Text>
-        </View>
+          <Text style={styles.encouragementBody}>
+            {isGoodGrade ? t('home.encouragementGoodBody') : t('home.encouragementBadBody')}
+          </Text>
+        </Card>
+
+        <Card style={styles.goalCard}>
+          <View style={styles.goalCardText}>
+            <Text style={styles.goalCardTitle}>{t('home.goalCardTitle')}</Text>
+            <Text style={styles.goalProgress}>
+              {t('home.goalProgress', { current: todayStats.hydratingMl, goal: todayStats.goalMl })}
+            </Text>
+            <View style={styles.goalTrack}>
+              <View style={[styles.goalFill, { width: `${Math.max(4, goalRatio * 100)}%`, backgroundColor: theme.accent }]} />
+            </View>
+          </View>
+          <View style={[styles.goalIconCircle, { backgroundColor: theme.accentSoft }]}>
+            <DrinkIcon type="water" size={22} />
+          </View>
+        </Card>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('home.quickAdd')}</Text>
@@ -88,20 +120,6 @@ export function HomeView() {
             </Pressable>
           </View>
         </View>
-
-        <Pressable onPress={() => router.push('/trends')}>
-          <Card style={styles.scoreSummaryCard}>
-            <View style={styles.scoreSummaryText}>
-              <Text style={styles.scoreSummaryLabel}>{t('home.scoreSummaryTitle')}</Text>
-              <View style={styles.scoreSummaryValueRow}>
-                <Text style={styles.scoreSummaryValue}>{todayStats.globalScore}</Text>
-                <Text style={styles.scoreSummarySuffix}>/100</Text>
-                <GradeBadge grade={todayStats.globalGrade} size="sm" />
-              </View>
-            </View>
-            <Sparkline values={weekScores} color={theme.accent} width={90} height={28} />
-          </Card>
-        </Pressable>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('home.metricsTitle')}</Text>
@@ -166,13 +184,16 @@ export function HomeView() {
 const styles = StyleSheet.create({
   content: {
     paddingBottom: Spacing.six,
-    gap: Spacing.five,
+    gap: Spacing.four,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: Spacing.two,
+  },
+  headerCenter: {
+    alignItems: 'center',
   },
   greeting: {
     color: Colors.textMuted,
@@ -183,7 +204,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.title2,
     fontWeight: '700',
   },
-  settingsButton: {
+  iconButton: {
     width: 36,
     height: 36,
     borderRadius: Radius.md,
@@ -193,20 +214,78 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ringSection: {
+  scoreCard: {
     alignItems: 'center',
     gap: Spacing.one,
   },
-  scoreLabel: {
+  scoreCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: Spacing.two,
+  },
+  scoreCardTitle: {
     color: Colors.textSecondary,
-    fontSize: FontSize.body,
-    fontWeight: '600',
+    fontSize: FontSize.footnote,
+    fontWeight: '700',
+  },
+  ringWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ringMascot: {
+    position: 'absolute',
+    top: -14,
+  },
+  encouragementTitle: {
+    color: Colors.text,
+    fontSize: FontSize.callout,
+    fontWeight: '700',
     marginTop: Spacing.two,
   },
-  goalProgress: {
-    color: Colors.textMuted,
+  encouragementBody: {
+    color: Colors.textSecondary,
     fontSize: FontSize.footnote,
+  },
+  goalCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
+  goalCardText: {
+    flex: 1,
+    gap: Spacing.one,
+  },
+  goalCardTitle: {
+    color: Colors.textSecondary,
+    fontSize: FontSize.footnote,
+    fontWeight: '700',
+  },
+  goalProgress: {
+    color: Colors.text,
+    fontSize: FontSize.title3,
+    fontWeight: '700',
     fontFamily: Fonts.mono,
+  },
+  goalTrack: {
+    height: 6,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceElevated,
+    overflow: 'hidden',
+    marginTop: Spacing.one,
+  },
+  goalFill: {
+    height: '100%',
+    borderRadius: Radius.full,
+  },
+  goalIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   section: {
     gap: Spacing.three,
@@ -238,38 +317,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     fontWeight: '600',
     textAlign: 'center',
-  },
-  scoreSummaryCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  scoreSummaryText: {
-    gap: 4,
-  },
-  scoreSummaryLabel: {
-    color: Colors.textMuted,
-    fontSize: FontSize.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-  },
-  scoreSummaryValueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  scoreSummaryValue: {
-    color: Colors.text,
-    fontFamily: Fonts.mono,
-    fontSize: FontSize.title2,
-    fontWeight: '700',
-  },
-  scoreSummarySuffix: {
-    color: Colors.textMuted,
-    fontFamily: Fonts.mono,
-    fontSize: FontSize.footnote,
-    marginLeft: -4,
   },
   metricsGrid: {
     flexDirection: 'row',

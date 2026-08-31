@@ -1,6 +1,6 @@
 /**
- * Lume — source unique de vérité du look : fond noir, un seul accent à la fois.
- * L'app reste mono-thème (pas de variante claire) — seul l'ACCENT peut changer, via les thèmes
+ * Lume — source unique de vérité du look : fond clair, mascotte, un seul accent à la fois.
+ * L'app reste mono-thème (pas de variante sombre) — seul l'ACCENT peut changer, via les thèmes
  * premium (`src/features/premium/themes.ts`). `Colors.accent*` ci-dessous est la valeur par
  * défaut (Menthe) ; les écrans qui doivent réagir au thème choisi passent par `useTheme()`
  * plutôt que d'importer `Colors` en dur.
@@ -9,41 +9,41 @@
 import { Platform } from 'react-native';
 
 export const Colors = {
-  background: '#000000',
-  backgroundElevated: '#050807',
-  surface: '#0E1512',
-  surfaceElevated: '#161F1A',
+  background: '#F4F7FB',
+  backgroundElevated: '#FFFFFF',
+  surface: '#FFFFFF',
+  surfaceElevated: '#F7F9FC',
 
-  text: '#F4FBF6',
-  textSecondary: 'rgba(244, 251, 246, 0.64)',
-  textMuted: 'rgba(244, 251, 246, 0.38)',
+  text: '#1B2430',
+  textSecondary: 'rgba(27, 36, 48, 0.62)',
+  textMuted: 'rgba(27, 36, 48, 0.4)',
 
-  accent: '#33E38F',
-  accentStrong: '#1FBE73',
-  accentSoft: 'rgba(51, 227, 143, 0.14)',
-  accentText: '#12331F',
+  accent: '#2ECC71',
+  accentStrong: '#25A85D',
+  accentSoft: 'rgba(46, 204, 113, 0.12)',
+  accentText: '#0F3D22',
 
-  border: 'rgba(255, 255, 255, 0.09)',
-  borderStrong: 'rgba(255, 255, 255, 0.16)',
+  border: 'rgba(27, 36, 48, 0.08)',
+  borderStrong: 'rgba(27, 36, 48, 0.16)',
 
-  success: '#33E38F',
+  success: '#2ECC71',
   danger: '#FF6B5E',
   dangerSoft: 'rgba(255, 107, 94, 0.14)',
-  overlay: 'rgba(0, 0, 0, 0.72)',
+  overlay: 'rgba(27, 36, 48, 0.45)',
 
   // Notes A / B / C / D — la grammaire visuelle de toute l'app, fixes quel que soit le thème.
-  gradeA: '#33E38F',
-  gradeASoft: 'rgba(51, 227, 143, 0.16)',
-  gradeB: '#9BE33D',
-  gradeBSoft: 'rgba(155, 227, 61, 0.16)',
+  gradeA: '#2ECC71',
+  gradeASoft: 'rgba(46, 204, 113, 0.14)',
+  gradeB: '#7BC142',
+  gradeBSoft: 'rgba(123, 193, 66, 0.14)',
   gradeC: '#F4B84C',
   gradeCSoft: 'rgba(244, 184, 76, 0.16)',
   gradeD: '#FF6B5E',
-  gradeDSoft: 'rgba(255, 107, 94, 0.16)',
+  gradeDSoft: 'rgba(255, 107, 94, 0.14)',
 
   // Mascotte Lume — couleur fixe, indépendante du thème d'accent choisi.
-  mascot: '#6FE1C7',
-  mascotStrong: '#3FC9A8',
+  mascot: '#3B9EFF',
+  mascotStrong: '#1F7FE0',
 } as const;
 
 export type ColorToken = keyof typeof Colors;

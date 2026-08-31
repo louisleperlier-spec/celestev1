@@ -43,7 +43,7 @@ export default function RootLayout() {
           <HydrationProvider>
             <AppConvexProvider>
               <TeamProvider>
-                <StatusBar style="light" />
+                <StatusBar style="dark" />
                 <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
@@ -52,6 +52,7 @@ export default function RootLayout() {
                   <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="coach-content" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="routine" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="challenge" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="coach-list" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="sleep-dashboard" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="score-info" options={{ presentation: 'modal' }} />

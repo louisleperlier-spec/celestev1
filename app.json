@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "lume",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#000000",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F4F7FB",
     "ios": {
       "bundleIdentifier": "app.lume.hydration",
       "icon": "./assets/images/icon.png",
@@ -31,7 +31,7 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#F4F7FB"
     },
     "plugins": [
       "expo-router",
@@ -39,7 +39,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000000",
+          "backgroundColor": "#F4F7FB",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 160
         }

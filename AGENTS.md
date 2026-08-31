@@ -1,7 +1,8 @@
 # Lume — repères pour toute IA qui travaille sur ce repo
 
-**Lume** est une app iOS de suivi d'hydratation : fond noir, accent vert, notes A/B/C par
-métrique + une note globale /100, 3 écrans (Accueil, Journal, Tendances), synchro Apple Santé.
+**Lume** est une app iOS de suivi d'hydratation : fond clair, mascotte goutte, accent vert,
+notes A/B/C/D par métrique + une note globale /100, 5 écrans (Accueil, Journal, Coach, Tendances,
+Équipe), synchro Apple Santé.
 
 ## SDK Expo pinné
 
@@ -41,23 +42,25 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 
 ## Design
 
-- **Fond noir, un seul accent affiché à la fois** : c'est l'identité de marque de Lume. Une
-  refonte claire/lavande/mascotte a existé brièvement en cours de session puis a été **annulée
-  sur demande explicite** — ne pas la réintroduire sans qu'on le redemande clairement.
-  `src/constants/theme.ts` reste la source des tokens invariants (fond noir, surfaces, texte,
-  notes A/B/C/D) ; **l'accent seul varie** selon le thème choisi (premium), via `useTheme()`
-  (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur. Menthe (vert) est
-  l'accent par défaut (gratuit) ; Azur/Corail/Violet sont réservés au premium
-  (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur dans un
-  composant.
+- **Fond clair, mascotte, un seul accent affiché à la fois.** L'identité visuelle a oscillé
+  plusieurs fois en cours de session (noir/vert → lavande/mascotte → noir/vert → **clair/vert/
+  mascotte**, la version actuelle) — c'est la version en place tant qu'on ne redemande pas
+  explicitement un changement, mais ne pas supposer qu'elle est figée pour toujours.
+  `src/constants/theme.ts` reste la source des tokens invariants (fond clair `#F4F7FB`, surfaces
+  blanches, texte sombre, notes A/B/C/D, couleur fixe de la mascotte) ; **l'accent seul varie**
+  selon le thème choisi (premium), via `useTheme()` (`src/features/premium/theme-context.tsx`),
+  jamais `Colors.accent*` en dur. Menthe (vert `#2ECC71`) est l'accent par défaut (gratuit) ;
+  Azur/Corail/Violet sont réservés au premium (`src/features/premium/themes.ts`). Toute couleur
+  passe par un token, jamais en dur dans un composant.
+- **Mascotte** (`src/ui/components/Mascot.tsx`, SVG, couleur bleue fixe `Colors.mascot`,
+  indépendante de l'accent) : présente sur l'anneau de score (Accueil), l'écran Ajouter une
+  boisson, l'avatar du Coach et l'écran Défi de la semaine. Poses `wave`/`sit`/`sleep`.
 - **`theme.accentText`** : chaque thème d'accent définit sa propre couleur de texte lisible
-  dessus (`onAccent` dans `themes.ts` — sombre sur les accents clairs comme Menthe, blanc sur les
-  accents saturés). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond `theme.accent` —
-  toujours `theme.accentText`.
+  dessus (`onAccent` dans `themes.ts`). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond
+  `theme.accent` — toujours `theme.accentText`.
 - **Notes A (≥80) / B (≥60) / C (≥40) / D (<40)** (`gradeA/B/C/D` dans `theme.ts`) restent fixes
   quel que soit le thème d'accent — la grammaire de couleur des notes ne doit jamais changer de
-  sens. La mascotte goutte (`src/ui/components/Mascot.tsx`) reste dans le code (onboarding) mais
-  n'est plus l'identité centrale de l'app.
+  sens.
 - SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI. Ils ne rendent rien sur le web
   (no-op silencieux hors plateforme native) — normal en testant via `expo export --platform web`,
   sans impact sur le vrai build iOS.
@@ -68,8 +71,10 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   uniquement ; le reste de l'app (Accueil, Journal, Tendances, Réglages, Paywall) reste
   mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_IMAGE`/`HYDRATION_IMAGE`/
   `STREAK_COLOR` en dehors de `src/features/coach/`.
-- Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) sont déjà
-  sur fond noir — cohérent avec l'identité actuelle.
+- Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) sont
+  restées sur l'ancienne identité (fond noir) à travers les changements de thème — pas encore
+  régénérées pour la DA claire actuelle. À refaire visuellement avant la sortie publique (hors
+  portée d'une session code-only).
 
 ## Onboarding (premier lancement)
 
@@ -140,8 +145,13 @@ pondérée. Voir le README pour le détail de chaque métrique.
 
 ## Coach — défi hebdo, récompenses, routines
 
-- **Défi de la semaine** (`coach-view.tsx`) : nombre réel de jours (sur les 7 derniers) où
-  l'objectif quotidien a été atteint (`hydratingMl >= goalMl`) — jamais une progression inventée.
+- **Écran Défi** (`challenge-view.tsx`, route `/challenge`, hero dégradé + mascotte) : accessible
+  depuis une carte teaser en bas du Coach. Regroupe défi hebdo, récompenses et routines — extrait
+  du scroll principal du Coach pour ne pas le surcharger.
+- **Défi de la semaine** : nombre réel de jours (sur les 7 derniers) où l'objectif quotidien a été
+  atteint (`hydratingMl >= goalMl`) — jamais une progression inventée. Le titre du hero s'adapte
+  (encourageant si < 4/7 jours, positif sinon) — jamais une louange plaquée sans rapport avec la
+  donnée réelle.
 - **Récompenses** : paliers de série (7/15/30 jours) basés sur `computeStreak` (`streak.ts`,
   déjà utilisé pour le badge flamme). Le palier 7 jours est calculable gratuitement (fenêtre de 7
   jours) ; 15 et 30 jours demandent l'historique 30 jours, donc **verrouillés en Premium** comme
@@ -149,6 +159,14 @@ pondérée. Voir le README pour le détail de chaque métrique.
 - **Routines recommandées** (`routines.ts` + `routine-view.tsx`, route `/routine?id=`) : liste
   d'étapes génériques de bien-être (pas de promesse médicale), cochables localement (pas
   persistées) — même esprit que `content.ts`, pas un catalogue.
+
+## Journal — semaine calendaire
+
+- Bandeau de 7 jours (lundi→dimanche, semaine calendaire contenant "aujourd'hui", pas une fenêtre
+  glissante) au-dessus de la liste ; taper un jour affiche ses entrées réelles pour cette date
+  (`statsForDate`). Flèches gauche/droite pour changer de semaine — au-delà de 7 jours en arrière,
+  **verrouillé en Premium** (`journal-view.tsx`), même logique que l'historique Journal déjà
+  documentée sous Premium ci-dessous.
 
 ## Vérif après toute modif
 

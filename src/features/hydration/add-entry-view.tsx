@@ -1,8 +1,11 @@
+import Slider from '@react-native-community/slider';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Ellipse, Svg } from 'react-native-svg';
 
 import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
 import { addCustomDrink, listCustomDrinks } from '@/features/hydration/custom-drinks';
@@ -10,12 +13,20 @@ import { useTheme } from '@/features/premium/theme-context';
 import { usePremiumGate } from '@/features/premium/use-premium-gate';
 import { Button } from '@/ui/components/Button';
 import { DrinkIcon } from '@/ui/components/DrinkIcon';
+import { Mascot } from '@/ui/components/Mascot';
 import { Screen } from '@/ui/components/Screen';
 
 import { useHydration } from './hydration-context';
 import { CustomDrink, DRINK_TYPES, DrinkType } from './types';
 
 const PRESET_VOLUMES = [150, 250, 330, 500, 750];
+const SLIDER_MIN = 100;
+const SLIDER_MAX = 1000;
+const SLIDER_TICKS = [100, 250, 500, 750, 1000];
+
+function formatTick(ml: number): string {
+  return ml >= 1000 ? `${ml / 1000}L` : `${ml}`;
+}
 
 type QualityChoice = 'water' | 'coffee';
 
@@ -99,16 +110,37 @@ export function AddEntryView() {
           </Pressable>
         </View>
 
+        <LinearGradient colors={['#CFE8FF', '#EAF4FF']} style={styles.hero}>
+          <Svg style={StyleSheet.absoluteFill} width="100%" height="100%">
+            <Ellipse cx="18%" cy="22%" rx={34} ry={14} fill="#FFFFFF" opacity={0.6} />
+            <Ellipse cx="80%" cy="16%" rx={26} ry={11} fill="#FFFFFF" opacity={0.5} />
+            <Ellipse cx="60%" cy="30%" rx={20} ry={9} fill="#FFFFFF" opacity={0.4} />
+          </Svg>
+          <Mascot pose="wave" size={110} />
+          <View style={styles.volumeValueRow}>
+            <Text style={styles.volumeValue}>{numericVolume}</Text>
+            <Text style={styles.volumeUnit}>ml</Text>
+          </View>
+        </LinearGradient>
+
         <View style={styles.section}>
-          <Text style={styles.label}>{t('addEntry.volumeLabel')}</Text>
-          <TextInput
-            value={volume}
-            onChangeText={setVolume}
-            keyboardType="number-pad"
-            style={styles.input}
-            placeholder="250"
-            placeholderTextColor={Colors.textMuted}
+          <Slider
+            value={Math.min(SLIDER_MAX, Math.max(SLIDER_MIN, numericVolume))}
+            minimumValue={SLIDER_MIN}
+            maximumValue={SLIDER_MAX}
+            step={10}
+            minimumTrackTintColor={theme.accent}
+            maximumTrackTintColor={Colors.border}
+            thumbTintColor={theme.accent}
+            onValueChange={(v) => setVolume(String(Math.round(v)))}
           />
+          <View style={styles.tickRow}>
+            {SLIDER_TICKS.map((tick) => (
+              <Text key={tick} style={styles.tickText}>
+                {formatTick(tick)}
+              </Text>
+            ))}
+          </View>
           <View style={styles.presetsRow}>
             {PRESET_VOLUMES.map((preset) => {
               const active = numericVolume === preset;
@@ -244,6 +276,41 @@ const styles = StyleSheet.create({
   cancel: {
     color: Colors.textSecondary,
     fontSize: FontSize.body,
+  },
+  hero: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.xl,
+    paddingVertical: Spacing.five,
+    marginBottom: Spacing.four,
+    overflow: 'hidden',
+  },
+  volumeValueRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 4,
+    marginTop: Spacing.two,
+  },
+  volumeValue: {
+    color: '#12314F',
+    fontSize: FontSize.hero,
+    fontWeight: '800',
+  },
+  volumeUnit: {
+    color: '#12314F',
+    fontSize: FontSize.title3,
+    fontWeight: '700',
+    marginBottom: Spacing.one,
+  },
+  tickRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: -Spacing.one,
+  },
+  tickText: {
+    color: Colors.textMuted,
+    fontSize: FontSize.caption,
+    fontWeight: '600',
   },
   section: {
     gap: Spacing.two,
