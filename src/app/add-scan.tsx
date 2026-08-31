@@ -26,16 +26,14 @@ function Field({
   const theme = useTheme();
   return (
     <View style={styles.field}>
-      <ThemedText type="small" themeColor="textSecondary" style={styles.fieldLabel}>
-        {label}
-      </ThemedText>
-      <View style={[styles.fieldInputRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+      <ThemedText type="sectionLabel">{label}</ThemedText>
+      <View style={[styles.fieldInputRow, { backgroundColor: theme.surface2, borderColor: theme.border }]}>
         <TextInput
           value={value}
           onChangeText={(t) => onChangeText(t.replace(/[^0-9.]/g, ''))}
           keyboardType="decimal-pad"
           placeholder="—"
-          placeholderTextColor={theme.textSecondary}
+          placeholderTextColor={theme.textTertiary}
           style={[styles.fieldInput, { color: theme.text }]}
         />
         <ThemedText themeColor="textSecondary">{suffix}</ThemedText>
@@ -99,13 +97,18 @@ export default function AddScanScreen() {
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <Pressable
             onPress={pickPhoto}
-            style={[styles.photoPicker, { backgroundColor: theme.backgroundElement }]}>
+            style={[
+              styles.photoPicker,
+              photoUri
+                ? { backgroundColor: theme.surface2 }
+                : { borderColor: theme.borderStrong, borderWidth: 1.5, borderStyle: 'dashed' },
+            ]}>
             {photoUri ? (
               <Image source={{ uri: photoUri }} style={styles.photo} />
             ) : (
               <>
-                <Ionicons name="camera" size={32} color={theme.textSecondary} />
-                <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.two }}>
+                <Ionicons name="camera" size={32} color={theme.textTertiary} />
+                <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.sm }}>
                   Ajouter une photo (optionnel)
                 </ThemedText>
               </>
@@ -117,18 +120,16 @@ export default function AddScanScreen() {
           <Field label="TOUR DE TAILLE" value={waist} onChangeText={setWaist} suffix="cm" />
 
           <View style={styles.field}>
-            <ThemedText type="small" themeColor="textSecondary" style={styles.fieldLabel}>
-              NOTE (OPTIONNEL)
-            </ThemedText>
+            <ThemedText type="sectionLabel">Note (optionnel)</ThemedText>
             <TextInput
               value={note}
               onChangeText={setNote}
               placeholder="Ressenti, contexte…"
-              placeholderTextColor={theme.textSecondary}
+              placeholderTextColor={theme.textTertiary}
               multiline
               style={[
                 styles.notesInput,
-                { backgroundColor: theme.backgroundElement, color: theme.text, borderColor: theme.border },
+                { backgroundColor: theme.surface2, color: theme.text, borderColor: theme.border },
               ]}
             />
           </View>
@@ -147,40 +148,39 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.lg,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Spacing.two,
+    paddingVertical: Spacing.sm,
   },
-  content: { gap: Spacing.three, paddingBottom: Spacing.four },
+  content: { gap: Spacing.base, paddingBottom: Spacing.lg },
   photoPicker: {
     aspectRatio: 1.6,
-    borderRadius: Radius.large,
+    borderRadius: Radius.card,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   photo: { width: '100%', height: '100%' },
-  field: { gap: Spacing.two },
-  fieldLabel: { letterSpacing: 1 },
+  field: { gap: Spacing.sm },
   fieldInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderRadius: Radius.medium,
-    paddingHorizontal: Spacing.three,
+    borderRadius: Radius.button,
+    paddingHorizontal: Spacing.base,
   },
-  fieldInput: { flex: 1, paddingVertical: Spacing.three, fontSize: 16 },
+  fieldInput: { flex: 1, paddingVertical: Spacing.base, fontSize: 16 },
   notesInput: {
     borderWidth: 1,
-    borderRadius: Radius.medium,
-    padding: Spacing.three,
+    borderRadius: Radius.button,
+    padding: Spacing.base,
     minHeight: 70,
     textAlignVertical: 'top',
   },
-  cta: { marginBottom: Spacing.three },
+  cta: { marginBottom: Spacing.base },
 });

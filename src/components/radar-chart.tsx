@@ -40,28 +40,29 @@ export function RadarChart({ axes, size = 220, color }: Props) {
             .map((p) => `${p.x},${p.y}`)
             .join(' ');
           return (
-            <Polygon key={f} points={ringPoints} stroke={theme.border} strokeWidth={1} fill="none" />
+            <Polygon key={f} points={ringPoints} stroke={theme.chartGrid} strokeWidth={1} fill="none" />
           );
         })}
 
         {axes.map((_, i) => {
           const p = pointAt(cx, cy, radius, i, count, 1);
-          return <Line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke={theme.border} strokeWidth={1} />;
+          return <Line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke={theme.chartGrid} strokeWidth={1} />;
         })}
 
         <Polygon points={dataPolygon} fill={`${color}33`} stroke={color} strokeWidth={2} />
         {dataPoints.map((p, i) => (
-          <Circle key={i} cx={p.x} cy={p.y} r={3.5} fill={color} />
+          <Circle key={i} cx={p.x} cy={p.y} r={4} fill={color} stroke={theme.bg} strokeWidth={1.5} />
         ))}
 
         {axes.map((a, i) => {
-          const p = pointAt(cx, cy, radius, i, count, 1.22);
+          const p = pointAt(cx, cy, radius, i, count, 1.24);
           return (
             <SvgText
               key={i}
               x={p.x}
               y={p.y}
               fontSize={11}
+              fontWeight="600"
               fill={theme.textSecondary}
               textAnchor="middle">
               {a.label}

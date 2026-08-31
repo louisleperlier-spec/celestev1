@@ -23,17 +23,16 @@ export function StreakRow({ checkIns, today, days = 7 }: Props) {
         const done = checkIns.some((c) => c.dateKey === key && c.status !== 'missed');
         const isToday = key === toDateKey(today);
         return (
-          <View key={key} style={styles.cell}>
-            <View
-              style={[
-                styles.dot,
-                {
-                  backgroundColor: done ? theme.primary : theme.backgroundElement,
-                  borderColor: isToday ? theme.primary : 'transparent',
-                },
-              ]}>
-              {done && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
-            </View>
+          <View
+            key={key}
+            style={[
+              styles.dot,
+              done
+                ? { backgroundColor: theme.primary, borderColor: theme.primary }
+                : { backgroundColor: 'transparent', borderColor: theme.borderStrong },
+              isToday && !done && { borderColor: theme.primary },
+            ]}>
+            {done && <Ionicons name="checkmark" size={14} color={theme.onPrimary} />}
           </View>
         );
       })}
@@ -46,15 +45,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  cell: {
-    alignItems: 'center',
-  },
   dot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
+    borderWidth: 1.5,
   },
 });

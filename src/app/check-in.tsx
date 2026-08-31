@@ -1,15 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PillButton } from '@/components/pill-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getMission } from '@/constants/missions';
-import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Radius, Spacing, withAlpha } from '@/constants/theme';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { useTheme } from '@/hooks/use-theme';
 import { useCheckIns } from '@/lib/checkins-store';
 import type { CheckInStatus } from '@/lib/types';
@@ -23,6 +24,7 @@ const OPTIONS: { status: CheckInStatus; label: string; icon: keyof typeof import
 export default function CheckInScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const reducedMotion = useReducedMotion();
   const { addCheckIn } = useCheckIns();
   const params = useLocalSearchParams<{ missionId: string }>();
   const mission = getMission(params.missionId);
@@ -30,6 +32,13 @@ export default function CheckInScreen() {
   const [status, setStatus] = useState<CheckInStatus | null>(null);
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [pulse] = useState(() => new Animated.Value(1));
+
+  useEffect(() => {
+    if (!status || reducedMotion) return;
+    pulse.setValue(0.82);
+    Animated.spring(pulse, { toValue: 1, useNativeDriver: true, friction: 5, tension: 140 }).start();
+  }, [status, reducedMotion, pulse]);
 
   const statusColor = (s: CheckInStatus) =>
     s === 'done' ? theme.success : s === 'partial' ? theme.warning : theme.danger;
@@ -56,13 +65,13 @@ export default function CheckInScreen() {
         <View style={styles.body}>
           <ThemedText style={styles.question}>Comment s&apos;est passée ta mission ?</ThemedText>
 
-          <View style={[styles.missionIcon, { backgroundColor: theme.primaryLight }]}>
-            <Ionicons name={mission.icon} size={40} color={theme.primary} />
+          <View style={styles.missionBlock}>
+            <View style={[styles.missionIcon, { backgroundColor: withAlpha(theme.primary, 0.12) }]}>
+              <Ionicons name={mission.icon} size={36} color={theme.primary} />
+            </View>
+            <ThemedText type="subtitle">{mission.title}</ThemedText>
+            <ThemedText themeColor="textSecondary">{mission.subtitle}</ThemedText>
           </View>
-          <ThemedText type="subtitle" style={styles.missionTitle}>
-            {mission.title}
-          </ThemedText>
-          <ThemedText themeColor="textSecondary">{mission.subtitle}</ThemedText>
 
           <View style={styles.options}>
             {OPTIONS.map((o) => {
@@ -75,9 +84,11 @@ export default function CheckInScreen() {
                   style={[
                     styles.optionBtn,
                     { borderColor: theme.border },
-                    active && { borderColor: color, backgroundColor: `${color}22` },
+                    active && { borderColor: color, backgroundColor: withAlpha(color, 0.14) },
                   ]}>
-                  <Ionicons name={o.icon} size={22} color={active ? color : theme.textSecondary} />
+                  <Animated.View style={active ? { transform: [{ scale: pulse }] } : undefined}>
+                    <Ionicons name={o.icon} size={22} color={active ? color : theme.textSecondary} />
+                  </Animated.View>
                   <ThemedText
                     type="small"
                     style={active ? { color, fontWeight: '700' } : undefined}
@@ -89,28 +100,28 @@ export default function CheckInScreen() {
             })}
           </View>
 
-          <ThemedText type="small" themeColor="textSecondary" style={styles.notesLabel}>
-            NOTES (OPTIONNEL)
-          </ThemedText>
-          <TextInput
-            value={note}
-            onChangeText={setNote}
-            placeholder="Écris quelque chose…"
-            placeholderTextColor={theme.textSecondary}
-            multiline
-            style={[
-              styles.notesInput,
-              { backgroundColor: theme.backgroundElement, color: theme.text, borderColor: theme.border },
-            ]}
+          <View style={styles.notesBlock}>
+            <ThemedText type="sectionLabel">Notes (optionnel)</ThemedText>
+            <TextInput
+              value={note}
+              onChangeText={setNote}
+              placeholder="Écris quelque chose…"
+              placeholderTextColor={theme.textTertiary}
+              multiline
+              style={[
+                styles.notesInput,
+                { backgroundColor: theme.surface2, color: theme.text, borderColor: theme.border },
+              ]}
+            />
+          </View>
+
+          <PillButton
+            title="Valider"
+            onPress={handleValidate}
+            disabled={!status || saving}
+            style={styles.cta}
           />
         </View>
-
-        <PillButton
-          title="Valider"
-          onPress={handleValidate}
-          disabled={!status || saving}
-          style={styles.cta}
-        />
       </SafeAreaView>
     </ThemedView>
   );
@@ -123,47 +134,45 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.lg,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Spacing.two,
+    paddingVertical: Spacing.sm,
   },
-  body: { flex: 1, alignItems: 'center', gap: Spacing.two, paddingTop: Spacing.four },
-  question: { fontSize: 18, textAlign: 'center', marginBottom: Spacing.three },
+  body: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.xl },
+  question: { fontSize: 18, textAlign: 'center' },
+  missionBlock: { alignItems: 'center', gap: Spacing.xs },
   missionIcon: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
+    width: 76,
+    height: 76,
+    borderRadius: 38,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: Spacing.xs,
   },
-  missionTitle: { fontSize: 22, lineHeight: 26, marginTop: Spacing.two },
   options: {
     flexDirection: 'row',
-    gap: Spacing.two,
+    gap: Spacing.sm,
     alignSelf: 'stretch',
-    marginTop: Spacing.four,
   },
   optionBtn: {
     flex: 1,
     alignItems: 'center',
     gap: 6,
     borderWidth: 1.5,
-    borderRadius: Radius.medium,
-    paddingVertical: Spacing.three,
+    borderRadius: Radius.button,
+    paddingVertical: Spacing.base,
   },
-  notesLabel: { alignSelf: 'flex-start', letterSpacing: 1, marginTop: Spacing.four },
+  notesBlock: { alignSelf: 'stretch', gap: Spacing.sm },
   notesInput: {
-    alignSelf: 'stretch',
     borderWidth: 1,
-    borderRadius: Radius.medium,
-    padding: Spacing.three,
-    minHeight: 80,
-    marginTop: Spacing.two,
+    borderRadius: Radius.button,
+    padding: Spacing.base,
+    minHeight: 70,
     textAlignVertical: 'top',
   },
-  cta: { marginBottom: Spacing.three },
+  cta: { alignSelf: 'stretch' },
 });

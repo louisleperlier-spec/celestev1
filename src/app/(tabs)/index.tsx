@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/card';
+import { PillBadge } from '@/components/pill-badge';
 import { PillarBar } from '@/components/pillar-bar';
 import { ScoreRing } from '@/components/score-ring';
 import { StreakRow } from '@/components/streak-row';
@@ -31,38 +32,36 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.brand}>
-            SELFMAX
+          <ThemedText type="sectionLabel" style={styles.brand}>
+            SelfMax
           </ThemedText>
 
-          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-            MAX SCORE
+          <ThemedText type="sectionLabel" style={styles.sectionLabel}>
+            Max Score
           </ThemedText>
 
           <View style={styles.ringWrap}>
-            <ScoreRing value={todayScore.total} color={theme.primary} />
+            <ScoreRing value={todayScore.total} />
             {delta !== 0 && (
-              <ThemedText type="smallBold" style={{ color: theme.primary, marginTop: Spacing.two }}>
-                {delta > 0 ? '+' : ''}
-                {delta} pts depuis hier
-              </ThemedText>
+              <View style={styles.deltaWrap}>
+                <PillBadge
+                  label={`${delta > 0 ? '+' : ''}${delta} pts depuis hier`}
+                  color={delta > 0 ? theme.primary : theme.textSecondary}
+                />
+              </View>
             )}
           </View>
 
           <Card style={styles.card}>
             <View style={styles.streakHeader}>
-              <ThemedText type="smallBold" themeColor="textSecondary">
-                SÉRIE ACTUELLE
-              </ThemedText>
+              <ThemedText type="sectionLabel">Série actuelle</ThemedText>
               <ThemedText type="smallBold">🔥 {streak} j</ThemedText>
             </View>
             <StreakRow checkIns={checkIns} today={today} />
           </Card>
 
           <Card style={styles.card}>
-            <ThemedText type="smallBold" themeColor="textSecondary" style={styles.pillarsLabel}>
-              PILIERS
-            </ThemedText>
+            <ThemedText type="sectionLabel">Piliers</ThemedText>
             <View style={styles.bars}>
               {PILLARS.map((p) => (
                 <PillarBar key={p.id} pillar={p} value={todayScore.byPillar[p.id]} />
@@ -81,37 +80,37 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
-    paddingBottom: BottomTabInset + Spacing.four,
-    gap: Spacing.three,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: BottomTabInset + Spacing.lg,
+    gap: Spacing.base,
     alignItems: 'center',
   },
   brand: {
     alignSelf: 'flex-start',
-    letterSpacing: 1,
-    marginTop: Spacing.two,
+    marginTop: Spacing.sm,
   },
   sectionLabel: {
-    letterSpacing: 1,
-    marginTop: Spacing.two,
+    marginTop: Spacing.sm,
   },
   ringWrap: {
     alignItems: 'center',
-    marginBottom: Spacing.two,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+    gap: Spacing.sm,
+  },
+  deltaWrap: {
+    marginTop: Spacing.xs,
   },
   card: {
     alignSelf: 'stretch',
-    gap: Spacing.three,
+    gap: Spacing.base,
   },
   streakHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  pillarsLabel: {
-    letterSpacing: 1,
-  },
   bars: {
-    gap: Spacing.three,
+    gap: Spacing.base,
   },
 });

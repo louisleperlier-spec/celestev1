@@ -1,32 +1,39 @@
 import { StyleSheet, View } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import { ThemedText } from '@/components/themed-text';
+import { Elevation } from '@/constants/theme';
+import { useAnimatedNumber } from '@/hooks/use-animated-number';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
   value: number; // 0-100
   size?: number;
   strokeWidth?: number;
-  color: string;
-  sublabel?: string;
 };
 
-export function ScoreRing({ value, size = 200, strokeWidth = 16, color, sublabel }: Props) {
+export function ScoreRing({ value, size = 220, strokeWidth = 18 }: Props) {
   const theme = useTheme();
+  const animatedValue = useAnimatedNumber(value);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const clamped = Math.max(0, Math.min(100, value));
+  const clamped = Math.max(0, Math.min(100, animatedValue));
   const dashOffset = circumference * (1 - clamped / 100);
 
   return (
-    <View style={{ width: size, height: size }}>
+    <View style={[{ width: size, height: size }, value > 0 && Elevation.glow]}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <Defs>
+          <LinearGradient id="scoreRingGradient" x1="0" y1="0" x2={size} y2={size}>
+            <Stop offset="0" stopColor={theme.gradientStart} />
+            <Stop offset="1" stopColor={theme.gradientEnd} />
+          </LinearGradient>
+        </Defs>
         <Circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={theme.backgroundElement}
+          stroke={theme.surface2}
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -34,7 +41,7 @@ export function ScoreRing({ value, size = 200, strokeWidth = 16, color, sublabel
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={color}
+          stroke="url(#scoreRingGradient)"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
@@ -45,15 +52,12 @@ export function ScoreRing({ value, size = 200, strokeWidth = 16, color, sublabel
         />
       </Svg>
       <View style={[StyleSheet.absoluteFill, styles.center]}>
-        <ThemedText style={[styles.value, { color: theme.text }]}>{Math.round(clamped)}</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
+        <ThemedText type="display" style={{ color: theme.text }}>
+          {Math.round(animatedValue)}
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary" style={styles.suffix}>
           / 100
         </ThemedText>
-        {sublabel ? (
-          <ThemedText type="smallBold" style={{ color, marginTop: 6 }}>
-            {sublabel}
-          </ThemedText>
-        ) : null}
       </View>
     </View>
   );
@@ -64,9 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  value: {
-    fontSize: 44,
-    fontWeight: '700',
-    lineHeight: 48,
+  suffix: {
+    marginTop: 2,
   },
 });

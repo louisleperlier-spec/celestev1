@@ -59,11 +59,9 @@ export default function PlanScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <ThemedText type="title" style={styles.title}>
-            Ton plan
-          </ThemedText>
+          <ThemedText type="title">Ton plan</ThemedText>
 
-          <View style={[styles.toggle, { backgroundColor: theme.backgroundElement }]}>
+          <View style={[styles.toggle, { backgroundColor: theme.surface2 }]}>
             {([
               ['jour', 'Jour'],
               ['semaine', 'Semaine'],
@@ -75,7 +73,7 @@ export default function PlanScreen() {
                 style={[styles.toggleBtn, view === key && { backgroundColor: theme.primary }]}>
                 <ThemedText
                   type="smallBold"
-                  style={view === key ? styles.toggleTextActive : undefined}
+                  style={view === key ? { color: theme.onPrimary } : undefined}
                   themeColor={view === key ? undefined : 'textSecondary'}>
                   {label}
                 </ThemedText>
@@ -85,9 +83,7 @@ export default function PlanScreen() {
 
           {view === 'jour' && (
             <>
-              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                TES MISSIONS DU JOUR
-              </ThemedText>
+              <ThemedText type="sectionLabel">Tes missions du jour</ThemedText>
               <View style={styles.missions}>
                 {MISSION_TEMPLATES.map((m) => (
                   <MissionCard
@@ -102,9 +98,7 @@ export default function PlanScreen() {
               </View>
 
               <Card style={styles.tipCard}>
-                <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                  CONSEIL DU JOUR
-                </ThemedText>
+                <ThemedText type="sectionLabel">Conseil du jour</ThemedText>
                 <ThemedText style={styles.tipBody}>{tip.body}</ThemedText>
               </Card>
 
@@ -156,11 +150,10 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
-    paddingBottom: BottomTabInset + Spacing.four,
-    gap: Spacing.three,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: BottomTabInset + Spacing.lg,
+    gap: Spacing.base,
   },
-  title: { fontSize: 28, lineHeight: 32 },
   toggle: {
     flexDirection: 'row',
     borderRadius: Radius.pill,
@@ -172,13 +165,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: Radius.pill,
   },
-  toggleTextActive: { color: '#FFFFFF' },
-  sectionLabel: { letterSpacing: 1 },
-  missions: { gap: Spacing.two },
-  tipCard: { gap: Spacing.two },
+  missions: { gap: Spacing.sm },
+  tipCard: { gap: Spacing.sm },
   tipBody: { lineHeight: 20 },
-  cta: { marginTop: Spacing.two },
-  weekRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
-  weekCell: { flexBasis: '12%', flexGrow: 1, alignItems: 'center', gap: 4, paddingVertical: Spacing.two },
-  statsRow: { flexDirection: 'row', gap: Spacing.two },
+  cta: { marginTop: Spacing.sm },
+  weekRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  weekCell: { flexBasis: '12%', flexGrow: 1, alignItems: 'center', gap: 4, paddingVertical: Spacing.sm },
+  statsRow: { flexDirection: 'row', gap: Spacing.sm },
 });

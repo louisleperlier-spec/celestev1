@@ -6,7 +6,7 @@ import { Card } from '@/components/card';
 import { RadarChart } from '@/components/radar-chart';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { TrendLineChart } from '@/components/trend-line-chart';
+import { TrendLineChart, TrendLineChartEmpty } from '@/components/trend-line-chart';
 import { PILLARS } from '@/constants/piliers';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -32,6 +32,7 @@ export default function ProgresScreen() {
   });
 
   const radarAxes = PILLARS.map((p) => ({ label: p.label, value: todayScore.byPillar[p.id] }));
+  const hasHistory = history.some((h) => h.total > 0);
 
   const sortedScans = useMemo(
     () => [...scans].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
@@ -42,11 +43,9 @@ export default function ProgresScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <ThemedText type="title" style={styles.title}>
-            Progrès
-          </ThemedText>
+          <ThemedText type="title">Progrès</ThemedText>
 
-          <View style={[styles.toggle, { backgroundColor: theme.backgroundElement }]}>
+          <View style={[styles.toggle, { backgroundColor: theme.surface2 }]}>
             {([
               ['apercu', 'Aperçu'],
               ['corps', 'Corps'],
@@ -58,7 +57,7 @@ export default function ProgresScreen() {
                 style={[styles.toggleBtn, tab === key && { backgroundColor: theme.primary }]}>
                 <ThemedText
                   type="small"
-                  style={tab === key ? styles.toggleTextActive : undefined}
+                  style={tab === key ? { color: theme.onPrimary } : undefined}
                   themeColor={tab === key ? undefined : 'textSecondary'}>
                   {label}
                 </ThemedText>
@@ -68,18 +67,18 @@ export default function ProgresScreen() {
 
           {tab === 'apercu' && (
             <>
-              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                ÉVOLUTION DU MAX SCORE
-              </ThemedText>
+              <ThemedText type="sectionLabel">Évolution du Max Score</ThemedText>
               <Card>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <TrendLineChart points={chartPoints} color={theme.primary} />
-                </ScrollView>
+                {hasHistory ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <TrendLineChart points={chartPoints} color={theme.primary} />
+                  </ScrollView>
+                ) : (
+                  <TrendLineChartEmpty />
+                )}
               </Card>
 
-              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionLabel}>
-                RÉPARTITION DES PILIERS
-              </ThemedText>
+              <ThemedText type="sectionLabel">Répartition des piliers</ThemedText>
               <Card style={styles.radarCard}>
                 <RadarChart axes={radarAxes} color={theme.primary} size={220} />
                 <View style={styles.legend}>
@@ -95,7 +94,7 @@ export default function ProgresScreen() {
           )}
 
           {tab === 'corps' && (
-            <View style={{ gap: Spacing.two }}>
+            <View style={{ gap: Spacing.sm }}>
               {sortedScans.length === 0 ? (
                 <ThemedText themeColor="textSecondary" style={styles.empty}>
                   Aucun scan enregistré pour l&apos;instant. Va dans l&apos;onglet Scan pour ajouter
@@ -148,19 +147,16 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
-    paddingBottom: BottomTabInset + Spacing.four,
-    gap: Spacing.three,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: BottomTabInset + Spacing.lg,
+    gap: Spacing.base,
   },
-  title: { fontSize: 28, lineHeight: 32 },
   toggle: { flexDirection: 'row', borderRadius: Radius.pill, padding: 4 },
   toggleBtn: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: Radius.pill },
-  toggleTextActive: { color: '#FFFFFF' },
-  sectionLabel: { letterSpacing: 1, marginTop: Spacing.two },
-  radarCard: { alignItems: 'center', gap: Spacing.three },
+  radarCard: { alignItems: 'center', gap: Spacing.base },
   legend: { alignSelf: 'stretch', gap: 4 },
   legendRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 },
-  empty: { textAlign: 'center', paddingVertical: Spacing.four, lineHeight: 20 },
-  scanRow: { gap: Spacing.two },
-  scanValues: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.three },
+  empty: { textAlign: 'center', paddingVertical: Spacing.lg, lineHeight: 20 },
+  scanRow: { gap: Spacing.sm },
+  scanValues: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.base },
 });

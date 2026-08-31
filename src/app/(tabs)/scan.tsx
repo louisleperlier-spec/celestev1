@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/card';
@@ -12,6 +12,29 @@ import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/th
 import { useTheme } from '@/hooks/use-theme';
 import { formatDayLong } from '@/lib/date';
 import { useCheckIns } from '@/lib/checkins-store';
+
+function MetricTile({ value, label }: { value: string | null; label: string }) {
+  const theme = useTheme();
+  if (value === null) {
+    return (
+      <View style={[styles.metricTile, styles.metricTileEmpty, { borderColor: theme.borderStrong }]}>
+        <ThemedText type="small" themeColor="textTertiary" style={styles.metricEmptyLabel}>
+          Ajoute ta première mesure
+        </ThemedText>
+      </View>
+    );
+  }
+  return (
+    <Card style={styles.metricTile}>
+      <ThemedText type="displayMedium" style={[styles.metricValue, { color: theme.primary }]}>
+        {value}
+      </ThemedText>
+      <ThemedText type="small" themeColor="textSecondary">
+        {label}
+      </ThemedText>
+    </Card>
+  );
+}
 
 export default function ScanScreen() {
   const theme = useTheme();
@@ -31,9 +54,7 @@ export default function ScanScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <ThemedText type="title" style={styles.title}>
-            Scan
-          </ThemedText>
+          <ThemedText type="title">Scan</ThemedText>
           <ThemedText themeColor="textSecondary" style={styles.subtitle}>
             Suivi manuel de tes mesures et photos de progression. L&apos;analyse automatique par
             IA arrive dans une prochaine version.
@@ -42,40 +63,23 @@ export default function ScanScreen() {
           {latest?.photoUri ? (
             <Image source={{ uri: latest.photoUri }} style={styles.photo} resizeMode="cover" />
           ) : (
-            <View style={[styles.photoPlaceholder, { backgroundColor: theme.backgroundElement }]}>
-              <Ionicons name="body" size={48} color={theme.textSecondary} />
-              <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.two }}>
-                Aucune photo pour l&apos;instant
+            <Pressable
+              onPress={() => router.push('/add-scan')}
+              style={[styles.photoPlaceholder, { borderColor: theme.borderStrong }]}>
+              <Ionicons name="camera" size={32} color={theme.textTertiary} />
+              <ThemedText themeColor="textSecondary" style={styles.photoPlaceholderText}>
+                Aucune photo — lance ton premier suivi
               </ThemedText>
-            </View>
+            </Pressable>
           )}
 
           <View style={styles.metricsRow}>
-            <Card style={styles.metricTile}>
-              <ThemedText type="smallBold" style={{ color: theme.primary, fontSize: 22 }}>
-                {leanMass ?? '—'}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Masse maigre (kg)
-              </ThemedText>
-            </Card>
-            <Card style={styles.metricTile}>
-              <ThemedText type="smallBold" style={{ color: theme.primary, fontSize: 22 }}>
-                {latest?.bodyFatPct ?? '—'}
-                {latest?.bodyFatPct != null ? '%' : ''}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Masse grasse
-              </ThemedText>
-            </Card>
-            <Card style={styles.metricTile}>
-              <ThemedText type="smallBold" style={{ color: theme.primary, fontSize: 22 }}>
-                {latest?.waistCm ?? '—'}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Taille (cm)
-              </ThemedText>
-            </Card>
+            <MetricTile value={leanMass != null ? String(leanMass) : null} label="Masse maigre (kg)" />
+            <MetricTile
+              value={latest?.bodyFatPct != null ? `${latest.bodyFatPct}%` : null}
+              label="Masse grasse"
+            />
+            <MetricTile value={latest?.waistCm != null ? String(latest.waistCm) : null} label="Taille (cm)" />
           </View>
 
           <Card style={styles.infoRow}>
@@ -102,26 +106,40 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: MaxContentWidth,
-    paddingHorizontal: Spacing.four,
-    paddingBottom: BottomTabInset + Spacing.four,
-    gap: Spacing.three,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: BottomTabInset + Spacing.lg,
+    gap: Spacing.base,
   },
-  title: { fontSize: 28, lineHeight: 32 },
   subtitle: { lineHeight: 20 },
   photo: {
     width: '100%',
-    aspectRatio: 1,
-    borderRadius: Radius.large,
+    aspectRatio: 1.4,
+    borderRadius: Radius.card,
   },
   photoPlaceholder: {
     width: '100%',
-    aspectRatio: 1,
-    borderRadius: Radius.large,
+    aspectRatio: 1.4,
+    borderRadius: Radius.card,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: Spacing.sm,
   },
-  metricsRow: { flexDirection: 'row', gap: Spacing.two },
-  metricTile: { flex: 1, alignItems: 'center', gap: 4 },
-  infoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  cta: { marginTop: Spacing.two },
+  photoPlaceholderText: {
+    paddingHorizontal: Spacing.xl,
+    textAlign: 'center',
+  },
+  metricsRow: { flexDirection: 'row', gap: Spacing.sm },
+  metricTile: { flex: 1, alignItems: 'center', gap: 4, minHeight: 86, justifyContent: 'center' },
+  metricTileEmpty: {
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderRadius: Radius.card,
+    paddingHorizontal: Spacing.xs,
+  },
+  metricEmptyLabel: { textAlign: 'center' },
+  metricValue: { fontSize: 22, lineHeight: 26 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  cta: { marginTop: Spacing.sm },
 });

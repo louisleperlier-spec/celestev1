@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Card } from '@/components/card';
 import { ThemedText } from '@/components/themed-text';
 import type { MissionTemplate } from '@/constants/missions';
-import { Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing, withAlpha } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { CheckInStatus } from '@/lib/types';
 
@@ -15,50 +15,67 @@ type Props = {
 };
 
 const STATUS_ICON: Record<CheckInStatus, keyof typeof Ionicons.glyphMap> = {
-  missed: 'close-circle',
-  partial: 'remove-circle',
-  done: 'checkmark-circle',
+  missed: 'close',
+  partial: 'remove',
+  done: 'checkmark',
 };
 
 export function MissionCard({ mission, status, onPress }: Props) {
   const theme = useTheme();
   const statusColor =
-    status === 'done' ? theme.success : status === 'partial' ? theme.warning : status === 'missed' ? theme.danger : theme.textSecondary;
+    status === 'done' ? theme.success : status === 'partial' ? theme.warning : theme.danger;
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} style={({ pressed }) => pressed && styles.pressed}>
       <Card style={styles.card}>
-        <View style={[styles.icon, { backgroundColor: theme.backgroundElement }]}>
-          <Ionicons name={mission.icon} size={20} color={theme.text} />
+        <View style={[styles.icon, { backgroundColor: withAlpha(theme.primary, 0.12) }]}>
+          <Ionicons name={mission.icon} size={18} color={theme.primary} />
         </View>
         <View style={styles.middle}>
-          <ThemedText type="smallBold">{mission.title}</ThemedText>
+          <ThemedText type="smallBold" style={styles.title}>
+            {mission.title}
+          </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {mission.subtitle}
           </ThemedText>
         </View>
-        <Ionicons
-          name={status ? STATUS_ICON[status] : 'ellipse-outline'}
-          size={26}
-          color={statusColor}
-        />
+        <View
+          style={[
+            styles.status,
+            status
+              ? { backgroundColor: statusColor, borderColor: statusColor }
+              : { backgroundColor: 'transparent', borderColor: theme.borderStrong },
+          ]}>
+          {status && <Ionicons name={STATUS_ICON[status]} size={16} color={theme.onPrimary} />}
+        </View>
       </Card>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressed: { opacity: 0.85 },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.three,
+    gap: Spacing.md,
+    paddingVertical: Spacing.md,
   },
   icon: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.medium,
+    width: 36,
+    height: 36,
+    borderRadius: Radius.tile,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: { fontSize: 15 },
   middle: { flex: 1, gap: 2 },
+  status: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
