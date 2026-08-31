@@ -10,9 +10,11 @@ import { useTheme } from '@/features/premium/theme-context';
 import { Button } from '@/ui/components/Button';
 import { Card } from '@/ui/components/Card';
 import { DrinkIcon } from '@/ui/components/DrinkIcon';
+import { GradeBadge } from '@/ui/components/GradeBadge';
 import { MetricCard } from '@/ui/components/MetricCard';
 import { Screen } from '@/ui/components/Screen';
 import { ScoreRing } from '@/ui/components/ScoreRing';
+import { Sparkline } from '@/ui/components/Sparkline';
 
 import { useHydration } from './hydration-context';
 
@@ -20,13 +22,25 @@ export function HomeView() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
-  const { todayStats, addEntry, healthSupported, settings, syncing, lastSyncedAt, enableHealthSync, syncWithHealth } =
-    useHydration();
+  const {
+    todayStats,
+    addEntry,
+    healthSupported,
+    settings,
+    syncing,
+    lastSyncedAt,
+    enableHealthSync,
+    syncWithHealth,
+    statsForLastDays,
+  } = useHydration();
 
   const quickAdd = (volumeMl: number) => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     void addEntry(volumeMl, 'water');
   };
+
+  const weekStats = statsForLastDays(7);
+  const weekScores = weekStats.map((d) => (d.entries.length > 0 ? d.globalScore : 0));
 
   return (
     <Screen>
@@ -64,6 +78,10 @@ export function HomeView() {
               <DrinkIcon type="water" size={22} />
               <Text style={styles.quickAddText}>{t('home.addBottle')}</Text>
             </Pressable>
+            <Pressable style={styles.quickAddButton} onPress={() => quickAdd(750)}>
+              <DrinkIcon type="water" size={22} />
+              <Text style={styles.quickAddText}>{t('home.addLarge')}</Text>
+            </Pressable>
             <Pressable style={styles.quickAddButton} onPress={() => router.push('/add-entry')}>
               <SymbolView name="plus.circle.fill" size={22} tintColor={theme.accent} />
               <Text style={styles.quickAddText}>{t('home.addCustom')}</Text>
@@ -71,17 +89,47 @@ export function HomeView() {
           </View>
         </View>
 
+        <Pressable onPress={() => router.push('/trends')}>
+          <Card style={styles.scoreSummaryCard}>
+            <View style={styles.scoreSummaryText}>
+              <Text style={styles.scoreSummaryLabel}>{t('home.scoreSummaryTitle')}</Text>
+              <View style={styles.scoreSummaryValueRow}>
+                <Text style={styles.scoreSummaryValue}>{todayStats.globalScore}</Text>
+                <Text style={styles.scoreSummarySuffix}>/100</Text>
+                <GradeBadge grade={todayStats.globalGrade} size="sm" />
+              </View>
+            </View>
+            <Sparkline values={weekScores} color={theme.accent} width={90} height={28} />
+          </Card>
+        </Pressable>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('home.metricsTitle')}</Text>
           <View style={styles.metricsGrid}>
-            <MetricCard label={t('metrics.volume')} score={todayStats.metrics.volume.score} grade={todayStats.metrics.volume.grade} />
             <MetricCard
+              metricId="volume"
+              label={t('metrics.volume')}
+              score={todayStats.metrics.volume.score}
+              grade={todayStats.metrics.volume.grade}
+            />
+            <MetricCard
+              metricId="regularity"
               label={t('metrics.regularity')}
               score={todayStats.metrics.regularity.score}
               grade={todayStats.metrics.regularity.grade}
             />
-            <MetricCard label={t('metrics.timing')} score={todayStats.metrics.timing.score} grade={todayStats.metrics.timing.grade} />
-            <MetricCard label={t('metrics.quality')} score={todayStats.metrics.quality.score} grade={todayStats.metrics.quality.grade} />
+            <MetricCard
+              metricId="timing"
+              label={t('metrics.timing')}
+              score={todayStats.metrics.timing.score}
+              grade={todayStats.metrics.timing.grade}
+            />
+            <MetricCard
+              metricId="quality"
+              label={t('metrics.quality')}
+              score={todayStats.metrics.quality.score}
+              grade={todayStats.metrics.quality.grade}
+            />
           </View>
         </View>
 
@@ -190,6 +238,38 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  scoreSummaryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  scoreSummaryText: {
+    gap: 4,
+  },
+  scoreSummaryLabel: {
+    color: Colors.textMuted,
+    fontSize: FontSize.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  scoreSummaryValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  scoreSummaryValue: {
+    color: Colors.text,
+    fontFamily: Fonts.mono,
+    fontSize: FontSize.title2,
+    fontWeight: '700',
+  },
+  scoreSummarySuffix: {
+    color: Colors.textMuted,
+    fontFamily: Fonts.mono,
+    fontSize: FontSize.footnote,
+    marginLeft: -4,
   },
   metricsGrid: {
     flexDirection: 'row',

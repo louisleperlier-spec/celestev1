@@ -145,6 +145,7 @@ export function TrendsView() {
                 {(Object.keys(metricAverages) as MetricId[]).map((id) => (
                   <MetricCard
                     key={id}
+                    metricId={id}
                     label={t(`metrics.${id}`)}
                     score={metricAverages[id]}
                     grade={gradeFromScore(metricAverages[id])}

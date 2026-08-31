@@ -23,6 +23,8 @@ export default {
     quickAdd: 'Quick add',
     addGlass: 'Glass · 250 ml',
     addBottle: 'Bottle · 500 ml',
+    addLarge: 'Large · 750 ml',
+    scoreSummaryTitle: "Today's score",
     addCustom: 'Custom',
     metricsTitle: 'Metric breakdown',
     healthTitle: 'Apple Health',
