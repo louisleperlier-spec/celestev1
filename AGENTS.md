@@ -41,22 +41,26 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 
 ## Design
 
-- **Fond clair et doux, mascotte, un seul accent affiché à la fois** : identité repensée autour
-  d'une goutte souriante (`src/ui/components/Mascot.tsx`, SVG, sans asset externe) sur un fond
-  lavande pâle (`#F3F0FC`) — c'est l'identité de marque actuelle, pas un thème parmi d'autres.
-  `src/constants/theme.ts` reste la source des tokens invariants (fond, surfaces, texte, notes
-  A/B/C, couleur fixe de la mascotte) ; **l'accent seul varie** selon le thème choisi (premium),
-  via `useTheme()` (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur.
-  Lavande est l'accent par défaut (gratuit) ; Menthe/Azur/Corail/Violet sont réservés au premium
+- **Fond noir, un seul accent affiché à la fois** : c'est l'identité de marque de Lume. Une
+  refonte claire/lavande/mascotte a existé brièvement en cours de session puis a été **annulée
+  sur demande explicite** — ne pas la réintroduire sans qu'on le redemande clairement.
+  `src/constants/theme.ts` reste la source des tokens invariants (fond noir, surfaces, texte,
+  notes A/B/C/D) ; **l'accent seul varie** selon le thème choisi (premium), via `useTheme()`
+  (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur. Menthe (vert) est
+  l'accent par défaut (gratuit) ; Azur/Corail/Violet sont réservés au premium
   (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur dans un
   composant.
 - **`theme.accentText`** : chaque thème d'accent définit sa propre couleur de texte lisible
-  dessus (`onAccent` dans `themes.ts` — blanc sur les accents saturés comme Lavande, sombre sur
-  les accents clairs comme Menthe). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond
-  `theme.accent` — toujours `theme.accentText`.
-- Les couleurs A/B/C (`gradeA/B/C`) restent fixes quel que soit le thème — le vert de succès
-  ne doit jamais changer de sens.
-- SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI.
+  dessus (`onAccent` dans `themes.ts` — sombre sur les accents clairs comme Menthe, blanc sur les
+  accents saturés). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond `theme.accent` —
+  toujours `theme.accentText`.
+- **Notes A (≥80) / B (≥60) / C (≥40) / D (<40)** (`gradeA/B/C/D` dans `theme.ts`) restent fixes
+  quel que soit le thème d'accent — la grammaire de couleur des notes ne doit jamais changer de
+  sens. La mascotte goutte (`src/ui/components/Mascot.tsx`) reste dans le code (onboarding) mais
+  n'est plus l'identité centrale de l'app.
+- SF Symbols (`expo-symbols`) partout, jamais d'emoji dans l'UI. Ils ne rendent rien sur le web
+  (no-op silencieux hors plateforme native) — normal en testant via `expo export --platform web`,
+  sans impact sur le vrai build iOS.
 - **Exception scoped au Coach** (`src/features/coach/coach-theme.ts`) : les cartes recommandées
   (recette/activité/récupération) ont une couleur par catégorie + une illustration
   (`assets/coach/*.jpg`, fournies par l'utilisateur, pas de la photo de stock) au lieu du
@@ -64,9 +68,8 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   uniquement ; le reste de l'app (Accueil, Journal, Tendances, Réglages, Paywall) reste
   mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_IMAGE`/`HYDRATION_IMAGE`/
   `STREAK_COLOR` en dehors de `src/features/coach/`.
-- Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) restent
-  sur l'ancienne identité (fond noir) — pas encore régénérés avec la nouvelle DA claire/mascotte.
-  À refaire visuellement avant la sortie publique (hors portée d'une session code-only).
+- Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) sont déjà
+  sur fond noir — cohérent avec l'identité actuelle.
 
 ## Onboarding (premier lancement)
 
@@ -132,8 +135,20 @@ obligatoire d'App Store Connect (formulaire de contact via Netlify Forms, aucun 
 
 Le moteur pur est dans `src/features/hydration/scoring.ts` (zéro dépendance React, testable
 isolément) : 4 métriques (Volume 40 %, Régularité 20 %, Timing 15 %, Qualité 25 %) → une note
-0-100 par métrique + lettre A (≥85) / B (≥60) / C, combinées en une note globale pondérée.
-Voir le README pour le détail de chaque métrique.
+0-100 par métrique + lettre A (≥80) / B (≥60) / C (≥40) / D (<40), combinées en une note globale
+pondérée. Voir le README pour le détail de chaque métrique.
+
+## Coach — défi hebdo, récompenses, routines
+
+- **Défi de la semaine** (`coach-view.tsx`) : nombre réel de jours (sur les 7 derniers) où
+  l'objectif quotidien a été atteint (`hydratingMl >= goalMl`) — jamais une progression inventée.
+- **Récompenses** : paliers de série (7/15/30 jours) basés sur `computeStreak` (`streak.ts`,
+  déjà utilisé pour le badge flamme). Le palier 7 jours est calculable gratuitement (fenêtre de 7
+  jours) ; 15 et 30 jours demandent l'historique 30 jours, donc **verrouillés en Premium** comme
+  Tendances 30 jours — jamais affichés "débloqués" sans que la donnée réelle existe.
+- **Routines recommandées** (`routines.ts` + `routine-view.tsx`, route `/routine?id=`) : liste
+  d'étapes génériques de bien-être (pas de promesse médicale), cochables localement (pas
+  persistées) — même esprit que `content.ts`, pas un catalogue.
 
 ## Vérif après toute modif
 

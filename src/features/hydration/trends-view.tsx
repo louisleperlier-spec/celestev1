@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/features/premium/theme-context';
@@ -19,6 +20,15 @@ const GRADE_COLOR: Record<Grade, string> = {
   A: Colors.gradeA,
   B: Colors.gradeB,
   C: Colors.gradeC,
+  D: Colors.gradeD,
+};
+
+const GRADE_ORDER: Grade[] = ['A', 'B', 'C', 'D'];
+const GRADE_RANGE_LABEL: Record<Grade, string> = {
+  A: '80-100',
+  B: '60-79',
+  C: '40-59',
+  D: '<40',
 };
 
 const PERIODS = [7, 30] as const;
@@ -37,8 +47,14 @@ export function TrendsView() {
   const averageScore = activeDays.length
     ? Math.round(activeDays.reduce((sum, d) => sum + d.globalScore, 0) / activeDays.length)
     : 0;
-  const goodDays = activeDays.filter((d) => d.globalGrade !== 'C').length;
+  const goodDays = activeDays.filter((d) => d.globalGrade === 'A' || d.globalGrade === 'B').length;
   const streak = useMemo(() => computeStreak(days), [days]);
+
+  const gradeCounts = useMemo(() => {
+    const counts: Record<Grade, number> = { A: 0, B: 0, C: 0, D: 0 };
+    for (const d of activeDays) counts[d.globalGrade]++;
+    return counts;
+  }, [activeDays]);
 
   const scoreData: BarChartDatum[] = days.map((d) => ({
     key: d.date,
@@ -136,10 +152,76 @@ export function TrendsView() {
                 ))}
               </View>
             </View>
+
+            <Card style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{t('trends.gradeDistribution')}</Text>
+              <GradeDistributionRing counts={gradeCounts} />
+            </Card>
           </>
         )}
       </ScrollView>
     </Screen>
+  );
+}
+
+function GradeDistributionRing({ counts }: { counts: Record<Grade, number> }) {
+  const { t } = useTranslation();
+  const total = GRADE_ORDER.reduce((sum, g) => sum + counts[g], 0);
+  const size = 140;
+  const strokeWidth = 20;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const center = size / 2;
+
+  let cumulative = 0;
+  const segments = GRADE_ORDER.filter((g) => counts[g] > 0).map((g) => {
+    const fraction = total > 0 ? counts[g] / total : 0;
+    const length = fraction * circumference;
+    const offset = cumulative;
+    cumulative += length;
+    return { grade: g, length, offset };
+  });
+
+  return (
+    <View style={styles.distributionRow}>
+      <View style={{ width: size, height: size }}>
+        <Svg width={size} height={size}>
+          <Circle cx={center} cy={center} r={radius} stroke={Colors.surfaceElevated} strokeWidth={strokeWidth} fill="none" />
+          {segments.map((seg) => (
+            <Circle
+              key={seg.grade}
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={GRADE_COLOR[seg.grade]}
+              strokeWidth={strokeWidth}
+              fill="none"
+              strokeDasharray={`${seg.length} ${circumference - seg.length}`}
+              strokeDashoffset={-seg.offset}
+              rotation={-90}
+              origin={`${center}, ${center}`}
+            />
+          ))}
+        </Svg>
+        <View style={StyleSheet.absoluteFill}>
+          <View style={styles.distributionCenter}>
+            <Text style={styles.distributionTotal}>{total}</Text>
+            <Text style={styles.distributionTotalLabel}>{t('trends.daysLogged')}</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.legend}>
+        {GRADE_ORDER.map((g) => (
+          <View key={g} style={styles.legendRow}>
+            <View style={[styles.legendDot, { backgroundColor: GRADE_COLOR[g] }]} />
+            <Text style={styles.legendLabel}>
+              {g} ({GRADE_RANGE_LABEL[g]})
+            </Text>
+            <Text style={styles.legendCount}>{counts[g]}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
@@ -152,7 +234,7 @@ function computeStreak(daysAscending: DayStats[]): number {
   let streak = 0;
   for (let i = daysAscending.length - 1; i >= 0; i--) {
     const day = daysAscending[i];
-    if (day.entries.length > 0 && day.globalGrade !== 'C') {
+    if (day.entries.length > 0 && (day.globalGrade === 'A' || day.globalGrade === 'B')) {
       streak += 1;
     } else {
       break;
@@ -254,5 +336,51 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textAlign: 'center',
     paddingVertical: Spacing.four,
+  },
+  distributionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.four,
+  },
+  distributionCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  distributionTotal: {
+    color: Colors.text,
+    fontFamily: Fonts.mono,
+    fontSize: FontSize.title2,
+    fontWeight: '700',
+  },
+  distributionTotalLabel: {
+    color: Colors.textMuted,
+    fontSize: 10,
+    textAlign: 'center',
+  },
+  legend: {
+    flex: 1,
+    gap: Spacing.two,
+  },
+  legendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  legendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: Radius.full,
+  },
+  legendLabel: {
+    flex: 1,
+    color: Colors.textSecondary,
+    fontSize: FontSize.footnote,
+  },
+  legendCount: {
+    color: Colors.text,
+    fontSize: FontSize.footnote,
+    fontWeight: '700',
+    fontFamily: Fonts.mono,
   },
 });

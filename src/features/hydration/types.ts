@@ -40,7 +40,7 @@ export interface CustomDrink {
   lowersQuality: boolean;
 }
 
-export type Grade = 'A' | 'B' | 'C';
+export type Grade = 'A' | 'B' | 'C' | 'D';
 
 export interface MetricScore {
   score: number; // 0-100

@@ -11,12 +11,12 @@ note globale sur 100, synchronisée avec Apple Santé.
 - **Journal** — l'historique des prises d'eau groupées par jour, avec le total et la note du
   jour ; les entrées venues d'Apple Santé sont marquées et non supprimables depuis Lume.
 - **Tendances** — score moyen, jours "bons" (≥ B), série en cours, évolution du score et du
-  volume sur 7 ou 30 jours, moyenne par métrique.
+  volume sur 7 ou 30 jours, moyenne par métrique, répartition des notes A/B/C/D.
 
 ## La note
 
 Le moteur (`src/features/hydration/scoring.ts`, pur et sans dépendance React) calcule 4
-métriques, chacune notée 0-100 puis en lettre (A ≥ 85, B ≥ 60, sinon C) :
+métriques, chacune notée 0-100 puis en lettre (A ≥ 80, B ≥ 60, C ≥ 40, sinon D) :
 
 | Métrique | Poids | Ce qu'elle mesure |
 |---|---|---|

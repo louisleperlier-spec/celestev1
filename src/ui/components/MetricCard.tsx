@@ -10,6 +10,7 @@ const GRADE_FILL: Record<Grade, string> = {
   A: Colors.gradeA,
   B: Colors.gradeB,
   C: Colors.gradeC,
+  D: Colors.gradeD,
 };
 
 interface MetricCardProps {

@@ -8,6 +8,7 @@ const GRADE_COLORS: Record<Grade, { fg: string; bg: string }> = {
   A: { fg: Colors.gradeA, bg: Colors.gradeASoft },
   B: { fg: Colors.gradeB, bg: Colors.gradeBSoft },
   C: { fg: Colors.gradeC, bg: Colors.gradeCSoft },
+  D: { fg: Colors.gradeD, bg: Colors.gradeDSoft },
 };
 
 interface GradeBadgeProps {

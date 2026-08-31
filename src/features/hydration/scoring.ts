@@ -25,12 +25,13 @@ export const WEIGHTS = {
   quality: 0.25,
 } as const;
 
-const GRADE_THRESHOLDS = { A: 85, B: 60 } as const;
+const GRADE_THRESHOLDS = { A: 80, B: 60, C: 40 } as const;
 
 export function gradeFromScore(score: number): Grade {
   if (score >= GRADE_THRESHOLDS.A) return 'A';
   if (score >= GRADE_THRESHOLDS.B) return 'B';
-  return 'C';
+  if (score >= GRADE_THRESHOLDS.C) return 'C';
+  return 'D';
 }
 
 function toMetric(score: number): MetricScore {
