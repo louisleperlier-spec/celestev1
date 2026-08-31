@@ -11,6 +11,8 @@ import { HydrationProvider } from '@/features/hydration/hydration-context';
 import { shouldShowOnboarding } from '@/features/onboarding/onboarding-storage';
 import { PremiumProvider } from '@/features/premium/premium-context';
 import { ThemeProvider } from '@/features/premium/theme-context';
+import { AppConvexProvider } from '@/features/team/convex-provider';
+import { TeamProvider } from '@/features/team/team-context';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -39,18 +41,22 @@ export default function RootLayout() {
       <ThemeProvider>
         <PremiumProvider>
           <HydrationProvider>
-            <StatusBar style="dark" />
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
-              <Stack.Screen name="add-entry" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="coach-content" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="coach-list" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="sleep-dashboard" options={{ presentation: 'modal' }} />
-              <Stack.Screen name="score-info" options={{ presentation: 'modal' }} />
-            </Stack>
+            <AppConvexProvider>
+              <TeamProvider>
+                <StatusBar style="dark" />
+                <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+                  <Stack.Screen name="add-entry" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="coach-content" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="coach-list" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="sleep-dashboard" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="score-info" options={{ presentation: 'modal' }} />
+                </Stack>
+              </TeamProvider>
+            </AppConvexProvider>
           </HydrationProvider>
         </PremiumProvider>
       </ThemeProvider>
