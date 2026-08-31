@@ -299,7 +299,7 @@ function RevealStep({ goalFocus, estimatedGoal }: { goalFocus: GoalFocus | null;
 
   return (
     <View style={styles.centered}>
-      <Mascot pose="sit" size={96} />
+      <Mascot pose="thumbsup" size={96} />
       <Text style={[styles.subtitle, { color: theme.textSecondary, marginTop: Spacing.two }]}>
         {t('onboarding.reveal.title')}
       </Text>

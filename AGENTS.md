@@ -52,9 +52,12 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   jamais `Colors.accent*` en dur. Menthe (vert `#2ECC71`) est l'accent par défaut (gratuit) ;
   Azur/Corail/Violet sont réservés au premium (`src/features/premium/themes.ts`). Toute couleur
   passe par un token, jamais en dur dans un composant.
-- **Mascotte** (`src/ui/components/Mascot.tsx`, SVG, couleur bleue fixe `Colors.mascot`,
-  indépendante de l'accent) : présente sur l'anneau de score (Accueil), l'écran Ajouter une
-  boisson, l'avatar du Coach et l'écran Défi de la semaine. Poses `wave`/`sit`/`sleep`.
+- **Mascotte** (`src/ui/components/Mascot.tsx`) : illustrations fournies par l'utilisateur
+  (`assets/mascot/*.webp`, 8 poses détourées — pas un rendu généré ni de la photo de stock), pas
+  du SVG maison. Poses utilisées : `wave` (Bienvenue onboarding, Défi encourageant),
+  `thumbsup` (Révélation onboarding, Ajouter une boisson), `sparkle` (anneau Accueil, avatar
+  Coach), `heart` (Défi quand la semaine est réussie). `sunglasses`/`workout`/`sleep` sont
+  disponibles dans les assets mais pas encore branchés à un écran.
 - **`theme.accentText`** : chaque thème d'accent définit sa propre couleur de texte lisible
   dessus (`onAccent` dans `themes.ts`). Ne jamais coder `'#000000'`/`'#FFFFFF'` en dur sur un fond
   `theme.accent` — toujours `theme.accentText`.

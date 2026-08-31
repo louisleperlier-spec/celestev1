@@ -40,10 +40,6 @@ export const Colors = {
   gradeCSoft: 'rgba(244, 184, 76, 0.16)',
   gradeD: '#FF6B5E',
   gradeDSoft: 'rgba(255, 107, 94, 0.14)',
-
-  // Mascotte Lume — couleur fixe, indépendante du thème d'accent choisi.
-  mascot: '#3B9EFF',
-  mascotStrong: '#1F7FE0',
 } as const;
 
 export type ColorToken = keyof typeof Colors;

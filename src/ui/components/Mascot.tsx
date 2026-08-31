@@ -1,78 +1,51 @@
 import React from 'react';
-import Svg, { Circle, Ellipse, Path } from 'react-native-svg';
-
-import { Colors } from '@/constants/theme';
+import { Image, ImageSourcePropType } from 'react-native';
 
 /**
- * Mascotte Lume — une goutte souriante, couleur fixe (indépendante du thème d'accent choisi),
- * au même titre que les notes A/B/C. Poses volontairement simples (formes géométriques), pas
- * d'asset externe à charger.
+ * Mascotte Lume — illustrations fournies par l'utilisateur (assets/mascot/*.webp), pas de la
+ * photo de stock ni un rendu généré à la volée. Chaque pose a son propre ratio largeur/hauteur
+ * (ce ne sont pas des carrés) ; `size` fixe la hauteur affichée, la largeur suit le ratio.
  */
 
-export type MascotPose = 'wave' | 'sit' | 'sleep';
+export type MascotPose = 'wave' | 'heart' | 'bottle' | 'sunglasses' | 'workout' | 'sleep' | 'sparkle' | 'thumbsup';
+
+const SOURCES: Record<MascotPose, ImageSourcePropType> = {
+  wave: require('../../../assets/mascot/wave.webp'),
+  heart: require('../../../assets/mascot/heart.webp'),
+  bottle: require('../../../assets/mascot/bottle.webp'),
+  sunglasses: require('../../../assets/mascot/sunglasses.webp'),
+  workout: require('../../../assets/mascot/workout.webp'),
+  sleep: require('../../../assets/mascot/sleep.webp'),
+  sparkle: require('../../../assets/mascot/sparkle.webp'),
+  thumbsup: require('../../../assets/mascot/thumbsup.webp'),
+};
+
+// Ratio largeur/hauteur de chaque image source (rognées, pas carrées).
+const ASPECT_RATIO: Record<MascotPose, number> = {
+  wave: 352 / 460,
+  heart: 371 / 460,
+  bottle: 359 / 460,
+  sunglasses: 362 / 460,
+  workout: 322 / 460,
+  sleep: 345 / 460,
+  sparkle: 345 / 460,
+  thumbsup: 349 / 460,
+};
 
 interface MascotProps {
   pose?: MascotPose;
+  /** Hauteur affichée en points — la largeur suit le ratio propre à la pose. */
   size?: number;
 }
 
-export function Mascot({ pose = 'wave', size = 120 }: MascotProps) {
+export function Mascot({ pose = 'sparkle', size = 120 }: MascotProps) {
+  const ratio = ASPECT_RATIO[pose];
   return (
-    <Svg width={size} height={size} viewBox="0 0 120 120">
-      {/* Corps */}
-      <Path
-        d="M60 8 C60 8 24 52 24 76 C24 98.6 40.1 112 60 112 C79.9 112 96 98.6 96 76 C96 52 60 8 60 8 Z"
-        fill={Colors.mascot}
-      />
-      <Path
-        d="M60 8 C60 8 24 52 24 76 C24 98.6 40.1 112 60 112 L60 8 Z"
-        fill={Colors.mascotStrong}
-        opacity={0.16}
-      />
-
-      {/* Joues */}
-      <Circle cx={40} cy={82} r={6} fill="#FFFFFF" opacity={0.45} />
-      <Circle cx={80} cy={82} r={6} fill="#FFFFFF" opacity={0.45} />
-
-      {pose === 'sleep' ? (
-        <>
-          <Path d="M42 72 q6 -6 12 0" stroke="#1C2B26" strokeWidth={3} strokeLinecap="round" fill="none" />
-          <Path d="M66 72 q6 -6 12 0" stroke="#1C2B26" strokeWidth={3} strokeLinecap="round" fill="none" />
-          <Path d="M52 92 q8 5 16 0" stroke="#1C2B26" strokeWidth={3} strokeLinecap="round" fill="none" />
-        </>
-      ) : (
-        <>
-          <Circle cx={47} cy={72} r={4} fill="#1C2B26" />
-          <Circle cx={73} cy={72} r={4} fill="#1C2B26" />
-          <Path
-            d="M48 90 q12 12 24 0"
-            stroke="#1C2B26"
-            strokeWidth={3.5}
-            strokeLinecap="round"
-            fill="none"
-          />
-        </>
-      )}
-
-      {/* Bras */}
-      {pose === 'wave' && (
-        <>
-          <Path d="M28 78 C16 74 10 60 14 50" stroke={Colors.mascot} strokeWidth={9} strokeLinecap="round" fill="none" />
-          <Path d="M92 78 C104 70 106 58 100 50" stroke={Colors.mascot} strokeWidth={9} strokeLinecap="round" fill="none" />
-        </>
-      )}
-      {pose === 'sit' && (
-        <>
-          <Path d="M30 84 C22 90 20 98 26 102" stroke={Colors.mascot} strokeWidth={9} strokeLinecap="round" fill="none" />
-          <Path d="M90 84 C98 90 100 98 94 102" stroke={Colors.mascot} strokeWidth={9} strokeLinecap="round" fill="none" />
-        </>
-      )}
-      {pose === 'sleep' && (
-        <Path d="M40 96 C50 104 70 104 80 96" stroke={Colors.mascot} strokeWidth={9} strokeLinecap="round" fill="none" />
-      )}
-
-      {/* Reflet brillant */}
-      <Ellipse cx={44} cy={38} rx={7} ry={11} fill="#FFFFFF" opacity={0.55} />
-    </Svg>
+    <Image
+      source={SOURCES[pose]}
+      style={{ width: size * ratio, height: size }}
+      resizeMode="contain"
+      accessibilityIgnoresInvertColors
+    />
   );
 }

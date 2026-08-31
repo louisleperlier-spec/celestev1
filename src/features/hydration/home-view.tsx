@@ -70,7 +70,7 @@ export function HomeView() {
           <View style={styles.ringWrap}>
             <ScoreRing score={todayStats.globalScore} grade={todayStats.globalGrade} />
             <View style={styles.ringMascot}>
-              <Mascot pose="sit" size={40} />
+              <Mascot pose="sparkle" size={40} />
             </View>
           </View>
 

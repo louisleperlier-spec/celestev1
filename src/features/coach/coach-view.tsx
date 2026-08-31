@@ -142,7 +142,7 @@ export function CoachView() {
                 </View>
               )}
               <View style={styles.avatarCircle}>
-                <Mascot pose="sit" size={28} />
+                <Mascot pose="sparkle" size={28} />
               </View>
             </View>
           </View>

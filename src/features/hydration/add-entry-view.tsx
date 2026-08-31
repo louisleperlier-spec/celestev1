@@ -116,7 +116,7 @@ export function AddEntryView() {
             <Ellipse cx="80%" cy="16%" rx={26} ry={11} fill="#FFFFFF" opacity={0.5} />
             <Ellipse cx="60%" cy="30%" rx={20} ry={9} fill="#FFFFFF" opacity={0.4} />
           </Svg>
-          <Mascot pose="wave" size={110} />
+          <Mascot pose="thumbsup" size={110} />
           <View style={styles.volumeValueRow}>
             <Text style={styles.volumeValue}>{numericVolume}</Text>
             <Text style={styles.volumeUnit}>ml</Text>

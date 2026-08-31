@@ -54,7 +54,7 @@ export function ChallengeView() {
         <Text style={styles.heroTitle}>
           {isDoingWell ? t('coach.challenge.heroTitleGood') : t('coach.challenge.heroTitleEncourage')}
         </Text>
-        <Mascot pose={isDoingWell ? 'wave' : 'sit'} size={140} />
+        <Mascot pose={isDoingWell ? 'heart' : 'wave'} size={140} />
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
