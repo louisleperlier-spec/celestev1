@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import { ThemedText } from '@/components/themed-text';
@@ -53,7 +53,7 @@ export function ScoreRing({ value, size = 220, strokeWidth = 16 }: Props) {
         />
       </Svg>
       <View style={[StyleSheet.absoluteFill, styles.center]}>
-        <ThemedText type="display" style={{ color: theme.text }}>
+        <ThemedText type="display" style={[{ color: theme.text }, styles.number]}>
           {Math.round(animatedValue)}
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary" style={styles.suffix}>
@@ -71,5 +71,9 @@ const styles = StyleSheet.create({
   },
   suffix: {
     marginTop: 2,
+  },
+  number: {
+    fontFamily: Platform.select({ ios: 'ui-rounded', default: undefined }),
+    fontVariant: ['tabular-nums'],
   },
 });

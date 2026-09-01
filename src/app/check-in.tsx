@@ -62,6 +62,8 @@ export default function CheckInScreen() {
           <View style={{ width: 26 }} />
         </View>
 
+        <View style={styles.spacer} />
+
         <View style={styles.body}>
           <ThemedText style={styles.question}>Comment s&apos;est passée ta mission ?</ThemedText>
 
@@ -114,14 +116,16 @@ export default function CheckInScreen() {
               ]}
             />
           </View>
-
-          <PillButton
-            title="Valider"
-            onPress={handleValidate}
-            disabled={!status || saving}
-            style={styles.cta}
-          />
         </View>
+
+        <View style={styles.spacer} />
+
+        <PillButton
+          title="Valider"
+          onPress={handleValidate}
+          disabled={!status || saving}
+          style={styles.cta}
+        />
       </SafeAreaView>
     </ThemedView>
   );
@@ -142,7 +146,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.sm,
   },
-  body: { alignItems: 'center', gap: Spacing.lg, paddingTop: Spacing.base },
+  spacer: { flex: 1 },
+  body: { alignItems: 'center', gap: Spacing.lg },
   question: { fontSize: 18, textAlign: 'center' },
   missionBlock: { alignItems: 'center', gap: Spacing.xs },
   missionIcon: {
@@ -174,5 +179,5 @@ const styles = StyleSheet.create({
     minHeight: 70,
     textAlignVertical: 'top',
   },
-  cta: { alignSelf: 'stretch' },
+  cta: { alignSelf: 'stretch', marginBottom: Spacing.sm },
 });

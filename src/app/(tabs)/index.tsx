@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '@/components/card';
 import { PillBadge } from '@/components/pill-badge';
 import { PillarBar } from '@/components/pillar-bar';
+import { PillButton } from '@/components/pill-button';
 import { ScoreRing } from '@/components/score-ring';
 import { StreakRow } from '@/components/streak-row';
 import { ThemedText } from '@/components/themed-text';
@@ -18,6 +20,7 @@ import { computeCurrentStreak, computeDayScore } from '@/lib/score';
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const { checkIns } = useCheckIns();
 
   const today = useMemo(() => new Date(), []);
@@ -66,6 +69,14 @@ export default function HomeScreen() {
               ))}
             </View>
           </Card>
+
+          <PillButton
+            title="Lancer un scan"
+            icon="scan"
+            variant="secondary"
+            onPress={() => router.push('/add-scan')}
+            style={styles.scanCta}
+          />
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
@@ -106,5 +117,8 @@ const styles = StyleSheet.create({
   },
   bars: {
     gap: Spacing.base,
+  },
+  scanCta: {
+    alignSelf: 'stretch',
   },
 });

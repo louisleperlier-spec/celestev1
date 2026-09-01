@@ -84,7 +84,10 @@ export default function ProgresScreen() {
                 <View style={styles.legend}>
                   {PILLARS.map((p) => (
                     <View key={p.id} style={styles.legendRow}>
-                      <ThemedText type="small">{p.label}</ThemedText>
+                      <View style={styles.legendLeft}>
+                        <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
+                        <ThemedText type="small">{p.label}</ThemedText>
+                      </View>
                       <ThemedText type="smallBold">{todayScore.byPillar[p.id]}</ThemedText>
                     </View>
                   ))}
@@ -155,7 +158,9 @@ const styles = StyleSheet.create({
   toggleBtn: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: Radius.pill },
   radarCard: { alignItems: 'center', gap: Spacing.base },
   legend: { alignSelf: 'stretch', gap: 4 },
-  legendRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 },
+  legendRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4 },
+  legendLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  legendDot: { width: 8, height: 8, borderRadius: 4 },
   empty: { textAlign: 'center', paddingVertical: Spacing.lg, lineHeight: 20 },
   scanRow: { gap: Spacing.sm },
   scanValues: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.base },
