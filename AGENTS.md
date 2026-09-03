@@ -71,12 +71,15 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
   (no-op silencieux hors plateforme native) — normal en testant via `expo export --platform web`,
   sans impact sur le vrai build iOS.
 - **Exception scoped au Coach** (`src/features/coach/coach-theme.ts`) : les cartes recommandées
-  (recette/activité/récupération) ont une couleur par catégorie + une illustration
-  (`assets/coach/*.jpg`, fournies par l'utilisateur, pas de la photo de stock) au lieu du
-  mono-accent strict. C'est une dérogation volontaire et délimitée, décidée pour ce tab
+  (recette/activité/récupération) ont une couleur par catégorie + une icône SF Symbol
+  (`CATEGORY_ICON`) au lieu du mono-accent strict. Les anciennes photos `assets/coach/*.jpg`
+  (fournies par l'utilisateur) ont été retirées du code — leur mélange de styles disparates
+  (photo réaliste, art abstrait, halo vert) lisait comme de l'illustration IA générique plutôt
+  que comme une identité Lume ; des tuiles plates teintées + icône sont plus sobres et cohérentes
+  avec le reste de l'app. C'est une dérogation volontaire et délimitée, décidée pour ce tab
   uniquement ; le reste de l'app (Accueil, Journal, Tendances, Réglages, Paywall) reste
-  mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_IMAGE`/`HYDRATION_IMAGE`/
-  `STREAK_COLOR` en dehors de `src/features/coach/`.
+  mono-accent. Ne pas réutiliser `CATEGORY_TINT`/`CATEGORY_ICON`/`STREAK_COLOR` en dehors de
+  `src/features/coach/`.
 - Icône d'app, écran de démarrage (splash) et icônes Android (`assets/images/*.png`) sont
   restées sur l'ancienne identité (fond noir) à travers les changements de thème — pas encore
   régénérées pour la DA claire actuelle. À refaire visuellement avant la sortie publique (hors

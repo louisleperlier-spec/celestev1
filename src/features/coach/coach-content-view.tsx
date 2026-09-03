@@ -1,14 +1,15 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
 import { Screen } from '@/ui/components/Screen';
 
 import { CATEGORY_LABEL_KEY, ContentItem } from './content';
-import { CATEGORY_IMAGE } from './coach-theme';
+import { CATEGORY_ICON, CATEGORY_TINT } from './coach-theme';
 
 interface CoachContentViewProps {
   item: ContentItem;
@@ -26,7 +27,13 @@ export function CoachContentView({ item }: CoachContentViewProps) {
           <Text style={styles.backLabel}>{t('coach.detailBack')}</Text>
         </Pressable>
 
-        <Image source={CATEGORY_IMAGE[item.category]} style={styles.banner} resizeMode="cover" />
+        <LinearGradient
+          colors={[CATEGORY_TINT[item.category], Colors.surface]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.banner}>
+          <SymbolView name={CATEGORY_ICON[item.category]} size={40} tintColor="#FFFFFF" />
+        </LinearGradient>
 
         <Text style={styles.category}>{t(CATEGORY_LABEL_KEY[item.category])}</Text>
         <Text style={styles.title}>{t(`coach.content.${item.id}.title`)}</Text>
@@ -63,6 +70,8 @@ const styles = StyleSheet.create({
     height: 160,
     borderRadius: Radius.lg,
     marginBottom: Spacing.three,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   category: {
     color: Colors.textMuted,

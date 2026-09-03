@@ -4,7 +4,7 @@ import { SymbolView } from 'expo-symbols';
 import type { SFSymbol } from 'sf-symbols-typescript';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontSize, Fonts, Radius, Spacing } from '@/constants/theme';
 import { useHydration } from '@/features/hydration/hydration-context';
@@ -18,7 +18,7 @@ import { Screen } from '@/ui/components/Screen';
 import { CoachCopy, getCoachCopy } from './ai-copy';
 import { loadBookmarks, toggleBookmark } from './bookmarks';
 import { CATEGORY_LABEL_KEY, ContentCategory, ContentItem, contentForCategory } from './content';
-import { CATEGORY_TINT, HYDRATION_IMAGE, STREAK_COLOR } from './coach-theme';
+import { CATEGORY_TINT, STREAK_COLOR } from './coach-theme';
 import { computeWeeklyInsight } from './insight';
 import { loadManualMissionState, saveManualMissionState } from './mission-state';
 import { PhotoCard } from './photo-card';
@@ -167,8 +167,8 @@ export function CoachView() {
                 <Text style={styles.heroAction}>{t(`coach.action.${action.kind}`, actionParams(action))}</Text>
                 <Text style={styles.heroExplanation}>{explanation}</Text>
               </View>
-              <View style={styles.heroImageWrap}>
-                <Image source={HYDRATION_IMAGE} style={styles.heroImage} resizeMode="cover" />
+              <View style={[styles.heroImageWrap, { backgroundColor: theme.accentSoft }]}>
+                <Mascot pose="thumbsup" size={64} />
               </View>
             </View>
             <View style={styles.heroFooter}>
@@ -456,11 +456,9 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: Radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
     overflow: 'hidden',
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
   },
   heroLabelRow: {
     flexDirection: 'row',
