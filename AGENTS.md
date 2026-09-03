@@ -1,8 +1,8 @@
 # Lume — repères pour toute IA qui travaille sur ce repo
 
-**Lume** est une app iOS de suivi d'hydratation : fond clair, mascotte goutte, accent vert,
-notes A/B/C/D par métrique + une note globale /100, 5 écrans (Accueil, Journal, Coach, Tendances,
-Équipe), synchro Apple Santé.
+**Lume** est une app iOS de suivi d'hydratation : fond très sombre façon dashboard premium,
+mascotte goutte, accent vert, notes A/B/C/D par métrique + une note globale /100, 5 écrans
+(Accueil, Journal, Coach, Tendances, Équipe), synchro Apple Santé.
 
 ## SDK Expo pinné
 
@@ -42,16 +42,19 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 
 ## Design
 
-- **Fond clair, mascotte, un seul accent affiché à la fois.** L'identité visuelle a oscillé
-  plusieurs fois en cours de session (noir/vert → lavande/mascotte → noir/vert → **clair/vert/
-  mascotte**, la version actuelle) — c'est la version en place tant qu'on ne redemande pas
-  explicitement un changement, mais ne pas supposer qu'elle est figée pour toujours.
-  `src/constants/theme.ts` reste la source des tokens invariants (fond clair `#F4F7FB`, surfaces
-  blanches, texte sombre, notes A/B/C/D, couleur fixe de la mascotte) ; **l'accent seul varie**
-  selon le thème choisi (premium), via `useTheme()` (`src/features/premium/theme-context.tsx`),
-  jamais `Colors.accent*` en dur. Menthe (vert `#2ECC71`) est l'accent par défaut (gratuit) ;
-  Azur/Corail/Violet sont réservés au premium (`src/features/premium/themes.ts`). Toute couleur
-  passe par un token, jamais en dur dans un composant.
+- **Fond très sombre (quasi noir), mascotte, un seul accent affiché à la fois.** L'identité
+  visuelle a oscillé plusieurs fois en cours de session (noir/vert → lavande/mascotte → noir/vert
+  → clair/vert/mascotte → **sombre/vert/mascotte "dashboard premium"**, la version actuelle,
+  inspirée d'une appli sportive de référence pour le style de cartes/paywall uniquement — jamais
+  les métriques sportives elles-mêmes, absentes de Lume) — c'est la version en place tant qu'on ne
+  redemande pas explicitement un changement, mais ne pas supposer qu'elle est figée pour toujours.
+  `src/constants/theme.ts` reste la source des tokens invariants (fond `#0A0B0D`, surfaces
+  `#17191D`/`#1F2226`, texte clair, notes A/B/C/D, couleur fixe de la mascotte) ; **l'accent seul
+  varie** selon le thème choisi (premium), via `useTheme()`
+  (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur. Menthe (vert
+  `#2ECC71`) est l'accent par défaut (gratuit) ; Azur/Corail/Violet sont réservés au premium
+  (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur dans un
+  composant.
 - **Mascotte** (`src/ui/components/Mascot.tsx`) : illustrations fournies par l'utilisateur
   (`assets/mascot/*.webp`, 8 poses détourées — pas un rendu généré ni de la photo de stock), pas
   du SVG maison. Poses utilisées : `wave` (Bienvenue onboarding, Défi encourageant),
@@ -112,7 +115,9 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 - Paywall (`src/features/premium/paywall-view.tsx`) : prix réels via l'offering RevenueCat
   quand disponible, sinon repli statique (`paywall.monthlyPriceFallback`/`annualPriceFallback`
   dans les locales) — à garder alignés sur les prix réels une fois les produits créés sur
-  App Store Connect + RevenueCat.
+  App Store Connect + RevenueCat. Hero dégradé + mascotte + badges de réassurance (annulable,
+  paiement sécurisé, sans engagement) — jamais de faux avis/note/nombre d'utilisateurs inventés,
+  Lume n'ayant pas encore d'historique App Store réel à afficher honnêtement.
 
 ## Coach IA (Gemini)
 

@@ -211,8 +211,12 @@ export default {
     },
   },
   paywall: {
+    eyebrow: 'Débloquer maintenant',
     title: 'Lume Premium',
     subtitle: 'Débloque le suivi complet de ton hydratation.',
+    assuranceCancelAnytime: 'Annulable à tout moment',
+    assuranceSecurePayment: 'Paiement sécurisé',
+    assuranceNoCommitment: 'Sans engagement',
     benefitHistory: 'Historique illimité + statistiques et tendances',
     benefitHealthSync: 'Synchro Apple Santé complète (eau + sommeil)',
     benefitCoachAI: 'Coach IA personnalisé, généré pour toi chaque jour',

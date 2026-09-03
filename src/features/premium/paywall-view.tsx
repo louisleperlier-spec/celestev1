@@ -1,11 +1,14 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
+import type { SFSymbol } from 'sf-symbols-typescript';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { FontSize, Radius, Spacing } from '@/constants/theme';
+import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
 import { Button } from '@/ui/components/Button';
+import { Mascot } from '@/ui/components/Mascot';
 import { Screen } from '@/ui/components/Screen';
 
 import { annualSavingsPercent, trialDaysFor } from './plan-pricing';
@@ -69,21 +72,37 @@ export function PaywallView() {
     t('paywall.benefitDrinksThemes'),
   ];
 
+  const assurances: { icon: SFSymbol; label: string }[] = [
+    { icon: 'xmark.circle', label: t('paywall.assuranceCancelAnytime') },
+    { icon: 'lock.fill', label: t('paywall.assuranceSecurePayment') },
+    { icon: 'arrow.counterclockwise', label: t('paywall.assuranceNoCommitment') },
+  ];
+
   return (
     <Screen edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
+        <LinearGradient colors={[theme.accentSoft, Colors.background]} style={styles.hero}>
           <Pressable onPress={() => router.back()} hitSlop={12} style={styles.closeButton}>
             <SymbolView name="xmark" size={16} tintColor={theme.textSecondary} />
           </Pressable>
-        </View>
-
-        <View style={styles.hero}>
-          <View style={[styles.crownWrap, { backgroundColor: theme.accentSoft }]}>
-            <SymbolView name="crown.fill" size={28} tintColor={theme.accent} />
+          <Mascot pose="thumbsup" size={100} />
+          <View style={styles.heroTextWrap}>
+            <View style={styles.crownRow}>
+              <SymbolView name="crown.fill" size={14} tintColor={theme.accent} />
+              <Text style={[styles.eyebrow, { color: theme.accent }]}>{t('paywall.eyebrow')}</Text>
+            </View>
+            <Text style={[styles.title, { color: theme.text }]}>{t('paywall.title')}</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{t('paywall.subtitle')}</Text>
           </View>
-          <Text style={[styles.title, { color: theme.text }]}>{t('paywall.title')}</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{t('paywall.subtitle')}</Text>
+        </LinearGradient>
+
+        <View style={styles.assuranceRow}>
+          {assurances.map((item) => (
+            <View key={item.label} style={styles.assuranceItem}>
+              <SymbolView name={item.icon} size={14} tintColor={theme.textMuted} />
+              <Text style={[styles.assuranceText, { color: theme.textMuted }]}>{item.label}</Text>
+            </View>
+          ))}
         </View>
 
         <View style={styles.benefits}>
@@ -147,7 +166,7 @@ function PlanCard({ selected, onPress, label, price, perUnit, trialLabel, badge,
       style={[
         styles.planCard,
         { backgroundColor: theme.surface, borderColor: selected ? theme.accent : theme.border },
-        selected && { backgroundColor: theme.accentSoft },
+        selected && [styles.planCardSelected, { backgroundColor: theme.accentSoft, shadowColor: theme.accent }],
       ]}>
       {badge && (
         <View style={styles.badgeRow}>
@@ -171,31 +190,42 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: Spacing.six,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingTop: Spacing.two,
-  },
   closeButton: {
+    position: 'absolute',
+    top: Spacing.two,
+    right: Spacing.three,
     width: 32,
     height: 32,
     borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
   },
   hero: {
     alignItems: 'center',
-    gap: Spacing.one,
-    marginTop: Spacing.two,
-    marginBottom: Spacing.five,
+    paddingTop: Spacing.five,
+    paddingBottom: Spacing.four,
+    paddingHorizontal: Spacing.four,
+    marginHorizontal: -Spacing.four,
+    borderBottomLeftRadius: Radius.xl,
+    borderBottomRightRadius: Radius.xl,
+    marginBottom: Spacing.three,
   },
-  crownWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: Radius.xl,
+  heroTextWrap: {
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.two,
+    gap: Spacing.one,
+    marginTop: Spacing.three,
+  },
+  crownRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  eyebrow: {
+    fontSize: FontSize.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
   },
   title: {
     fontSize: FontSize.title1,
@@ -203,6 +233,21 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: FontSize.body,
+    textAlign: 'center',
+  },
+  assuranceRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.four,
+    marginBottom: Spacing.five,
+  },
+  assuranceItem: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  assuranceText: {
+    fontSize: 10,
+    fontWeight: '600',
     textAlign: 'center',
   },
   benefits: {
@@ -226,9 +271,15 @@ const styles = StyleSheet.create({
   planCard: {
     flex: 1,
     borderRadius: Radius.lg,
-    borderWidth: 1.5,
+    borderWidth: 2,
     padding: Spacing.three,
     gap: Spacing.one,
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 16,
+    shadowOpacity: 0,
+  },
+  planCardSelected: {
+    shadowOpacity: 0.35,
   },
   badgeRow: {
     position: 'absolute',

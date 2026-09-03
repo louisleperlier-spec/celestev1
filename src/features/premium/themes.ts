@@ -1,5 +1,5 @@
 /**
- * Thèmes premium — Lume reste clair/mono-surface, seul l'accent change. Le vert Menthe reste
+ * Thèmes premium — Lume reste sombre/mono-surface, seul l'accent change. Le vert Menthe reste
  * l'identité par défaut (gratuit) ; les autres teintes sont réservées au premium. `onAccent` est
  * la couleur de texte à utiliser sur un fond de cette couleur (varie selon la luminosité de
  * l'accent — blanc sur les teintes saturées, sombre sur les teintes claires).

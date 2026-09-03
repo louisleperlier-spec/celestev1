@@ -50,6 +50,15 @@ export function TrendsView() {
   const goodDays = activeDays.filter((d) => d.globalGrade === 'A' || d.globalGrade === 'B').length;
   const streak = useMemo(() => computeStreak(days), [days]);
 
+  // Comparaison honnête à la période équivalente précédente — seulement si des données existent.
+  const previousDays = useMemo(() => statsForLastDays(period * 2).slice(0, period), [statsForLastDays, period]);
+  const previousActiveDays = previousDays.filter((d) => d.entries.length > 0);
+  const previousAverageScore = previousActiveDays.length
+    ? Math.round(previousActiveDays.reduce((sum, d) => sum + d.globalScore, 0) / previousActiveDays.length)
+    : null;
+  const scoreTrend =
+    previousAverageScore !== null && activeDays.length ? averageScore - previousAverageScore : null;
+
   const gradeCounts = useMemo(() => {
     const counts: Record<Grade, number> = { A: 0, B: 0, C: 0, D: 0 };
     for (const d of activeDays) counts[d.globalGrade]++;
@@ -108,6 +117,18 @@ export function TrendsView() {
           <Card style={styles.statCard}>
             <Text style={styles.statValue}>{averageScore}</Text>
             <Text style={styles.statLabel}>{t('trends.averageScore')}</Text>
+            {scoreTrend !== null && scoreTrend !== 0 && (
+              <View style={[styles.trendChip, { backgroundColor: scoreTrend > 0 ? Colors.gradeASoft : Colors.gradeDSoft }]}>
+                <SymbolView
+                  name={scoreTrend > 0 ? 'arrow.up.right' : 'arrow.down.right'}
+                  size={9}
+                  tintColor={scoreTrend > 0 ? Colors.gradeA : Colors.gradeD}
+                />
+                <Text style={[styles.trendChipText, { color: scoreTrend > 0 ? Colors.gradeA : Colors.gradeD }]}>
+                  {Math.abs(scoreTrend)}
+                </Text>
+              </View>
+            )}
           </Card>
           <Card style={styles.statCard}>
             <Text style={styles.statValue}>{goodDays}</Text>
@@ -307,6 +328,20 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     fontSize: 11,
     textAlign: 'center',
+  },
+  trendChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radius.full,
+    marginTop: 2,
+  },
+  trendChipText: {
+    fontSize: 10,
+    fontWeight: '700',
+    fontFamily: Fonts.mono,
   },
   chartCard: {
     gap: Spacing.three,

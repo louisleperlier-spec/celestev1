@@ -211,8 +211,12 @@ export default {
     },
   },
   paywall: {
+    eyebrow: 'Unlock now',
     title: 'Lume Premium',
     subtitle: 'Unlock the full hydration tracking experience.',
+    assuranceCancelAnytime: 'Cancel anytime',
+    assuranceSecurePayment: 'Secure payment',
+    assuranceNoCommitment: 'No commitment',
     benefitHistory: 'Unlimited history + stats and trends',
     benefitHealthSync: 'Full Apple Health sync (water + sleep)',
     benefitCoachAI: 'Personalized AI Coach, generated for you every day',
