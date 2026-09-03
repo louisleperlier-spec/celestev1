@@ -43,7 +43,7 @@ export default function RootLayout() {
           <HydrationProvider>
             <AppConvexProvider>
               <TeamProvider>
-                <StatusBar style="light" />
+                <StatusBar style="dark" />
                 <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />

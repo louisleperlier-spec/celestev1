@@ -10,13 +10,14 @@ import { useTheme } from '@/features/premium/theme-context';
 import { Button } from '@/ui/components/Button';
 import { Card } from '@/ui/components/Card';
 import { DrinkIcon } from '@/ui/components/DrinkIcon';
-import { GradeBadge } from '@/ui/components/GradeBadge';
 import { Mascot } from '@/ui/components/Mascot';
 import { MetricCard } from '@/ui/components/MetricCard';
 import { Screen } from '@/ui/components/Screen';
-import { ScoreRing } from '@/ui/components/ScoreRing';
+import { ZoneGauge } from '@/ui/components/ZoneGauge';
 
 import { useHydration } from './hydration-context';
+
+const GRADE_WORD_KEY = { A: 'grade.wordA', B: 'grade.wordB', C: 'grade.wordC', D: 'grade.wordD' } as const;
 
 export function HomeView() {
   const { t } = useTranslation();
@@ -30,7 +31,6 @@ export function HomeView() {
     void addEntry(volumeMl, 'water');
   };
 
-  const isGoodGrade = todayStats.globalGrade === 'A' || todayStats.globalGrade === 'B';
   const goalRatio = todayStats.goalMl > 0 ? Math.min(1, todayStats.hydratingMl / todayStats.goalMl) : 0;
 
   const onShareScore = () => {
@@ -67,21 +67,15 @@ export function HomeView() {
             </Pressable>
           </View>
 
-          <View style={styles.ringWrap}>
-            <ScoreRing score={todayStats.globalScore} grade={todayStats.globalGrade} />
-            <View style={styles.ringMascot}>
-              <Mascot pose="sparkle" size={40} />
+          <View style={styles.scoreWordRow}>
+            <View style={styles.scoreWordCol}>
+              <Text style={styles.scoreWord}>{t(GRADE_WORD_KEY[todayStats.globalGrade])}</Text>
+              <Text style={styles.scoreNumber}>{todayStats.globalScore}/100</Text>
             </View>
+            <Mascot pose="sparkle" size={56} />
           </View>
 
-          <GradeBadge grade={todayStats.globalGrade} size="md" />
-
-          <Text style={styles.encouragementTitle}>
-            {isGoodGrade ? t('home.encouragementGoodTitle') : t('home.encouragementBadTitle')}
-          </Text>
-          <Text style={styles.encouragementBody}>
-            {isGoodGrade ? t('home.encouragementGoodBody') : t('home.encouragementBadBody')}
-          </Text>
+          <ZoneGauge value={todayStats.globalScore} />
         </Card>
 
         <Card style={styles.goalCard}>
@@ -215,39 +209,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   scoreCard: {
-    alignItems: 'center',
-    gap: Spacing.one,
+    gap: Spacing.three,
   },
   scoreCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: Spacing.two,
   },
   scoreCardTitle: {
     color: Colors.textSecondary,
     fontSize: FontSize.footnote,
     fontWeight: '700',
   },
-  ringWrap: {
-    position: 'relative',
+  scoreWordRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
-  ringMascot: {
-    position: 'absolute',
-    top: -14,
+  scoreWordCol: {
+    gap: 2,
   },
-  encouragementTitle: {
+  scoreWord: {
     color: Colors.text,
-    fontSize: FontSize.callout,
-    fontWeight: '700',
-    marginTop: Spacing.two,
+    fontSize: FontSize.title1,
+    fontWeight: '800',
   },
-  encouragementBody: {
-    color: Colors.textSecondary,
+  scoreNumber: {
+    color: Colors.textMuted,
     fontSize: FontSize.footnote,
+    fontFamily: Fonts.mono,
   },
   goalCard: {
     flexDirection: 'row',

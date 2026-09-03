@@ -1,7 +1,7 @@
 export default {
   app: { name: 'Lume' },
   tabs: { home: 'Home', journal: 'Journal', trends: 'Trends', coach: 'Coach', team: 'Team' },
-  grade: { a: 'A', b: 'B', c: 'C', d: 'D' },
+  grade: { a: 'A', b: 'B', c: 'C', d: 'D', wordA: 'Excellent', wordB: 'Good', wordC: 'Attention', wordD: 'Low' },
   metrics: {
     volume: 'Volume',
     regularity: 'Regularity',

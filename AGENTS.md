@@ -1,8 +1,8 @@
 # Lume — repères pour toute IA qui travaille sur ce repo
 
-**Lume** est une app iOS de suivi d'hydratation : fond très sombre façon dashboard premium,
-mascotte goutte, accent vert, notes A/B/C/D par métrique + une note globale /100, 5 écrans
-(Accueil, Journal, Coach, Tendances, Équipe), synchro Apple Santé.
+**Lume** est une app iOS de suivi d'hydratation : fond clair et doux, mascotte goutte, accent
+vert, notes A/B/C/D par métrique + une note globale /100, 5 écrans (Accueil, Journal, Coach,
+Tendances, Équipe), synchro Apple Santé.
 
 ## SDK Expo pinné
 
@@ -32,9 +32,9 @@ src/
     reminders/    rappels quotidiens locaux (expo-notifications, aucun backend)
     premium/      RevenueCat (purchases.ts, contexte usePremium), thèmes d'accent, écran paywall
   services/       accès externe : health/ (HealthKit)
-  ui/components/  design system (Screen, Card, Button, ScoreRing, GradeBadge, MetricCard, EntryRow, BarChart…)
+  ui/components/  design system (Screen, Card, Button, ZoneGauge, GradeBadge, MetricCard, EntryRow, BarChart…)
   lib/            i18n, date/id helpers
-  constants/      theme.ts — SOURCE de vérité du fond noir + tokens invariants (texte, notes A/B/C…)
+  constants/      theme.ts — SOURCE de vérité du fond clair + tokens invariants (texte, notes A/B/C/D…)
 ```
 
 Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-view.tsx` (ou
@@ -42,19 +42,23 @@ Routes minces : le corps de chaque écran vit dans `src/features/hydration/*-vie
 
 ## Design
 
-- **Fond très sombre (quasi noir), mascotte, un seul accent affiché à la fois.** L'identité
-  visuelle a oscillé plusieurs fois en cours de session (noir/vert → lavande/mascotte → noir/vert
-  → clair/vert/mascotte → **sombre/vert/mascotte "dashboard premium"**, la version actuelle,
-  inspirée d'une appli sportive de référence pour le style de cartes/paywall uniquement — jamais
-  les métriques sportives elles-mêmes, absentes de Lume) — c'est la version en place tant qu'on ne
-  redemande pas explicitement un changement, mais ne pas supposer qu'elle est figée pour toujours.
-  `src/constants/theme.ts` reste la source des tokens invariants (fond `#0A0B0D`, surfaces
-  `#17191D`/`#1F2226`, texte clair, notes A/B/C/D, couleur fixe de la mascotte) ; **l'accent seul
-  varie** selon le thème choisi (premium), via `useTheme()`
-  (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur. Menthe (vert
-  `#2ECC71`) est l'accent par défaut (gratuit) ; Azur/Corail/Violet sont réservés au premium
-  (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur dans un
-  composant.
+- **Fond clair et doux, mascotte, un seul accent affiché à la fois.** L'identité visuelle a
+  oscillé plusieurs fois en cours de session (noir/vert → lavande/mascotte → noir/vert →
+  clair/vert/mascotte → sombre/vert "dashboard premium" → **clair/vert/mascotte "wellness"
+  actuel**, inspiré d'une appli santé/bien-être de référence pour le style de cartes/jauge
+  uniquement — jamais ses métriques HRV/stress/fréquence cardiaque, absentes de Lume, qui ne
+  suit que l'hydratation) — c'est la version en place tant qu'on ne redemande pas explicitement
+  un changement, mais ne pas supposer qu'elle est figée pour toujours. `src/constants/theme.ts`
+  reste la source des tokens invariants (fond `#F5F7EF`, surfaces blanches, texte sombre, notes
+  A/B/C/D, couleur fixe de la mascotte) ; **l'accent seul varie** selon le thème choisi (premium),
+  via `useTheme()` (`src/features/premium/theme-context.tsx`), jamais `Colors.accent*` en dur.
+  Menthe (vert `#2ECC71`) est l'accent par défaut (gratuit) ; Azur/Corail/Violet sont réservés au
+  premium (`src/features/premium/themes.ts`). Toute couleur passe par un token, jamais en dur
+  dans un composant.
+- **`ZoneGauge`** (`src/ui/components/ZoneGauge.tsx`) : jauge horizontale à 4 zones de couleur
+  (D/C/B/A, mêmes seuils que `scoring.ts`, largeurs proportionnelles — D fait 40 points de large,
+  C/B/A 20 chacune) avec un curseur blanc positionné en `left: score%`. Élément visuel signature
+  de la carte score (Accueil), à ne pas confondre avec les barres de `MetricCard`/`BarChart`.
 - **Mascotte** (`src/ui/components/Mascot.tsx`) : illustrations fournies par l'utilisateur
   (`assets/mascot/*.webp`, 8 poses détourées — pas un rendu généré ni de la photo de stock), pas
   du SVG maison. Poses utilisées : `wave` (Bienvenue onboarding, Défi encourageant),
