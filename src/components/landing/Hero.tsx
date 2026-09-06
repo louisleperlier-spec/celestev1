@@ -71,7 +71,10 @@ export default function Hero() {
 
         <div className="relative flex justify-center lg:justify-end">
           <div className="absolute -inset-10 -z-10 rounded-full bg-aurora-violet/10 blur-3xl" />
-          <div className="glass-panel animate-rise rounded-[2.5rem] p-8" style={{ animationDelay: "0.15s" }}>
+          <div
+            className="glass-panel animate-rise w-full max-w-[380px] rounded-[2.5rem] p-6 sm:p-8"
+            style={{ animationDelay: "0.15s" }}
+          >
             <EmotionWheel
               size={380}
               selectedFamilyId={selection?.familyId}

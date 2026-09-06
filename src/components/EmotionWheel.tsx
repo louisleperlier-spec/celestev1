@@ -57,11 +57,10 @@ export default function EmotionWheel({
       : null;
 
   return (
-    <div className="relative inline-flex flex-col items-center gap-6">
+    <div className="relative flex w-full flex-col items-center gap-6" style={{ maxWidth: size }}>
       <svg
         viewBox="-40 -40 520 520"
-        width={size}
-        height={size}
+        style={{ width: "100%", height: "auto", maxWidth: size }}
         role="img"
         aria-label="Carte des émotions : sélectionnez une famille et son intensité"
       >
