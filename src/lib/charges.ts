@@ -7,7 +7,7 @@ import { exercice, hrMax, lvlN, progFactor, progWeek, type PlanItem, type Profil
 export type Charge = { txt: string; sub: string; kg?: number };
 
 /** Nombre à la française (dec() du prototype). */
-export const dec = (n: number) => String(n).replace('.', ',');
+export const dec = (n: number | string) => String(n).replace('.', ',');
 
 export function loadFor(it: PlanItem, p: Profil, now: number = Date.now()): Charge {
   const e = exercice(it.id);

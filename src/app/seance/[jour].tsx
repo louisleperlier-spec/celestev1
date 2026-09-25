@@ -73,7 +73,12 @@ export default function SeanceDuJour() {
         )}
       </ScrollView>
       <View style={styles.foot}>
-        <Button label="Lancer la séance" iconAfter="play" onPress={() => bientot('seance')} />
+        <Button
+          label="Lancer la séance"
+          iconAfter="play"
+          // Une sortie vélo se lance depuis l'onglet Vélo (étape 7).
+          onPress={() => (s.ride ? bientot('velo') : router.push({ pathname: '/seance-en-cours', params: { jour: String(day) } }))}
+        />
       </View>
       <ExerciceSheet id={exo?.id ?? null} it={exo ?? undefined} onClose={() => setExo(null)} />
     </SafeAreaView>

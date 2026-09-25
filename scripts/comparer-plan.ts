@@ -13,7 +13,8 @@ import { SEANCES } from '../src/data/seances';
 import { loadFor } from '../src/lib/charges';
 import { buildPlan, recoCoach, type PlanItem, type Profil } from '../src/lib/plan';
 import { catSession, type Intensite } from '../src/lib/semaine';
-import { lvlInfo, rankOf, streak, type Log } from '../src/lib/xp';
+import { Coeur, hrStats } from '../src/lib/coeur';
+import { lvlInfo, rankOf, streak, todayQuests, type Log } from '../src/lib/xp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const prototype = require('./prototype-plan.cjs') as {
@@ -22,6 +23,9 @@ const prototype = require('./prototype-plan.cjs') as {
   load: (state: Profil, now: number, it: PlanItem) => unknown;
   streak: (state: object, now: number) => number;
   lvl: (xp: number) => unknown;
+  coeur: (age: number, random: () => number, steps: [number, number | null][]) => unknown;
+  stats: (age: number, samples: number[], rr: number[]) => unknown;
+  quetes: (now: number) => unknown;
 };
 
 const NIVEAUX = ['deb', 'int', 'adv'] as const;
@@ -99,6 +103,32 @@ for (let k = 0; k < 300; k++) {
 
 // Niveaux et rangs
 for (let xp = 0; xp < 20000; xp += 37) compter('lvlInfo', [lvlInfo(xp), rankOf(lvlInfo(xp).n)], prototype.lvl(xp), { xp });
+
+// FC simulée : même suite aléatoire pour les deux, intensités et fatigue variées
+const graineAlea = (g: number) => () => (g = (g * 16807) % 2147483647) / 2147483647;
+for (let k = 0; k < 40; k++) {
+  const age = 16 + k * 2;
+  const steps: [number, number | null][] = [];
+  for (let t = 0; t < 400; t++) steps.push([[0.05, 0.12, 0.25, 0.3, 0.55, 0.72, 0.86][Math.floor(t / 60) % 7], t === 200 ? 0.8 : null]);
+  const mien = new Coeur(age, graineAlea(k + 1));
+  const res: unknown[] = [];
+  const samples: number[] = [];
+  for (const [intensity, fatigue] of steps) {
+    if (fatigue != null) mien.fatigue = fatigue;
+    mien.intensity = intensity;
+    mien.tick();
+    samples.push(mien.bpm);
+    res.push([mien.bpm, mien.rr.slice(-3), mien.rmssd(), mien.zone()]);
+  }
+  compter('FC simulée (tick)', res, prototype.coeur(age, graineAlea(k + 1), steps), { age });
+  compter('hrStats', hrStats(samples, mien.rr, age), prototype.stats(age, samples, mien.rr), { age });
+}
+
+// Quêtes du jour sur 2 ans
+for (let j = 0; j < 730; j++) {
+  const t = Date.parse('2026-01-01T12:00:00Z') + j * 864e5;
+  compter('quêtes du jour', todayQuests(null, new Date(t)), prototype.quetes(t), { jour: j });
+}
 
 for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);
 console.log(`${total} profils comparés au prototype : ${differences} différence(s) sur buildPlan.`);

@@ -133,6 +133,18 @@ const ICONS = {
     </>
   ),
   trophy: <Path d="M6 9H4a2 2 0 0 1 0-4h2M18 9h2a2 2 0 0 0 0-4h-2M6 4h12v6a6 6 0 0 1-12 0zM12 16v4M8 21h8" />,
+  calcheck: (
+    <>
+      <Rect x="3" y="4" width="18" height="18" rx="2" />
+      <Path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4" />
+    </>
+  ),
+  trend: (
+    <>
+      <Path d="M22 7l-8.5 8.5-5-5L2 17" />
+      <Path d="M16 7h6v6" />
+    </>
+  ),
   chart: (
     <>
       <Path d="M4 20v-5M9 20v-8M14 20v-6M19 20V8" />

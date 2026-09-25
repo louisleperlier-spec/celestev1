@@ -1,7 +1,7 @@
 /** Série de jours, niveaux et rangs, boosts (streak, lvlInfo, rankOf, boosts, mult du prototype). */
-import { RANKS } from '@/data/ligue';
+import { QUESTS, RANKS } from '@/data/ligue';
 import { DAYSPOS } from '@/data/templates';
-import type { JoursParSemaine, Rank } from '@/data/types';
+import type { JoursParSemaine, Quest, Rank } from '@/data/types';
 
 /** Une activité terminée (séance ou sortie vélo). */
 export type Log = {
@@ -63,3 +63,27 @@ export function boosts(serie: number, boostUntil: number, equipeActive: number, 
 
 /** Multiplicateur d'XP : produit des boosts, plafonné à x3. */
 export const mult = (b: readonly Boost[]) => Math.min(3, b.reduce((a, x) => a * x[1], 1));
+
+/** Hachage simple d'une chaîne vers [0, 1[ (hash du prototype). */
+export const hash = (s: string) => {
+  let h = 7;
+  for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) % 9973;
+  return h / 9973;
+};
+
+/** Jour au format AAAA-MM-JJ (UTC, comme le prototype). */
+export const dayKey = (now: Date = new Date()) => now.toISOString().slice(0, 10);
+
+export type QuestId = Quest[0];
+export type QuetesDuJour = { day: string; ids: QuestId[]; done: QuestId[] };
+
+/** Les 3 quêtes du jour : « Termine une séance » + 2 tirées selon la date (todayQuests). */
+export function todayQuests(q: QuetesDuJour | null, now: Date = new Date()): QuetesDuJour {
+  const day = dayKey(now);
+  if (q && q.day === day) return q;
+  const i = (hash(day) * 4) | 0;
+  return { day, ids: [QUESTS[0][0], QUESTS[1 + (i % 3)][0], QUESTS[1 + ((i + 1) % 3)][0]], done: [] };
+}
+
+/** XP gagnée pour une action : base × multiplicateur des boosts, arrondi (addXp). */
+export const gainXp = (base: number, b: readonly Boost[]) => Math.round(base * mult(b));

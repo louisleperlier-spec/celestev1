@@ -11,7 +11,9 @@ import { useShallow } from 'zustand/react/shallow';
 import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
-import type { Log } from '@/lib/xp';
+import { toast } from '@/components/ui/Toast';
+import { QUESTS } from '@/data/ligue';
+import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
 export type Sante = {
@@ -35,6 +37,11 @@ type Etat = Profil & {
   /** Séances et sorties terminées (remplies à l'étape 4). */
   logs: Log[];
   xp: number;
+  /** Historique des gains d'XP (400 derniers). */
+  xpLog: { d: string; xp: number; l: string }[];
+  /** Turbos x2 gagnés (1 par niveau), utilisables avec NÉA Plus. */
+  tokens: number;
+  quests: QuetesDuJour | null;
   /** Fin du Turbo x2 (horodatage). */
   boostUntil: number;
   /** Séances du catalogue ajoutées au calendrier, par `addedKey`. */
@@ -61,6 +68,12 @@ type Actions = {
   setIntensite: (id: SeanceId, v: Intensite) => void;
   /** Suit un autre programme du coach : il repart de la semaine 1. */
   suivre: (id: ProgrammeId) => void;
+  /** Ajoute de l'XP (× boosts) et renvoie le gain (addXp du prototype). */
+  addXp: (base: number, label: string) => number;
+  /** Valide une quête du jour si elle en fait partie (quest du prototype). */
+  quest: (id: QuestId) => void;
+  /** Enregistre une séance ou une sortie terminée (la plus récente en premier). */
+  addLog: (l: Log) => void;
   reset: () => void;
 };
 
@@ -81,6 +94,9 @@ const defauts = (): Etat => ({
   wlog: [],
   logs: [],
   xp: 0,
+  xpLog: [],
+  tokens: 0,
+  quests: null,
   boostUntil: 0,
   added: {},
   wkMod: {},
@@ -125,6 +141,27 @@ export const useProfil = create<Etat & Actions>()(
       },
       setIntensite: (id, v) => set({ wkMod: { ...get().wkMod, [id]: v } }),
       suivre: (id) => set({ progs: { ...get().progs, [get().coach]: id }, progStart: new Date().toISOString() }),
+      addXp: (base, label) => {
+        const st = get();
+        const before = lvlInfo(st.xp).n;
+        const g = gainXp(base, boosts(streak(st.logs, st.days), st.boostUntil, 0));
+        const xpLog = [...st.xpLog, { d: new Date().toISOString(), xp: g, l: label }].slice(-400);
+        const after = lvlInfo(st.xp + g).n;
+        set({ xp: st.xp + g, xpLog, tokens: st.tokens + Math.max(0, after - before) });
+        if (after > before) setTimeout(() => toast('Niveau ' + after + ' ! +1 Turbo x2 gagné'), 400);
+        return g;
+      },
+      quest: (id) => {
+        const q = todayQuests(get().quests);
+        if (!q.ids.includes(id) || q.done.includes(id)) {
+          set({ quests: q });
+          return;
+        }
+        set({ quests: { ...q, done: [...q.done, id] } });
+        const g = get().addXp(QUESTS.find((x) => x[0] === id)![2], 'Quête');
+        setTimeout(() => toast('Quête réussie : +' + g + ' XP'), 900);
+      },
+      addLog: (l) => set({ logs: [l, ...get().logs] }),
       reset: () => set(defauts()),
     }),
     {
@@ -138,6 +175,9 @@ export const useProfil = create<Etat & Actions>()(
         wlog: s.wlog,
         logs: s.logs,
         xp: s.xp,
+        xpLog: s.xpLog,
+        tokens: s.tokens,
+        quests: s.quests,
         boostUntil: s.boostUntil,
         added: s.added,
         wkMod: s.wkMod,

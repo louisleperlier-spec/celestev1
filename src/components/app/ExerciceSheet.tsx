@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
 
@@ -11,20 +12,24 @@ import { coachById, exercice, exKcal, lvlN, mkItem, type PlanItem } from '@/lib/
 import { selectProfil, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
 
-import { bientot } from './bientot';
+import { DemoSheet } from './DemoSheet';
 import { Sheet } from './Sheet';
 import { ZoneBar } from './ZoneBar';
 
 /** Fiche exercice (exoSheet du prototype). `it` : l'exercice tel qu'il est prévu dans la séance. */
 export function ExerciceSheet({ id, it, onClose }: { id: ExerciceId | null; it?: PlanItem; onClose: () => void }) {
+  const [demo, setDemo] = useState<ExerciceId | null>(null);
   return (
-    <Sheet visible={!!id} onClose={onClose}>
-      {id && <Contenu id={id} it={it} onClose={onClose} />}
-    </Sheet>
+    <>
+      <Sheet visible={!!id && !demo} onClose={onClose}>
+        {id && <Contenu id={id} it={it} onClose={onClose} onDemo={() => setDemo(id)} />}
+      </Sheet>
+      <DemoSheet id={demo} onClose={() => setDemo(null)} />
+    </>
   );
 }
 
-function Contenu({ id, it: it0, onClose }: { id: ExerciceId; it?: PlanItem; onClose: () => void }) {
+function Contenu({ id, it: it0, onClose, onDemo }: { id: ExerciceId; it?: PlanItem; onClose: () => void; onDemo: () => void }) {
   const profil = useProfil();
   const p = selectProfil(profil);
   const e = exercice(id);
@@ -62,7 +67,7 @@ function Contenu({ id, it: it0, onClose }: { id: ExerciceId; it?: PlanItem; onCl
         ))}
       </View>
       <Text style={styles.sub}>{e.muscles}</Text>
-      <Button label="Voir la démo guidée" variant="dark" icon="play" onPress={() => bientot('demo')} style={styles.demo} />
+      <Button label="Voir la démo guidée" variant="dark" icon="play" onPress={onDemo} style={styles.demo} />
 
       <Text weight="bold" style={styles.h4}>
         Comment faire le mouvement

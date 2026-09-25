@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -135,7 +135,12 @@ export default function SeanceCatalogue() {
           <View style={styles.two}>
             <Button label="Modifier" variant="dark" small icon="sliders" onPress={() => setIntensite(true)} style={styles.flex} />
             <Button label="Planifier" variant="dark" small icon="cal" onPress={() => setPlanifier(true)} style={styles.flex} />
-            <Button label="Commencer" small onPress={() => bientot('seance')} style={styles.flex} />
+            <Button
+              label="Commencer"
+              small
+              onPress={() => (w.ride ? bientot('velo') : router.push({ pathname: '/seance-en-cours', params: { cat: w.id } }))}
+              style={styles.flex}
+            />
           </View>
         )}
       </LinearGradient>

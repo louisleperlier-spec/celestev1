@@ -158,7 +158,7 @@ export default function Accueil() {
           </LinearGradient>
         </Pressable>
 
-        <SectionHead title="Ta progression" action="Voir plus" onAction={() => bientot('progres')} />
+        <SectionHead title="Ta progression" action="Voir plus" onAction={() => router.navigate('/progres')} />
         {/* .prog */}
         <Card style={styles.prog}>
           <Anneau pct={pct} />
@@ -240,7 +240,7 @@ function XpStrip({ xp, serie, boostUntil }: { xp: number; serie: number; boostUn
             />
           </View>
           <Text style={styles.xpSmall}>
-            {b.length ? `Boost x${dec(+mult(b).toFixed(2))} : ${b.map((x) => x[0]).join(', ')}` : 'Aucun boost actif'}
+            {b.length ? `Boost x${dec(mult(b).toFixed(2))} : ${b.map((x) => x[0]).join(', ')}` : 'Aucun boost actif'}
           </Text>
         </View>
         <Icon name="right" />

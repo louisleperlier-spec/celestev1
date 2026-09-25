@@ -24,7 +24,8 @@ export function ToastHost() {
   }, [message, id]);
   if (!message) return null;
   return (
-    <Animated.View key={id} entering={FadeIn.duration(250)} exiting={FadeOut.duration(250)} style={styles.toast} pointerEvents="none">
+    // Un seul toast à la fois : le nouveau message remplace le texte, sans superposition.
+    <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(250)} style={styles.toast} pointerEvents="none">
       <Text style={styles.text}>{message}</Text>
     </Animated.View>
   );

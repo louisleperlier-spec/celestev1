@@ -32,6 +32,11 @@ const fns = ['allowed', 'rankFor', 'buildPlan', 'mkItem', 'workSec', 'estMin', '
   .map((n) => grab(js.indexOf('function ' + n + '(')))
   .join('\n');
 
+const hrObj = grab(js.indexOf('const HR='));
+const extra = ['hrStats', 'todayQuests'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
+const quests = js.slice(js.indexOf('const QUESTS='), js.indexOf(';', js.indexOf('const QUESTS=')) + 1);
+const hashFn = js.slice(js.indexOf('const hash='), js.indexOf(';', js.indexOf('return h/9973')) + 1);
+
 const src = `${data}
 let S, NOW;
 const coach = () => COACHES.find((c) => c.id === S.coach);
@@ -43,7 +48,21 @@ const rankOf = (n) => RANKS[Math.min(4, Math.floor((n - 1) / 5))];
 const Date_ = Date;
 Date = class extends Date_ { constructor(...a) { if (a.length) super(...a); else super(NOW); } static now() { return NOW; } };
 ${fns}
+${hrObj}
+${extra}
+${quests}
+${hashFn}
+const dayKey = () => new Date().toISOString().slice(0, 10);
 module.exports = {
+  coeur(age, random, steps) {
+    S = { age }; const r0 = Math.random; Math.random = random;
+    HR.bpm = 64; HR.rr = []; HR.src = 'sim'; HR.intensity = .05; HR.fatigue = 0;
+    const out = [];
+    for (const [intensity, fatigue] of steps) { if (fatigue != null) HR.fatigue = fatigue; HR.intensity = intensity; HR.tick(); out.push([HR.bpm, HR.rr.slice(-3), HR.rmssd(), HR.zone()]); }
+    Math.random = r0; return out;
+  },
+  stats(age, samples, rr) { S = { age }; return hrStats(samples, rr); },
+  quetes(now) { NOW = now; S = { quests: null }; return todayQuests(); },
   run(state, now) { S = state; NOW = now; return { plan: buildPlan(), reco: recoCoach() }; },
   cat(state, id) { S = state; return catSession(CAT.find((w) => w.id === id), null); },
   load(state, now, it) { S = state; NOW = now; return loadFor(it); },

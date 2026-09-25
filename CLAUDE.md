@@ -12,6 +12,9 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 **Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur.
 
+**Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
+qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
+
 ## Avancement (section 12 du cahier des charges)
 
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
@@ -20,7 +23,9 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 - [x] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
   - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
   - `isPremium()` renvoie `false` jusqu'à l'étape 11 (`src/lib/premium.ts`)
-- [ ] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
+- [x] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
+  - la notification « VFC post-entraînement » du récap arrivera avec les notifications (étape 8)
+  - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
 - [ ] 6. Apple Santé
 - [ ] 7. Vélo
@@ -38,16 +43,20 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
-    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier) + barre d'onglets
+    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), progres.tsx + barre d'onglets
+    seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
-  components/app/  TabBar, Sheet, ExerciceSheet, PlanifierSheet, ZoneBar, Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb
+  components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
+                    Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
-  lib/charges.ts    charge conseillée (loadFor), itemLine, zone de reps · lib/xp.ts : série, niveaux, rangs, boosts
-  store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine()
+  lib/charges.ts    charge conseillée (loadFor), itemLine, zone de reps · lib/xp.ts : série, niveaux, rangs, boosts, quêtes
+  lib/coeur.ts      FC et VFC simulées (Coeur.tick, rmssd, zone), hrStats · lib/premium.ts : accès NÉA Plus
+  store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
+  store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
 assets/
@@ -85,10 +94,10 @@ Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une imag
 ## Logique (`@/lib/plan`)
 
 `buildPlan`, `recoCoach`, `estMin`, `exKcal`, `sesKcal`, `progWeek`, `progFactor`, `hrMax`, `catSession`, `loadFor`,
-`streak`, `lvlInfo`, `rankOf` sont portés **à l'identique** du prototype.
+`streak`, `lvlInfo`, `rankOf`, la FC simulée (`HR.tick`, `rmssd`, `zone`), `hrStats` et les quêtes du jour sont portés **à l'identique** du prototype.
 Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le code d'origine
 de `prototype/nea-app.html` et compare : buildPlan sur 3 888 profils, loadFor sur ~92 000 exercices, catSession sur
-les 41 séances × 3 intensités × 4 poids, streak et lvlInfo.
+les 41 séances × 3 intensités × 4 poids, streak, lvlInfo, 40 × 400 s de FC simulée (même suite aléatoire) et 730 jours de quêtes.
 `src/lib/*` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
 
 ## Design system
@@ -98,6 +107,7 @@ les 41 séances × 3 intensités × 4 poids, streak et lvlInfo.
 - Cartes radius 16, boutons pilule hauteur 52, sélection = bordure rose + `glow()`.
 - Couleurs ponctuelles du CSS du prototype dans `ui` (`@/theme`) ; `mix()` et `alpha()` pour `color-mix`.
 - Lueurs : `<Glow>` (dégradé radial SVG) ou `<RadialBackground>`, jamais de `textShadow` coloré (rectangle sur iOS).
+- Avec le React Compiler, ne jamais modifier un objet d'état en place (il ne serait pas redessiné) : copies immuables, valeurs simples en props.
 - Grands chiffres (poids, âge, FC, compte à rebours, prix du paywall…) : toujours `<BigNumber value unit>`. Jamais de `Text` de grande taille imbriqué dans un `Text` plus petit ni de `lineHeight` inférieur à la taille de police : sur iOS, le haut des chiffres est rogné.
 
 ## Commandes
