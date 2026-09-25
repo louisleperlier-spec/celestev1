@@ -3,9 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, Screen, SelectableCard, Text } from '@/components/ui';
+import { Button, Card, Glow, Screen, SelectableCard, Text } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
 import { colors, gradients, heartZones, radius, spacing } from '@/theme';
+
+/** Taille de la lueur derrière le logo. */
+const GLOW = { width: 320, height: 150 } as const;
 
 /**
  * Étape 1 — écran de vérification du design system.
@@ -30,9 +33,13 @@ export default function DesignSystemScreen() {
   return (
     <Screen scroll contentStyle={styles.content}>
       <View style={styles.hero}>
-        <Text weight="light" style={styles.logo}>
-          NÉA
-        </Text>
+        {/* Lueur derrière le logo : aucun fond ni overflow sur ce conteneur. */}
+        <View style={styles.logoWrap}>
+          <Glow width={GLOW.width} height={GLOW.height} />
+          <Text weight="light" style={styles.logo}>
+            NÉA
+          </Text>
+        </View>
         <Text weight="semibold" color={colors.pinkLight} style={styles.logoSub}>
           COACHING SPORTIF IA
         </Text>
@@ -117,6 +124,15 @@ const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   // Logo du prototype (.logo / .logo-sub) : Inter 300, 42px, espacement 0,42em
   logo: { fontSize: 42, lineHeight: 50, letterSpacing: 42 * 0.42, paddingLeft: 42 * 0.42, textAlign: 'center' },
+  // Le conteneur a la taille de la lueur (rien ne déborde, donc rien n'est rogné) ;
+  // les marges négatives évitent qu'elle pousse la mise en page.
+  logoWrap: {
+    width: GLOW.width,
+    height: GLOW.height,
+    marginVertical: -(GLOW.height - 50) / 2 + spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   logoSub: { fontSize: 10.5, lineHeight: 14, letterSpacing: 10.5 * 0.32, textAlign: 'center', marginBottom: spacing.md },
   center: { textAlign: 'center' },
   coaches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
