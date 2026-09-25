@@ -100,7 +100,7 @@ export default function DesignSystemScreen() {
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl * 2 },
   hero: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
-  logo: { color: colors.pink, fontSize: 56, lineHeight: 60, textShadowColor: colors.pink, textShadowRadius: 24 },
+  logo: { color: colors.pink, fontSize: 56, lineHeight: 60, textShadowColor: colors.pink, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 24 },
   center: { textAlign: 'center' },
   swatches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   swatch: { width: 72, alignItems: 'center', gap: spacing.xs },
