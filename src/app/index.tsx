@@ -30,8 +30,11 @@ export default function DesignSystemScreen() {
   return (
     <Screen scroll contentStyle={styles.content}>
       <View style={styles.hero}>
-        <Text variant="display" style={styles.logo}>
+        <Text weight="light" style={styles.logo}>
           NÉA
+        </Text>
+        <Text weight="semibold" color={colors.pinkLight} style={styles.logoSub}>
+          COACHING SPORTIF IA
         </Text>
         <Text variant="heading" style={styles.center}>
           Plus qu&apos;un programme. Un coach qui te connaît vraiment.
@@ -112,7 +115,9 @@ export default function DesignSystemScreen() {
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl * 2 },
   hero: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
-  logo: { color: colors.pink, fontSize: 56, lineHeight: 60, textShadowColor: colors.pink, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 24 },
+  // Logo du prototype (.logo / .logo-sub) : Inter 300, 42px, espacement 0,42em
+  logo: { fontSize: 42, lineHeight: 50, letterSpacing: 42 * 0.42, paddingLeft: 42 * 0.42, textAlign: 'center' },
+  logoSub: { fontSize: 10.5, lineHeight: 14, letterSpacing: 10.5 * 0.32, textAlign: 'center', marginBottom: spacing.md },
   center: { textAlign: 'center' },
   coaches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   coach: { width: 72, alignItems: 'center', gap: spacing.xs },
