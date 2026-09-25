@@ -9,7 +9,9 @@ export const colors = {
 
   // Surfaces
   surface: '#121215',
+  surface2: '#18181C',
   border: '#26262B',
+  border2: '#34343A',
 
   // Rose néon (accent)
   pink: '#FF4FA3',
@@ -19,6 +21,8 @@ export const colors = {
   // Texte
   text: '#FFFFFF',
   textSecondary: '#9A9AA3',
+  textTertiary: '#6C6C75',
+  green: '#3EE07A',
 
   /** Texte posé sur le bouton principal */
   onPrimary: '#0A0A0C',
@@ -27,10 +31,45 @@ export const colors = {
   kcal: '#FF8A1F',
 } as const;
 
+/** Teintes ponctuelles reprises telles quelles du CSS du prototype. */
+export const ui = {
+  /** Bouton sombre, cases du récap (.btn.dark, .cplan div, .stepper button). */
+  dark: '#1A1A1F',
+  /** Fond de pastille d'icône (.big2 .gi). */
+  iconBg: '#1C1C21',
+  /** Pastilles du style de coach (.coachstyle span). */
+  chipBg: '#17171B',
+  /** Fond des avatars (.av). */
+  avatarBg: '#0D0D10',
+  /** Flèches du carrousel de coachs (.coachstage .arrow). */
+  arrowBg: 'rgba(20,20,24,0.85)',
+  /** Texte clair secondaire (.quote, .coachstyle, .ackb, .bsteps, .goal .gi). */
+  text2: '#E8E8EC',
+  text3: '#D6D6DB',
+  text4: '#E6E6EA',
+  icon: '#D9D9DE',
+  /** Avertissement (.warn). */
+  warnBg: 'rgba(255,79,100,0.08)',
+  warnBorder: 'rgba(255,79,100,0.3)',
+  warnText: '#F3D6DE',
+  /** Icône cœur de la FC max (.fcmax svg). */
+  heart: '#FF4F6D',
+  /** Texte du badge « Recommandé » (.reco). */
+  onGold: '#1A1300',
+  /** Toast (.toast). */
+  toast: '#1D1D22',
+  /** Sélection : fond rose très léger (.sel.on). */
+  selTop: 'rgba(255,79,163,0.10)',
+  selBottom: 'rgba(255,79,163,0.03)',
+  pinkRing: 'rgba(255,79,163,0.35)',
+} as const;
+
 /** Dégradés (du premier au dernier stop). */
 export const gradients = {
-  /** Bouton principal : #FFFFFF → #FFD6EA → #F7A9CF */
+  /** Bouton principal : #FFFFFF → #FFD6EA (55 %) → #F7A9CF, horizontal (.btn). */
   primary: ['#FFFFFF', '#FFD6EA', '#F7A9CF'],
+  /** Segments de progression actifs (.segs i.on). */
+  progress: ['#FF8CC6', '#FF4FA3'],
   /** Or NÉA Plus : #FFE38A → #FFC23D */
   gold: ['#FFE38A', '#FFC23D'],
 } as const;
@@ -46,3 +85,13 @@ export const heartZones = {
 
 export type ColorName = keyof typeof colors;
 export type HeartZone = keyof typeof heartZones;
+
+/** `color-mix(in srgb, a p%, b)` du CSS : mélange deux couleurs hexadécimales. */
+export function mix(a: string, p: number, b: string): string {
+  const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [rgb(a), rgb(b)];
+  return '#' + x.map((v, i) => Math.round(v * (p / 100) + y[i] * (1 - p / 100)).toString(16).padStart(2, '0')).join('');
+}
+
+/** Couleur hexadécimale avec opacité (0 à 1). */
+export const alpha = (hex: string, a: number) => hex + Math.round(a * 255).toString(16).padStart(2, '0');

@@ -13,7 +13,9 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 ## Avancement (section 12 du cahier des charges)
 
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
-- [ ] 2. Onboarding complet + `buildPlan`
+- [x] 2. Onboarding complet + `buildPlan`
+  - paywall (étape 11) et création de compte (étape 5) viendront entre « C'est parti » et le programme ; le bouton « J'ai déjà un compte » de l'accueil arrivera avec les comptes (étape 5)
+  - `src/app/programme.tsx` est un aperçu **temporaire** du plan, remplacé par les onglets à l'étape 3
 - [ ] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
 - [ ] 4. Séance en cours + récap
 - [ ] 5. Supabase (comptes, sauvegarde, suppression)
@@ -31,7 +33,13 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 ```
 src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
-  components/ui/    composants de base du design system (Text, Button, Card, SelectableCard, Screen)
+    bienvenue.tsx   accueil (vidéo d'Axel)
+    onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
+    programme.tsx   aperçu temporaire du plan · design.tsx : écran de vérification du design system
+  components/ui/    design system (Text, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
+  components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
+  lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
+  store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan()
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
 assets/
@@ -41,7 +49,7 @@ assets/
   images/           icône et écran de démarrage
 docs/               cahier des charges
 prototype/          nea-app.html (référence) + LISEZMOI des données
-scripts/            verifier-donnees.ts
+scripts/            verifier-donnees.ts, comparer-plan.ts (+ prototype-plan.cjs)
 ```
 
 Alias d'import : `@/…` → `src/…`, `@/assets/…` → `assets/…`.
@@ -66,11 +74,20 @@ Générées depuis `NEA-donnees-et-images.zip`, identiques aux constantes du pro
 Les exercices d'une séance gardent le format du prototype `id:séries:reps:repos` (`SeanceExercice`).
 Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une image par coach et par exercice).
 
+## Logique (`@/lib/plan`)
+
+`buildPlan`, `recoCoach`, `estMin`, `exKcal`, `sesKcal`, `progWeek`, `progFactor`, `hrMax`, `nextSession` sont portés **à l'identique** du prototype.
+Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le `buildPlan` d'origine
+de `prototype/nea-app.html` et compare les deux sur 3 888 profils (coachs × programmes × niveaux × lieux × jours × durées).
+`plan.ts` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
+
 ## Design system
 
 - Toujours passer par `@/theme` (jamais de couleur en dur dans un écran).
 - Polices : utiliser `<Text weight="black">` etc. ; sur RN chaque graisse est une famille Inter distincte (`fonts.*`), `fontWeight` seul ne suffit pas.
 - Cartes radius 16, boutons pilule hauteur 52, sélection = bordure rose + `glow()`.
+- Couleurs ponctuelles du CSS du prototype dans `ui` (`@/theme`) ; `mix()` et `alpha()` pour `color-mix`.
+- Lueurs : `<Glow>` (dégradé radial SVG) ou `<RadialBackground>`, jamais de `textShadow` coloré (rectangle sur iOS).
 
 ## Commandes
 

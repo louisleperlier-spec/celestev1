@@ -2,8 +2,10 @@ import { useFonts } from '@expo-google-fonts/inter';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
+import { ToastHost } from '@/components/ui';
+import { useProfil } from '@/store/profil';
 import { colors, fontAssets } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -20,19 +22,27 @@ const navTheme = {
   },
 };
 
+/** L'état sauvegardé sur l'appareil est-il chargé ? */
+function useHydrated() {
+  return useSyncExternalStore(useProfil.persist.onFinishHydration, useProfil.persist.hasHydrated);
+}
+
 export default function RootLayout() {
   const [loaded, error] = useFonts(fontAssets);
+  const hydrated = useHydrated();
+  const ready = (loaded || !!error) && hydrated;
 
   useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync();
-  }, [loaded, error]);
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
 
-  if (!loaded && !error) return null;
+  if (!ready) return null;
 
   return (
     <ThemeProvider value={navTheme}>
       <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'fade' }} />
+      <ToastHost />
     </ThemeProvider>
   );
 }

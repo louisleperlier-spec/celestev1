@@ -1,58 +1,80 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, fonts, gradients, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, glow, gradients, radius, sizes, spacing, ui } from '@/theme';
 
+import { Icon } from './Icon';
 import { Text } from './Text';
 
 type Props = {
   label: string;
   onPress?: () => void;
-  variant?: 'primary' | 'secondary';
+  /** primary : dégradé (.btn) ; dark : sombre bordé (.btn.dark) ; secondary : alias de dark. */
+  variant?: 'primary' | 'dark' | 'secondary';
   disabled?: boolean;
+  /** Flèche après le libellé, comme les boutons « Continuer » du prototype. */
+  arrow?: boolean;
 };
 
-/**
- * Bouton pilule, hauteur 52.
- * - primary : dégradé #FFFFFF → #FFD6EA → #F7A9CF, texte #0A0A0C
- * - secondary : surface sombre bordée
- */
-export function Button({ label, onPress, variant = 'primary', disabled = false }: Props) {
+/** Bouton pilule, hauteur 52 (.btn du prototype). */
+export function Button({ label, onPress, variant = 'primary', disabled = false, arrow = false }: Props) {
+  const primary = variant === 'primary';
+  const fg = primary ? colors.onPrimary : colors.text;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       onPress={onPress}
       disabled={disabled}
-      style={({ pressed }) => [styles.base, (pressed || disabled) && { opacity: disabled ? 0.4 : 0.85 }]}
+      style={({ pressed }) => [
+        styles.base,
+        primary && !disabled && glow('rgba(255,79,163,0.35)', 24),
+        disabled && styles.disabled,
+        pressed && styles.pressed,
+      ]}
     >
-      {variant === 'primary' ? (
+      {primary ? (
         <LinearGradient
           colors={gradients.primary}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          locations={[0, 0.55, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
           style={styles.fill}
         >
-          <Text style={[styles.label, { color: colors.onPrimary }]}>{label}</Text>
+          <Label label={label} color={fg} arrow={arrow} />
         </LinearGradient>
       ) : (
-        <View style={[styles.fill, styles.secondary]}>
-          <Text style={styles.label}>{label}</Text>
+        <View style={[styles.fill, styles.dark]}>
+          <Label label={label} color={fg} arrow={arrow} />
         </View>
       )}
     </Pressable>
   );
 }
 
+function Label({ label, color, arrow }: { label: string; color: string; arrow: boolean }) {
+  return (
+    <>
+      <Text style={[styles.label, { color }]}>{label}</Text>
+      {arrow && <Icon name="arrow" size={18} strokeWidth={2.2} color={color} />}
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
-  base: { height: sizes.buttonHeight, borderRadius: radius.pill, overflow: 'hidden' },
+  base: { height: sizes.buttonHeight, borderRadius: radius.pill },
+  disabled: { opacity: 0.35 },
+  pressed: { transform: [{ scale: 0.98 }] },
   fill: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
     paddingHorizontal: spacing.xl,
     borderRadius: radius.pill,
+    overflow: 'hidden',
   },
-  secondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
-  label: { fontFamily: fonts.extrabold, fontSize: 16 },
+  dark: { backgroundColor: ui.dark, borderWidth: 1, borderColor: colors.border2 },
+  label: { fontFamily: fonts.bold, fontSize: 15 },
 });
