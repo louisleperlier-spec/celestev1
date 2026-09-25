@@ -56,6 +56,17 @@ npx expo lint             # lint
 npx expo install <pkg>    # toujours utiliser ceci pour ajouter une dépendance
 ```
 
+## Publier pour tester dans Expo Go (EAS Update)
+
+Projet EAS : `@leaderprinces-team/nea`. `runtimeVersion` = `exposdk:57.0.0` pour qu'Expo Go (SDK 57) puisse ouvrir les mises à jour.
+Nécessite `EXPO_TOKEN` dans l'environnement (jamais dans le code ni dans git).
+
+```bash
+npx eas-cli@latest update --branch preview --environment preview --platform ios --non-interactive --message "…"
+```
+
+Ouvrir dans Expo Go : `exp://u.expo.dev/<projectId>/group/<updateGroupId>` (ou QR code « Preview » sur la page de la mise à jour dans le tableau de bord EAS).
+
 Lancer typecheck et lint avant de considérer une tâche terminée.
 
 @AGENTS.md

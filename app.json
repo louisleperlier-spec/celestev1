@@ -38,6 +38,17 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "backgroundColor": "#070708"
+    "backgroundColor": "#070708",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8236e0bd-7d60-4537-9cbb-6df1ea24586a"
+      }
+    },
+    "owner": "leaderprinces-team",
+    "runtimeVersion": "exposdk:57.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/8236e0bd-7d60-4537-9cbb-6df1ea24586a"
+    }
   }
 }
