@@ -36,7 +36,7 @@ src/
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
     programme.tsx   aperçu temporaire du plan · design.tsx : écran de vérification du design system
-  components/ui/    design system (Text, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
+  components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan()
@@ -88,6 +88,7 @@ de `prototype/nea-app.html` et compare les deux sur 3 888 profils (coachs × pro
 - Cartes radius 16, boutons pilule hauteur 52, sélection = bordure rose + `glow()`.
 - Couleurs ponctuelles du CSS du prototype dans `ui` (`@/theme`) ; `mix()` et `alpha()` pour `color-mix`.
 - Lueurs : `<Glow>` (dégradé radial SVG) ou `<RadialBackground>`, jamais de `textShadow` coloré (rectangle sur iOS).
+- Grands chiffres (poids, âge, FC, compte à rebours, prix du paywall…) : toujours `<BigNumber value unit>`. Jamais de `Text` de grande taille imbriqué dans un `Text` plus petit ni de `lineHeight` inférieur à la taille de police : sur iOS, le haut des chiffres est rogné.
 
 ## Commandes
 

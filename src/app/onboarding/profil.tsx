@@ -3,10 +3,10 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Warn } from '@/components/onboarding/Choices';
 import { ob, ObScaffold } from '@/components/onboarding/ObScaffold';
-import { Card, Icon, Text, toast } from '@/components/ui';
+import { BigNumber, Card, Icon, Text, toast } from '@/components/ui';
 import { hrMax } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, ui } from '@/theme';
+import { colors, ui } from '@/theme';
 
 /** Nombre à la française (dec() du prototype). */
 const dec = (n: number) => String(n).replace('.', ',');
@@ -30,9 +30,8 @@ export default function Profil() {
       }}
     >
       <Text style={[ob.lbl, ob.first]}>Poids</Text>
-      <Text style={styles.bignum}>
-        <Text style={styles.bignumB}>{dec(weight)}</Text> kg
-      </Text>
+      {/* .bignum : chiffre 56 px + « kg » 18 px grisé */}
+      <BigNumber value={dec(weight)} unit="kg" size={56} unitSize={18} gap={5} />
       <Slider
         style={styles.slider}
         minimumValue={40}
@@ -56,8 +55,8 @@ export default function Profil() {
         >
           <Icon name="minus" />
         </Pressable>
-        <Text style={styles.stepVal}>{age}</Text>
-        <Text style={styles.stepUnit}>ans</Text>
+        {/* .stepper b (44 px) + « ans » collé (margin-left: -12px sur un gap de 18) */}
+        <BigNumber value={age} unit="ans" size={44} unitSize={15} gap={6} style={styles.stepVal} />
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Plus"
@@ -84,9 +83,6 @@ export default function Profil() {
 }
 
 const styles = StyleSheet.create({
-  // .bignum
-  bignum: { textAlign: 'center', fontSize: 18, lineHeight: 64, color: colors.textSecondary },
-  bignumB: { fontFamily: fonts.black, fontSize: 56, color: colors.text, fontVariant: ['tabular-nums'] },
   slider: { width: '100%', height: 30, marginTop: 6 },
   // .stepper
   stepper: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 18 },
@@ -100,8 +96,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepVal: { fontFamily: fonts.black, fontSize: 44, lineHeight: 52, minWidth: 70, textAlign: 'center' },
-  stepUnit: { color: colors.textSecondary, marginLeft: -12 },
+  stepVal: { minWidth: 70 },
   warn: { marginTop: 18 },
   // .fcmax
   fcmax: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, marginTop: 22 },

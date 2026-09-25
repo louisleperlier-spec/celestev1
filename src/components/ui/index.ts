@@ -1,3 +1,4 @@
+export { BigNumber } from './BigNumber';
 export { Button } from './Button';
 export { Card } from './Card';
 export { Glow } from './Glow';
