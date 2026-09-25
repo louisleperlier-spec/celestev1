@@ -79,6 +79,7 @@ export default function Bienvenue() {
         </ScrollView>
         <View style={styles.foot}>
           <Button label="Commencer" arrow onPress={() => router.push('/onboarding/prenom')} />
+          <Button label="J'ai déjà un compte" variant="dark" onPress={() => router.push({ pathname: '/compte', params: { mode: 'login' } })} style={styles.mt10} />
           <Text style={styles.tag}>Ton meilleur toi, chaque jour.</Text>
         </View>
       </SafeAreaView>
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
   hidden: { opacity: 0 },
+  mt10: { marginTop: 10 },
   video: { alignSelf: 'center', overflow: 'hidden' },
   tag: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
 });

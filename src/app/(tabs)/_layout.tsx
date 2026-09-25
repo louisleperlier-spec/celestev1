@@ -13,6 +13,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="accueil" />
       <Tabs.Screen name="programme" />
       <Tabs.Screen name="progres" />
+      <Tabs.Screen name="profil" />
     </Tabs>
   );
 }

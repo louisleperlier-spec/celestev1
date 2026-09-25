@@ -80,9 +80,8 @@ export default function Preparation() {
   const flotte = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
 
   const commencer = () => {
-    // Le paywall (étape 11) et la création de compte (étape 5) viendront s'insérer ici.
-    profil.set({ onboarded: true });
-    router.replace('/accueil');
+    // Le paywall (étape 11) viendra s'insérer ici, avant la création de compte.
+    router.push({ pathname: '/compte', params: { onb: '1' } });
   };
 
   return (

@@ -5,10 +5,12 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useSyncExternalStore } from 'react';
 
 import { ToastHost } from '@/components/ui';
+import { demarrerCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fontAssets } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
+demarrerCompte();
 
 const navTheme = {
   ...DarkTheme,

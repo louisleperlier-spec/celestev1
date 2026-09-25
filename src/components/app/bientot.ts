@@ -5,7 +5,6 @@ import { toast } from '@/components/ui';
  * À retirer au fur et à mesure des étapes.
  */
 export const ETAPES = {
-  profil: 5,
   comptes: 5,
   sante: 6,
   velo: 7,

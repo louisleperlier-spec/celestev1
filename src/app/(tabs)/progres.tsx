@@ -2,14 +2,14 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { bientot } from '@/components/app/bientot';
 import { Kpi } from '@/components/app/Recap';
-import { Sheet } from '@/components/app/Sheet';
-import { Button, Card, Text, toast } from '@/components/ui';
+import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
+import { Card, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, hrMax } from '@/lib/plan';
@@ -290,38 +290,6 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
   );
 }
 
-/** « Ton poids aujourd'hui » (weightSheet du prototype). */
-function Pesee({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const weight = useProfil((s) => s.weight);
-  const [v, setV] = useState(String(weight).replace('.', ','));
-  return (
-    <Sheet visible={visible} onClose={onClose} title="Ton poids aujourd'hui">
-      <TextInput
-        style={styles.inp}
-        value={v}
-        onChangeText={setV}
-        keyboardType="decimal-pad"
-        accessibilityLabel="Ton poids en kilos"
-        autoFocus
-      />
-      <View style={{ height: 12 }} />
-      <Button
-        label="Enregistrer"
-        onPress={() => {
-          const n = parseFloat(v.replace(',', '.'));
-          if (n > 30 && n < 300) {
-            const st = useProfil.getState();
-            st.logWeight(Math.round(n * 10) / 10);
-            st.quest('poids');
-            onClose();
-            toast('Poids enregistré, charges recalculées');
-          }
-        }}
-      />
-    </Sheet>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
@@ -362,15 +330,4 @@ const styles = StyleSheet.create({
   qText: { fontSize: 13.5, lineHeight: 19.6 },
   qEm: { fontSize: 13.5, lineHeight: 19.6, color: colors.textSecondary, marginTop: 4 },
   qImg: { position: 'absolute', right: -10, bottom: -26, width: 124, height: 124 },
-  inp: {
-    height: 50,
-    paddingHorizontal: 16,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
-    color: colors.text,
-    fontFamily: fonts.regular,
-    fontSize: 15,
-  },
 });

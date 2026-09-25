@@ -7,7 +7,7 @@ import { colors } from '@/theme';
 
 import { bientot } from './bientot';
 
-type Onglet = { label: string; icon: IconName; href?: '/accueil' | '/programme' | '/progres'; ecran?: Parameters<typeof bientot>[0] };
+type Onglet = { label: string; icon: IconName; href?: '/accueil' | '/programme' | '/progres' | '/profil'; ecran?: Parameters<typeof bientot>[0] };
 
 /** Les 6 onglets du prototype (vTabs). Ceux des étapes suivantes affichent un message. */
 const ONGLETS: Onglet[] = [
@@ -16,7 +16,7 @@ const ONGLETS: Onglet[] = [
   { label: 'Vélo', icon: 'bike', ecran: 'velo' },
   { label: 'Ligue', icon: 'trophy', ecran: 'ligue' },
   { label: 'Progrès', icon: 'chart', href: '/progres' },
-  { label: 'Profil', icon: 'user', ecran: 'profil' },
+  { label: 'Profil', icon: 'user', href: '/profil' },
 ];
 
 /** Barre d'onglets flottante arrondie (.tabs). */

@@ -22,17 +22,20 @@ type Props = {
   onNext?: () => boolean | void;
   /** Contenu libre à la place du titre (écran coach). */
   header?: ReactNode;
+  /** Ouvert depuis le Profil : pas de barre d'étapes, et le bouton mène ici. */
+  horsOnboarding?: { suivant: () => void };
 };
 
 /** Écran d'onboarding (obWrap + obBar du prototype). */
-export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Continuer', onNext, header }: Props) {
+export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Continuer', onNext, header, horsOnboarding }: Props) {
   const next = () => {
     if (onNext?.() === false) return;
+    if (horsOnboarding) return horsOnboarding.suivant();
     router.push(obHref(obNext(step)));
   };
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
-      <ObBar step={step} />
+      {horsOnboarding ? <Retour /> : <ObBar step={step} />}
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {header ?? (
           <>
@@ -51,6 +54,17 @@ export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Conti
         <Button label={cta} arrow disabled={!ok} onPress={next} />
       </View>
     </SafeAreaView>
+  );
+}
+
+/** Simple bouton retour (.obh), hors onboarding. */
+export function Retour() {
+  return (
+    <View style={styles.bar}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} style={styles.back}>
+        <Icon name="left" />
+      </Pressable>
+    </View>
   );
 }
 

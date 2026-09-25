@@ -1,12 +1,12 @@
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ObBar } from '@/components/onboarding/ObScaffold';
-import { Button, Card, Glow, Icon, Text } from '@/components/ui';
+import { ObBar, Retour } from '@/components/onboarding/ObScaffold';
+import { Button, Card, Glow, Icon, Text, toast } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
 import { coachById, recoCoach } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
@@ -24,21 +24,27 @@ export default function Coach() {
   const pickCoach = useProfil((s) => s.pickCoach);
   const stepCoach = useProfil((s) => s.stepCoach);
 
+  // Depuis le Profil (« Changer de coach ») : pas de présélection, retour au programme (vCoach du prototype).
+  const depuisProfil = useLocalSearchParams<{ depuis?: string }>().depuis === 'profil';
   const rc = recoCoach(goals, level);
   // À la première arrivée (ou si objectifs/niveau ont changé), on présélectionne le coach recommandé.
   useEffect(() => {
-    if (!obCoachSet) set({ coach: rc, obCoachSet: true });
-  }, [obCoachSet, rc, set]);
-  const c = coachById(obCoachSet ? coachId : rc);
-  const reco = c.id === rc;
+    if (!obCoachSet && !depuisProfil) set({ coach: rc, obCoachSet: true });
+  }, [obCoachSet, rc, set, depuisProfil]);
+  const c = coachById(obCoachSet || depuisProfil ? coachId : rc);
+  const reco = !depuisProfil && c.id === rc;
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
-      <ObBar step="coach" />
+      {depuisProfil ? <Retour /> : <ObBar step="coach" />}
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Choisis ton coach</Text>
         <Text style={styles.sub}>
-          {reco ? 'Recommandé selon tes objectifs, mais tu peux changer.' : 'Chaque coach a son propre style de programme.'}
+          {depuisProfil
+            ? 'Chaque coach a une personnalité unique.\nLequel te correspond le plus ?'
+            : reco
+              ? 'Recommandé selon tes objectifs, mais tu peux changer.'
+              : 'Chaque coach a son propre style de programme.'}
         </Text>
 
         {/* .coachstage */}
@@ -115,7 +121,16 @@ export default function Coach() {
         </View>
       </ScrollView>
       <View style={styles.foot}>
-        <Button label={`Choisir ${c.nom}`} arrow onPress={() => router.push('/onboarding/preparation')} />
+        <Button
+          label={`Choisir ${c.nom}`}
+          arrow
+          onPress={() => {
+            if (!depuisProfil) return router.push('/onboarding/preparation');
+            toast('Programme de ' + c.nom + ' créé');
+            router.dismissAll();
+            router.navigate('/programme');
+          }}
+        />
       </View>
     </SafeAreaView>
   );

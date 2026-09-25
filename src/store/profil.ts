@@ -13,6 +13,7 @@ import { buildPlan, type Duree, type Jours, type Plan, type Profil } from '@/lib
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
 import { toast } from '@/components/ui/Toast';
 import { QUESTS } from '@/data/ligue';
+
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
@@ -167,24 +168,32 @@ export const useProfil = create<Etat & Actions>()(
     {
       name: 'nea2',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s): Omit<Etat, 'obCoachSet'> => ({
-        ...selectProfil(s),
-        onboarded: s.onboarded,
-        name: s.name,
-        health: s.health,
-        wlog: s.wlog,
-        logs: s.logs,
-        xp: s.xp,
-        xpLog: s.xpLog,
-        tokens: s.tokens,
-        quests: s.quests,
-        boostUntil: s.boostUntil,
-        added: s.added,
-        wkMod: s.wkMod,
-      }),
+      partialize: (s): EtatSauvegarde => etatSauvegarde(s),
     },
   ),
 );
+
+/** Ce qui est sauvegardé : sur l'appareil, et sur Supabase quand un compte est connecté. */
+export type EtatSauvegarde = Omit<Etat, 'obCoachSet'>;
+
+export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
+  ...selectProfil(s),
+  onboarded: s.onboarded,
+  name: s.name,
+  health: s.health,
+  wlog: s.wlog,
+  logs: s.logs,
+  xp: s.xp,
+  xpLog: s.xpLog,
+  tokens: s.tokens,
+  quests: s.quests,
+  boostUntil: s.boostUntil,
+  added: s.added,
+  wkMod: s.wkMod,
+});
+
+/** Remplace l'état local par celui du compte (connexion sur un appareil). */
+export const chargerEtat = (e: Partial<EtatSauvegarde>) => useProfil.setState({ ...defauts(), ...e, obCoachSet: true });
 
 /** Profil courant pour le générateur de programme. */
 export const selectProfil = (s: Etat): Profil => ({
