@@ -1,8 +1,10 @@
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Card, Screen, SelectableCard, Text } from '@/components/ui';
+import { COACHES, COACH_IMAGES } from '@/data';
 import { colors, gradients, heartZones, radius, spacing } from '@/theme';
 
 /**
@@ -37,6 +39,16 @@ export default function DesignSystemScreen() {
         <Text variant="caption" style={styles.center}>
           Ton meilleur toi, chaque jour.
         </Text>
+      </View>
+
+      <Text variant="title">Coachs</Text>
+      <View style={styles.coaches}>
+        {COACHES.map((c) => (
+          <View key={c.id} style={styles.coach}>
+            <Image source={COACH_IMAGES[c.id].tete} style={[styles.avatar, { borderColor: c.c }]} />
+            <Text variant="caption">{c.nom}</Text>
+          </View>
+        ))}
       </View>
 
       <Text variant="title">Couleurs</Text>
@@ -102,6 +114,9 @@ const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   logo: { color: colors.pink, fontSize: 56, lineHeight: 60, textShadowColor: colors.pink, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 24 },
   center: { textAlign: 'center' },
+  coaches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
+  coach: { width: 72, alignItems: 'center', gap: spacing.xs },
+  avatar: { width: 56, height: 56, borderRadius: radius.pill, borderWidth: 2 },
   swatches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   swatch: { width: 72, alignItems: 'center', gap: spacing.xs },
   swatchColor: {

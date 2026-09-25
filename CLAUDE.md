@@ -5,14 +5,14 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 ## Sources de vérité
 
 1. `docs/NEA-cahier-des-charges.md` : cahier des charges complet (produit, stack, règles de calcul, monétisation, plan de construction).
-2. `docs/nea-app.html` : prototype web = **référence visuelle et fonctionnelle exacte** (écrans, couleurs, données `COACHES`, `PROGS`, `EXL`, `CAT`, logique `buildPlan()`).
+2. `prototype/nea-app.html` : prototype web = **référence visuelle et fonctionnelle exacte** (écrans, couleurs, textes). Toute la logique (`buildPlan()`, charges, calories, VFC, XP) est dans sa section `<script>`.
+3. `src/data/` : données du prototype déjà extraites et typées (voir ci-dessous) ; ne pas les recopier depuis le HTML.
 
 **Règle** : ne rien inventer qui n'est pas dans le prototype ou le cahier des charges. En cas de doute, demander. Code propre et typé (`strict`).
 
 ## Avancement (section 12 du cahier des charges)
 
-- [x] 1. Base : projet Expo, structure, design system, `CLAUDE.md`
-  - [ ] Données extraites + images en fichiers → en attente de `docs/nea-app.html`
+- [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
 - [ ] 2. Onboarding complet + `buildPlan`
 - [ ] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
 - [ ] 4. Séance en cours + récap
@@ -33,12 +33,38 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
   components/ui/    composants de base du design system (Text, Button, Card, SelectableCard, Screen)
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
-  data/             données statiques extraites du prototype (COACHES, PROGS, EXL, CAT)
-assets/images/      icônes, mascottes, illustrations d'exercices
-docs/               cahier des charges + prototype
+  data/             données statiques extraites du prototype (typées, voir « Données »)
+assets/
+  exercices/        50 illustrations <id-exercice>.webp
+  coachs/           <coach>_corps.png (mascotte entière) et <coach>_tete.webp (avatar)
+  deco/             podium, poses d'Axel, vidéo d'accueil v_axel.mp4
+  images/           icône et écran de démarrage
+docs/               cahier des charges
+prototype/          nea-app.html (référence) + LISEZMOI des données
+scripts/            verifier-donnees.ts
 ```
 
 Alias d'import : `@/…` → `src/…`, `@/assets/…` → `assets/…`.
+
+## Données (`@/data`)
+
+Générées depuis `NEA-donnees-et-images.zip`, identiques aux constantes du prototype (clés d'origine conservées).
+
+| Export | Prototype | Contenu |
+|---|---|---|
+| `COACHES` | `COACHES` | 6 coachs |
+| `EXERCICES` | `EXL` + `NAMES` | 50 exercices |
+| `SEANCES`, `SEANCES_GRATUITES` | `CAT`, `FREE_WK` | 41 séances, 3 gratuites |
+| `PROGRAMMES` | `PROGS` | 3 programmes par coach (18) |
+| `TEMPLATES`, `SPECIAL`, `DAYSPOS` | `TPL`, `SPECIAL`, `DAYSPOS` | modèles de séance pour `buildPlan` |
+| `GROUPES`, `MATERIEL`, `LIEUX`, `GEAR`, `GOALS`, `GOALF` | `GRP`, `EQN`, `LIEUX`, `GEAR`, `GOALS`, `GOALF` | référentiels |
+| `HEALTH_QUESTIONS` | `HQ` | questionnaire santé |
+| `PLANS` | `PLANS` | offres NÉA Plus |
+| `QUESTS`, `RANKS` | `QUESTS`, `RANKS` | ligue |
+| `EXERCICE_IMAGES`, `COACH_IMAGES`, `DECO_IMAGES`, `VIDEO_ACCUEIL` | — | images dans `/assets` |
+
+Les exercices d'une séance gardent le format du prototype `id:séries:reps:repos` (`SeanceExercice`).
+Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une image par coach et par exercice).
 
 ## Design system
 
