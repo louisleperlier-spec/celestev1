@@ -10,6 +10,8 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 **Règle** : ne rien inventer qui n'est pas dans le prototype ou le cahier des charges. En cas de doute, demander. Code propre et typé (`strict`).
 
+**Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur.
+
 ## Avancement (section 12 du cahier des charges)
 
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
@@ -18,8 +20,8 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 - [x] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
   - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
   - `isPremium()` renvoie `false` jusqu'à l'étape 11 (`src/lib/premium.ts`)
-- [ ] 4. Séance en cours + récap
-- [ ] 5. Supabase (comptes, sauvegarde, suppression)
+- [ ] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
+- [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
 - [ ] 6. Apple Santé
 - [ ] 7. Vélo
 - [ ] 8. Notifications

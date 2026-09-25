@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Warn } from '@/components/onboarding/Choices';
 import { ob, ObScaffold } from '@/components/onboarding/ObScaffold';
 import { BigNumber, Card, Icon, Text, toast } from '@/components/ui';
-import { hrMax } from '@/lib/plan';
+import { AGE_MIN, hrMax } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
 
@@ -23,8 +23,8 @@ export default function Profil() {
       title="Ton profil physique"
       sub="Pour calculer tes charges, tes calories et ta fréquence cardiaque max."
       onNext={() => {
-        if (age < 14) {
-          toast('NÉA est réservé aux 14 ans et plus');
+        if (age < AGE_MIN) {
+          toast(`NÉA est réservé aux ${AGE_MIN} ans et plus`);
           return false;
         }
       }}
@@ -67,7 +67,7 @@ export default function Profil() {
         </Pressable>
       </View>
 
-      {age < 14 && <Warn style={styles.warn}>NÉA est réservé aux personnes de 14 ans et plus.</Warn>}
+      {age < AGE_MIN && <Warn style={styles.warn}>{`NÉA est réservé aux personnes de ${AGE_MIN} ans et plus.`}</Warn>}
 
       <Card style={styles.fcmax}>
         <Icon name="heart" color={ui.heart} />

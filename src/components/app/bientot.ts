@@ -7,6 +7,8 @@ import { toast } from '@/components/ui';
 export const ETAPES = {
   seance: 4,
   demo: 4,
+  progres: 4,
+  profil: 5,
   comptes: 5,
   sante: 6,
   velo: 7,
@@ -16,6 +18,6 @@ export const ETAPES = {
   plus: 11,
 } as const;
 
-export function bientot(ecran: keyof typeof ETAPES | 'progres' | 'profil') {
-  toast(ecran === 'progres' || ecran === 'profil' ? 'Bientôt disponible' : `Arrive à l'étape ${ETAPES[ecran]}`);
+export function bientot(ecran: keyof typeof ETAPES) {
+  toast(`Arrive à l'étape ${ETAPES[ecran]}`);
 }

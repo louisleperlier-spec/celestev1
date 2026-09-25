@@ -7,7 +7,7 @@ import { Chip } from '@/components/onboarding/Choices';
 import { ob } from '@/components/onboarding/ObScaffold';
 import { Button, Icon, SelectableCard, Text, toast, type IconName } from '@/components/ui';
 import type { LieuOnboarding } from '@/data/types';
-import type { Jours, NiveauId } from '@/lib/plan';
+import { AGE_MIN, type Jours, type NiveauId } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
@@ -36,8 +36,7 @@ export default function Reglages() {
     const a = parseInt(age, 10);
     if (!v) return toast('Écris ton prénom');
     if (!(w > 30 && w < 300)) return toast('Entre un poids entre 30 et 300 kg');
-    // Le prototype accepte 13 ans ici, mais le cahier des charges fixe l'âge minimum à 14 ans.
-    if (!(a >= 14 && a <= 99)) return toast('Entre un âge entre 14 et 99 ans');
+    if (!(a >= AGE_MIN && a <= 99)) return toast(`Entre un âge entre ${AGE_MIN} et 99 ans`);
     profil.set({ name: v, age: a });
     profil.logWeight(w);
     toast('Programme mis à jour');

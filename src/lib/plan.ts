@@ -79,6 +79,9 @@ export type Plan = {
 
 export const LVLN = ['Débutant', 'Intermédiaire', 'Avancé'] as const;
 
+/** Âge minimum pour utiliser NÉA, partout dans l'app (le 13 ans du vSetup du prototype était une erreur). */
+export const AGE_MIN = 14;
+
 const EX: Readonly<Record<ExerciceId, Exercice & { idx: number }>> = Object.fromEntries(
   EXERCICES.map((e, idx) => [e.id, { ...e, idx }]),
 ) as Record<ExerciceId, Exercice & { idx: number }>;
