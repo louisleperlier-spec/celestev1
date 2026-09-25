@@ -1,12 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, radius, ui } from '@/theme';
 
 type Props = {
   selected: boolean;
-  onPress: () => void;
+  /** Sans onPress, la carte n'est pas un bouton (simple mise en évidence). */
+  onPress?: () => void;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
@@ -19,6 +20,16 @@ type Props = {
  * et fond rose très léger (.sel.on).
  */
 export function SelectableCard({ selected, onPress, children, style, accessibilityLabel, multi }: Props) {
+  const fond = selected && (
+    <LinearGradient colors={[ui.selTop, ui.selBottom]} style={[StyleSheet.absoluteFill, styles.bg]} pointerEvents="none" />
+  );
+  if (!onPress)
+    return (
+      <View accessibilityLabel={accessibilityLabel} style={[styles.base, selected && styles.selected, style]}>
+        {fond}
+        {children}
+      </View>
+    );
   return (
     <Pressable
       accessibilityRole={multi ? 'checkbox' : 'radio'}
@@ -27,13 +38,7 @@ export function SelectableCard({ selected, onPress, children, style, accessibili
       onPress={onPress}
       style={[styles.base, selected && styles.selected, style]}
     >
-      {selected && (
-        <LinearGradient
-          colors={[ui.selTop, ui.selBottom]}
-          style={[StyleSheet.absoluteFill, styles.bg]}
-          pointerEvents="none"
-        />
-      )}
+      {fond}
       {children}
     </Pressable>
   );

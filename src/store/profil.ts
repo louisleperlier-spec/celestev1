@@ -8,8 +8,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-import type { CoachId, GoalId } from '@/data/types';
+import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
+import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
+import type { Log } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
 export type Sante = {
@@ -30,6 +32,15 @@ type Etat = Profil & {
   health: Sante | null;
   /** Historique du poids, une valeur par jour. */
   wlog: PeseeJour[];
+  /** Séances et sorties terminées (remplies à l'étape 4). */
+  logs: Log[];
+  xp: number;
+  /** Fin du Turbo x2 (horodatage). */
+  boostUntil: number;
+  /** Séances du catalogue ajoutées au calendrier, par `addedKey`. */
+  added: Partial<Record<string, SeanceId>>;
+  /** Intensité choisie par séance du catalogue. */
+  wkMod: Partial<Record<SeanceId, Intensite>>;
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -44,6 +55,12 @@ type Actions = {
   toggleHealthFlag: (i: number) => void;
   toggleHealthAck: (k: 'ack' | 'ack2') => void;
   logWeight: (kg: number) => void;
+  /** Planifie une séance du catalogue le jour i de la semaine en cours. */
+  planifier: (i: number, id: SeanceId) => void;
+  retirer: (i: number) => void;
+  setIntensite: (id: SeanceId, v: Intensite) => void;
+  /** Suit un autre programme du coach : il repart de la semaine 1. */
+  suivre: (id: ProgrammeId) => void;
   reset: () => void;
 };
 
@@ -62,6 +79,11 @@ const defauts = (): Etat => ({
   progStart: new Date().toISOString(),
   health: null,
   wlog: [],
+  logs: [],
+  xp: 0,
+  boostUntil: 0,
+  added: {},
+  wkMod: {},
   obCoachSet: false,
 });
 
@@ -95,6 +117,14 @@ export const useProfil = create<Etat & Actions>()(
         const jour = new Date().toISOString().slice(0, 10);
         set({ wlog: [...get().wlog.filter((x) => x.d !== jour), { d: jour, kg }], weight: kg });
       },
+      planifier: (i, id) => set({ added: { ...get().added, [addedKey(i)]: id } }),
+      retirer: (i) => {
+        const added = { ...get().added };
+        delete added[addedKey(i)];
+        set({ added });
+      },
+      setIntensite: (id, v) => set({ wkMod: { ...get().wkMod, [id]: v } }),
+      suivre: (id) => set({ progs: { ...get().progs, [get().coach]: id }, progStart: new Date().toISOString() }),
       reset: () => set(defauts()),
     }),
     {
@@ -106,6 +136,11 @@ export const useProfil = create<Etat & Actions>()(
         name: s.name,
         health: s.health,
         wlog: s.wlog,
+        logs: s.logs,
+        xp: s.xp,
+        boostUntil: s.boostUntil,
+        added: s.added,
+        wkMod: s.wkMod,
       }),
     },
   ),
@@ -132,4 +167,11 @@ export const healthFlagged = (h: Sante | null) => !!h && h.flags.some(Boolean);
 export function usePlan(): Plan {
   const p = useProfil(useShallow(selectProfil));
   return useMemo(() => buildPlan(p), [p]);
+}
+
+/** Semaine courante : plan + séances ajoutées + intensités. */
+export function useSemaine(): Semaine {
+  const plan = usePlan();
+  const { weight, added, wkMod } = useProfil(useShallow((s) => ({ weight: s.weight, added: s.added, wkMod: s.wkMod })));
+  return useMemo(() => ({ plan, weight, added, wkMod }), [plan, weight, added, wkMod]);
 }

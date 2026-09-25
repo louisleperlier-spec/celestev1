@@ -56,6 +56,8 @@ export type PlanItem = {
   reps?: [number, number];
   /** …durée d'effort en secondes. */
   sec?: number;
+  /** Tempo (séances du catalogue uniquement ; sinon celui du coach). */
+  tempo?: string;
 };
 
 export type PlanSession = {
@@ -122,7 +124,8 @@ function rankFor(c: CoachEffectif): (id: ExerciceId) => number {
   return (id) => r[id] ?? 100 + EX[id].idx;
 }
 
-function mkItem(id: ExerciceId, c: CoachEffectif, L: number, finisher = false): PlanItem {
+/** Exercice avec séries, reps ou durée et repos, selon le style du coach et le niveau (L = 0, 1 ou 2). */
+export function mkItem(id: ExerciceId, c: CoachEffectif, L: number, finisher = false): PlanItem {
   const e = EX[id];
   const it: PlanItem = { id, sets: c.sets[L], rest: c.rest };
   if (e.groupe === 'cardio' && e.id === 'velo_stationnaire') {

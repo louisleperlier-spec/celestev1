@@ -1,18 +1,27 @@
 /// <reference types="node" />
 /**
- * Compare `buildPlan` et `recoCoach` (src/lib/plan.ts) à la logique d'origine du prototype
- * sur tous les coachs × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés).
+ * Compare la logique de l'app à celle d'origine du prototype : buildPlan et recoCoach sur tous les
+ * coachs × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés),
+ * loadFor (charges), catSession (séances du catalogue × intensité), streak, lvlInfo/rankOf.
  *
  * Lancer : npm run comparer-plan
  */
 import { COACHES } from '../src/data/coaches';
 import { PROGRAMMES } from '../src/data/programmes';
 import { GOALS } from '../src/data/referentiels';
-import { buildPlan, recoCoach, type Profil } from '../src/lib/plan';
+import { SEANCES } from '../src/data/seances';
+import { loadFor } from '../src/lib/charges';
+import { buildPlan, recoCoach, type PlanItem, type Profil } from '../src/lib/plan';
+import { catSession, type Intensite } from '../src/lib/semaine';
+import { lvlInfo, rankOf, streak, type Log } from '../src/lib/xp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const prototype = require('./prototype-plan.cjs') as {
   run: (state: Profil, now: number) => { plan: { sessions: unknown; notes: unknown }; reco: string };
+  cat: (state: object, id: string) => unknown;
+  load: (state: Profil, now: number, it: PlanItem) => unknown;
+  streak: (state: object, now: number) => number;
+  lvl: (xp: number) => unknown;
 };
 
 const NIVEAUX = ['deb', 'int', 'adv'] as const;
@@ -26,6 +35,13 @@ const alea = () => (graine = (graine * 9301 + 49297) % 233280) / 233280;
 
 let total = 0;
 let differences = 0;
+const parFonction: Record<string, { total: number; diff: number }> = {};
+function compter(nom: string, a: unknown, b: unknown, contexte: unknown) {
+  const r = (parFonction[nom] ??= { total: 0, diff: 0 });
+  r.total++;
+  if (JSON.stringify(a) !== JSON.stringify(b) && r.diff++ < 3)
+    console.log(`Différence ${nom} :`, JSON.stringify(contexte), '\n  app       ', JSON.stringify(a).slice(0, 300), '\n  prototype ', JSON.stringify(b).slice(0, 300));
+}
 for (const c of COACHES)
   for (const pr of PROGRAMMES[c.id])
     for (const level of NIVEAUX)
@@ -47,6 +63,11 @@ for (const c of COACHES)
               progStart: new Date(NOW - semaines * 7 * 864e5 - 3600e3).toISOString(),
             };
             const plan = buildPlan(p, NOW);
+            // Charge conseillée de chaque exercice du plan
+            for (const se of plan.sessions)
+              for (const it of se.items) {
+                compter('loadFor', loadFor(it, p, NOW), prototype.load({ ...p, goals: [...goals] }, NOW, it), p);
+              }
             const ref = prototype.run({ ...p, goals: [...goals] }, NOW);
             const a = JSON.stringify([plan.sessions, plan.notes, recoCoach(goals, level)]);
             const b = JSON.stringify([ref.plan.sessions, ref.plan.notes, ref.reco]);
@@ -54,5 +75,32 @@ for (const c of COACHES)
             if (a !== b && differences++ < 3) console.log('Différence :', JSON.stringify(p), '\n  app       ', a.slice(0, 300), '\n  prototype ', b.slice(0, 300));
           }
 
-console.log(`${total} profils comparés au prototype : ${differences} différence(s).`);
-if (differences) process.exit(1);
+// Séances du catalogue : 41 séances × 3 intensités × 4 poids, et leurs charges
+for (const w of SEANCES)
+  for (const mod of [-1, 0, 1] as Intensite[])
+    for (const weight of [45, 62.5, 80, 120]) {
+      const mine = catSession(w, null, weight, mod);
+      const ref = prototype.cat({ weight, wkMod: { [w.id]: mod } }, w.id);
+      compter('catSession', mine, ref, { id: w.id, mod, weight });
+      for (const level of NIVEAUX) {
+        const p: Profil = { coach: 'axel', goals: [], level, gear: 'salle', days: 4, dur: 45, weight, age: 30, progs: {}, progStart: new Date(NOW - 3 * 7 * 864e5).toISOString() };
+        for (const it of mine.items) compter('loadFor (catalogue)', loadFor(it, p, NOW), prototype.load(p, NOW, it), p);
+      }
+    }
+
+// Série de jours sur des historiques aléatoires
+for (let k = 0; k < 300; k++) {
+  const days = JOURS[k % 6];
+  const logs: Log[] = [];
+  for (let j = 0; j < 30; j++)
+    if (alea() < 0.5) logs.push({ d: new Date(NOW - j * 864e5 - alea() * 3600e3).toISOString(), type: 'muscu', title: '', min: 30, cal: 200, vol: 0 });
+  compter('streak', streak(logs, days, new Date(NOW)), prototype.streak({ logs, days }, NOW), { days });
+}
+
+// Niveaux et rangs
+for (let xp = 0; xp < 20000; xp += 37) compter('lvlInfo', [lvlInfo(xp), rankOf(lvlInfo(xp).n)], prototype.lvl(xp), { xp });
+
+for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);
+console.log(`${total} profils comparés au prototype : ${differences} différence(s) sur buildPlan.`);
+const autres = Object.values(parFonction).reduce((a, v) => a + v.diff, 0);
+if (differences || autres) process.exit(1);

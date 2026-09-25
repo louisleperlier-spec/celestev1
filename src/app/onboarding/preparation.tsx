@@ -82,7 +82,7 @@ export default function Preparation() {
   const commencer = () => {
     // Le paywall (étape 11) et la création de compte (étape 5) viendront s'insérer ici.
     profil.set({ onboarded: true });
-    router.replace('/programme');
+    router.replace('/accueil');
   };
 
   return (

@@ -14,9 +14,10 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
 - [x] 2. Onboarding complet + `buildPlan`
-  - paywall (étape 11) et création de compte (étape 5) viendront entre « C'est parti » et le programme ; le bouton « J'ai déjà un compte » de l'accueil arrivera avec les comptes (étape 5)
-  - `src/app/programme.tsx` est un aperçu **temporaire** du plan, remplacé par les onglets à l'étape 3
-- [ ] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
+  - paywall (étape 11) et création de compte (étape 5) viendront entre « C'est parti » et l'accueil ; le bouton « J'ai déjà un compte » de l'accueil arrivera avec les comptes (étape 5)
+- [x] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
+  - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
+  - `isPremium()` renvoie `false` jusqu'à l'étape 11 (`src/lib/premium.ts`)
 - [ ] 4. Séance en cours + récap
 - [ ] 5. Supabase (comptes, sauvegarde, suppression)
 - [ ] 6. Apple Santé
@@ -35,11 +36,16 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
-    programme.tsx   aperçu temporaire du plan · design.tsx : écran de vérification du design system
+    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier) + barre d'onglets
+    seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
+    reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
+  components/app/  TabBar, Sheet, ExerciceSheet, PlanifierSheet, ZoneBar, Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
-  store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan()
+  lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
+  lib/charges.ts    charge conseillée (loadFor), itemLine, zone de reps · lib/xp.ts : série, niveaux, rangs, boosts
+  store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine()
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
 assets/
@@ -76,10 +82,12 @@ Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une imag
 
 ## Logique (`@/lib/plan`)
 
-`buildPlan`, `recoCoach`, `estMin`, `exKcal`, `sesKcal`, `progWeek`, `progFactor`, `hrMax`, `nextSession` sont portés **à l'identique** du prototype.
-Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le `buildPlan` d'origine
-de `prototype/nea-app.html` et compare les deux sur 3 888 profils (coachs × programmes × niveaux × lieux × jours × durées).
-`plan.ts` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
+`buildPlan`, `recoCoach`, `estMin`, `exKcal`, `sesKcal`, `progWeek`, `progFactor`, `hrMax`, `catSession`, `loadFor`,
+`streak`, `lvlInfo`, `rankOf` sont portés **à l'identique** du prototype.
+Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le code d'origine
+de `prototype/nea-app.html` et compare : buildPlan sur 3 888 profils, loadFor sur ~92 000 exercices, catSession sur
+les 41 séances × 3 intensités × 4 poids, streak et lvlInfo.
+`src/lib/*` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
 
 ## Design system
 

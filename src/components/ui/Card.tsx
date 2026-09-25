@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, radius, spacing } from '@/theme';
 
-type Props = { children: ReactNode; style?: ViewStyle };
+type Props = { children: ReactNode; style?: StyleProp<ViewStyle> };
 
 /** Carte : surface #121215, bordure #26262B, radius 16. */
 export function Card({ children, style }: Props) {
