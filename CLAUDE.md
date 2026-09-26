@@ -27,7 +27,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - la notification « VFC post-entraînement » du récap arrivera avec les notifications (étape 8)
   - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
-  - fait : projet Supabase « NÉA COACH » (Canada Central), email + mot de passe, sauvegarde auto (table `etats`), suppression réelle
+  - fait et **validé sur iPhone** : projet Supabase « NÉA COACH » (Canada Central), email + mot de passe, sauvegarde auto (table `etats`), suppression réelle
     (`supprimer_mon_compte`), écran de compte, onglet Profil, Conditions, Confidentialité
   - `supabase/schema.sql` à exécuter dans SQL Editor (tables + RLS + fonction) ; valeurs publiques dans `.env`
   - reste : Sign in with Apple (compte Apple Developer), Google (Google Cloud), réinitialisation du mot de passe (lien profond)
@@ -138,6 +138,9 @@ npx eas-cli@latest update --branch preview --environment preview --platform ios 
 ```
 
 Ouvrir dans Expo Go : `exp://u.expo.dev/<projectId>/group/<updateGroupId>` (ou QR code « Preview » sur la page de la mise à jour dans le tableau de bord EAS).
+
+`--environment` fait ignorer le `.env` local : les valeurs publiques Supabase ont donc un secours dans `src/lib/supabase.ts`.
+Après chaque publication, vérifier : `strings dist/_expo/static/js/ios/*.hbc | grep -c aqmojycbnaotxrrcvxdr` (doit valoir 1).
 
 Lancer typecheck et lint avant de considérer une tâche terminée.
 
