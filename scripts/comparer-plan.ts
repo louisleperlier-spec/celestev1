@@ -14,6 +14,7 @@ import { loadFor } from '../src/lib/charges';
 import { buildPlan, recoCoach, type PlanItem, type Profil } from '../src/lib/plan';
 import { catSession, type Intensite } from '../src/lib/semaine';
 import { Coeur, hrStats } from '../src/lib/coeur';
+import { baseHrv, hm, lastNight, recovStatus, sleepScore, type MesureVFC, type Nuit } from '../src/lib/sommeil';
 import { lvlInfo, rankOf, streak, todayQuests, type Log } from '../src/lib/xp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -26,6 +27,8 @@ const prototype = require('./prototype-plan.cjs') as {
   coeur: (age: number, random: () => number, steps: [number, number | null][]) => unknown;
   stats: (age: number, samples: number[], rr: number[]) => unknown;
   quetes: (now: number) => unknown;
+  sommeil: (nights: Nuit[], checks: MesureVFC[], now: number) => unknown;
+  hm: (s: string) => number;
 };
 
 const NIVEAUX = ['deb', 'int', 'adv'] as const;
@@ -129,6 +132,24 @@ for (let j = 0; j < 730; j++) {
   const t = Date.parse('2026-01-01T12:00:00Z') + j * 864e5;
   compter('quêtes du jour', todayQuests(null, new Date(t)), prototype.quetes(t), { jour: j });
 }
+
+// Sommeil : score, dernière nuit, VFC de référence, état de récupération
+for (let k = 0; k < 400; k++) {
+  const now = NOW + Math.floor(alea() * 30) * 864e5 + Math.floor(alea() * 24) * 36e5;
+  const nights: Nuit[] = [];
+  const nb = Math.floor(alea() * 8);
+  for (let i = nb; i >= 0; i--) {
+    const d = new Date(now - (i + Math.floor(alea() * 3)) * 864e5).toISOString().slice(0, 10);
+    nights.push({ d, h: Math.round((4 + alea() * 6) * 10) / 10, q: 1 + Math.floor(alea() * 5), hrv: alea() < 0.3 ? null : 20 + Math.floor(alea() * 80), rhr: null });
+  }
+  nights.sort((a, b) => (a.d < b.d ? -1 : 1));
+  const checks: MesureVFC[] = [...Array(Math.floor(alea() * 4))].map(() => ({ d: new Date(now).toISOString(), hrv: 15 + Math.floor(alea() * 90), bpm: 60, kind: alea() < 0.5 ? 'matin' : 'post' }));
+  const base = baseHrv(nights, checks);
+  const ln = lastNight(nights, new Date(now));
+  const mien = { base, ln, score: sleepScore(ln, base), recup: [20, 35, 40, 45, 50, 60, 80].map((h) => recovStatus(h, base)) };
+  compter('sommeil', mien, prototype.sommeil(nights, checks, now), { k });
+}
+for (const t of ['22:30', '07:30', '00:05', '23:59']) compter('hm', hm(t), prototype.hm(t), { t });
 
 for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);
 console.log(`${total} profils comparés au prototype : ${differences} différence(s) sur buildPlan.`);

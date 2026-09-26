@@ -70,6 +70,10 @@ export const ui = {
   segBg: '#17171B',
   segTxt: '#C6C6CC',
   segOn: '#FFC6E0',
+  /** Sommeil : barres et anneau (#8f9bff → #5a46d6), libellés des graphiques (#77777f). */
+  sommeil: '#8F9BFF',
+  sommeilFonce: '#5A46D6',
+  axe: '#77777F',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */

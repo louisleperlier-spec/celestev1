@@ -1,21 +1,23 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { bientot } from '@/components/app/bientot';
+import { BarresVFC } from '@/components/app/BarresVFC';
 import { Kpi } from '@/components/app/Recap';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
 import { Card, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, hrMax } from '@/lib/plan';
+import { baseHrv, lastNight, sleepScore } from '@/lib/sommeil';
 import type { Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, heartZones } from '@/theme';
+import { colors, fonts } from '@/theme';
 
 type Periode = 'Semaine' | 'Mois' | 'Année';
 const JOURS_PERIODE: Record<Periode, number> = { Semaine: 7, Mois: 30, Année: 365 };
@@ -51,6 +53,8 @@ export default function Progres() {
   const [now, setNow] = useState(Date.now);
   useFocusEffect(useCallback(() => setNow(Date.now()), []));
   const days = JOURS_PERIODE[p];
+  const base = baseHrv(profil.nights, profil.hrvChecks);
+  const n7 = profil.nights.slice(-7);
   const cur = logsIn(profil.logs, now, days);
   const prev = logsIn(profil.logs, now, days, days);
   const t = sum(cur, 'min');
@@ -118,12 +122,12 @@ export default function Progres() {
               ['FC max théorique', String(hrMax(profil.age))],
             ]}
           />
-          <BarresVFC hl={hl} />
+          <BarresVFC hl={hl.map((l) => ({ hrv: l.hrv ?? 0, type: l.type }))} />
           <Text style={styles.note}>VFC (RMSSD) des {hl.length} dernières séances. Plus elle est haute au repos, mieux tu récupères.</Text>
         </Card>
 
-        {/* Sommeil et récupération (Apple Santé, étape 6) : pas encore de nuits enregistrées */}
-        <Pressable accessibilityRole="button" onPress={() => bientot('sante')}>
+        {/* Sommeil et récupération */}
+        <Pressable accessibilityRole="button" onPress={() => router.push('/sommeil')}>
           <Card style={styles.chart}>
             <View style={styles.h4}>
               <Text weight="semibold" style={styles.h4Txt}>
@@ -133,9 +137,9 @@ export default function Progres() {
             </View>
             <Trio
               items={[
-                ['Score nuit', '--'],
-                ['Sommeil moy.', `${dec((0).toFixed(1))} h`],
-                ['VFC nuit', '45 ms'],
+                ['Score nuit', String(sleepScore(lastNight(profil.nights, new Date(now)), base) ?? '--')],
+                ['Sommeil moy.', `${dec((n7.reduce((a, n) => a + n.h, 0) / Math.max(1, n7.length)).toFixed(1))} h`],
+                ['VFC nuit', `${base} ms`],
               ]}
             />
           </Card>
@@ -177,44 +181,6 @@ function Trio({ items }: { items: [string, string][] }) {
         </View>
       ))}
     </View>
-  );
-}
-
-/** VFC des dernières séances en barres (vfcBars du prototype). */
-function BarresVFC({ hl }: { hl: readonly Log[] }) {
-  const { width } = useWindowDimensions();
-  if (!hl.length) return null;
-  const W = 320;
-  const H = 90;
-  const mx = Math.max(...hl.map((l) => l.hrv ?? 0)) * 1.15 || 1;
-  const bw = W / hl.length;
-  const w = width - 40 - 28;
-  return (
-    <>
-      <Svg width={w} height={(w * (H + 14)) / W} viewBox={`0 0 ${W} ${H + 14}`} style={styles.svg}>
-        {hl.map((l, i) => {
-          const h = ((l.hrv ?? 0) / mx) * H;
-          return (
-            <G key={i}>
-              <Rect x={i * bw + bw * 0.2} y={H - h} width={bw * 0.6} height={h} rx={3} fill={l.type === 'velo' ? heartZones.z1 : colors.pink} />
-              <SvgText x={i * bw + bw / 2} y={H + 11} textAnchor="middle" fill="#77777F" fontSize={8} fontFamily={fonts.regular}>
-                {l.hrv}
-              </SvgText>
-            </G>
-          );
-        })}
-      </Svg>
-      <View style={styles.leg}>
-        <View style={styles.legItem}>
-          <View style={[styles.dot, { backgroundColor: colors.pink }]} />
-          <Text style={styles.legTxt}>Muscu</Text>
-        </View>
-        <View style={styles.legItem}>
-          <View style={[styles.dot, { backgroundColor: heartZones.z1 }]} />
-          <Text style={styles.legTxt}>Vélo</Text>
-        </View>
-      </View>
-    </>
   );
 }
 
@@ -309,10 +275,6 @@ const styles = StyleSheet.create({
   cplanSmall: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary, textAlign: 'center' },
   cplanB: { fontSize: 14, lineHeight: 18 },
   svg: { marginTop: 10 },
-  leg: { flexDirection: 'row', gap: 14, marginTop: 8 },
-  legItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  dot: { width: 8, height: 8, borderRadius: 4 },
-  legTxt: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 6 },
   noteVide: { paddingTop: 14, paddingBottom: 8 },
   qcard: {

@@ -32,6 +32,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - `supabase/schema.sql` à exécuter dans SQL Editor (tables + RLS + fonction) ; valeurs publiques dans `.env`
   - reste : Sign in with Apple (compte Apple Developer), Google (Google Cloud), réinitialisation du mot de passe (lien profond)
 - [ ] 6. Apple Santé
+  - fait (fidèle au prototype, testable dans Expo Go) : écran **Sommeil** (`/sommeil`, vSleep : score de nuit, 7 nuits, VFC nocturne,
+    mesures), saisie de la nuit (`NuitSheet`, sleepSheet), **mesure de récupération d'1 min** (`/recuperation`, vHrv, FC simulée,
+    même correction des RR que la séance), cartes Nuit / Récupération de l'Accueil, carte Sommeil de Progrès, ligne Sommeil du Profil ;
+    `lib/sommeil.ts` (sleepScore, lastNight, baseHrv, recovStatus, hm) comparé au prototype par `comparer-plan`
+  - reste : lecture réelle d'Apple Santé (FC, VFC, sommeil, poids) et ceinture Bluetooth : modules natifs absents d'Expo Go,
+    il faut un **build de développement EAS** (compte Apple Developer) ; « Connecter un capteur » et « Ceinture cardio » appellent encore `bientot('sante')`
 - [ ] 7. Vélo
 - [ ] 8. Notifications
 - [ ] 9. Coach IA (Edge Function)
@@ -57,12 +63,14 @@ src/
     (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), ligue.tsx, progres.tsx + barre d'onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
+    sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
     (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
-                    Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer
+                    Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
+                    BarresVFC, NuitSheet
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
@@ -71,6 +79,7 @@ src/
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
   store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état (+ joueur de la Ligue)
+  store/mesure.ts   mesure de récupération en cours (non sauvegardée) · lib/sommeil.ts : score de nuit, VFC de référence, récupération
   store/ligue.ts    Ligue en ligne (non sauvegardée) : code ami, amis, équipe, classement ; RPC de supabase/ligue.sql
   lib/ligue.ts      semaine de la Ligue : lundiISO, xpSemaine (myWeekXp), actifSemaine, actifsEquipe (teamActiveN)
   lib/supabase.ts   client Supabase (session : lib/stockage.ts via expo-sqlite, stockage.web.ts dans le navigateur)
@@ -111,7 +120,8 @@ Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une imag
 ## Logique (`@/lib/plan`)
 
 `buildPlan`, `recoCoach`, `estMin`, `exKcal`, `sesKcal`, `progWeek`, `progFactor`, `hrMax`, `catSession`, `loadFor`,
-`streak`, `lvlInfo`, `rankOf`, la FC simulée (`HR.tick`, `rmssd`, `zone`), `hrStats` et les quêtes du jour sont portés **à l'identique** du prototype.
+`streak`, `lvlInfo`, `rankOf`, la FC simulée (`HR.tick`, `rmssd`, `zone`), `hrStats`, les quêtes du jour et le sommeil (`sleepScore`,
+`lastNight`, `baseHrv`, `recovStatus`, `hm`) sont portés **à l'identique** du prototype.
 Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le code d'origine
 de `prototype/nea-app.html` et compare : buildPlan sur 3 888 profils, loadFor sur ~92 000 exercices, catSession sur
 les 41 séances × 3 intensités × 4 poids, streak, lvlInfo, 40 × 400 s de FC simulée (même suite aléatoire) et 730 jours de quêtes.

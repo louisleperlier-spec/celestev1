@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import type { ReactNode } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
@@ -11,14 +12,15 @@ import { colors, fonts, ui } from '@/theme';
 import { CoachFace } from './CoachFace';
 
 /** En-tête des écrans de détail (.obh) : retour + libellé centré. */
-export function DetailHead({ titre }: { titre: string }) {
+/** `droite` : bouton optionnel à droite (réglages…). */
+export function DetailHead({ titre, droite }: { titre: string; droite?: ReactNode }) {
   return (
     <View style={styles.obh}>
       <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
         <Icon name="left" />
       </Pressable>
       <Text style={styles.step}>{titre}</Text>
-      <View style={styles.back} />
+      {droite ?? <View style={styles.back} />}
     </View>
   );
 }

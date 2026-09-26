@@ -121,7 +121,7 @@ export default function Profil() {
           />
           <Ligne icon="edit" titre="Niveau, matériel, poids, âge" sous={`${p.days} jours par semaine`} onPress={() => router.push('/reglages')} />
           <Ligne icon="bell" titre="Notifications" sous="VFC post-séance, bilan de nuit, coucher" onPress={() => bientot('notifications')} />
-          <Ligne icon="moon" titre="Sommeil" sous="Tes nuits, ta VFC nocturne et ton score" onPress={() => bientot('sante')} />
+          <Ligne icon="moon" titre="Sommeil" sous="Tes nuits, ta VFC nocturne et ton score" onPress={() => router.push('/sommeil')} />
           <Ligne icon="bt" titre="Ceinture cardio Bluetooth" sous="Arrive avec Apple Santé" onPress={() => bientot('sante')} />
           <Ligne icon="scale" titre="Ajouter mon poids" sous={`Dernier : ${dec(p.weight)} kg`} chevron="plus" onPress={() => setPesee(true)} />
           <Ligne

@@ -8,10 +8,12 @@ import { create } from 'zustand';
 import type { ExerciceId } from '@/data/types';
 import { loadFor } from '@/lib/charges';
 import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
+import { actifsEquipe } from '@/lib/ligue';
 import { coachById, exercice, exKcal, type PlanItem } from '@/lib/plan';
 import type { SeanceJour } from '@/lib/semaine';
 import { boosts, mult, streak } from '@/lib/xp';
 
+import { autresActifs } from './ligue';
 import { selectProfil, useProfil } from './profil';
 
 export type Phase = 'ready' | 'work' | 'rest' | 'done';
@@ -97,7 +99,7 @@ function finish(w: Seance): Seance {
   st0.addLog({ d: new Date().toISOString(), type: 'muscu', title: w.s.titre, min, cal: res.cal, vol: res.vol, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
   const apres = useProfil.getState();
   const serie = streak(apres.logs, apres.days);
-  res.m = mult(boosts(serie, apres.boostUntil, 0));
+  res.m = mult(boosts(serie, apres.boostUntil, actifsEquipe(autresActifs(), apres.logs)));
   const xp = w.xp + apres.addXp(40 + 5 * Math.min(10, serie), 'Séance');
   res.xp = xp;
   apres.quest('seance');

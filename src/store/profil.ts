@@ -16,6 +16,7 @@ import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
 
 import { actifsEquipe } from '@/lib/ligue';
+import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
@@ -51,6 +52,10 @@ type Etat = Profil & {
   added: Partial<Record<string, SeanceId>>;
   /** Intensité choisie par séance du catalogue. */
   wkMod: Partial<Record<SeanceId, Intensite>>;
+  /** Nuits notées (60 dernières), de la plus ancienne à la plus récente. */
+  nights: Nuit[];
+  /** Mesures de récupération d'1 minute. */
+  hrvChecks: MesureVFC[];
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -77,6 +82,10 @@ type Actions = {
   quest: (id: QuestId) => void;
   /** Enregistre une séance ou une sortie terminée (la plus récente en premier). */
   addLog: (l: Log) => void;
+  /** Enregistre une nuit (+10 XP « Sommeil »). */
+  noterNuit: (n: Nuit) => void;
+  /** Enregistre une mesure de récupération (+10 XP « Mesure VFC »). */
+  noterMesure: (m: MesureVFC) => void;
   reset: () => void;
 };
 
@@ -103,6 +112,8 @@ const defauts = (): Etat => ({
   boostUntil: 0,
   added: {},
   wkMod: {},
+  nights: [],
+  hrvChecks: [],
   obCoachSet: false,
 });
 
@@ -165,6 +176,14 @@ export const useProfil = create<Etat & Actions>()(
         setTimeout(() => toast('Quête réussie : +' + g + ' XP'), 900);
       },
       addLog: (l) => set({ logs: [l, ...get().logs] }),
+      noterNuit: (n) => {
+        set({ nights: ajouterNuit(get().nights, n) });
+        get().addXp(10, 'Sommeil');
+      },
+      noterMesure: (m) => {
+        set({ hrvChecks: [...get().hrvChecks, m] });
+        get().addXp(10, 'Mesure VFC');
+      },
       reset: () => set(defauts()),
     }),
     {
@@ -192,6 +211,8 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   boostUntil: s.boostUntil,
   added: s.added,
   wkMod: s.wkMod,
+  nights: s.nights,
+  hrvChecks: s.hrvChecks,
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */

@@ -15,6 +15,7 @@ import { dec, fmt } from '@/lib/charges';
 import { coachById, todayIdx } from '@/lib/plan';
 import { actifsEquipe } from '@/lib/ligue';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
+import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { boosts, lvlInfo, mult, rankOf, streak, type Log } from '@/lib/xp';
 import { useAutresActifs } from '@/store/ligue';
 import { useProfil, useSemaine } from '@/store/profil';
@@ -46,6 +47,11 @@ export default function Accueil() {
   const when = ns.offset === 0 ? 'Séance du jour' : ns.offset === 1 ? 'Séance de demain' : 'Prochaine séance';
   const serie = streak(p.logs, p.days);
   const autres = useAutresActifs();
+  const base = baseHrv(p.nights, p.hrvChecks);
+  const ln = lastNight(p.nights);
+  const sc = sleepScore(ln, base);
+  const lc = p.hrvChecks[p.hrvChecks.length - 1];
+  const st = lc ? recovStatus(lc.hrv, base) : null;
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -116,29 +122,29 @@ export default function Accueil() {
           <Stat icon="wave" label="VFC moy." value={`${avgOf(p.logs, 'hrv')} ms`} />
         </View>
 
-        {/* readyCard : nuit et récupération (Apple Santé, étape 6) */}
+        {/* readyCard : nuit et récupération */}
         <View style={styles.rdy}>
-          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => bientot('sante')}>
+          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => router.push('/sommeil')}>
             <Card style={styles.rdyCard}>
-              <Icon name="moon" size={22} color="#8F9BFF" />
+              <Icon name="moon" size={22} color={ui.sommeil} />
               <View>
                 <Text style={styles.rdySmall}>Nuit</Text>
                 <Text weight="bold" style={styles.rdyB}>
-                  À noter
+                  {sc != null ? sc + '/100' : 'À noter'}
                 </Text>
-                <Text style={styles.rdyEm}>Ajouter</Text>
+                <Text style={styles.rdyEm}>{ln ? dec(ln.h) + ' h' + (ln.hrv ? ' • ' + ln.hrv + ' ms' : '') : 'Ajouter'}</Text>
               </View>
             </Card>
           </Pressable>
-          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => bientot('sante')}>
+          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => router.push('/recuperation')}>
             <Card style={styles.rdyCard}>
               <Icon name="wave" size={22} color={colors.pink} />
               <View>
                 <Text style={styles.rdySmall}>Récupération</Text>
-                <Text weight="bold" style={styles.rdyB}>
-                  Mesurer
+                <Text weight="bold" style={[styles.rdyB, st && { color: st[1] }]}>
+                  {lc ? lc.hrv + ' ms' : 'Mesurer'}
                 </Text>
-                <Text style={styles.rdyEm}>1 min au calme</Text>
+                <Text style={styles.rdyEm}>{st ? st[0] : '1 min au calme'}</Text>
               </View>
             </Card>
           </Pressable>
