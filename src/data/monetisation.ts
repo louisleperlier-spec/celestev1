@@ -3,7 +3,7 @@
 
 import type { Plan } from './types';
 
-/** Offres NÉA Plus (`PLANS`), en dollars canadiens. */
+/** Offres NÉA Plus (`PLANS`), en dollars canadiens. Écart validé : l'offre « À vie » (149,99 $) du prototype est retirée. */
 export const PLANS: readonly Plan[] = [
   {
     id: 'an',
@@ -18,11 +18,5 @@ export const PLANS: readonly Plan[] = [
     nom: 'Mensuel',
     prix: 12.99,
     per: 'mois',
-  },
-  {
-    id: 'vie',
-    nom: 'À vie',
-    prix: 149.99,
-    per: 'paiement unique',
   },
 ];

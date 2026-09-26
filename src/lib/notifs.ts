@@ -56,7 +56,7 @@ export const COULEURS_NOTIF = { post: '#ff4fa3', sleep: '#6b7cff', bed: '#8a5cff
 
 /** « Ton essai se termine demain » (obligatoire), envoyé seulement si le renouvellement est actif. */
 export function notifEssai(p: Premium | null): NouvelleNotif | null {
-  if (!p || p.plan === 'vie' || !p.renew) return null;
+  if (!p || !p.renew) return null;
   return {
     type: 'trial',
     icon: 'star',

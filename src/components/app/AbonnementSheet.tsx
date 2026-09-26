@@ -12,7 +12,7 @@ export function AbonnementSheet({ visible, onClose }: { visible: boolean; onClos
   const p = useProfil((s) => s.premium);
   if (!p) return null;
   const basculer = () => {
-    const avant = p.plan !== 'vie' && p.renew;
+    const avant = p.renew;
     useProfil.getState().basculerRenouvellement();
     onClose();
     toast(avant ? 'Renouvellement annulé' : 'Renouvellement réactivé');
@@ -20,13 +20,11 @@ export function AbonnementSheet({ visible, onClose }: { visible: boolean; onClos
   return (
     <Sheet visible={visible} onClose={onClose} title="Ton abonnement">
       <Text style={styles.sub}>
-        {p.plan === 'vie'
-          ? "Tu as l'accès à vie, rien à gérer."
-          : enEssai(p)
+        {enEssai(p)
             ? "Essai gratuit en cours. Si tu annules, tu gardes l'accès jusqu'à la fin de l'essai et rien n'est facturé."
             : "Si tu annules, tu gardes l'accès jusqu'à la fin de la période payée."}
       </Text>
-      {p.plan !== 'vie' && <Button label={p.renew ? 'Annuler le renouvellement' : 'Réactiver le renouvellement'} variant="dark" onPress={basculer} />}
+      {<Button label={p.renew ? 'Annuler le renouvellement' : 'Réactiver le renouvellement'} variant="dark" onPress={basculer} />}
       <Text style={styles.note}>Dans l&apos;app publiée, la gestion passe par les réglages App Store ou Google Play.</Text>
     </Sheet>
   );

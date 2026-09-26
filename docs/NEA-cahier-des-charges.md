@@ -139,7 +139,7 @@ Puis : animation « ton coach prépare ton programme », **paywall**, **créatio
 **Offres (dollars canadiens)**
 - **Annuel** : 3 jours gratuits, puis 59,99 $/an (présélectionné, « Meilleure offre », −62 %)
 - **Mensuel** : 12,99 $/mois
-- **À vie** : 149,99 $
+- ~~**À vie** : 149,99 $~~ (retirée, décision du 26 septembre 2026)
 - **Offre de sortie** (une seule fois, en fermant le paywall) : 3 jours gratuits, puis 39,99 $ la 1re année, ensuite 59,99 $/an. Compte à rebours réel de 10 minutes.
 
 **Version gratuite** : 3 séances, le 1er programme de chaque coach, 3 messages au coach par jour, pas de Turbo.

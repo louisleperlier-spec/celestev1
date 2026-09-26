@@ -318,7 +318,7 @@ export type Template = readonly [string, readonly (GroupeId | `@${SpecialId}`)[]
 export type Goal = readonly [GoalId, string, string];
 
 export type Plan = {
-  id: 'an' | 'mois' | 'vie';
+  id: 'an' | 'mois';
   nom: string;
   /** Prix en dollars canadiens. */
   prix: number;

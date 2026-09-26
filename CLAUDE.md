@@ -10,7 +10,8 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 **Règle** : ne rien inventer qui n'est pas dans le prototype ou le cahier des charges. En cas de doute, demander. Code propre et typé (`strict`).
 
-**Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur.
+**Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur ;
+**pas d'offre « À vie »** : NÉA Plus = Annuel 59,99 $/an (3 jours gratuits) et Mensuel 12,99 $/mois (+ offre de sortie 39,99 $ la 1re année).
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
@@ -72,14 +73,14 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - sans compte : niveau, boosts, Turbo et quêtes locaux, classement réduit à soi, carte « Créer mon compte »
   - Turbo « Activer » renvoie à NÉA Plus (étape 11) ; icône `bolt` absente du prototype (éclair ajouté)
 - [ ] 11. NÉA Plus (RevenueCat) : **paywall et accès codés, achats encore simulés**
-  - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 3 offres, frise de l'essai, X après 2 s, textes
+  - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 2 offres (annuel, mensuel), frise de l'essai, X après 2 s, textes
     légaux, Restaurer / Conditions / Confidentialité) ; `?suite=compte` après « C'est parti » de l'onboarding (puis création de compte)
   - offre de sortie une seule fois (39,99 $ la 1re année, compte à rebours réel de 10 min), feuille d'achat, « Ton abonnement »
     (annuler / réactiver) depuis la ligne NÉA Plus du Profil, rappel « Ton essai se termine demain » au jour 2 (notifications)
   - `lib/premium.ts` : isPremium lit `premium` du profil (sauvegardé et synchronisé avec le compte) ; séances, programmes, coach illimité,
     Turbo et carte « Essaie NÉA Plus » suivent l'abonnement ; tous les boutons « NÉA Plus » passent par `ouvrirPlus()`
   - reste : vrais achats App Store (RevenueCat `react-native-purchases`, build natif) : contrat « Paid Apps », banque et fiscalité dans
-    App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel, à vie), compte RevenueCat ; puis la limite du coach côté
+    App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel), compte RevenueCat ; puis la limite du coach côté
     serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
