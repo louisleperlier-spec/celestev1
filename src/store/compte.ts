@@ -5,8 +5,10 @@
 import type { AuthError } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
+import { actifSemaine, xpSemaine } from '@/lib/ligue';
 import { supabase } from '@/lib/supabase';
 
+import { chargerLigue, synchroJoueur, viderLigue } from './ligue';
 import { chargerEtat, etatSauvegarde, useProfil, type EtatSauvegarde } from './profil';
 
 type Compte = {
@@ -48,6 +50,15 @@ async function sauvegarder(etat: EtatSauvegarde) {
   if (!id) return;
   const { error } = await supabase.from('etats').upsert({ id, etat, maj: new Date().toISOString() });
   if (error) console.warn('Sauvegarde Supabase :', error.message);
+  await synchroJoueur({ prenom: etat.name, coach: etat.coach, xp: etat.xp, xpSemaine: xpSemaine(etat.xpLog), actif: actifSemaine(etat.logs) });
+}
+
+/** Mon joueur à jour dans la Ligue, puis amis, équipe et classement. */
+export async function rafraichirLigue() {
+  if (!useCompte.getState().userId) return;
+  const e = useProfil.getState();
+  await synchroJoueur({ prenom: e.name, coach: e.coach, xp: e.xp, xpSemaine: xpSemaine(e.xpLog), actif: actifSemaine(e.logs) });
+  await chargerLigue();
 }
 
 /** Récupère l'état du compte ; sinon y enregistre l'état de l'appareil (enterAccount du prototype). */
@@ -58,6 +69,7 @@ async function recupererOuEnvoyer() {
   if (error) throw error;
   if (data?.etat) chargerEtat(data.etat as EtatSauvegarde);
   else await sauvegarder(etatSauvegarde(useProfil.getState()));
+  await rafraichirLigue();
 }
 
 export type Resultat = { ok: true; confirmer?: boolean } | { ok: false; erreur: string };
@@ -70,6 +82,7 @@ export async function inscrire(email: string, motDePasse: string): Promise<Resul
   if (data.user && !data.user.identities?.length) return { ok: false, erreur: message({ message: 'already registered' }) };
   if (!data.session) return { ok: true, confirmer: true };
   await sauvegarder(etatSauvegarde(useProfil.getState()));
+  await chargerLigue();
   return { ok: true };
 }
 
@@ -88,6 +101,7 @@ export async function connecter(email: string, motDePasse: string): Promise<Resu
 export async function deconnecter() {
   await supabase.auth.signOut();
   useProfil.getState().reset();
+  viderLigue();
 }
 
 /** Suppression définitive du compte et de toutes ses données sur le serveur, puis sur l'appareil. */
@@ -98,6 +112,7 @@ export async function supprimerCompte(): Promise<Resultat> {
     await supabase.auth.signOut();
   }
   useProfil.getState().reset();
+  viderLigue();
   return { ok: true };
 }
 
@@ -112,6 +127,8 @@ export function demarrerCompte() {
   supabase.auth.getSession().then(({ data }) => {
     const u = data.session?.user;
     useCompte.setState({ pret: true, userId: u?.id ?? null, email: u?.email ?? null });
+    // Coéquipiers actifs dès le démarrage : ils comptent pour le boost Équipe.
+    rafraichirLigue();
   });
   supabase.auth.onAuthStateChange((_evt, session) => {
     const u = session?.user;

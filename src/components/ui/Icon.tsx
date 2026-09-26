@@ -160,6 +160,14 @@ const ICONS = {
       <Path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" />
     </>
   ),
+  usercheck: (
+    <>
+      <Circle cx={10} cy={8} r={4} />
+      <Path d="M3 21a7 7 0 0 1 12-4.9M16 19l2 2 4-4" />
+    </>
+  ),
+  /** Absent de `P` dans le prototype (icône vide) : éclair du Turbo x2. */
+  bolt: <Path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" />,
   chart: (
     <>
       <Path d="M4 20v-5M9 20v-8M14 20v-6M19 20V8" />

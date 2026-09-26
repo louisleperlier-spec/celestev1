@@ -7,14 +7,14 @@ import { colors } from '@/theme';
 
 import { bientot } from './bientot';
 
-type Onglet = { label: string; icon: IconName; href?: '/accueil' | '/programme' | '/progres' | '/profil'; ecran?: Parameters<typeof bientot>[0] };
+type Onglet = { label: string; icon: IconName; href?: '/accueil' | '/programme' | '/ligue' | '/progres' | '/profil'; ecran?: Parameters<typeof bientot>[0] };
 
 /** Les 6 onglets du prototype (vTabs). Ceux des étapes suivantes affichent un message. */
 const ONGLETS: Onglet[] = [
   { label: 'Accueil', icon: 'home', href: '/accueil' },
   { label: 'Programme', icon: 'clip', href: '/programme' },
   { label: 'Vélo', icon: 'bike', ecran: 'velo' },
-  { label: 'Ligue', icon: 'trophy', ecran: 'ligue' },
+  { label: 'Ligue', icon: 'trophy', href: '/ligue' },
   { label: 'Progrès', icon: 'chart', href: '/progres' },
   { label: 'Profil', icon: 'user', href: '/profil' },
 ];

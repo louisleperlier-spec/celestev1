@@ -12,8 +12,10 @@ import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
 import { toast } from '@/components/ui/Toast';
+import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
 
+import { actifsEquipe } from '@/lib/ligue';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
@@ -145,7 +147,7 @@ export const useProfil = create<Etat & Actions>()(
       addXp: (base, label) => {
         const st = get();
         const before = lvlInfo(st.xp).n;
-        const g = gainXp(base, boosts(streak(st.logs, st.days), st.boostUntil, 0));
+        const g = gainXp(base, boosts(streak(st.logs, st.days), st.boostUntil, actifsEquipe(autresActifs(), st.logs)));
         const xpLog = [...st.xpLog, { d: new Date().toISOString(), xp: g, l: label }].slice(-400);
         const after = lvlInfo(st.xp + g).n;
         set({ xp: st.xp + g, xpLog, tokens: st.tokens + Math.max(0, after - before) });

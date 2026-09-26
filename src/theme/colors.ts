@@ -62,6 +62,14 @@ export const ui = {
   selTop: 'rgba(255,79,163,0.10)',
   selBottom: 'rgba(255,79,163,0.03)',
   pinkRing: 'rgba(255,79,163,0.35)',
+  /** Podium du classement (.pos.p0, .p1, .p2). */
+  podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
+  /** Éclair du Turbo x2 (.turbo svg). */
+  turbo: '#FFD21F',
+  /** Boutons du sélecteur (.seg button) et bouton actif (dégradé #ffc6e0 → #ff8cc6). */
+  segBg: '#17171B',
+  segTxt: '#C6C6CC',
+  segOn: '#FFC6E0',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */

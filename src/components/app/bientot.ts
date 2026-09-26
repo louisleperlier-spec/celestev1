@@ -10,7 +10,6 @@ export const ETAPES = {
   velo: 7,
   notifications: 8,
   coach: 9,
-  ligue: 10,
   plus: 11,
 } as const;
 

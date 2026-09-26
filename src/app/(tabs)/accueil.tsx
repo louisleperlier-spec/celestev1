@@ -3,19 +3,22 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Circle, Defs, LinearGradient as SvgGradient, Polygon, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 
 import { bientot } from '@/components/app/bientot';
 import { CoachFace } from '@/components/app/CoachFace';
+import { Lvl } from '@/components/app/Lvl';
 import { SectionHead } from '@/components/app/Section';
-import { Card, Glow, Icon, SelectableCard, Text, type IconName } from '@/components/ui';
+import { Card, Icon, SelectableCard, Text, type IconName } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, todayIdx } from '@/lib/plan';
+import { actifsEquipe } from '@/lib/ligue';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
 import { boosts, lvlInfo, mult, rankOf, streak, type Log } from '@/lib/xp';
+import { useAutresActifs } from '@/store/ligue';
 import { useProfil, useSemaine } from '@/store/profil';
-import { colors, fonts, glow, gradients, ui } from '@/theme';
+import { colors, glow, gradients, ui } from '@/theme';
 
 /** Moyenne des valeurs positives (avgOf du prototype). */
 const avgOf = (logs: readonly Log[], k: 'hrv') => {
@@ -42,6 +45,7 @@ export default function Accueil() {
   const mx = Math.max(60, ...mins);
   const when = ns.offset === 0 ? 'Séance du jour' : ns.offset === 1 ? 'Séance de demain' : 'Prochaine séance';
   const serie = streak(p.logs, p.days);
+  const autres = useAutresActifs();
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -140,7 +144,7 @@ export default function Accueil() {
           </Pressable>
         </View>
 
-        <XpStrip xp={p.xp} serie={serie} boostUntil={p.boostUntil} />
+        <XpStrip xp={p.xp} serie={serie} boostUntil={p.boostUntil} equipe={actifsEquipe(autres, p.logs)} />
 
         {/* .upsell : NÉA Plus (étape 11) */}
         <Pressable accessibilityRole="button" onPress={() => bientot('plus')}>
@@ -209,24 +213,15 @@ function Stat({ icon, label, value }: { icon: IconName; label: string; value: st
   );
 }
 
-/** Niveau, rang et barre d'XP (xpStrip du prototype). Ligue : étape 10. */
-function XpStrip({ xp, serie, boostUntil }: { xp: number; serie: number; boostUntil: number }) {
+/** Niveau, rang et barre d'XP (xpStrip du prototype) : ouvre la Ligue. */
+function XpStrip({ xp, serie, boostUntil, equipe }: { xp: number; serie: number; boostUntil: number; equipe: number }) {
   const li = lvlInfo(xp);
   const rk = rankOf(li.n);
-  const b = boosts(serie, boostUntil, 0);
+  const b = boosts(serie, boostUntil, equipe);
   return (
-    <Pressable accessibilityRole="button" onPress={() => bientot('ligue')}>
+    <Pressable accessibilityRole="button" onPress={() => router.navigate('/ligue')}>
       <Card style={styles.xps}>
-        {/* .lvl : hexagone de la couleur du rang */}
-        <View style={styles.lvl}>
-          <Glow width={52} height={52} color={rk[1]} intensity={0.45} />
-          <Svg width={40} height={40} viewBox="0 0 40 40">
-            <Polygon points="20,0 40,10 40,30 20,40 0,30 0,10" fill={rk[1]} />
-            <SvgText x="20" y="26" fontSize="16" fontFamily={fonts.black} fill={colors.onPrimary} textAnchor="middle">
-              {li.n}
-            </SvgText>
-          </Svg>
-        </View>
+        <Lvl n={li.n} color={rk[1]} />
         <View style={styles.flex}>
           <Text weight="bold" style={styles.xpB}>
             {rk[0]} • {fmt(xp)} XP
@@ -312,7 +307,6 @@ const styles = StyleSheet.create({
   rdyB: { fontSize: 15, lineHeight: 19 },
   rdyEm: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
   xps: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12, marginHorizontal: 20, paddingVertical: 12, paddingHorizontal: 14 },
-  lvl: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   xpB: { fontSize: 13.5, lineHeight: 17 },
   xbar: { height: 7, borderRadius: 6, backgroundColor: colors.border, overflow: 'hidden', marginTop: 6, marginBottom: 4 },
   xfill: { height: '100%' },

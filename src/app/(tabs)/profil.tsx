@@ -2,10 +2,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { bientot } from '@/components/app/bientot';
+import { confirmer } from '@/components/app/confirmer';
 import { PeseeSheet } from '@/components/app/PeseeSheet';
 import { Card, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
@@ -15,18 +16,6 @@ import { lvlInfo, rankOf } from '@/lib/xp';
 import { deconnecter, supprimerCompte, useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, glow } from '@/theme';
-
-/** Demande de confirmation (confirm() du prototype). */
-function confirmer(titre: string, texte: string, action: string, ok: () => void) {
-  if (Platform.OS === 'web') {
-    if (window.confirm(`${titre} ${texte}`)) ok();
-    return;
-  }
-  Alert.alert(titre, texte, [
-    { text: 'Annuler', style: 'cancel' },
-    { text: action, style: 'destructive', onPress: ok },
-  ]);
-}
 
 /** Onglet Profil (vProfile du prototype). */
 export default function Profil() {

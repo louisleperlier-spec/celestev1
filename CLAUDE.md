@@ -35,7 +35,14 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 - [ ] 7. Vélo
 - [ ] 8. Notifications
 - [ ] 9. Coach IA (Edge Function)
-- [ ] 10. Ligue
+- [ ] 10. Ligue : **codée, à valider sur iPhone** (onglet fidèle à vLigue ; amis et équipes réels à la place des exemples du mode démo)
+  - `supabase/ligue.sql` à exécuter dans SQL Editor (après `schema.sql`) : tables `joueurs`, `amities`, `equipes` fermées (RLS sans règle),
+    tout passe par des fonctions `security definer` limitées au compte connecté (`ligue_maj`, `ligue_etat`, `ajouter_ami`, `creer_equipe`,
+    `rejoindre_equipe`, `quitter_equipe`, `renommer_equipe`)
+  - choix validés : ami ajouté en saisissant son code (mutuel, immédiat) ; une équipe par personne, 5 membres max, on crée la sienne ou on
+    rejoint celle d'un ami ; boost Équipe x1,2 si 3 membres actifs dans la semaine ; classement « Équipes » = toutes les équipes (nom + XP)
+  - sans compte : niveau, boosts, Turbo et quêtes locaux, classement réduit à soi, carte « Créer mon compte »
+  - Turbo « Activer » renvoie à NÉA Plus (étape 11) ; icône `bolt` absente du prototype (éclair ajouté)
 - [ ] 11. NÉA Plus (RevenueCat)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
@@ -47,7 +54,7 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
-    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), progres.tsx + barre d'onglets
+    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), ligue.tsx, progres.tsx + barre d'onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
@@ -55,7 +62,7 @@ src/
     (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
-                    Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb
+                    Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
@@ -63,7 +70,9 @@ src/
   lib/coeur.ts      FC et VFC simulées (Coeur.tick, rmssd, zone), hrStats · lib/premium.ts : accès NÉA Plus
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
-  store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état
+  store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état (+ joueur de la Ligue)
+  store/ligue.ts    Ligue en ligne (non sauvegardée) : code ami, amis, équipe, classement ; RPC de supabase/ligue.sql
+  lib/ligue.ts      semaine de la Ligue : lundiISO, xpSemaine (myWeekXp), actifSemaine, actifsEquipe (teamActiveN)
   lib/supabase.ts   client Supabase (session : lib/stockage.ts via expo-sqlite, stockage.web.ts dans le navigateur)
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
