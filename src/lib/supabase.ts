@@ -7,8 +7,10 @@ import { AppState, Platform } from 'react-native';
 
 import { stockageSession } from './stockage';
 
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+// Valeurs PUBLIQUES du projet « NÉA COACH » (la sécurité repose sur la Row Level Security).
+// En secours du .env : `eas update --environment` ne lit pas le .env local, l'app plantait sans elles.
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://aqmojycbnaotxrrcvxdr.supabase.co';
+const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_lTvmKhqA1rvPBdLt-D_7wQ_AoQjpNx1';
 
 export const supabase = createClient(url, key, {
   auth: {
