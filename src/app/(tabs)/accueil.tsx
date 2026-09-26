@@ -59,7 +59,7 @@ export default function Accueil() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* .top */}
         <View style={styles.top}>
-          <Pressable accessibilityRole="button" accessibilityLabel={`Parler à ${c.nom}`} onPress={() => bientot('coach')}>
+          <Pressable accessibilityRole="button" accessibilityLabel={`Parler à ${c.nom}`} onPress={() => router.push('/chat')}>
             <CoachFace id={c.id} />
           </Pressable>
           <View style={styles.flex}>
@@ -195,7 +195,7 @@ export default function Accueil() {
         </Card>
 
         {/* .qcard : citation du coach */}
-        <Pressable accessibilityRole="button" onPress={() => bientot('coach')} style={styles.qWrap}>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/chat')} style={styles.qWrap}>
           <LinearGradient colors={[colors.surface, colors.surface, '#2A1220']} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
             <Text style={styles.qText}>« {c.daily} »</Text>
             <Text style={styles.qEm}>— {c.nom} • Parler à ton coach</Text>

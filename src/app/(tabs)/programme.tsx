@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
 import { CoachFace } from '@/components/app/CoachFace';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
 import { Kcal } from '@/components/app/Kcal';
@@ -170,7 +169,7 @@ function Catalogue({ onExo, onPlanifier }: { onExo: (id: ExerciceId) => void; on
         </View>
       ) : (
         <>
-          <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => bientot('coach')} />
+          <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => router.push('/chat')} />
           {/* .plans : carrousel des 3 programmes du coach */}
           <ScrollView
             horizontal

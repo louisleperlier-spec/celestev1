@@ -79,6 +79,10 @@ export const ui = {
   grille: '#16161C',
   /** Texte de la bannière de notification (.nbanner small) et date d'une notification (--muted2). */
   bannerTxt: '#CFCFD6',
+  /** Chat : bulle de l'utilisateur (#ffb3d6 → #ff79b9), bouton Envoyer (#ffc6e0 → #ff6fb5), lien NÉA Plus (.quota button). */
+  bulleMoi: ['#FFB3D6', '#FF79B9'],
+  envoyer: ['#FFC6E0', '#FF6FB5'],
+  plusLien: '#FFC23D',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */

@@ -16,6 +16,7 @@ import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
 
 import { actifsEquipe } from '@/lib/ligue';
+import type { MessageChat, QuotaChat } from '@/lib/coach';
 import { notifsDues, rappelPost, REGLAGES_DEFAUT, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
@@ -66,6 +67,10 @@ type Etat = Profil & {
   /** Jour du dernier bilan de nuit et du dernier rappel du coucher. */
   lastWake: string | null;
   lastBed: string | null;
+  /** Conversation avec le coach IA (S.chat), coach de cette conversation, messages envoyés aujourd'hui (S.chatQ). */
+  chat: MessageChat[];
+  chatCoach: CoachId | null;
+  chatQ: QuotaChat | null;
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -139,6 +144,9 @@ const defauts = (): Etat => ({
   notifs: [],
   lastWake: null,
   lastBed: null,
+  chat: [],
+  chatCoach: null,
+  chatQ: null,
   obCoachSet: false,
 });
 
@@ -267,6 +275,9 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   notifs: s.notifs,
   lastWake: s.lastWake,
   lastBed: s.lastBed,
+  chat: s.chat,
+  chatCoach: s.chatCoach,
+  chatQ: s.chatQ,
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */

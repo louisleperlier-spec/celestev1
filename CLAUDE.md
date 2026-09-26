@@ -56,7 +56,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - notifications du téléphone app fermée (`store/notifs.ts`, `expo-notifications`, locales donc possibles dans Expo Go) après
     « Autoriser aussi hors de l'app » ; le bilan programmé d'avance affiche le plus souvent « Comment as-tu dormi ? »
   - l'essai NÉA Plus (« Ton essai se termine demain ») viendra avec l'étape 11
-- [ ] 9. Coach IA (Edge Function)
+- [ ] 9. Coach IA (Edge Function) : **codé, à déployer puis valider sur iPhone**
+  - écran `/chat` fidèle à vChat (accueil du coach, bulles, « … », questions rapides, « N messages gratuits aujourd'hui • Illimité avec
+    NÉA Plus », saisie) ; ouvert par l'avatar et la citation de l'Accueil et « Parler à … » du Programme ; quête « coach »
+  - `supabase/functions/coach/index.ts` (Deno, SDK `@anthropic-ai/sdk`, modèle `claude-opus-5`, effort bas, secours `fallbacks: "default"`) :
+    compte connecté obligatoire, consigne du prototype (personnage, tutoiement, 2 à 4 phrases, pas de conseil médical), 10 derniers messages
+    + résumé du profil (jamais l'email), clé `ANTHROPIC_API_KEY` en secret de la fonction
+  - limite de 3 messages par jour comptée côté serveur (`supabase/coach.sql`, table `coach_quota`, RPC réservées à service_role) et
+    dans l'app (`chatQ`) ; sans compte ou si le modèle ne répond pas : réponses de secours du prototype (`lib/coach.ts`)
+  - à faire : exécuter `coach.sql`, ajouter le secret, déployer la fonction `coach` (sans « Verify JWT », la fonction vérifie elle-même)
 - [ ] 10. Ligue : **codée, à valider sur iPhone** (onglet fidèle à vLigue ; amis et équipes réels à la place des exemples du mode démo)
   - `supabase/ligue.sql` à exécuter dans SQL Editor (après `schema.sql`) : tables `joueurs`, `amities`, `equipes` fermées (RLS sans règle),
     tout passe par des fonctions `security definer` limitées au compte connecté (`ligue_maj`, `ligue_etat`, `ajouter_ami`, `creer_equipe`,
@@ -80,6 +88,7 @@ src/
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
+    chat.tsx        discussion avec le coach IA
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
@@ -97,6 +106,7 @@ src/
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
   store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état (+ joueur de la Ligue)
+  store/coach.ts    envoi d'un message au coach (fonction Edge ou secours) · lib/coach.ts : accueil, secours, quota, résumé du profil
   store/notifs.ts   horloge des notifications, bannière, ouverture, notifications du téléphone · lib/notifs.ts : réglages, textes, échéances
   store/velo.ts     sortie vélo en cours (non sauvegardée) · lib/velo.ts : distance, tracé, parcours simulé, calories, XP
   store/mesure.ts   mesure de récupération en cours (non sauvegardée) · lib/sommeil.ts : score de nuit, VFC de référence, récupération
@@ -112,6 +122,7 @@ assets/
   images/           icône et écran de démarrage
 docs/               cahier des charges
 prototype/          nea-app.html (référence) + LISEZMOI des données
+supabase/           schema.sql, ligue.sql, coach.sql (SQL Editor) · functions/coach (fonction Edge, exclue du tsc et du lint de l'app)
 scripts/            verifier-donnees.ts, comparer-plan.ts (+ prototype-plan.cjs)
 ```
 
