@@ -27,6 +27,10 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - la notification « VFC post-entraînement » du récap arrivera avec les notifications (étape 8)
   - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
+  - fait : projet Supabase « NÉA COACH » (Canada Central), email + mot de passe, sauvegarde auto (table `etats`), suppression réelle
+    (`supprimer_mon_compte`), écran de compte, onglet Profil, Conditions, Confidentialité
+  - `supabase/schema.sql` à exécuter dans SQL Editor (tables + RLS + fonction) ; valeurs publiques dans `.env`
+  - reste : Sign in with Apple (compte Apple Developer), Google (Google Cloud), réinitialisation du mot de passe (lien profond)
 - [ ] 6. Apple Santé
 - [ ] 7. Vélo
 - [ ] 8. Notifications
@@ -47,6 +51,8 @@ src/
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
+    compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
+    (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb
@@ -57,6 +63,8 @@ src/
   lib/coeur.ts      FC et VFC simulées (Coeur.tick, rmssd, zone), hrStats · lib/premium.ts : accès NÉA Plus
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
+  store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état
+  lib/supabase.ts   client Supabase (session : lib/stockage.ts via expo-sqlite, stockage.web.ts dans le navigateur)
   theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
 assets/
