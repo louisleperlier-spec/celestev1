@@ -42,7 +42,13 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - choix : `react-native-health` du cahier des charges est à l'ancienne architecture (absente de RN 0.86), d'où `@kingstinct/react-native-healthkit`
   - à faire : build TestFlight (`scripts/build-ios.sh`, clé d'API App Store Connect dans l'environnement) puis validation sur iPhone ;
     FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
-- [ ] 7. Vélo
+- [ ] 7. Vélo : **codé, à valider sur iPhone** (onglet `(tabs)/velo.tsx`, vBike)
+  - extérieur : GPS réel (`expo-location`, autorisation « pendant l'utilisation ») sinon parcours simulé après 6 s ; carte **Apple Plans**
+    (`react-native-maps`, `Carte.tsx`) avec tracé rose, et le quadrillage SVG du prototype dans le navigateur (`Carte.web.tsx`)
+  - stationnaire (résistance 2 à 10), FC simulée, zones, dernière sortie (courbe FC, zones, « Ouvrir dans Plans »), historique ;
+    enregistrée dès 30 s, XP 30 + 4/km, quête vélo dès 5 km ou 20 min ; l'horloge continue si on change d'onglet (`store/velo.ts`)
+  - les sorties vélo du programme ouvrent l'onglet (`lancerSortie`) ; `lib/velo.ts` (hav, proj) comparé au prototype
+  - reste : suivi GPS en arrière-plan (écran verrouillé) = build natif ; notification VFC post-sortie (étape 8)
 - [ ] 8. Notifications
 - [ ] 9. Coach IA (Edge Function)
 - [ ] 10. Ligue : **codée, à valider sur iPhone** (onglet fidèle à vLigue ; amis et équipes réels à la place des exemples du mode démo)
@@ -67,6 +73,7 @@ src/
     (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), ligue.tsx, progres.tsx + barre d'onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
+    (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
@@ -74,7 +81,7 @@ src/
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
-                    BarresVFC, NuitSheet
+                    BarresVFC, NuitSheet, Carte (.web : SVG du prototype), CarteVide, lancerSortie
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
@@ -83,6 +90,7 @@ src/
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
   store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état (+ joueur de la Ligue)
+  store/velo.ts     sortie vélo en cours (non sauvegardée) · lib/velo.ts : distance, tracé, parcours simulé, calories, XP
   store/mesure.ts   mesure de récupération en cours (non sauvegardée) · lib/sommeil.ts : score de nuit, VFC de référence, récupération
   store/ligue.ts    Ligue en ligne (non sauvegardée) : code ami, amis, équipe, classement ; RPC de supabase/ligue.sql
   lib/ligue.ts      semaine de la Ligue : lundiISO, xpSemaine (myWeekXp), actifSemaine, actifsEquipe (teamActiveN)
@@ -128,7 +136,8 @@ Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une imag
 `lastNight`, `baseHrv`, `recovStatus`, `hm`) sont portés **à l'identique** du prototype.
 Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le code d'origine
 de `prototype/nea-app.html` et compare : buildPlan sur 3 888 profils, loadFor sur ~92 000 exercices, catSession sur
-les 41 séances × 3 intensités × 4 poids, streak, lvlInfo, 40 × 400 s de FC simulée (même suite aléatoire) et 730 jours de quêtes.
+les 41 séances × 3 intensités × 4 poids, streak, lvlInfo, 40 × 400 s de FC simulée (même suite aléatoire), 730 jours de quêtes,
+le sommeil et le vélo (hav, proj).
 `src/lib/*` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
 
 ## Design system

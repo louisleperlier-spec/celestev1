@@ -15,6 +15,7 @@ import { buildPlan, recoCoach, type PlanItem, type Profil } from '../src/lib/pla
 import { catSession, type Intensite } from '../src/lib/semaine';
 import { Coeur, hrStats } from '../src/lib/coeur';
 import { baseHrv, hm, lastNight, recovStatus, sleepScore, type MesureVFC, type Nuit } from '../src/lib/sommeil';
+import { hav, proj, type Pt } from '../src/lib/velo';
 import { lvlInfo, rankOf, streak, todayQuests, type Log } from '../src/lib/xp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -29,6 +30,7 @@ const prototype = require('./prototype-plan.cjs') as {
   quetes: (now: number) => unknown;
   sommeil: (nights: Nuit[], checks: MesureVFC[], now: number) => unknown;
   hm: (s: string) => number;
+  velo: (a: Pt, b: Pt, pts: Pt[]) => unknown;
 };
 
 const NIVEAUX = ['deb', 'int', 'adv'] as const;
@@ -150,6 +152,13 @@ for (let k = 0; k < 400; k++) {
   compter('sommeil', mien, prototype.sommeil(nights, checks, now), { k });
 }
 for (const t of ['22:30', '07:30', '00:05', '23:59']) compter('hm', hm(t), prototype.hm(t), { t });
+
+// Vélo : distance entre deux points GPS et projection du tracé
+for (let k = 0; k < 300; k++) {
+  const a: Pt = [45 + alea() * 2, -74 + alea() * 2];
+  const pts: Pt[] = [...Array(1 + Math.floor(alea() * 20))].map(() => [a[0] + (alea() - 0.5) * 0.05, a[1] + (alea() - 0.5) * 0.05] as Pt);
+  compter('vélo (hav, proj)', { d: hav(a, pts[0]), p: proj(pts) }, prototype.velo(a, pts[0], pts), { k });
+}
 
 for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);
 console.log(`${total} profils comparés au prototype : ${differences} différence(s) sur buildPlan.`);

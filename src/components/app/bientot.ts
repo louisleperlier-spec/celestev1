@@ -7,7 +7,6 @@ import { toast } from '@/components/ui';
 export const ETAPES = {
   comptes: 5,
   sante: 6,
-  velo: 7,
   notifications: 8,
   coach: 9,
   plus: 11,

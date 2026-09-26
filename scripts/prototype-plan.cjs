@@ -35,6 +35,7 @@ const fns = ['allowed', 'rankFor', 'buildPlan', 'mkItem', 'workSec', 'estMin', '
 const hrObj = grab(js.indexOf('const HR='));
 const extra = ['hrStats', 'todayQuests'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
 const sommeil = ['baseHrv', 'sleepScore', 'lastNight', 'recovStatus'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
+const veloFns = ['hav', 'proj'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
 const hmFn = js.slice(js.indexOf('const hm='), js.indexOf(';', js.indexOf('return h*60+m')) + 1);
 const quests = js.slice(js.indexOf('const QUESTS='), js.indexOf(';', js.indexOf('const QUESTS=')) + 1);
 const hashFn = js.slice(js.indexOf('const hash='), js.indexOf(';', js.indexOf('return h/9973')) + 1);
@@ -56,6 +57,7 @@ ${quests}
 ${hashFn}
 ${sommeil}
 ${hmFn}
+${veloFns}
 const dayKey = () => new Date().toISOString().slice(0, 10);
 module.exports = {
   coeur(age, random, steps) {
@@ -72,6 +74,7 @@ module.exports = {
     return { base: baseHrv(), ln, score: sleepScore(ln), recup: [20, 35, 40, 45, 50, 60, 80].map((h) => recovStatus(h)) };
   },
   hm(s) { return hm(s); },
+  velo(a, b, pts) { return { d: hav(a, b), p: proj(pts) }; },
   quetes(now) { NOW = now; S = { quests: null }; return todayQuests(); },
   run(state, now) { S = state; NOW = now; return { plan: buildPlan(), reco: recoCoach() }; },
   cat(state, id) { S = state; return catSession(CAT.find((w) => w.id === id), null); },

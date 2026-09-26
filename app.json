@@ -40,6 +40,12 @@
       "expo-video",
       "expo-sqlite",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo pour tracer ton parcours et calculer ta distance et ta vitesse."
+        }
+      ],
+      [
         "@kingstinct/react-native-healthkit",
         {
           "NSHealthShareUsageDescription": "NÉA lit ton sommeil, ta VFC, ta fréquence cardiaque au repos et ton poids dans Apple Santé pour calculer ton score de récupération et adapter tes séances.",

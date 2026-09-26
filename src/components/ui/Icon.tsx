@@ -160,6 +160,12 @@ const ICONS = {
       <Path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" />
     </>
   ),
+  pin: (
+    <>
+      <Path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" />
+      <Circle cx={12} cy={10} r={2.5} />
+    </>
+  ),
   usercheck: (
     <>
       <Circle cx={10} cy={8} r={4} />

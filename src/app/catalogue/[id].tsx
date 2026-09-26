@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { bientot } from '@/components/app/bientot';
+import { lancerSortie } from '@/components/app/lancerSortie';
 import { DetailHead, detail, Hero, KStat, ParCoach, Tags } from '@/components/app/Detail';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
 import { Kcal } from '@/components/app/Kcal';
@@ -138,7 +139,7 @@ export default function SeanceCatalogue() {
             <Button
               label="Commencer"
               small
-              onPress={() => (w.ride ? bientot('velo') : router.push({ pathname: '/seance-en-cours', params: { cat: w.id } }))}
+              onPress={() => (w.ride ? lancerSortie(w.ride, w.id) : router.push({ pathname: '/seance-en-cours', params: { cat: w.id } }))}
               style={styles.flex}
             />
           </View>

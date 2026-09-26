@@ -74,6 +74,9 @@ export const ui = {
   sommeil: '#8F9BFF',
   sommeilFonce: '#5A46D6',
   axe: '#77777F',
+  /** Carte du vélo : fond (.map) et quadrillage (grid). */
+  carte: '#0C0C10',
+  grille: '#16161C',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
+import { lancerSortie } from '@/components/app/lancerSortie';
 import { CoachFace } from '@/components/app/CoachFace';
 import { DetailHead } from '@/components/app/Detail';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
@@ -77,7 +77,7 @@ export default function SeanceDuJour() {
           label="Lancer la séance"
           iconAfter="play"
           // Une sortie vélo se lance depuis l'onglet Vélo (étape 7).
-          onPress={() => (s.ride ? bientot('velo') : router.push({ pathname: '/seance-en-cours', params: { jour: String(day) } }))}
+          onPress={() => (s.ride ? lancerSortie(s.min, s.cat) : router.push({ pathname: '/seance-en-cours', params: { jour: String(day) } }))}
         />
       </View>
       <ExerciceSheet id={exo?.id ?? null} it={exo ?? undefined} onClose={() => setExo(null)} />
