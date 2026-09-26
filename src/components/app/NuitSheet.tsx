@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { Chip } from '@/components/onboarding/Choices';
 import { Button, Text, toast } from '@/components/ui';
+import { nuitSante, santeDisponible } from '@/lib/sante';
 import { baseHrv, COUCHER_DEFAUT, lastNight, nouvelleNuit, REVEIL_DEFAUT, sleepScore } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
@@ -27,6 +28,24 @@ export function NuitSheet({ visible, onClose }: { visible: boolean; onClose: () 
   const [q, setQ] = useState(4);
   const [hv, setHv] = useState('');
   const [rh, setRh] = useState('');
+  const [sante, setSante] = useState(false);
+
+  // Version native : la nuit de la montre est lue dans Apple Santé et préremplie (il reste la qualité à choisir).
+  useEffect(() => {
+    if (!visible || !santeDisponible()) return;
+    let actif = true;
+    nuitSante().then((n) => {
+      if (!actif || !n) return;
+      setCoucher(n.coucher);
+      setReveil(n.reveil);
+      if (n.hrv) setHv(String(n.hrv));
+      if (n.rhr) setRh(String(n.rhr));
+      setSante(true);
+    });
+    return () => {
+      actif = false;
+    };
+  }, [visible]);
 
   const enregistrer = () => {
     const n = nouvelleNuit(heure(coucher), heure(reveil), q, parseInt(hv, 10), parseInt(rh, 10));
@@ -39,6 +58,7 @@ export function NuitSheet({ visible, onClose }: { visible: boolean; onClose: () 
 
   return (
     <Sheet visible={visible} onClose={onClose} title="Ta nuit">
+      {sante && <Text style={styles.sante}>Prérempli avec Apple Santé : choisis la qualité de ta nuit.</Text>}
       <View style={styles.two}>
         <Champ label="Couché à" value={coucher} onChange={setCoucher} placeholder="22:30" clavier="numbers-and-punctuation" />
         <Champ label="Réveillé à" value={reveil} onChange={setReveil} placeholder="07:30" clavier="numbers-and-punctuation" />
@@ -107,4 +127,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   espace: { height: 14 },
+  sante: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: -4 },
 });

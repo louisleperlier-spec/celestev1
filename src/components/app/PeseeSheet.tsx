@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { Button, toast } from '@/components/ui';
+import { poidsSante, santeDisponible } from '@/lib/sante';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
@@ -11,6 +12,17 @@ import { Sheet } from './Sheet';
 export function PeseeSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const weight = useProfil((s) => s.weight);
   const [v, setV] = useState(String(weight).replace('.', ','));
+  // Version native : dernier poids d'Apple Santé proposé.
+  useEffect(() => {
+    if (!visible || !santeDisponible()) return;
+    let actif = true;
+    poidsSante().then((kg) => {
+      if (actif && kg) setV(String(kg).replace('.', ','));
+    });
+    return () => {
+      actif = false;
+    };
+  }, [visible]);
   return (
     <Sheet visible={visible} onClose={onClose} title="Ton poids aujourd'hui">
       <TextInput

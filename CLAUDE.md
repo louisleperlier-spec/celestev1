@@ -36,8 +36,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     mesures), saisie de la nuit (`NuitSheet`, sleepSheet), **mesure de récupération d'1 min** (`/recuperation`, vHrv, FC simulée,
     même correction des RR que la séance), cartes Nuit / Récupération de l'Accueil, carte Sommeil de Progrès, ligne Sommeil du Profil ;
     `lib/sommeil.ts` (sleepScore, lastNight, baseHrv, recovStatus, hm) comparé au prototype par `comparer-plan`
-  - reste : lecture réelle d'Apple Santé (FC, VFC, sommeil, poids) et ceinture Bluetooth : modules natifs absents d'Expo Go,
-    il faut un **build de développement EAS** (compte Apple Developer) ; « Connecter un capteur » et « Ceinture cardio » appellent encore `bientot('sante')`
+  - Apple Santé (`lib/sante.ts`, `@kingstinct/react-native-healthkit`, lecture seule) : la feuille « Ta nuit » est préremplie avec la nuit
+    de l'Apple Watch (coucher, réveil, VFC nocturne SDNN, FC au repos), la pesée avec le dernier poids. Chargé seulement hors Expo Go
+    (`santeDisponible()`), donc Expo Go garde la saisie manuelle
+  - choix : `react-native-health` du cahier des charges est à l'ancienne architecture (absente de RN 0.86), d'où `@kingstinct/react-native-healthkit`
+  - à faire : build TestFlight (`scripts/build-ios.sh`, clé d'API App Store Connect dans l'environnement) puis validation sur iPhone ;
+    FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
 - [ ] 7. Vélo
 - [ ] 8. Notifications
 - [ ] 9. Coach IA (Edge Function)
@@ -146,6 +150,13 @@ npx tsc --noEmit          # typecheck
 npx expo lint             # lint
 npx expo install <pkg>    # toujours utiliser ceci pour ajouter une dépendance
 ```
+
+## Build iOS (TestFlight)
+
+Bundle ID `com.neacoach.app`. `eas.json` : profils `preview` (canal preview, TestFlight) et `production`, numéro de build géré par EAS.
+`scripts/build-ios.sh` lance le build sans ordinateur : les identifiants Apple viennent des variables d'environnement listées dans le script.
+L'app TestFlight télécharge les mises à jour `eas update --branch preview` comme Expo Go (même `runtimeVersion`) : un nouveau build
+n'est nécessaire que si on ajoute un module natif. Ne jamais créer `ios/` à la main (`npx expo prebuild` sert seulement à vérifier).
 
 ## Publier pour tester dans Expo Go (EAS Update)
 
