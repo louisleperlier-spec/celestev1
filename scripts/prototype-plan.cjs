@@ -35,6 +35,7 @@ const fns = ['allowed', 'rankFor', 'buildPlan', 'mkItem', 'workSec', 'estMin', '
 const hrObj = grab(js.indexOf('const HR='));
 const extra = ['hrStats', 'todayQuests'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
 const sommeil = ['baseHrv', 'sleepScore', 'lastNight', 'recovStatus'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
+const notifTick = grab(js.indexOf('function notifTick('));
 const veloFns = ['hav', 'proj'].map((n) => grab(js.indexOf('function ' + n + '('))).join('\n');
 const hmFn = js.slice(js.indexOf('const hm='), js.indexOf(';', js.indexOf('return h*60+m')) + 1);
 const quests = js.slice(js.indexOf('const QUESTS='), js.indexOf(';', js.indexOf('const QUESTS=')) + 1);
@@ -58,6 +59,10 @@ ${hashFn}
 ${sommeil}
 ${hmFn}
 ${veloFns}
+${notifTick}
+const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+let SORTIE = [];
+const notify = (n) => SORTIE.push(n);
 const dayKey = () => new Date().toISOString().slice(0, 10);
 module.exports = {
   coeur(age, random, steps) {
@@ -74,6 +79,11 @@ module.exports = {
     return { base: baseHrv(), ln, score: sleepScore(ln), recup: [20, 35, 40, 45, 50, 60, 80].map((h) => recovStatus(h)) };
   },
   hm(s) { return hm(s); },
+  notifs(etat, now) {
+    S = { onboarded: true, ...JSON.parse(JSON.stringify(etat)) }; NOW = now; SORTIE = [];
+    notifTick();
+    return { notifs: SORTIE, pending: S.pending, lastWake: S.lastWake, lastBed: S.lastBed };
+  },
   velo(a, b, pts) { return { d: hav(a, b), p: proj(pts) }; },
   quetes(now) { NOW = now; S = { quests: null }; return todayQuests(); },
   run(state, now) { S = state; NOW = now; return { plan: buildPlan(), reco: recoCoach() }; },

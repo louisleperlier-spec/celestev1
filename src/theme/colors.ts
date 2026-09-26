@@ -77,6 +77,8 @@ export const ui = {
   /** Carte du vélo : fond (.map) et quadrillage (grid). */
   carte: '#0C0C10',
   grille: '#16161C',
+  /** Texte de la bannière de notification (.nbanner small) et date d'une notification (--muted2). */
+  bannerTxt: '#CFCFD6',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */

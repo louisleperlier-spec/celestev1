@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Chip } from '@/components/onboarding/Choices';
 import { Button, Text, toast } from '@/components/ui';
 import { nuitSante, santeDisponible } from '@/lib/sante';
-import { baseHrv, COUCHER_DEFAUT, lastNight, nouvelleNuit, REVEIL_DEFAUT, sleepScore } from '@/lib/sommeil';
+import { baseHrv, heure, lastNight, nouvelleNuit, sleepScore } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
@@ -12,19 +12,12 @@ import { Sheet } from './Sheet';
 
 const QUALITE = ['😫', '😕', '😐', '🙂', '😴'];
 
-/** « 7:5 », « 0730 » → « 07:30 » ; vide si l'heure n'est pas valable. */
-function heure(s: string): string {
-  const m = s.trim().match(/^(\d{1,2})[:h ]?(\d{2})$/);
-  if (!m) return '';
-  const h = Number(m[1]);
-  const mn = Number(m[2]);
-  return h < 24 && mn < 60 ? String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0') : '';
-}
-
 /** « Ta nuit » : coucher, réveil, qualité, VFC nocturne et FC au repos facultatives (sleepSheet du prototype). */
 export function NuitSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const [coucher, setCoucher] = useState(COUCHER_DEFAUT);
-  const [reveil, setReveil] = useState(REVEIL_DEFAUT);
+  // Heures proposées : celles des réglages des notifications (S.nset.bedT / wake).
+  const nset = useProfil((s) => s.nset);
+  const [coucher, setCoucher] = useState(nset.bedT);
+  const [reveil, setReveil] = useState(nset.wake);
   const [q, setQ] = useState(4);
   const [hv, setHv] = useState('');
   const [rh, setRh] = useState('');

@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { bientot } from '@/components/app/bientot';
 import { confirmer } from '@/components/app/confirmer';
+import { NotifSheet } from '@/components/app/NotifSheet';
 import { PeseeSheet } from '@/components/app/PeseeSheet';
 import { Card, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
@@ -25,6 +26,7 @@ export default function Profil() {
   const li = lvlInfo(p.xp);
   const lv = li.n;
   const [pesee, setPesee] = useState(false);
+  const [reglages, setReglages] = useState(false);
 
   const supprimer = () =>
     confirmer(
@@ -120,7 +122,7 @@ export default function Profil() {
             onPress={() => router.push({ pathname: '/onboarding/objectifs', params: { depuis: 'profil' } })}
           />
           <Ligne icon="edit" titre="Niveau, matériel, poids, âge" sous={`${p.days} jours par semaine`} onPress={() => router.push('/reglages')} />
-          <Ligne icon="bell" titre="Notifications" sous="VFC post-séance, bilan de nuit, coucher" onPress={() => bientot('notifications')} />
+          <Ligne icon="bell" titre="Notifications" sous="VFC post-séance, bilan de nuit, coucher" onPress={() => setReglages(true)} />
           <Ligne icon="moon" titre="Sommeil" sous="Tes nuits, ta VFC nocturne et ton score" onPress={() => router.push('/sommeil')} />
           <Ligne icon="bt" titre="Ceinture cardio Bluetooth" sous="Arrive avec Apple Santé" onPress={() => bientot('sante')} />
           <Ligne icon="scale" titre="Ajouter mon poids" sous={`Dernier : ${dec(p.weight)} kg`} chevron="plus" onPress={() => setPesee(true)} />
@@ -150,6 +152,7 @@ export default function Profil() {
         <View style={{ height: 10 }} />
       </ScrollView>
       <PeseeSheet visible={pesee} onClose={() => setPesee(false)} />
+      <NotifSheet visible={reglages} onClose={() => setReglages(false)} />
     </SafeAreaView>
   );
 }

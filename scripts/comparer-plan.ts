@@ -16,6 +16,7 @@ import { catSession, type Intensite } from '../src/lib/semaine';
 import { Coeur, hrStats } from '../src/lib/coeur';
 import { baseHrv, hm, lastNight, recovStatus, sleepScore, type MesureVFC, type Nuit } from '../src/lib/sommeil';
 import { hav, proj, type Pt } from '../src/lib/velo';
+import { notifsDues, type EtatNotifs } from '../src/lib/notifs';
 import { lvlInfo, rankOf, streak, todayQuests, type Log } from '../src/lib/xp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -31,6 +32,7 @@ const prototype = require('./prototype-plan.cjs') as {
   sommeil: (nights: Nuit[], checks: MesureVFC[], now: number) => unknown;
   hm: (s: string) => number;
   velo: (a: Pt, b: Pt, pts: Pt[]) => unknown;
+  notifs: (etat: EtatNotifs, now: number) => unknown;
 };
 
 const NIVEAUX = ['deb', 'int', 'adv'] as const;
@@ -158,6 +160,24 @@ for (let k = 0; k < 300; k++) {
   const a: Pt = [45 + alea() * 2, -74 + alea() * 2];
   const pts: Pt[] = [...Array(1 + Math.floor(alea() * 20))].map(() => [a[0] + (alea() - 0.5) * 0.05, a[1] + (alea() - 0.5) * 0.05] as Pt);
   compter('vélo (hav, proj)', { d: hav(a, pts[0]), p: proj(pts) }, prototype.velo(a, pts[0], pts), { k });
+}
+
+// Notifications dues (notifTick) : rappels VFC, bilan de nuit, coucher, à toute heure de la journée
+for (let k = 0; k < 600; k++) {
+  const now = NOW + Math.floor(alea() * 96) * 15 * 60000;
+  const nights: Nuit[] = alea() < 0.5 ? [] : [{ d: new Date(now - 864e5 * Math.floor(alea() * 3)).toISOString().slice(0, 10), h: 7.4, q: 4, hrv: alea() < 0.5 ? null : 52, rhr: null }];
+  const hh = () => String(Math.floor(alea() * 24)).padStart(2, '0') + ':' + ['00', '15', '30', '45'][Math.floor(alea() * 4)];
+  const etat: EtatNotifs = {
+    nset: { post: alea() < 0.8, delay: [0.1, 5, 10, 30, 60][Math.floor(alea() * 5)], sleep: alea() < 0.8, wake: hh(), bed: alea() < 0.8, bedT: hh() },
+    pending: [...Array(Math.floor(alea() * 3))].map(() => ({ at: now + (alea() - 0.5) * 36e5, type: 'post' as const, kind: alea() < 0.5 ? ('velo' as const) : ('muscu' as const), endHrv: alea() < 0.5 ? null : 30 + Math.floor(alea() * 40) })),
+    lastWake: alea() < 0.3 ? new Date(now).toISOString().slice(0, 10) : null,
+    lastBed: null,
+    nights,
+    hrvChecks: [],
+  };
+  const mien = notifsDues(etat, new Date(now));
+  const proto = prototype.notifs(etat, now) as { notifs: object[] };
+  compter('notifications', { ...mien, notifs: mien.notifs }, { ...proto, notifs: proto.notifs }, { k });
 }
 
 for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);

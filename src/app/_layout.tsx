@@ -5,12 +5,15 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useSyncExternalStore } from 'react';
 
 import { ToastHost } from '@/components/ui';
+import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
+import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { colors, fontAssets } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 demarrerCompte();
+demarrerNotifs();
 
 const navTheme = {
   ...DarkTheme,
@@ -44,6 +47,7 @@ export default function RootLayout() {
     <ThemeProvider value={navTheme}>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'fade' }} />
+      <NotifBanniere />
       <ToastHost />
     </ThemeProvider>
   );

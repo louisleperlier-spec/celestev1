@@ -47,6 +47,7 @@ export default function Accueil() {
   const when = ns.offset === 0 ? 'Séance du jour' : ns.offset === 1 ? 'Séance de demain' : 'Prochaine séance';
   const serie = streak(p.logs, p.days);
   const autres = useAutresActifs();
+  const nonLues = p.notifs.some((n) => !n.read);
   const base = baseHrv(p.nights, p.hrvChecks);
   const ln = lastNight(p.nights);
   const sc = sleepScore(ln, base);
@@ -67,8 +68,9 @@ export default function Accueil() {
             </Text>
             <Text style={styles.pret}>Prêt pour ta séance d&apos;aujourd&apos;hui ?</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell} onPress={() => bientot('notifications')}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.bell} onPress={() => router.push('/notifications')}>
             <Icon name="bell" />
+            {nonLues && <View style={styles.bellDot} />}
           </Pressable>
         </View>
 
@@ -291,6 +293,8 @@ const styles = StyleSheet.create({
   salut: { fontSize: 18, lineHeight: 23 },
   pret: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
   bell: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  // .bell::after : pastille rose tant qu'une notification n'est pas lue
+  bellDot: { position: 'absolute', top: 8, right: 9, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.pink, boxShadow: `0 0 8px ${colors.pink}` },
   week: { flexDirection: 'row', gap: 7, paddingTop: 12, paddingHorizontal: 20, paddingBottom: 4 },
   day: { flex: 1, height: 58, alignItems: 'center', justifyContent: 'center', gap: 5 },
   dayLbl: { fontSize: 10.5, lineHeight: 13, color: colors.textSecondary },

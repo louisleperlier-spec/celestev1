@@ -1,12 +1,12 @@
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { BarresVFC } from '@/components/app/BarresVFC';
-import { bientot } from '@/components/app/bientot';
 import { DetailHead } from '@/components/app/Detail';
+import { NotifSheet } from '@/components/app/NotifSheet';
 import { NuitSheet } from '@/components/app/NuitSheet';
 import { Row } from '@/components/app/Rows';
 import { SectionHead } from '@/components/app/Section';
@@ -20,7 +20,10 @@ import { colors, fonts, heartZones, ui } from '@/theme';
 /** Sommeil : score de la nuit, 7 dernières nuits, VFC nocturne, mesures de récupération (vSleep du prototype). */
 export default function Sommeil() {
   const p = useProfil();
-  const [feuille, setFeuille] = useState(false);
+  // ?ajout=1 : ouverte depuis la notification « Comment as-tu dormi ? » (sleepadd)
+  const { ajout } = useLocalSearchParams<{ ajout?: string }>();
+  const [feuille, setFeuille] = useState(ajout === '1');
+  const [reglages, setReglages] = useState(false);
   const [now, setNow] = useState(Date.now);
   useFocusEffect(useCallback(() => setNow(Date.now()), []));
 
@@ -35,7 +38,7 @@ export default function Sommeil() {
       <DetailHead
         titre="Sommeil"
         droite={
-          <Pressable accessibilityRole="button" accessibilityLabel="Réglages" onPress={() => bientot('notifications')} style={styles.iconbtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Réglages" onPress={() => setReglages(true)} style={styles.iconbtn}>
             <Icon name="bell" />
           </Pressable>
         }
@@ -108,6 +111,7 @@ export default function Sommeil() {
         <Button label="Ajouter ma nuit" icon="plus" onPress={() => setFeuille(true)} />
       </View>
       <NuitSheet visible={feuille} onClose={() => setFeuille(false)} />
+      <NotifSheet visible={reglages} onClose={() => setReglages(false)} />
     </SafeAreaView>
   );
 }

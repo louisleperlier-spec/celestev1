@@ -16,6 +16,7 @@ import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
 
 import { actifsEquipe } from '@/lib/ligue';
+import { notifsDues, rappelPost, REGLAGES_DEFAUT, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
@@ -56,6 +57,15 @@ type Etat = Profil & {
   nights: Nuit[];
   /** Mesures de récupération d'1 minute. */
   hrvChecks: MesureVFC[];
+  /** Réglages des notifications (S.nset). */
+  nset: ReglagesNotifs;
+  /** Rappels VFC post-entraînement à venir. */
+  pending: EnAttente[];
+  /** Notifications reçues (40 dernières, la plus récente en premier). */
+  notifs: Notif[];
+  /** Jour du dernier bilan de nuit et du dernier rappel du coucher. */
+  lastWake: string | null;
+  lastBed: string | null;
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -86,6 +96,16 @@ type Actions = {
   noterNuit: (n: Nuit) => void;
   /** Enregistre une mesure de récupération (+10 XP « Mesure VFC »). */
   noterMesure: (m: MesureVFC) => void;
+  /** Nouveaux réglages : le bilan et le coucher peuvent revenir aujourd'hui. */
+  reglerNotifs: (n: ReglagesNotifs) => void;
+  /** Rappel VFC après une séance ou une sortie (schedulePost). */
+  programmerPost: (kind: EnAttente['kind'], endHrv: number | null) => void;
+  /** Ajoute les notifications dues et les renvoie (notifTick). */
+  tickNotifs: (now?: Date) => Notif[];
+  /** Ajoute une notification (notify). */
+  notifier: (n: NouvelleNotif) => Notif;
+  lireNotifs: () => void;
+  lireNotif: (id: string) => void;
   reset: () => void;
 };
 
@@ -114,6 +134,11 @@ const defauts = (): Etat => ({
   wkMod: {},
   nights: [],
   hrvChecks: [],
+  nset: REGLAGES_DEFAUT,
+  pending: [],
+  notifs: [],
+  lastWake: null,
+  lastBed: null,
   obCoachSet: false,
 });
 
@@ -184,6 +209,30 @@ export const useProfil = create<Etat & Actions>()(
         set({ hrvChecks: [...get().hrvChecks, m] });
         get().addXp(10, 'Mesure VFC');
       },
+      reglerNotifs: (nset) => set({ nset, lastWake: null, lastBed: null }),
+      programmerPost: (kind, endHrv) => {
+        const p = rappelPost(get().nset, kind, endHrv);
+        if (p) set({ pending: [...get().pending, p] });
+      },
+      tickNotifs: (now = new Date()) => {
+        const st = get();
+        if (!st.onboarded) return [];
+        const r = notifsDues(st, now);
+        if (!r.notifs.length && r.pending.length === st.pending.length) return [];
+        const neuves = r.notifs.map((n, i): Notif => ({ ...n, id: String(+now) + '-' + i, d: now.toISOString(), read: false }));
+        set({ pending: r.pending, lastWake: r.lastWake, lastBed: r.lastBed, notifs: [...neuves.reverse(), ...st.notifs].slice(0, 40) });
+        return neuves;
+      },
+      notifier: (n) => {
+        const now = new Date();
+        const x: Notif = { ...n, id: String(+now), d: now.toISOString(), read: false };
+        set({ notifs: [x, ...get().notifs].slice(0, 40) });
+        return x;
+      },
+      lireNotifs: () => {
+        if (get().notifs.some((n) => !n.read)) set({ notifs: get().notifs.map((n) => (n.read ? n : { ...n, read: true })) });
+      },
+      lireNotif: (id) => set({ notifs: get().notifs.map((n) => (n.id === id ? { ...n, read: true } : n)) }),
       reset: () => set(defauts()),
     }),
     {
@@ -213,6 +262,11 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   wkMod: s.wkMod,
   nights: s.nights,
   hrvChecks: s.hrvChecks,
+  nset: s.nset,
+  pending: s.pending,
+  notifs: s.notifs,
+  lastWake: s.lastWake,
+  lastBed: s.lastBed,
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */

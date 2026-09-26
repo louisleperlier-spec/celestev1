@@ -24,7 +24,6 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
   - `isPremium()` renvoie `false` jusqu'à l'étape 11 (`src/lib/premium.ts`)
 - [x] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
-  - la notification « VFC post-entraînement » du récap arrivera avec les notifications (étape 8)
   - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
   - fait et **validé sur iPhone** : projet Supabase « NÉA COACH » (Canada Central), email + mot de passe, sauvegarde auto (table `etats`), suppression réelle
@@ -49,7 +48,14 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     enregistrée dès 30 s, XP 30 + 4/km, quête vélo dès 5 km ou 20 min ; l'horloge continue si on change d'onglet (`store/velo.ts`)
   - les sorties vélo du programme ouvrent l'onglet (`lancerSortie`) ; `lib/velo.ts` (hav, proj) comparé au prototype
   - reste : suivi GPS en arrière-plan (écran verrouillé) = build natif ; notification VFC post-sortie (étape 8)
-- [ ] 8. Notifications
+- [ ] 8. Notifications : **codées, à valider sur iPhone**
+  - fidèles au prototype : rappel « VFC post-entraînement » après séance et sortie (délai 6 s à 1 h), « Bilan de ta nuit » /
+    « Comment as-tu dormi ? » dans les 4 h après le réveil, « C'est l'heure de te coucher » ; écran `/notifications` (liste, « Tester »),
+    feuille de réglages (`NotifSheet`, depuis la liste, Sommeil et Profil), bannière dans l'app (`NotifBanniere`), point rose sur la cloche
+  - `lib/notifs.ts` (notifTick, textes) comparé au prototype ; état sauvegardé dans le profil (nset, pending, notifs, lastWake, lastBed)
+  - notifications du téléphone app fermée (`store/notifs.ts`, `expo-notifications`, locales donc possibles dans Expo Go) après
+    « Autoriser aussi hors de l'app » ; le bilan programmé d'avance affiche le plus souvent « Comment as-tu dormi ? »
+  - l'essai NÉA Plus (« Ton essai se termine demain ») viendra avec l'étape 11
 - [ ] 9. Coach IA (Edge Function)
 - [ ] 10. Ligue : **codée, à valider sur iPhone** (onglet fidèle à vLigue ; amis et équipes réels à la place des exemples du mode démo)
   - `supabase/ligue.sql` à exécuter dans SQL Editor (après `schema.sql`) : tables `joueurs`, `amities`, `equipes` fermées (RLS sans règle),
@@ -74,6 +80,7 @@ src/
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
+    notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
@@ -81,7 +88,7 @@ src/
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
-                    BarresVFC, NuitSheet, Carte (.web : SVG du prototype), CarteVide, lancerSortie
+                    BarresVFC, NuitSheet, NotifSheet, NotifBanniere, Carte (.web : SVG du prototype), CarteVide, lancerSortie
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
@@ -90,6 +97,7 @@ src/
   store/profil.ts   état utilisateur Zustand sauvegardé (AsyncStorage, clé nea2) + usePlan(), useSemaine(), addXp, quest, addLog
   store/seance.ts   séance en cours (non sauvegardée), mises à jour immuables (React Compiler)
   store/compte.ts   compte Supabase : inscrire, connecter, deconnecter, supprimerCompte, sauvegarde auto de l'état (+ joueur de la Ligue)
+  store/notifs.ts   horloge des notifications, bannière, ouverture, notifications du téléphone · lib/notifs.ts : réglages, textes, échéances
   store/velo.ts     sortie vélo en cours (non sauvegardée) · lib/velo.ts : distance, tracé, parcours simulé, calories, XP
   store/mesure.ts   mesure de récupération en cours (non sauvegardée) · lib/sommeil.ts : score de nuit, VFC de référence, récupération
   store/ligue.ts    Ligue en ligne (non sauvegardée) : code ami, amis, équipe, classement ; RPC de supabase/ligue.sql
@@ -137,7 +145,7 @@ Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une imag
 Toute modification doit garder `npm run comparer-plan` à 0 différence : ce script exécute le code d'origine
 de `prototype/nea-app.html` et compare : buildPlan sur 3 888 profils, loadFor sur ~92 000 exercices, catSession sur
 les 41 séances × 3 intensités × 4 poids, streak, lvlInfo, 40 × 400 s de FC simulée (même suite aléatoire), 730 jours de quêtes,
-le sommeil et le vélo (hav, proj).
+le sommeil, le vélo (hav, proj) et les notifications dues (notifTick).
 `src/lib/*` n'importe pas `@/data` (qui charge les images) pour rester exécutable avec Node.
 
 ## Design system

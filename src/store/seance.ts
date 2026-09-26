@@ -103,6 +103,8 @@ function finish(w: Seance): Seance {
   const xp = w.xp + apres.addXp(40 + 5 * Math.min(10, serie), 'Séance');
   res.xp = xp;
   apres.quest('seance');
+  // VFC de fin : les 2 dernières minutes (schedulePost du prototype).
+  useProfil.getState().programmerPost('muscu', hrStats(w.hr.slice(-120), w.rrs.slice(-150), p.age).hrv || st.hrv);
   hr.fatigue = Math.min(1, 0.4 + c.int * 0.6);
   return { ...w, xp, res, phase: 'done' };
 }

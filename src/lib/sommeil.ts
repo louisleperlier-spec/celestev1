@@ -9,10 +9,6 @@ export type Nuit = { d: string; h: number; q: number; hrv: number | null; rhr: n
 /** Une mesure de récupération d'1 minute. `matin` avant 11 h, sinon `post` (après entraînement). */
 export type MesureVFC = { d: string; hrv: number; bpm: number; kind: 'matin' | 'post' };
 
-/** Réglages de rappel du prototype (`S.nset`) : heures proposées dans la saisie de la nuit. */
-export const COUCHER_DEFAUT = '22:30';
-export const REVEIL_DEFAUT = '07:30';
-
 /** VFC de référence : moyenne des VFC nocturnes et des mesures du matin, 45 ms par défaut (baseHrv). */
 export function baseHrv(nights: readonly Nuit[], checks: readonly MesureVFC[]): number {
   const v = [...nights.map((n) => n.hrv), ...checks.filter((c) => c.kind === 'matin').map((c) => c.hrv)].filter((x): x is number => !!x);
@@ -57,6 +53,15 @@ export const hm = (s: string) => {
   const [h, m] = s.split(':').map(Number);
   return h * 60 + m;
 };
+
+/** « 7:5 », « 0730 », « 7h30 » → « 07:30 » ; vide si l'heure n'est pas valable. */
+export function heure(s: string): string {
+  const m = s.trim().match(/^(\d{1,2})[:h ]?(\d{2})$/);
+  if (!m) return '';
+  const h = Number(m[1]);
+  const mn = Number(m[2]);
+  return h < 24 && mn < 60 ? String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0') : '';
+}
 
 /**
  * Nuit saisie (bouton « Enregistrer » de sleepSheet) : durée entre coucher et réveil, clé = veille avant 15 h,

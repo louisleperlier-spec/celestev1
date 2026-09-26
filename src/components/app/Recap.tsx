@@ -22,6 +22,7 @@ const FOND = [{ rx: 70, ry: 45, cx: 50, cy: 30, color: 'rgba(255,79,163,0.28)' }
 export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) {
   const c = coachById(coachId);
   const age = useProfil((s) => s.age);
+  const nset = useProfil((s) => s.nset);
   return (
     <View style={styles.root}>
       <RadialBackground layers={FOND} />
@@ -53,6 +54,14 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
             <CourbeFC samples={r.hr} age={age} />
             <ListeZones z={r.st.z} />
           </Card>
+          {nset.post && (
+            <View style={styles.noteRow}>
+              <Icon name="bell" size={14} color={colors.textSecondary} />
+              <Text style={styles.note}>
+                Notification VFC post-entraînement dans {nset.delay < 1 ? 'quelques secondes' : nset.delay + ' min'} pour mesurer ta récupération.
+              </Text>
+            </View>
+          )}
         </ScrollView>
         <View style={styles.foot}>
           <Button label="Retour à l'accueil" arrow onPress={() => router.dismissTo('/accueil')} />
@@ -95,5 +104,7 @@ const styles = StyleSheet.create({
   h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   h4Txt: { fontSize: 13.5, lineHeight: 18 },
   h4Small: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary },
+  noteRow: { flexDirection: 'row', gap: 6, paddingTop: 10 },
+  note: { flex: 1, fontSize: 11.5, lineHeight: 16, color: colors.textSecondary },
   foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
 });

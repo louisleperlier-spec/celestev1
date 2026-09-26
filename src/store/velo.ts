@@ -182,6 +182,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
         res.xp = g;
         if (v.dist >= 5 || v.el >= 1200) useProfil.getState().quest('velo');
         coeur(p.age).fatigue = 0.7;
+        useProfil.getState().programmerPost('velo', st.hrv);
         toast('Sortie enregistrée : +' + g + ' XP');
       } else toast('Sortie trop courte, non enregistrée');
       set({ run: false, paused: false, res });

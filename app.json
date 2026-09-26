@@ -45,6 +45,7 @@
           "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo pour tracer ton parcours et calculer ta distance et ta vitesse."
         }
       ],
+      "expo-notifications",
       [
         "@kingstinct/react-native-healthkit",
         {
