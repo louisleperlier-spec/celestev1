@@ -5,7 +5,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
 import { Icon, Text } from '@/components/ui';
 import { chatLeft, QUESTIONS_RAPIDES } from '@/lib/coach';
@@ -20,6 +20,8 @@ export default function Chat() {
   const coachId = useProfil((s) => s.coach);
   const chat = useProfil((s) => s.chat);
   const chatQ = useProfil((s) => s.chatQ);
+  // Redessine l'écran quand l'abonnement change.
+  useProfil((s) => s.premium);
   const ecrit = useCoachEcrit((s) => s.ecrit);
   const c = coachById(coachId);
   const [saisie, setSaisie] = useState('');
@@ -91,7 +93,7 @@ export default function Chat() {
             <Text style={styles.quotaTxt}>
               {reste} message{reste > 1 ? 's' : ''} gratuit{reste > 1 ? 's' : ''} aujourd&apos;hui •{' '}
             </Text>
-            <Pressable accessibilityRole="button" onPress={() => bientot('plus')}>
+            <Pressable accessibilityRole="button" onPress={() => ouvrirPlus()}>
               <Text weight="semibold" style={styles.quotaLien}>
                 Illimité avec NÉA Plus
               </Text>

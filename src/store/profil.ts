@@ -17,6 +17,7 @@ import { QUESTS } from '@/data/ligue';
 
 import { actifsEquipe } from '@/lib/ligue';
 import type { MessageChat, QuotaChat } from '@/lib/coach';
+import { basculerRenouvellement, brancherPremium, nouvelAbonnement, type OffreId, type Premium } from '@/lib/premium';
 import { notifsDues, rappelPost, REGLAGES_DEFAUT, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
@@ -71,6 +72,11 @@ type Etat = Profil & {
   chat: MessageChat[];
   chatCoach: CoachId | null;
   chatQ: QuotaChat | null;
+  /** Abonnement NÉA Plus (S.premium). */
+  premium: Premium | null;
+  /** Offre de sortie : fin du compte à rebours de 10 min, et refusée (proposée une seule fois). */
+  exitUntil: number;
+  exitDeclined: boolean;
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -104,7 +110,11 @@ type Actions = {
   /** Nouveaux réglages : le bilan et le coucher peuvent revenir aujourd'hui. */
   reglerNotifs: (n: ReglagesNotifs) => void;
   /** Rappel VFC après une séance ou une sortie (schedulePost). */
-  programmerPost: (kind: EnAttente['kind'], endHrv: number | null) => void;
+  programmerPost: (kind: 'muscu' | 'velo', endHrv: number | null) => void;
+  /** Achat NÉA Plus (buySheet) : abonnement, rappel de fin d'essai au jour 2, +50 XP. */
+  acheterPlus: (id: OffreId) => void;
+  /** Annuler / réactiver le renouvellement (subSheet). */
+  basculerRenouvellement: () => void;
   /** Ajoute les notifications dues et les renvoie (notifTick). */
   tickNotifs: (now?: Date) => Notif[];
   /** Ajoute une notification (notify). */
@@ -147,6 +157,9 @@ const defauts = (): Etat => ({
   chat: [],
   chatCoach: null,
   chatQ: null,
+  premium: null,
+  exitUntil: 0,
+  exitDeclined: false,
   obCoachSet: false,
 });
 
@@ -217,6 +230,17 @@ export const useProfil = create<Etat & Actions>()(
         set({ hrvChecks: [...get().hrvChecks, m] });
         get().addXp(10, 'Mesure VFC');
       },
+      acheterPlus: (id) => {
+        const now = Date.now();
+        const premium = nouvelAbonnement(id, now);
+        const pending = premium.plan === 'an' ? [...get().pending, { at: now + 2 * 864e5, type: 'trial' as const }] : get().pending;
+        set({ premium, pending });
+        get().addXp(50, 'NÉA Plus');
+      },
+      basculerRenouvellement: () => {
+        const p = get().premium;
+        if (p) set({ premium: basculerRenouvellement(p) });
+      },
       reglerNotifs: (nset) => set({ nset, lastWake: null, lastBed: null }),
       programmerPost: (kind, endHrv) => {
         const p = rappelPost(get().nset, kind, endHrv);
@@ -251,6 +275,9 @@ export const useProfil = create<Etat & Actions>()(
   ),
 );
 
+// isPremium() lit l'abonnement du profil.
+brancherPremium(() => useProfil.getState().premium);
+
 /** Ce qui est sauvegardé : sur l'appareil, et sur Supabase quand un compte est connecté. */
 export type EtatSauvegarde = Omit<Etat, 'obCoachSet'>;
 
@@ -278,6 +305,9 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   chat: s.chat,
   chatCoach: s.chatCoach,
   chatQ: s.chatQ,
+  premium: s.premium,
+  exitUntil: s.exitUntil,
+  exitDeclined: s.exitDeclined,
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */

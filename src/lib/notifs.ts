@@ -3,6 +3,7 @@
  * Portage fidèle du prototype (`S.nset`, `schedulePost`, `notifTick`, `notify`).
  */
 import { dec } from './charges';
+import type { Premium } from './premium';
 import { dayKey } from './xp';
 import { baseHrv, conseilNuit, hm, lastNight, sleepScore, type MesureVFC, type Nuit } from './sommeil';
 
@@ -37,8 +38,8 @@ export type Notif = {
   id: string;
   d: string;
   read: boolean;
-  type: 'post' | 'sleep' | 'bed';
-  icon: 'wave' | 'moon';
+  type: 'post' | 'sleep' | 'bed' | 'trial';
+  icon: 'wave' | 'moon' | 'star';
   col: string;
   act: ActionNotif;
   title: string;
@@ -47,19 +48,32 @@ export type Notif = {
 
 export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;
 
-/** Rappel « VFC post-entraînement » en attente (S.pending). */
-export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo'; endHrv: number | null };
+/** Rappel en attente (S.pending) : VFC post-entraînement, ou veille de la fin de l'essai NÉA Plus. */
+export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo'; endHrv: number | null } | { at: number; type: 'trial' };
 
 /** Couleurs des pastilles (.nic) reprises du prototype. */
-export const COULEURS_NOTIF = { post: '#ff4fa3', sleep: '#6b7cff', bed: '#8a5cff' } as const;
+export const COULEURS_NOTIF = { post: '#ff4fa3', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000' } as const;
+
+/** « Ton essai se termine demain » (obligatoire), envoyé seulement si le renouvellement est actif. */
+export function notifEssai(p: Premium | null): NouvelleNotif | null {
+  if (!p || p.plan === 'vie' || !p.renew) return null;
+  return {
+    type: 'trial',
+    icon: 'star',
+    col: COULEURS_NOTIF.trial,
+    act: 'notifs',
+    title: 'Ton essai se termine demain',
+    body: `Ton abonnement NÉA Plus annuel (${p.promo ? '39,99 $' : '59,99 $'}) démarre demain. Tu peux l'annuler dans le Profil, sans frais, jusqu'à demain.`,
+  };
+}
 
 /** Rappel VFC à programmer après une séance ou une sortie (schedulePost), ou rien si désactivé. */
-export function rappelPost(n: ReglagesNotifs, kind: EnAttente['kind'], endHrv: number | null, now = Date.now()): EnAttente | null {
+export function rappelPost(n: ReglagesNotifs, kind: 'muscu' | 'velo', endHrv: number | null, now = Date.now()): EnAttente | null {
   return n.post ? { at: now + n.delay * 60000, type: 'post', kind, endHrv } : null;
 }
 
 /** Notification « VFC post-entraînement ». */
-export function notifPost(p: EnAttente, n: ReglagesNotifs, base: number): NouvelleNotif {
+export function notifPost(p: Extract<EnAttente, { type: 'post' }>, n: ReglagesNotifs, base: number): NouvelleNotif {
   const d = p.endHrv ? Math.round(((p.endHrv - base) / base) * 100) : null;
   return {
     type: 'post',
@@ -112,6 +126,7 @@ export type EtatNotifs = {
   lastBed: string | null;
   nights: readonly Nuit[];
   hrvChecks: readonly MesureVFC[];
+  premium?: Premium | null;
 };
 
 /**
@@ -123,7 +138,12 @@ export function notifsDues(e: EtatNotifs, now: Date = new Date()) {
   const out: NouvelleNotif[] = [];
   const base = baseHrv(e.nights, e.hrvChecks);
   const dues = e.pending.filter((p) => p.at <= t);
-  dues.forEach((p) => out.push(notifPost(p, e.nset, base)));
+  dues.forEach((p) => {
+    if (p.type === 'trial') {
+      const t = notifEssai(e.premium ?? null);
+      if (t) out.push(t);
+    } else out.push(notifPost(p, e.nset, base));
+  });
   const pending = e.pending.filter((p) => p.at > t);
   const today = dayKey(now);
   const m = now.getHours() * 60 + now.getMinutes();

@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, Share, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
 import { confirmer } from '@/components/app/confirmer';
 import { Lvl } from '@/components/app/Lvl';
@@ -80,7 +80,7 @@ export default function Ligue() {
 
   const turbo = () => {
     if (!isPremium()) {
-      bientot('plus');
+      ouvrirPlus();
       return;
     }
     if (p.tokens < 1) return;

@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { DetailHead, detail, Hero, KStat, ParCoach, Tags } from '@/components/app/Detail';
 import { Kcal } from '@/components/app/Kcal';
 import { DayNum, Row, RowText, rowStyles } from '@/components/app/Rows';
@@ -103,7 +103,7 @@ export default function PlanDetail() {
             style={styles.flex}
           />
         ) : progLocked(c.id, pr.id) ? (
-          <Button label="Débloquer" icon="lock" onPress={() => bientot('plus')} style={styles.flex} />
+          <Button label="Débloquer" icon="lock" onPress={() => ouvrirPlus()} style={styles.flex} />
         ) : (
           <Button
             label="Suivre ce programme"

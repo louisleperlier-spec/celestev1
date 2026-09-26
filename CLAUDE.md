@@ -18,11 +18,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 ## Avancement (section 12 du cahier des charges)
 
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
-- [x] 2. Onboarding complet + `buildPlan`
-  - paywall (étape 11) et création de compte (étape 5) viendront entre « C'est parti » et l'accueil ; le bouton « J'ai déjà un compte » de l'accueil arrivera avec les comptes (étape 5)
+- [x] 2. Onboarding complet + `buildPlan` (« C'est parti » → paywall → création de compte)
 - [x] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
   - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
-  - `isPremium()` renvoie `false` jusqu'à l'étape 11 (`src/lib/premium.ts`)
 - [x] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
   - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
@@ -73,7 +71,16 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     rejoint celle d'un ami ; boost Équipe x1,2 si 3 membres actifs dans la semaine ; classement « Équipes » = toutes les équipes (nom + XP)
   - sans compte : niveau, boosts, Turbo et quêtes locaux, classement réduit à soi, carte « Créer mon compte »
   - Turbo « Activer » renvoie à NÉA Plus (étape 11) ; icône `bolt` absente du prototype (éclair ajouté)
-- [ ] 11. NÉA Plus (RevenueCat)
+- [ ] 11. NÉA Plus (RevenueCat) : **paywall et accès codés, achats encore simulés**
+  - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 3 offres, frise de l'essai, X après 2 s, textes
+    légaux, Restaurer / Conditions / Confidentialité) ; `?suite=compte` après « C'est parti » de l'onboarding (puis création de compte)
+  - offre de sortie une seule fois (39,99 $ la 1re année, compte à rebours réel de 10 min), feuille d'achat, « Ton abonnement »
+    (annuler / réactiver) depuis la ligne NÉA Plus du Profil, rappel « Ton essai se termine demain » au jour 2 (notifications)
+  - `lib/premium.ts` : isPremium lit `premium` du profil (sauvegardé et synchronisé avec le compte) ; séances, programmes, coach illimité,
+    Turbo et carte « Essaie NÉA Plus » suivent l'abonnement ; tous les boutons « NÉA Plus » passent par `ouvrirPlus()`
+  - reste : vrais achats App Store (RevenueCat `react-native-purchases`, build natif) : contrat « Paid Apps », banque et fiscalité dans
+    App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel, à vie), compte RevenueCat ; puis la limite du coach côté
+    serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
@@ -88,7 +95,7 @@ src/
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
-    chat.tsx        discussion avec le coach IA
+    chat.tsx        discussion avec le coach IA · plus.tsx : paywall NÉA Plus (?suite=compte dans l'onboarding)
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
@@ -97,7 +104,7 @@ src/
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
-                    BarresVFC, NuitSheet, NotifSheet, NotifBanniere, Carte (.web : SVG du prototype), CarteVide, lancerSortie
+                    BarresVFC, NuitSheet, NotifSheet, NotifBanniere, AbonnementSheet, ouvrirPlus, Carte (.web : SVG du prototype), CarteVide, lancerSortie
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)

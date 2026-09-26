@@ -6,17 +6,20 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { confirmer } from '@/components/app/confirmer';
+import { AbonnementSheet } from '@/components/app/AbonnementSheet';
 import { NotifSheet } from '@/components/app/NotifSheet';
 import { PeseeSheet } from '@/components/app/PeseeSheet';
 import { Card, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
 import { dec } from '@/lib/charges';
 import { coachById } from '@/lib/plan';
+import { estPremium, ligneAbonnement } from '@/lib/premium';
 import { lvlInfo, rankOf } from '@/lib/xp';
 import { deconnecter, supprimerCompte, useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, glow } from '@/theme';
+import { colors, fonts, glow, ui } from '@/theme';
 
 /** Onglet Profil (vProfile du prototype). */
 export default function Profil() {
@@ -27,6 +30,7 @@ export default function Profil() {
   const lv = li.n;
   const [pesee, setPesee] = useState(false);
   const [reglages, setReglages] = useState(false);
+  const [abonnement, setAbonnement] = useState(false);
 
   const supprimer = () =>
     confirmer(
@@ -74,8 +78,14 @@ export default function Profil() {
         </View>
 
         <View style={styles.menu}>
-          {/* subRow : NÉA Plus (étape 11) */}
-          <Ligne icon="star" titre="NÉA Plus" sous="Version gratuite • Découvre l'essai 3 jours" onPress={() => bientot('plus')} />
+          {/* subRow : NÉA Plus */}
+          <Ligne
+            icon="star"
+            couleur={ui.plusLien}
+            titre="NÉA Plus"
+            sous={ligneAbonnement(p.premium)}
+            onPress={() => (estPremium(p.premium) ? setAbonnement(true) : ouvrirPlus())}
+          />
           {/* accRow */}
           {email ? (
             <Card style={[styles.row, styles.acc]}>
@@ -153,6 +163,7 @@ export default function Profil() {
       </ScrollView>
       <PeseeSheet visible={pesee} onClose={() => setPesee(false)} />
       <NotifSheet visible={reglages} onClose={() => setReglages(false)} />
+      <AbonnementSheet visible={abonnement} onClose={() => setAbonnement(false)} />
     </SafeAreaView>
   );
 }
@@ -165,7 +176,9 @@ function Ligne({
   onPress,
   chevron = 'right',
   danger,
+  couleur: teinte,
 }: {
+  couleur?: string;
   icon: IconName;
   titre: string;
   sous: string;
@@ -173,7 +186,7 @@ function Ligne({
   chevron?: IconName | null;
   danger?: boolean;
 }) {
-  const couleur = danger ? '#FF6B85' : colors.pink;
+  const couleur = danger ? '#FF6B85' : (teinte ?? colors.pink);
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={titre} onPress={onPress}>
       <Card style={styles.row}>

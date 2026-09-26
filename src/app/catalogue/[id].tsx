@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { DetailHead, detail, Hero, KStat, ParCoach, Tags } from '@/components/app/Detail';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
@@ -131,7 +131,7 @@ export default function SeanceCatalogue() {
         pointerEvents="box-none"
       >
         {lk ? (
-          <Button label="Débloquer avec l'essai gratuit" icon="lock" onPress={() => bientot('plus')} />
+          <Button label="Débloquer avec l'essai gratuit" icon="lock" onPress={() => ouvrirPlus()} />
         ) : (
           <View style={styles.two}>
             <Button label="Modifier" variant="dark" small icon="sliders" onPress={() => setIntensite(true)} style={styles.flex} />

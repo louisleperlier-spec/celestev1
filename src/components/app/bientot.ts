@@ -7,7 +7,6 @@ import { toast } from '@/components/ui';
 export const ETAPES = {
   comptes: 5,
   sante: 6,
-  plus: 11,
 } as const;
 
 export function bientot(ecran: keyof typeof ETAPES) {

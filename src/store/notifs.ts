@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { AppState, Platform } from 'react-native';
 import { create } from 'zustand';
 
-import { notifCoucher, notifNuit, notifPost, type ActionNotif, type Notif } from '@/lib/notifs';
+import { notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif } from '@/lib/notifs';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
@@ -82,7 +82,9 @@ export async function reprogrammer(now: Date = new Date()) {
   const base = baseHrv(st.nights, st.hrvChecks);
   const DATE = Notifications.SchedulableTriggerInputTypes.DATE;
   for (const p of st.pending) {
-    if (p.at > +now) await Notifications.scheduleNotificationAsync({ content: contenu(notifPost(p, st.nset, base)), trigger: { type: DATE, date: new Date(p.at) } });
+    if (p.at <= +now) continue;
+    const n = p.type === 'trial' ? notifEssai(st.premium) : notifPost(p, st.nset, base);
+    if (n) await Notifications.scheduleNotificationAsync({ content: contenu(n), trigger: { type: DATE, date: new Date(p.at) } });
   }
   if (st.nset.sleep) {
     let reveil = prochaine(st.nset.wake, now);
@@ -120,7 +122,7 @@ export function demarrerNotifs() {
     t = setTimeout(() => reprogrammer().catch(() => {}), 1000);
   };
   useProfil.subscribe((s, avant) => {
-    if (s.nset !== avant.nset || s.pending !== avant.pending || s.nights !== avant.nights || s.lastWake !== avant.lastWake || s.onboarded !== avant.onboarded) plus_tard();
+    if (s.nset !== avant.nset || s.pending !== avant.pending || s.premium !== avant.premium || s.nights !== avant.nights || s.lastWake !== avant.lastWake || s.onboarded !== avant.onboarded) plus_tard();
   });
   AppState.addEventListener('change', (a) => {
     if (a === 'active') {

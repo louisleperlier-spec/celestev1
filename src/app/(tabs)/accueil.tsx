@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
 import { Lvl } from '@/components/app/Lvl';
 import { SectionHead } from '@/components/app/Section';
@@ -14,6 +14,7 @@ import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, todayIdx } from '@/lib/plan';
 import { actifsEquipe } from '@/lib/ligue';
+import { estPremium } from '@/lib/premium';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { boosts, lvlInfo, mult, rankOf, streak, type Log } from '@/lib/xp';
@@ -154,8 +155,9 @@ export default function Accueil() {
 
         <XpStrip xp={p.xp} serie={serie} boostUntil={p.boostUntil} equipe={actifsEquipe(autres, p.logs)} />
 
-        {/* .upsell : NÉA Plus (étape 11) */}
-        <Pressable accessibilityRole="button" onPress={() => bientot('plus')}>
+        {/* .upsell : NÉA Plus, seulement en version gratuite */}
+        {!estPremium(p.premium) && (
+        <Pressable accessibilityRole="button" onPress={() => ouvrirPlus()}>
           <LinearGradient colors={['#17140C', colors.surface]} locations={[0, 0.6]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.upsell}>
             <LinearGradient colors={gradients.gold} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.upsellIcon}>
               <Icon name="star" color={ui.onGold} />
@@ -169,6 +171,7 @@ export default function Accueil() {
             <Icon name="right" />
           </LinearGradient>
         </Pressable>
+        )}
 
         <SectionHead title="Ta progression" action="Voir plus" onAction={() => router.navigate('/progres')} />
         {/* .prog */}

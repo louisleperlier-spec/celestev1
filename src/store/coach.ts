@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 
-import { bientot } from '@/components/app/bientot';
+import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { accueilCoach, chatLeft, compterMessage, CHAT_GRATUIT, reponseSecours, resumeProfil, type MessageChat } from '@/lib/coach';
 import { buildPlan, coachById } from '@/lib/plan';
 import { isPremium } from '@/lib/premium';
@@ -44,7 +44,7 @@ export async function envoyer(texte: string) {
   if (!t || useCoachEcrit.getState().ecrit) return;
   const st = useProfil.getState();
   if (chatLeft(st.chatQ, isPremium()) <= 0) {
-    bientot('plus');
+    ouvrirPlus();
     return;
   }
   const chat = [...st.chat, { r: 'me' as const, t }];
