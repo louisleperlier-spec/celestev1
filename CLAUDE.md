@@ -58,7 +58,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     Récupération (VFC du jour / référence), carte sur l'Accueil et semaine dans Progrès ; avec Apple Santé, Bouger et Exercice = données Apple ;
     la carte de l'Accueil **remplace les cartes Nuit et Récupération** (readyCard) : lignes touchables (Sommeil → /sommeil avec le score de nuit,
     Récupération → /recuperation avec l'état de la mesure du jour)
-  - à faire : build TestFlight (`scripts/build-ios.sh`, clé d'API App Store Connect dans l'environnement) puis validation sur iPhone ;
+  - **build TestFlight 1.0.0 (2) validé sur iPhone** (29 sept. 2026) : Apple Santé, connexion Apple, cercles OK ;
     FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
 - [ ] 7. Vélo : **codé, à valider sur iPhone** (onglet `(tabs)/velo.tsx`, vBike)
   - extérieur : GPS réel (`expo-location`, autorisation « pendant l'utilisation ») sinon parcours simulé après 6 s ; carte **Apple Plans**
@@ -214,6 +214,10 @@ Bundle ID `com.neacoach.app`. `eas.json` : profils `preview` (canal preview, Tes
 `scripts/build-ios.sh` lance le build sans ordinateur : les identifiants Apple viennent des variables d'environnement listées dans le script.
 L'app TestFlight télécharge les mises à jour `eas update --branch preview` comme Expo Go (même `runtimeVersion`) : un nouveau build
 n'est nécessaire que si on ajoute un module natif. Ne jamais créer `ios/` à la main (`npx expo prebuild` sert seulement à vérifier).
+Premier build : EAS refuse de créer les identifiants Apple en non interactif ; certificat de distribution (8DJK33Q58J, jusqu'au 29/09/2027)
+et profil App Store (742RA248D9) créés via l'API App Store Connect, utilisés en `credentialsSource: local` (fichiers hors git), puis
+`eas submit` avec `ascApiKeyPath`/`ascApiKeyId`/`ascApiKeyIssuerId` temporaires dans le profil d'envoi (`ascAppId` 6816691008 dans `eas.json`).
+Pour les builds suivants : téléverser ce certificat et ce profil sur EAS (`eas credentials`, interactif) ou les recréer.
 
 ## Publier pour tester dans Expo Go (EAS Update)
 
