@@ -28,7 +28,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - fait et **validé sur iPhone** : projet Supabase « NÉA COACH » (Canada Central), email + mot de passe, sauvegarde auto (table `etats`), suppression réelle
     (`supprimer_mon_compte`), écran de compte, onglet Profil, Conditions, Confidentialité
   - `supabase/schema.sql` à exécuter dans SQL Editor (tables + RLS + fonction) ; valeurs publiques dans `.env`
-  - reste : Sign in with Apple (compte Apple Developer), Google (Google Cloud), réinitialisation du mot de passe (lien profond)
+  - **Sign in with Apple codé** (`connecterApple`, `expo-apple-authentication`, jeton vérifié par `signInWithIdToken`, prénom repris à la 1re
+    connexion) : à activer dans Supabase (Authentication → Providers → Apple, Client IDs `com.neacoach.app,host.exp.Exponent`) et cocher
+    « Sign In with Apple » sur l'identifiant `com.neacoach.app` (developer.apple.com) ; avant l'App Store, la suppression du compte devra
+    aussi révoquer le jeton Apple (règle 5.1.1(v))
+  - reste : Google (Google Cloud), réinitialisation du mot de passe (lien profond)
 - [ ] 6. Apple Santé
   - fait (fidèle au prototype, testable dans Expo Go) : écran **Sommeil** (`/sommeil`, vSleep : score de nuit, 7 nuits, VFC nocturne,
     mesures), saisie de la nuit (`NuitSheet`, sleepSheet), **mesure de récupération d'1 min** (`/recuperation`, vHrv, FC simulée,

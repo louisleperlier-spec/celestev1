@@ -97,6 +97,38 @@ export async function connecter(email: string, motDePasse: string): Promise<Resu
   return { ok: true };
 }
 
+/**
+ * Connexion avec Apple (iPhone seulement) : Apple renvoie un jeton d'identité que Supabase vérifie.
+ * Le prénom n'est fourni qu'à la toute première connexion : il remplit le profil s'il est vide.
+ */
+export async function connecterApple(): Promise<Resultat | null> {
+  let jeton: string | null = null;
+  let prenom: string | null = null;
+  try {
+    const AppleAuthentication = await import('expo-apple-authentication');
+    if (!(await AppleAuthentication.isAvailableAsync())) return { ok: false, erreur: 'Connexion Apple indisponible sur cet appareil' };
+    const c = await AppleAuthentication.signInAsync({
+      requestedScopes: [AppleAuthentication.AppleAuthenticationScope.FULL_NAME, AppleAuthentication.AppleAuthenticationScope.EMAIL],
+    });
+    jeton = c.identityToken;
+    prenom = c.fullName?.givenName ?? null;
+  } catch (e) {
+    // Fenêtre d'Apple fermée : rien à afficher.
+    if ((e as { code?: string }).code === 'ERR_REQUEST_CANCELED') return null;
+    return { ok: false, erreur: 'Connexion Apple impossible, réessaie' };
+  }
+  if (!jeton) return { ok: false, erreur: 'Connexion Apple impossible, réessaie' };
+  const { error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: jeton });
+  if (error) return { ok: false, erreur: message(error) };
+  if (prenom && !useProfil.getState().name) useProfil.getState().set({ name: prenom });
+  try {
+    await recupererOuEnvoyer();
+  } catch (e) {
+    return { ok: false, erreur: message(e as Error) };
+  }
+  return { ok: true };
+}
+
 /** Déconnexion : les données restent sur le compte, l'appareil repart de zéro. */
 export async function deconnecter() {
   await supabase.auth.signOut();

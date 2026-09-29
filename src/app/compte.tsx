@@ -7,7 +7,7 @@ import Svg, { Path } from 'react-native-svg';
 import { CoachFace } from '@/components/app/CoachFace';
 import { Button, Icon, Text, toast } from '@/components/ui';
 import { coachById } from '@/lib/plan';
-import { connecter, emailValide, inscrire, pwScore } from '@/store/compte';
+import { connecter, connecterApple, emailValide, inscrire, pwScore } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
 
@@ -70,6 +70,18 @@ export default function Compte() {
     entrer();
   };
 
+  const apple = async () => {
+    if (Platform.OS !== 'ios') return toast('Connexion Apple disponible sur iPhone');
+    setErreur('');
+    setInfo('');
+    setAttente(true);
+    const r = await connecterApple();
+    setAttente(false);
+    if (!r) return;
+    if (!r.ok) return setErreur(r.erreur);
+    entrer();
+  };
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
       {!onb && (
@@ -102,7 +114,7 @@ export default function Compte() {
           )}
           <Text style={styles.h1}>{mode === 'signup' ? 'Crée ton compte' : 'Content de te revoir'}</Text>
 
-          {/* Google et Apple : il faut d'abord les configurer (Google Cloud, Apple Developer). */}
+          {/* Google : il faut d'abord le configurer (Google Cloud). */}
           <Pressable accessibilityRole="button" style={styles.gbtn} onPress={() => toast('Connexion Google bientôt disponible')}>
             <Svg viewBox="0 0 24 24" width={20} height={20}>
               <Path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z" />
@@ -114,7 +126,7 @@ export default function Compte() {
               Continuer avec Google
             </Text>
           </Pressable>
-          <Pressable accessibilityRole="button" style={styles.abtn} onPress={() => toast('Connexion Apple bientôt disponible')}>
+          <Pressable accessibilityRole="button" style={styles.abtn} onPress={apple} disabled={attente}>
             <Svg viewBox="0 0 24 24" width={19} height={19}>
               <Path
                 fill="#FFFFFF"
