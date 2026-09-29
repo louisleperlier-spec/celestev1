@@ -49,7 +49,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     5 s, le cœur simulé la suit, `SourceFC = 'montre'`, VFC toujours estimée ; libellé « Apple Watch ») ; **séances et sorties écrites** dans
     Apple Santé (`enregistrerEntrainement`, renforcement / vélo, calories, distance) ; **cercles** (`lib/cercles.ts`, `store/cercles.ts`,
     `Cercles.tsx`) : Bouger (kcal, objectif = séance moyenne du programme), Exercice (min, objectif = durée choisie), Sommeil (8 h),
-    Récupération (VFC du jour / référence), carte sur l'Accueil et semaine dans Progrès ; avec Apple Santé, Bouger et Exercice = données Apple
+    Récupération (VFC du jour / référence), carte sur l'Accueil et semaine dans Progrès ; avec Apple Santé, Bouger et Exercice = données Apple ;
+    la carte de l'Accueil **remplace les cartes Nuit et Récupération** (readyCard) : lignes touchables (Sommeil → /sommeil avec le score de nuit,
+    Récupération → /recuperation avec l'état de la mesure du jour)
   - à faire : build TestFlight (`scripts/build-ios.sh`, clé d'API App Store Connect dans l'environnement) puis validation sur iPhone ;
     FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
 - [ ] 7. Vélo : **codé, à valider sur iPhone** (onglet `(tabs)/velo.tsx`, vBike)

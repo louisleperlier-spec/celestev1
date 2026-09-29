@@ -2,11 +2,14 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
+import { useShallow } from 'zustand/react/shallow';
 
-import { Card, Text } from '@/components/ui';
+import { Card, Icon, Text } from '@/components/ui';
 import { dec } from '@/lib/charges';
 import { part, type Cercle, type IdCercle } from '@/lib/cercles';
+import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { rafraichirActivite, useCercles } from '@/store/cercles';
+import { useProfil } from '@/store/profil';
 import { alpha, colors, heartZones } from '@/theme';
 
 /** Couleur de chaque cercle (de l'extérieur vers l'intérieur). */
@@ -63,33 +66,75 @@ function useRafraichir() {
   );
 }
 
-/** Carte de l'Accueil : les cercles du jour et leurs valeurs ; ouvre Progrès. */
+/** Ce que fait chaque ligne de la carte de l'Accueil. */
+const OUVRIR: Record<IdCercle, () => void> = {
+  bouger: () => router.navigate('/progres'),
+  exercice: () => router.navigate('/progres'),
+  sommeil: () => router.push('/sommeil'),
+  recup: () => router.push('/recuperation'),
+};
+
+/**
+ * Carte « Ta journée » de l'Accueil : les cercles du jour, et à côté une ligne touchable par cercle.
+ * Elle remplace les cartes Nuit et Récupération du prototype (readyCard) : même score de nuit, même état de récupération.
+ */
 export function CarteCercles() {
   useRafraichir();
   const { semaine, auj, sante } = useCercles();
+  const { nights, hrvChecks } = useProfil(useShallow((s) => ({ nights: s.nights, hrvChecks: s.hrvChecks })));
   const jour = semaine[auj];
+  const base = baseHrv(nights, hrvChecks);
+  const ln = lastNight(nights);
+  const sc = sleepScore(ln, base);
+  const lc = hrvChecks[hrvChecks.length - 1];
+  const st = lc ? recovStatus(lc.hrv, base) : null;
+
+  const detail = (c: Cercle): { fort: string; texte: string; couleur?: string } => {
+    if (c.id === 'sommeil') return ln ? { fort: dec(ln.h) + ' h', texte: `/ 8 h • score ${sc}/100` } : { fort: 'À noter', texte: 'ta nuit' };
+    if (c.id === 'recup') {
+      // Mesure du jour : son état (comme la carte Récupération du prototype) ; sinon la VFC de la nuit, qui remplit déjà le cercle.
+      if (lc && st && new Date(lc.d).toDateString() === new Date().toDateString()) return { fort: lc.hrv + ' ms', texte: st[0], couleur: st[1] };
+      return c.val ? { fort: c.val + ' %', texte: 'de ta moyenne (nuit)' } : { fort: 'Mesurer', texte: '1 min au calme' };
+    }
+    return { fort: valeur(c), texte: objectif(c) };
+  };
+
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Tes cercles du jour, voir Progrès" onPress={() => router.navigate('/progres')}>
-      <Card style={styles.carte}>
+    <Card style={styles.carte}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Tes cercles de la semaine" onPress={() => router.navigate('/progres')}>
         <Anneaux cercles={jour} size={112} trait={11} />
-        <View style={styles.legende}>
-          {jour.map((c) => (
-            <View key={c.id} style={styles.ligne}>
-              <Text weight="semibold" style={[styles.nom, { color: COULEURS_CERCLES[c.id] }]}>
-                {c.nom}
-              </Text>
-              <View style={styles.valLigne}>
-                <Text weight="bold" style={styles.valFort}>
-                  {c.unite === '%' ? (c.val ? c.val + ' %' : '--') : valeur(c)}
+      </Pressable>
+      <View style={styles.legende}>
+        {jour.map((c) => {
+          const d = detail(c);
+          return (
+            <Pressable
+              key={c.id}
+              accessibilityRole="button"
+              accessibilityLabel={`${c.nom} : ${d.fort} ${d.texte}`}
+              onPress={OUVRIR[c.id]}
+              style={({ pressed }) => [styles.ligne, pressed && styles.appui]}
+            >
+              <View style={styles.flex}>
+                <Text weight="semibold" style={[styles.nom, { color: COULEURS_CERCLES[c.id] }]}>
+                  {c.nom}
                 </Text>
-                <Text style={styles.val}>{c.unite === '%' ? (c.val ? objectif(c) : 'à mesurer') : objectif(c)}</Text>
+                <View style={styles.valLigne}>
+                  <Text weight="bold" style={[styles.valFort, d.couleur ? { color: d.couleur } : null]}>
+                    {d.fort}
+                  </Text>
+                  <Text style={styles.val} numberOfLines={1}>
+                    {d.texte}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
-          <Text style={styles.src}>{sante ? 'Apple Santé + NÉA' : 'Tes séances NÉA'}</Text>
-        </View>
-      </Card>
-    </Pressable>
+              <Icon name="right" size={14} color={colors.textTertiary} />
+            </Pressable>
+          );
+        })}
+        <Text style={styles.src}>{sante ? 'Apple Santé + NÉA' : 'Tes séances NÉA'}</Text>
+      </View>
+    </Card>
   );
 }
 
@@ -129,11 +174,13 @@ export function SemaineCercles() {
 const styles = StyleSheet.create({
   carte: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   legende: { flex: 1, gap: 5 },
-  ligne: { gap: 0 },
+  ligne: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 1 },
+  appui: { opacity: 0.6 },
+  flex: { flex: 1 },
   valLigne: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   nom: { fontSize: 12, lineHeight: 15 },
-  val: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
-  valFort: { fontSize: 14, lineHeight: 17, color: colors.text },
+  val: { flexShrink: 1, fontSize: 12, lineHeight: 16, color: colors.textSecondary },
+  valFort: { flexShrink: 0, fontSize: 14, lineHeight: 17, color: colors.text },
   src: { fontSize: 10.5, lineHeight: 14, color: colors.textTertiary, marginTop: 2 },
   semaine: { gap: 12 },
   titre: { fontSize: 14, lineHeight: 18 },

@@ -17,7 +17,6 @@ import { coachById, todayIdx } from '@/lib/plan';
 import { actifsEquipe } from '@/lib/ligue';
 import { estPremium } from '@/lib/premium';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
-import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { boosts, lvlInfo, mult, rankOf, streak, type Log } from '@/lib/xp';
 import { useAutresActifs } from '@/store/ligue';
 import { useProfil, useSemaine } from '@/store/profil';
@@ -50,11 +49,6 @@ export default function Accueil() {
   const serie = streak(p.logs, p.days);
   const autres = useAutresActifs();
   const nonLues = p.notifs.some((n) => !n.read);
-  const base = baseHrv(p.nights, p.hrvChecks);
-  const ln = lastNight(p.nights);
-  const sc = sleepScore(ln, base);
-  const lc = p.hrvChecks[p.hrvChecks.length - 1];
-  const st = lc ? recovStatus(lc.hrv, base) : null;
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -119,7 +113,7 @@ export default function Accueil() {
           </LinearGradient>
         </Pressable>
 
-        {/* Cercles du jour (ajout : Bouger, Exercice, Sommeil, Récupération) */}
+        {/* Cercles du jour (ajout : Bouger, Exercice, Sommeil, Récupération), avec la nuit et la récupération (readyCard) */}
         <View style={styles.cercles}>
           <CarteCercles />
         </View>
@@ -129,34 +123,6 @@ export default function Accueil() {
           <Stat icon="flame" label="Série actuelle" value={`${serie} jours`} />
           <Stat icon="cal" label="Séances" value={String(p.logs.length)} />
           <Stat icon="wave" label="VFC moy." value={`${avgOf(p.logs, 'hrv')} ms`} />
-        </View>
-
-        {/* readyCard : nuit et récupération */}
-        <View style={styles.rdy}>
-          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => router.push('/sommeil')}>
-            <Card style={styles.rdyCard}>
-              <Icon name="moon" size={22} color={ui.sommeil} />
-              <View>
-                <Text style={styles.rdySmall}>Nuit</Text>
-                <Text weight="bold" style={styles.rdyB}>
-                  {sc != null ? sc + '/100' : 'À noter'}
-                </Text>
-                <Text style={styles.rdyEm}>{ln ? dec(ln.h) + ' h' + (ln.hrv ? ' • ' + ln.hrv + ' ms' : '') : 'Ajouter'}</Text>
-              </View>
-            </Card>
-          </Pressable>
-          <Pressable accessibilityRole="button" style={styles.flex} onPress={() => router.push('/recuperation')}>
-            <Card style={styles.rdyCard}>
-              <Icon name="wave" size={22} color={colors.pink} />
-              <View>
-                <Text style={styles.rdySmall}>Récupération</Text>
-                <Text weight="bold" style={[styles.rdyB, st && { color: st[1] }]}>
-                  {lc ? lc.hrv + ' ms' : 'Mesurer'}
-                </Text>
-                <Text style={styles.rdyEm}>{st ? st[0] : '1 min au calme'}</Text>
-              </View>
-            </Card>
-          </Pressable>
         </View>
 
         <XpStrip xp={p.xp} serie={serie} boostUntil={p.boostUntil} equipe={actifsEquipe(autres, p.logs)} />
@@ -321,11 +287,6 @@ const styles = StyleSheet.create({
   st: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9, padding: 10 },
   stSmall: { fontSize: 10, lineHeight: 13, color: colors.textSecondary },
   stB: { fontSize: 14, lineHeight: 18 },
-  rdy: { flexDirection: 'row', gap: 10, marginTop: 10, marginHorizontal: 20 },
-  rdyCard: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12 },
-  rdySmall: { fontSize: 10.5, lineHeight: 13, color: colors.textSecondary },
-  rdyB: { fontSize: 15, lineHeight: 19 },
-  rdyEm: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
   xps: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12, marginHorizontal: 20, paddingVertical: 12, paddingHorizontal: 14 },
   xpB: { fontSize: 13.5, lineHeight: 17 },
   xbar: { height: 7, borderRadius: 6, backgroundColor: colors.border, overflow: 'hidden', marginTop: 6, marginBottom: 4 },
