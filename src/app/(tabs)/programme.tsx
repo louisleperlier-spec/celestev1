@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { CoachFace } from '@/components/app/CoachFace';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
 import { Kcal } from '@/components/app/Kcal';
@@ -60,32 +61,6 @@ export default function Programme() {
   );
 }
 
-function Onglets({ cal }: { cal: boolean }) {
-  return (
-    <View style={styles.phd}>
-      {cal ? (
-        <>
-          <Pressable accessibilityRole="button" onPress={() => router.setParams({ vue: 'programme' })}>
-            <Text weight="bold" style={styles.phdBtn}>
-              Programme
-            </Text>
-          </Pressable>
-          <Text style={styles.phdH1}>Calendrier</Text>
-        </>
-      ) : (
-        <>
-          <Text style={styles.phdH1}>Programme</Text>
-          <Pressable accessibilityRole="button" onPress={() => router.setParams({ vue: 'calendrier' })}>
-            <Text weight="bold" style={styles.phdBtn}>
-              Calendrier
-            </Text>
-          </Pressable>
-        </>
-      )}
-    </View>
-  );
-}
-
 function Catalogue({ onExo, onPlanifier }: { onExo: (id: ExerciceId) => void; onPlanifier: (id: SeanceId) => void }) {
   const profil = useProfil();
   const p = selectProfil(profil);
@@ -138,7 +113,7 @@ function Catalogue({ onExo, onPlanifier }: { onExo: (id: ExerciceId) => void; on
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-      <Onglets cal={false} />
+      <EnTete rubriques={ENTRAINEMENT} actif="Programme" />
       {/* .srch */}
       <View style={styles.srch}>
         <Icon name="search" color={colors.textSecondary} />
@@ -324,7 +299,7 @@ function Calendrier() {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Onglets cal />
+      <EnTete rubriques={ENTRAINEMENT} actif="Calendrier" />
       <Pressable accessibilityRole="button" onPress={() => router.push(`/plan/${pr.id}`)} style={styles.pheadWrap}>
         <Card style={styles.phead}>
           <CoachFace id={c.id} size={52} borderColor={c.c} />
@@ -389,9 +364,6 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   mt14: { marginTop: 14 },
-  phd: { flexDirection: 'row', alignItems: 'baseline', gap: 16, paddingTop: 14, paddingHorizontal: 20 },
-  phdH1: { fontFamily: fonts.black, fontSize: 32, lineHeight: 39, letterSpacing: -0.64 },
-  phdBtn: { fontSize: 21, lineHeight: 26, color: colors.textTertiary },
   srch: {
     flexDirection: 'row',
     alignItems: 'center',

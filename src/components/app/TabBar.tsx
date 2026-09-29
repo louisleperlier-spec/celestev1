@@ -5,18 +5,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glow, Icon, Text, type IconName } from '@/components/ui';
 import { colors } from '@/theme';
 
-import { bientot } from './bientot';
 
-type Onglet = { label: string; icon: IconName; href?: '/accueil' | '/programme' | '/velo' | '/ligue' | '/progres' | '/profil'; ecran?: Parameters<typeof bientot>[0] };
+type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/progres' | '/profil';
+type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
-/** Les 6 onglets du prototype (vTabs). Ceux des étapes suivantes affichent un message. */
+/**
+ * 3 onglets (écart validé avec les 6 du prototype) : Aujourd'hui (Accueil + Ligue dessous),
+ * Entraînement (Programme, Calendrier, Vélo) et Moi (Progrès, Profil). Les écrans gardent leurs adresses.
+ */
 const ONGLETS: Onglet[] = [
-  { label: 'Accueil', icon: 'home', href: '/accueil' },
-  { label: 'Programme', icon: 'clip', href: '/programme' },
-  { label: 'Vélo', icon: 'bike', href: '/velo' },
-  { label: 'Ligue', icon: 'trophy', href: '/ligue' },
-  { label: 'Progrès', icon: 'chart', href: '/progres' },
-  { label: 'Profil', icon: 'user', href: '/profil' },
+  { label: "Aujourd'hui", icon: 'home', href: '/accueil', ecrans: ['/accueil', '/ligue'] },
+  { label: 'Entraînement', icon: 'clip', href: '/programme', ecrans: ['/programme', '/velo'] },
+  { label: 'Moi', icon: 'user', href: '/progres', ecrans: ['/progres', '/profil'] },
 ];
 
 /** Barre d'onglets flottante arrondie (.tabs). */
@@ -26,7 +26,7 @@ export function TabBar() {
   return (
     <View style={[styles.tabs, { marginBottom: 10 + Math.max(0, insets.bottom - 14) }]} accessibilityRole="tablist">
       {ONGLETS.map((o) => {
-        const on = !!o.href && path.startsWith(o.href);
+        const on = o.ecrans.some((e) => path.startsWith(e));
         const color = on ? colors.pink : '#A9A9B0';
         return (
           <Pressable
@@ -35,7 +35,7 @@ export function TabBar() {
             accessibilityState={{ selected: on }}
             accessibilityLabel={o.label}
             style={styles.tab}
-            onPress={() => (o.href ? router.navigate(o.href) : bientot(o.ecran!))}
+            onPress={() => router.navigate(o.href)}
           >
             <View style={styles.icon}>
               {on && <Glow width={34} height={34} intensity={0.35} />}

@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
+import { EnTete, MOI } from '@/components/app/EnTete';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { bientot } from '@/components/app/bientot';
 import { BarresVFC } from '@/components/app/BarresVFC';
@@ -75,9 +76,7 @@ export default function Progres() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text weight="bold" style={styles.ptitle}>
-          Ta progression
-        </Text>
+        <EnTete rubriques={MOI} actif="Progrès" />
         <View style={styles.cercles}>
           <SemaineCercles />
         </View>

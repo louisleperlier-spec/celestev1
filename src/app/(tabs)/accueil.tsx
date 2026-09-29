@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 
+import { Ligue } from '@/components/app/Ligue';
 import { CarteCercles } from '@/components/app/Cercles';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
@@ -177,6 +178,9 @@ export default function Accueil() {
             <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
           </LinearGradient>
         </Pressable>
+        {/* Onglet « Aujourd'hui » : la Ligue suit l'Accueil. */}
+        <Ligue integree />
+        <View style={styles.basPage} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -283,6 +287,7 @@ const styles = StyleSheet.create({
   todayImg: { position: 'absolute', right: -4, bottom: -12, height: 124, width: 124 },
   go: { position: 'absolute', right: 24, bottom: 18, width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', zIndex: 3 },
   cercles: { marginTop: 10, marginHorizontal: 20 },
+  basPage: { height: 24 },
   stats3: { flexDirection: 'row', gap: 8, marginTop: 10, marginHorizontal: 20 },
   st: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9, padding: 10 },
   stSmall: { fontSize: 10, lineHeight: 13, color: colors.textSecondary },

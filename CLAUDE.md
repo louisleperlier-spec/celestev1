@@ -12,6 +12,9 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 **Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur ;
 **pas d'offre « À vie »** : NÉA Plus = Annuel 59,99 $/an (3 jours gratuits) et Mensuel 12,99 $/mois (+ offre de sortie 39,99 $ la 1re année).
+**3 onglets au lieu de 6** (`TabBar`) : « Aujourd'hui » (Accueil, puis la Ligue dessous : `components/app/Ligue.tsx` avec `integree`),
+« Entraînement » (Programme · Calendrier · Vélo) et « Moi » (Progrès · Profil) ; en-tête `EnTete` (style .phd « Programme Calendrier » du
+prototype) en haut de ces écrans ; les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
@@ -106,7 +109,7 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
-    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), ligue.tsx, progres.tsx + barre d'onglets
+    (tabs)/         accueil.tsx (+ Ligue dessous), programme.tsx (?vue=calendrier), velo, ligue.tsx (Ligue seule), progres.tsx, profil + barre à 3 onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
@@ -120,7 +123,7 @@ src/
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
                     BarresVFC, NuitSheet, NotifSheet, NotifBanniere, AbonnementSheet, ouvrirPlus, Carte (.web : SVG du prototype), CarteVide, lancerSortie,
-                    Cercles (anneaux Bouger / Exercice / Sommeil / Récupération), MotDePasseSheet
+                    Cercles (anneaux Bouger / Exercice / Sommeil / Récupération), MotDePasseSheet, Ligue (écran de la Ligue), EnTete (rubriques d'un onglet)
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)

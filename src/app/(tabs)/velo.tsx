@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Carte } from '@/components/app/Carte';
 import { CourbeFC, ListeZones } from '@/components/app/Coeur';
 import { LivePills } from '@/components/app/LivePills';
@@ -43,9 +44,7 @@ export default function Velo() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text weight="bold" style={styles.ptitle}>
-          Vélo
-        </Text>
+        <EnTete rubriques={ENTRAINEMENT} actif="Vélo" />
 
         {/* .modes */}
         <View style={styles.modes}>
