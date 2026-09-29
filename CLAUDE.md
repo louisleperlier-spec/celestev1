@@ -32,7 +32,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     connexion) : à activer dans Supabase (Authentication → Providers → Apple, Client IDs `com.neacoach.app,host.exp.Exponent`) et cocher
     « Sign In with Apple » sur l'identifiant `com.neacoach.app` (developer.apple.com) ; avant l'App Store, la suppression du compte devra
     aussi révoquer le jeton Apple (règle 5.1.1(v))
-  - reste : Google (Google Cloud), réinitialisation du mot de passe (lien profond)
+  - **Mot de passe oublié codé** (`MotDePasseSheet`, sans lien profond) : code reçu par email (`resetPasswordForEmail` puis `verifyOtp`
+    type `recovery`), nouveau mot de passe (`updateUser`) ; le modèle d'email « Reset Password » de Supabase doit contenir `{{ .Token }}`
+  - reste : Google (Google Cloud) ; SMTP personnalisé dans Supabase avant la sortie (l'envoi intégré est limité et réservé à l'équipe)
 - [ ] 6. Apple Santé
   - fait (fidèle au prototype, testable dans Expo Go) : écran **Sommeil** (`/sommeil`, vSleep : score de nuit, 7 nuits, VFC nocturne,
     mesures), saisie de la nuit (`NuitSheet`, sleepSheet), **mesure de récupération d'1 min** (`/recuperation`, vHrv, FC simulée,

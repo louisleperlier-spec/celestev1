@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { CoachFace } from '@/components/app/CoachFace';
+import { MotDePasseSheet } from '@/components/app/MotDePasseSheet';
 import { Button, Icon, Text, toast } from '@/components/ui';
 import { coachById } from '@/lib/plan';
 import { connecter, connecterApple, emailValide, inscrire, pwScore } from '@/store/compte';
@@ -33,6 +34,7 @@ export default function Compte() {
   const [erreur, setErreur] = useState('');
   const [info, setInfo] = useState('');
   const [attente, setAttente] = useState(false);
+  const [oubli, setOubli] = useState(false);
   const score = pwScore(mdp);
 
   /** Après la connexion : l'accueil si l'onboarding est fait, sinon l'onboarding. */
@@ -188,7 +190,7 @@ export default function Compte() {
               <Text style={styles.pwt}>{TEXTES_FORCE[score]}</Text>
             </>
           ) : (
-            <Pressable accessibilityRole="button" onPress={() => toast('La réinitialisation du mot de passe arrive bientôt')}>
+            <Pressable accessibilityRole="button" onPress={() => setOubli(true)}>
               <Text style={styles.more}>Mot de passe oublié ?</Text>
             </Pressable>
           )}
@@ -235,6 +237,18 @@ export default function Compte() {
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
+      {oubli && (
+        <MotDePasseSheet
+          visible
+          emailInitial={email}
+          onClose={() => setOubli(false)}
+          onConnecte={() => {
+            setOubli(false);
+            toast('Mot de passe changé');
+            entrer();
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

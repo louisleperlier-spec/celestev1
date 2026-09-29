@@ -129,6 +129,31 @@ export async function connecterApple(): Promise<Resultat | null> {
   return { ok: true };
 }
 
+/**
+ * Mot de passe oublié, en 2 temps et sans lien à ouvrir : Supabase envoie un code par email
+ * (modèle « Reset Password » avec {{ .Token }}), puis le code connecte et on choisit le nouveau mot de passe.
+ */
+export async function envoyerCodeMotDePasse(email: string): Promise<Resultat> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  return error ? { ok: false, erreur: message(error) } : { ok: true };
+}
+
+export async function changerMotDePasse(email: string, code: string, motDePasse: string): Promise<Resultat> {
+  const { error } = await supabase.auth.verifyOtp({ email, token: code, type: 'recovery' });
+  if (error) {
+    const m = error.message.toLowerCase();
+    return { ok: false, erreur: m.includes('expired') || m.includes('invalid') ? 'Code incorrect ou expiré' : message(error) };
+  }
+  const r = await supabase.auth.updateUser({ password: motDePasse });
+  if (r.error) return { ok: false, erreur: message(r.error) };
+  try {
+    await recupererOuEnvoyer();
+  } catch (e) {
+    return { ok: false, erreur: message(e as Error) };
+  }
+  return { ok: true };
+}
+
 /** Déconnexion : les données restent sur le compte, l'appareil repart de zéro. */
 export async function deconnecter() {
   await supabase.auth.signOut();
