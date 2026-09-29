@@ -8,7 +8,7 @@ import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, 
 
 import { EnTete, MOI } from '@/components/app/EnTete';
 import { SemaineCercles } from '@/components/app/Cercles';
-import { bientot } from '@/components/app/bientot';
+import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { BarresVFC } from '@/components/app/BarresVFC';
 import { Kpi } from '@/components/app/Recap';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
@@ -16,6 +16,7 @@ import { Card, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, hrMax } from '@/lib/plan';
+import { santeDisponible } from '@/lib/sante';
 import { baseHrv, lastNight, sleepScore } from '@/lib/sommeil';
 import type { Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
@@ -113,9 +114,9 @@ export default function Progres() {
             <Text weight="semibold" style={styles.h4Txt}>
               Cœur : moyenne générale
             </Text>
-            {/* Capteur Bluetooth / Apple Santé : étape 6 */}
-            <Pressable accessibilityRole="button" onPress={() => bientot('sante')}>
-              <Text style={styles.h4Btn}>Connecter un capteur</Text>
+            {/* Apple Santé : sources et autorisations (Apple Watch) */}
+            <Pressable accessibilityRole="button" onPress={ouvrirSante}>
+              <Text style={styles.h4Btn}>{santeDisponible() ? 'Apple Santé' : 'Connecter un capteur'}</Text>
             </Pressable>
           </View>
           <Trio

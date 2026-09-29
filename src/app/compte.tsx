@@ -14,6 +14,9 @@ import { colors, fonts, ui } from '@/theme';
 
 type Mode = 'signup' | 'login';
 
+/** Connexion Google : à activer une fois configurée dans Google Cloud et Supabase. */
+const GOOGLE_PRET = false;
+
 const COULEURS_FORCE = ['#FF3B5C', '#FF8A1F', '#FFD21F', '#3EE07A'];
 const TEXTES_FORCE = ['8 caractères minimum, avec majuscule et chiffre', 'Faible', 'Moyen', 'Bon', 'Excellent'];
 
@@ -99,9 +102,7 @@ export default function Compte() {
             <View style={styles.hero}>
               <CoachFace id={c.id} size={70} borderColor={c.c} borderWidth={2} />
               <View style={styles.bubble}>
-                <Text style={styles.bubbleTxt}>
-                  Ton programme est prêt{profil.name ? ', ' + profil.name : ''} ! Crée ton compte pour ne rien perdre.
-                </Text>
+                <Text style={styles.bubbleTxt}>Ton programme est prêt{profil.name ? ', ' + profil.name : ''} ! Crée ton compte pour ne rien perdre.</Text>
               </View>
             </View>
           ) : (
@@ -116,19 +117,21 @@ export default function Compte() {
           )}
           <Text style={styles.h1}>{mode === 'signup' ? 'Crée ton compte' : 'Content de te revoir'}</Text>
 
-          {/* Google : il faut d'abord le configurer (Google Cloud). */}
-          <Pressable accessibilityRole="button" style={styles.gbtn} onPress={() => toast('Connexion Google bientôt disponible')}>
-            <Svg viewBox="0 0 24 24" width={20} height={20}>
-              <Path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z" />
-              <Path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23z" />
-              <Path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z" />
-              <Path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.3 1.7l3.1-3.1A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.3 9.1 5.4 12 5.4z" />
-            </Svg>
-            <Text weight="semibold" style={styles.gTxt}>
-              Continuer avec Google
-            </Text>
-          </Pressable>
-          <Pressable accessibilityRole="button" style={styles.abtn} onPress={apple} disabled={attente}>
+          {/* Google : masqué tant qu'il n'est pas configuré (Google Cloud + Supabase). */}
+          {GOOGLE_PRET && (
+            <Pressable accessibilityRole="button" style={styles.gbtn} onPress={() => toast('Connexion Google bientôt disponible')}>
+              <Svg viewBox="0 0 24 24" width={20} height={20}>
+                <Path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z" />
+                <Path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23z" />
+                <Path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z" />
+                <Path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.3 1.7l3.1-3.1A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.3 9.1 5.4 12 5.4z" />
+              </Svg>
+              <Text weight="semibold" style={styles.gTxt}>
+                Continuer avec Google
+              </Text>
+            </Pressable>
+          )}
+          <Pressable accessibilityRole="button" style={[styles.abtn, !GOOGLE_PRET && styles.abtnSeul]} onPress={apple} disabled={attente}>
             <Svg viewBox="0 0 24 24" width={19} height={19}>
               <Path
                 fill="#FFFFFF"
@@ -147,7 +150,15 @@ export default function Compte() {
           </View>
 
           {mode === 'signup' && !onb && (
-            <TextInput style={[styles.inp, styles.mb10]} value={prenom} onChangeText={setPrenom} placeholder="Prénom" placeholderTextColor={colors.textSecondary} autoComplete="given-name" accessibilityLabel="Prénom" />
+            <TextInput
+              style={[styles.inp, styles.mb10]}
+              value={prenom}
+              onChangeText={setPrenom}
+              placeholder="Prénom"
+              placeholderTextColor={colors.textSecondary}
+              autoComplete="given-name"
+              accessibilityLabel="Prénom"
+            />
           )}
           <TextInput
             style={styles.inp}
@@ -288,6 +299,7 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 10,
   },
+  abtnSeul: { marginTop: 20 },
   aTxt: { fontSize: 15, lineHeight: 19 },
   or: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 18, marginBottom: 14 },
   orLine: { flex: 1, height: 1, backgroundColor: colors.border2 },

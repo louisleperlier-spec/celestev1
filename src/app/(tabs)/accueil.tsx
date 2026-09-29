@@ -9,17 +9,13 @@ import { Ligue } from '@/components/app/Ligue';
 import { CarteCercles } from '@/components/app/Cercles';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
-import { Lvl } from '@/components/app/Lvl';
 import { SectionHead } from '@/components/app/Section';
 import { Card, Icon, SelectableCard, Text, type IconName } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
-import { dec, fmt } from '@/lib/charges';
 import { coachById, todayIdx } from '@/lib/plan';
-import { actifsEquipe } from '@/lib/ligue';
 import { estPremium } from '@/lib/premium';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
-import { boosts, lvlInfo, mult, rankOf, streak, type Log } from '@/lib/xp';
-import { useAutresActifs } from '@/store/ligue';
+import { streak, type Log } from '@/lib/xp';
 import { useProfil, useSemaine } from '@/store/profil';
 import { colors, glow, gradients, ui } from '@/theme';
 
@@ -48,7 +44,6 @@ export default function Accueil() {
   const mx = Math.max(60, ...mins);
   const when = ns.offset === 0 ? 'Séance du jour' : ns.offset === 1 ? 'Séance de demain' : 'Prochaine séance';
   const serie = streak(p.logs, p.days);
-  const autres = useAutresActifs();
   const nonLues = p.notifs.some((n) => !n.read);
 
   return (
@@ -126,7 +121,6 @@ export default function Accueil() {
           <Stat icon="wave" label="VFC moy." value={`${avgOf(p.logs, 'hrv')} ms`} />
         </View>
 
-        <XpStrip xp={p.xp} serie={serie} boostUntil={p.boostUntil} equipe={actifsEquipe(autres, p.logs)} />
 
         {/* .upsell : NÉA Plus, seulement en version gratuite */}
         {!estPremium(p.premium) && (
@@ -200,36 +194,6 @@ function Stat({ icon, label, value }: { icon: IconName; label: string; value: st
   );
 }
 
-/** Niveau, rang et barre d'XP (xpStrip du prototype) : ouvre la Ligue. */
-function XpStrip({ xp, serie, boostUntil, equipe }: { xp: number; serie: number; boostUntil: number; equipe: number }) {
-  const li = lvlInfo(xp);
-  const rk = rankOf(li.n);
-  const b = boosts(serie, boostUntil, equipe);
-  return (
-    <Pressable accessibilityRole="button" onPress={() => router.navigate('/ligue')}>
-      <Card style={styles.xps}>
-        <Lvl n={li.n} color={rk[1]} />
-        <View style={styles.flex}>
-          <Text weight="bold" style={styles.xpB}>
-            {rk[0]} • {fmt(xp)} XP
-          </Text>
-          <View style={styles.xbar}>
-            <LinearGradient
-              colors={['#FF8CC6', colors.pink]}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={[styles.xfill, { width: `${(li.cur / li.need) * 100}%` }]}
-            />
-          </View>
-          <Text style={styles.xpSmall}>
-            {b.length ? `Boost x${dec(mult(b).toFixed(2))} : ${b.map((x) => x[0]).join(', ')}` : 'Aucun boost actif'}
-          </Text>
-        </View>
-        <Icon name="right" />
-      </Card>
-    </Pressable>
-  );
-}
 
 /** Anneau de l'objectif hebdo (.ring). */
 function Anneau({ pct }: { pct: number }) {

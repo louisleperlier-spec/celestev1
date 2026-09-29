@@ -21,6 +21,8 @@ Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien 
 **Onglet Programme allégé** : Mon plan (carrousel), « Séances prêtes » (onglets de lieu, 4 séances : accessibles puis proches du niveau,
 « Tout voir » → `/seances` avec recherche, lieu et objectif) et une carte « Bibliothèque » → `/exercices` (recherche, groupes, fiche) ;
 « À la une » et la recherche globale retirées ; morceaux communs dans `components/app/Catalogue.tsx`.
+**Finitions** : barre d'XP de l'Accueil retirée (la Ligue est juste dessous) ; « Connecter un capteur » (Progrès) et « Apple Santé et
+Apple Watch » (Profil) ouvrent l'app Santé (`ouvrirSante`) ; bouton Google masqué (`GOOGLE_PRET` dans `compte.tsx`) tant qu'il n'est pas configuré.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
@@ -30,7 +32,6 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 - [x] 1. Base : projet Expo, structure, design system, données extraites, images en fichiers, `CLAUDE.md`
 - [x] 2. Onboarding complet + `buildPlan` (« C'est parti » → paywall → création de compte)
 - [x] 3. Onglets Accueil, Programme, Calendrier, détail de séance, fiche exercice
-  - les boutons vers des écrans pas encore construits appellent `bientot()` (`src/components/app/bientot.ts`) : à remplacer au fil des étapes
 - [x] 4. Séance en cours + récap (FC simulée en attendant Apple Santé), puis **onglet Progrès** (fidèle au prototype)
   - « Connecter un capteur » et la carte Sommeil de Progrès renvoient à Apple Santé (étape 6)
 - [ ] 5. Supabase (comptes, sauvegarde, suppression) + **onglet Profil** (avec Conditions, Confidentialité et Supprimer mon compte)
@@ -62,7 +63,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     la carte de l'Accueil **remplace les cartes Nuit et Récupération** (readyCard) : lignes touchables (Sommeil → /sommeil avec le score de nuit,
     Récupération → /recuperation avec l'état de la mesure du jour)
   - **build TestFlight 1.0.0 (2) validé sur iPhone** (29 sept. 2026) : Apple Santé, connexion Apple, cercles OK ;
-    FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
+    FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant)
 - [ ] 7. Vélo : **codé, à valider sur iPhone** (onglet `(tabs)/velo.tsx`, vBike)
   - extérieur : GPS réel (`expo-location`, autorisation « pendant l'utilisation ») sinon parcours simulé après 6 s ; carte **Apple Plans**
     (`react-native-maps`, `Carte.tsx`) avec tracé rose, et le quadrillage SVG du prototype dans le navigateur (`Carte.web.tsx`)

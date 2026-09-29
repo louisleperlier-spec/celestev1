@@ -77,7 +77,7 @@ export default function Recuperation() {
           <LivePills bpm={m.bpm} zone={m.zone} hrv={m.hrv} />
         </View>
         <Text style={styles.note}>
-          Sans capteur, la mesure est simulée. Avec une ceinture cardio Bluetooth (ou la montre dans la version native), elle sera réelle.
+          La mesure d&apos;1 minute est estimée : l&apos;Apple Watch ne transmet pas les battements un par un. Ta VFC nocturne, elle, vient de ta montre via Apple Santé.
         </Text>
       </ScrollView>
       <View style={styles.foot}>

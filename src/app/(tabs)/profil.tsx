@@ -6,7 +6,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EnTete, MOI } from '@/components/app/EnTete';
-import { bientot } from '@/components/app/bientot';
+import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { confirmer } from '@/components/app/confirmer';
 import { AbonnementSheet } from '@/components/app/AbonnementSheet';
@@ -17,6 +17,7 @@ import { COACH_IMAGES, GOALS } from '@/data';
 import { dec } from '@/lib/charges';
 import { coachById } from '@/lib/plan';
 import { estPremium, ligneAbonnement } from '@/lib/premium';
+import { santeDisponible } from '@/lib/sante';
 import { lvlInfo, rankOf } from '@/lib/xp';
 import { deconnecter, supprimerCompte, useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
@@ -117,7 +118,7 @@ export default function Profil() {
             <Ligne
               icon="user"
               titre="Créer mon compte"
-              sous="Sauvegarde ta progression avec Google ou ton email"
+              sous="Sauvegarde ta progression avec Apple ou ton email"
               onPress={() => router.push({ pathname: '/compte', params: { mode: 'signup' } })}
             />
           )}
@@ -136,7 +137,12 @@ export default function Profil() {
           <Ligne icon="edit" titre="Niveau, matériel, poids, âge" sous={`${p.days} jours par semaine`} onPress={() => router.push('/reglages')} />
           <Ligne icon="bell" titre="Notifications" sous="VFC post-séance, bilan de nuit, coucher" onPress={() => setReglages(true)} />
           <Ligne icon="moon" titre="Sommeil" sous="Tes nuits, ta VFC nocturne et ton score" onPress={() => router.push('/sommeil')} />
-          <Ligne icon="bt" titre="Ceinture cardio Bluetooth" sous="Arrive avec Apple Santé" onPress={() => bientot('sante')} />
+          <Ligne
+            icon="heart"
+            titre="Apple Santé et Apple Watch"
+            sous={santeDisponible() ? 'Nuits, FC, calories et séances synchronisées' : "Dans l'app installée (TestFlight / App Store)"}
+            onPress={ouvrirSante}
+          />
           <Ligne icon="scale" titre="Ajouter mon poids" sous={`Dernier : ${dec(p.weight)} kg`} chevron="plus" onPress={() => setPesee(true)} />
           <Ligne
             icon="refresh"

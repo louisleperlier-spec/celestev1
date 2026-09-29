@@ -104,7 +104,7 @@ export default function Sommeil() {
             })}
           {!p.hrvChecks.length && <Text style={styles.noteVide}>Aucune mesure : lance-en une après ta prochaine séance.</Text>}
         </View>
-        <Text style={styles.note}>La VFC nocturne se lit dans l&apos;app Santé ou celle de ta montre ; la version native la récupérera automatiquement.</Text>
+        <Text style={styles.note}>Avec Apple Santé, ta nuit, ta VFC nocturne et ta FC au repos sont importées automatiquement depuis ta montre.</Text>
         <View style={styles.bas} />
       </ScrollView>
       <View style={styles.foot}>
