@@ -4,7 +4,8 @@
  */
 
 /** Une nuit (clé = date du coucher, AAAA-MM-JJ). */
-export type Nuit = { d: string; h: number; q: number; hrv: number | null; rhr: number | null };
+/** `src: 'sante'` : nuit importée automatiquement d'Apple Santé (remplacée si une version plus complète arrive). */
+export type Nuit = { d: string; h: number; q: number; hrv: number | null; rhr: number | null; src?: 'sante' };
 
 /** Une mesure de récupération d'1 minute. `matin` avant 11 h, sinon `post` (après entraînement). */
 export type MesureVFC = { d: string; hrv: number; bpm: number; kind: 'matin' | 'post' };

@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 
+import { CarteCercles } from '@/components/app/Cercles';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { CoachFace } from '@/components/app/CoachFace';
 import { Lvl } from '@/components/app/Lvl';
@@ -117,6 +118,11 @@ export default function Accueil() {
             </LinearGradient>
           </LinearGradient>
         </Pressable>
+
+        {/* Cercles du jour (ajout : Bouger, Exercice, Sommeil, Récupération) */}
+        <View style={styles.cercles}>
+          <CarteCercles />
+        </View>
 
         {/* .stats3 */}
         <View style={styles.stats3}>
@@ -310,6 +316,7 @@ const styles = StyleSheet.create({
   todayP: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
   todayImg: { position: 'absolute', right: -4, bottom: -12, height: 124, width: 124 },
   go: { position: 'absolute', right: 24, bottom: 18, width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', zIndex: 3 },
+  cercles: { marginTop: 10, marginHorizontal: 20 },
   stats3: { flexDirection: 'row', gap: 8, marginTop: 10, marginHorizontal: 20 },
   st: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9, padding: 10 },
   stSmall: { fontSize: 10, lineHeight: 13, color: colors.textSecondary },

@@ -7,13 +7,15 @@ import { create } from 'zustand';
 
 import type { ExerciceId } from '@/data/types';
 import { loadFor } from '@/lib/charges';
-import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
+import { coeur, hrStats, type SourceFC, type StatsFC } from '@/lib/coeur';
 import { actifsEquipe } from '@/lib/ligue';
+import { enregistrerEntrainement } from '@/lib/sante';
 import { coachById, exercice, exKcal, type PlanItem } from '@/lib/plan';
 import type { SeanceJour } from '@/lib/semaine';
 import { boosts, mult, streak } from '@/lib/xp';
 
 import { autresActifs } from './ligue';
+import { arreterMontre, suivreMontre } from './montre';
 import { selectProfil, useProfil } from './profil';
 
 export type Phase = 'ready' | 'work' | 'rest' | 'done';
@@ -30,6 +32,8 @@ export type Resultat = {
   xp: number;
   /** FC à chaque seconde, pour la courbe. */
   hr: number[];
+  /** La FC vient (au moins en partie) de l'Apple Watch. */
+  montre?: boolean;
 };
 
 export type Seance = {
@@ -54,6 +58,9 @@ export type Seance = {
   bpm: number;
   zone: number;
   hrv: number;
+  /** Source de la FC affichée, et si la montre a servi pendant la séance. */
+  src: SourceFC;
+  montre: boolean;
 };
 
 type Store = {
@@ -80,7 +87,7 @@ const ctx = () => {
 
 const snap = (w: Seance): Seance => {
   const { hr } = ctx();
-  return { ...w, bpm: hr.bpm, zone: hr.zone(), hrv: hr.rmssd() };
+  return { ...w, bpm: hr.bpm, zone: hr.zone(), hrv: hr.rmssd(), src: hr.src, montre: w.montre || hr.src === 'montre' };
 };
 
 function pickTip(id: ExerciceId): string {
@@ -95,7 +102,7 @@ function finish(w: Seance): Seance {
   const min = Math.max(1, Math.round(sec / 60));
   const st = hrStats(w.hr, w.rrs, p.age);
   const cal = Math.round(c.int * 9 * p.weight * (Math.max(sec, 60) / 3600));
-  const res: Resultat = { min, sec, cal: w.kc > 0 ? Math.round(w.kc) : cal, vol: Math.round(w.vol), st, sets: w.done.flat().length, m: 1, xp: 0, hr: w.hr };
+  const res: Resultat = { min, sec, cal: w.kc > 0 ? Math.round(w.kc) : cal, vol: Math.round(w.vol), st, sets: w.done.flat().length, m: 1, xp: 0, hr: w.hr, montre: w.montre };
   st0.addLog({ d: new Date().toISOString(), type: 'muscu', title: w.s.titre, min, cal: res.cal, vol: res.vol, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
   const apres = useProfil.getState();
   const serie = streak(apres.logs, apres.days);
@@ -106,6 +113,8 @@ function finish(w: Seance): Seance {
   // VFC de fin : les 2 dernières minutes (schedulePost du prototype).
   useProfil.getState().programmerPost('muscu', hrStats(w.hr.slice(-120), w.rrs.slice(-150), p.age).hrv || st.hrv);
   hr.fatigue = Math.min(1, 0.4 + c.int * 0.6);
+  arreterMontre();
+  enregistrerEntrainement({ type: 'muscu', debut: new Date(Date.now() - sec * 1000), fin: new Date(), kcal: res.cal });
   return { ...w, xp, res, phase: 'done' };
 }
 
@@ -146,7 +155,8 @@ export const useSeance = create<Store>()((set, get) => {
   };
   return {
     w: null,
-    lancer: (s) =>
+    lancer: (s) => {
+      suivreMontre();
       set({
         w: snap({
           s,
@@ -166,8 +176,11 @@ export const useSeance = create<Store>()((set, get) => {
           bpm: 0,
           zone: 1,
           hrv: 0,
+          src: 'sim',
+          montre: false,
         }),
-      }),
+      });
+    },
     tick: () =>
       maj((w0) => {
         if (w0.phase === 'done') return w0;
@@ -207,6 +220,9 @@ export const useSeance = create<Store>()((set, get) => {
     choisirSerie: (i) => maj((w) => ({ ...w, set: i, phase: startPhase(w.s.items[w.ex]) })),
     passerRepos: () => maj((w) => ({ ...w, phase: startPhase(w.s.items[w.ex]) })),
     pause: () => maj((w) => ({ ...w, paused: !w.paused })),
-    quitter: () => set({ w: null }),
+    quitter: () => {
+      arreterMontre();
+      set({ w: null });
+    },
   };
 });

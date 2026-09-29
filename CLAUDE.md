@@ -44,6 +44,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     de l'Apple Watch (coucher, réveil, VFC nocturne SDNN, FC au repos), la pesée avec le dernier poids. Chargé seulement hors Expo Go
     (`santeDisponible()`), donc Expo Go garde la saisie manuelle
   - choix : `react-native-health` du cahier des charges est à l'ancienne architecture (absente de RN 0.86), d'où `@kingstinct/react-native-healthkit`
+  - ajouts validés (hors prototype) : **nuit importée seule** (`store/sante.ts`, à l'ouverture, 30 min après le réveil, qualité 4, jamais sur une
+    nuit notée à la main, `Nuit.src = 'sante'`) ; **FC de la montre** en séance et vélo (`store/montre.ts` lit la FC de moins de 20 s toutes les
+    5 s, le cœur simulé la suit, `SourceFC = 'montre'`, VFC toujours estimée ; libellé « Apple Watch ») ; **séances et sorties écrites** dans
+    Apple Santé (`enregistrerEntrainement`, renforcement / vélo, calories, distance) ; **cercles** (`lib/cercles.ts`, `store/cercles.ts`,
+    `Cercles.tsx`) : Bouger (kcal, objectif = séance moyenne du programme), Exercice (min, objectif = durée choisie), Sommeil (8 h),
+    Récupération (VFC du jour / référence), carte sur l'Accueil et semaine dans Progrès ; avec Apple Santé, Bouger et Exercice = données Apple
   - à faire : build TestFlight (`scripts/build-ios.sh`, clé d'API App Store Connect dans l'environnement) puis validation sur iPhone ;
     FC en direct et mesure réelle = ceinture Bluetooth (pas prévue pour l'instant) ; « Connecter un capteur » et « Ceinture cardio » appellent `bientot('sante')`
 - [ ] 7. Vélo : **codé, à valider sur iPhone** (onglet `(tabs)/velo.tsx`, vBike)
@@ -111,7 +117,8 @@ src/
   components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
-                    BarresVFC, NuitSheet, NotifSheet, NotifBanniere, AbonnementSheet, ouvrirPlus, Carte (.web : SVG du prototype), CarteVide, lancerSortie
+                    BarresVFC, NuitSheet, NotifSheet, NotifBanniere, AbonnementSheet, ouvrirPlus, Carte (.web : SVG du prototype), CarteVide, lancerSortie,
+                    Cercles (anneaux Bouger / Exercice / Sommeil / Récupération), MotDePasseSheet
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)

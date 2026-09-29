@@ -9,6 +9,7 @@ import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
+import { demarrerSante } from '@/store/sante';
 import { colors, fontAssets } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -38,7 +39,10 @@ export default function RootLayout() {
   const ready = (loaded || !!error) && hydrated;
 
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
+    if (!ready) return;
+    SplashScreen.hideAsync();
+    // Apple Santé : la nuit de la montre, une fois l'état de l'appareil chargé.
+    demarrerSante();
   }, [ready]);
 
   if (!ready) return null;

@@ -93,7 +93,7 @@ export default function SeanceEnCours() {
       <View style={styles.pbar}>
         <LinearGradient colors={[colors.green, '#9BF0B9']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.pfill, { width: `${(doneN / total) * 100}%` }]} />
       </View>
-      <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} kcal={w.kc} />
+      <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} kcal={w.kc} src={w.src} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* .exostage */}
@@ -184,7 +184,7 @@ export default function SeanceEnCours() {
             <Glow width={200} height={120} intensity={0.35} />
             <BigNumber value={w.left} size={72} color={colors.pink} />
           </View>
-          <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} centre />
+          <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} src={w.src} centre />
           <View style={styles.tip}>
             <CoachFace id={c.id} size={54} borderColor={colors.pink} />
             <Text style={styles.tipTxt}>{w.tip}</Text>

@@ -49,7 +49,7 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
               <Text weight="semibold" style={styles.h4Txt}>
                 Fréquence cardiaque
               </Text>
-              <Text style={styles.h4Small}>simulée</Text>
+              <Text style={styles.h4Small}>{r.montre ? 'Apple Watch' : 'simulée'}</Text>
             </View>
             <CourbeFC samples={r.hr} age={age} />
             <ListeZones z={r.st.z} />

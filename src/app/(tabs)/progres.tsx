@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
+import { SemaineCercles } from '@/components/app/Cercles';
 import { bientot } from '@/components/app/bientot';
 import { BarresVFC } from '@/components/app/BarresVFC';
 import { Kpi } from '@/components/app/Recap';
@@ -77,6 +78,9 @@ export default function Progres() {
         <Text weight="bold" style={styles.ptitle}>
           Ta progression
         </Text>
+        <View style={styles.cercles}>
+          <SemaineCercles />
+        </View>
         {/* .seg */}
         <View style={styles.seg}>
           {(['Semaine', 'Mois', 'Année'] as Periode[]).map((x) => (
@@ -259,6 +263,7 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
+  cercles: { paddingTop: 14, paddingHorizontal: 20 },
   ptitle: { fontSize: 24, lineHeight: 30, paddingTop: 14, paddingHorizontal: 20 },
   seg: { flexDirection: 'row', gap: 8, paddingTop: 14, paddingHorizontal: 20 },
   segBtn: { height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#17171B', borderWidth: 1, borderColor: colors.border },

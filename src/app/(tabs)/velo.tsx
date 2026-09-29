@@ -76,7 +76,7 @@ export default function Velo() {
           </>
         )}
 
-        <LivePills bpm={v.bpm} zone={v.zone} hrv={v.hrv} />
+        <LivePills bpm={v.bpm} zone={v.zone} hrv={v.hrv} src={v.src} />
 
         {/* .bstats */}
         <View style={styles.bstats}>

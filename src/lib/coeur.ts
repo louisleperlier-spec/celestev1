@@ -4,7 +4,8 @@
  */
 import { hrMax } from './plan';
 
-export type SourceFC = 'sim';
+/** sim : FC simulée ; montre : la simulation suit la FC mesurée par l'Apple Watch (la VFC reste estimée). */
+export type SourceFC = 'sim' | 'montre';
 
 /** Noms des 5 zones cardio (zonesList du prototype). */
 export const NOMS_ZONES = ['Récup', 'Endurance', 'Aérobie', 'Seuil', 'Max'] as const;
@@ -14,6 +15,8 @@ export class Coeur {
   /** Intervalles RR en ms (les 300 derniers). */
   rr: number[] = [];
   src: SourceFC = 'sim';
+  /** Dernière FC de la montre (src = 'montre'). */
+  cible: number | null = null;
   /** Intensité de l'effort, 0 à 1 (repos 0,05). */
   intensity = 0.05;
   /** Fatigue après une séance : ralentit le retour au calme. */
@@ -41,12 +44,12 @@ export class Coeur {
 
   /** Une seconde de simulation. */
   tick() {
-    if (this.src !== 'sim') return;
     const f = this.fatigue || 0;
     this.fatigue = f * 0.9997;
     const rest = 62 + 10 * f;
-    const target = rest + (hrMax(this.age) - rest) * this.intensity;
-    this.bpm += (target - this.bpm) * 0.12 + (this.random() - 0.5) * 2.2;
+    const montre = this.src === 'montre' && this.cible != null;
+    const target = montre ? this.cible! : rest + (hrMax(this.age) - rest) * this.intensity;
+    this.bpm += (target - this.bpm) * (montre ? 0.35 : 0.12) + (this.random() - 0.5) * 2.2;
     const base = 60000 / this.bpm;
     const sd = (6 + 48 * (1 - Math.min(1, this.intensity / 0.9))) * (1 - 0.5 * f);
     const n = Math.max(1, Math.round(this.bpm / 60));

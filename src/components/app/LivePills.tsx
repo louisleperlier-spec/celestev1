@@ -3,13 +3,14 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
 import { Icon, Text } from '@/components/ui';
+import type { SourceFC } from '@/lib/coeur';
 import { colors, heartZones, ui } from '@/theme';
 
 const ZC = [heartZones.z1, heartZones.z2, heartZones.z3, heartZones.z4, heartZones.z5];
 
 /** FC, zone, VFC (et calories) en direct (livePills du prototype). */
 /** `centre` : dans l'écran de repos, la ligne est centrée (pas de source poussée à droite). */
-export function LivePills({ bpm, zone, hrv, kcal, centre }: { bpm: number; zone: number; hrv: number; kcal?: number; centre?: boolean }) {
+export function LivePills({ bpm, zone, hrv, kcal, centre, src = 'sim' }: { bpm: number; zone: number; hrv: number; kcal?: number; centre?: boolean; src?: SourceFC }) {
   return (
     <View style={[styles.live, centre && styles.centre]}>
       <View style={styles.pill}>
@@ -37,7 +38,7 @@ export function LivePills({ bpm, zone, hrv, kcal, centre }: { bpm: number; zone:
           <Text style={styles.small}>kcal</Text>
         </View>
       )}
-      <Text style={[styles.src, centre && styles.srcCentre]}>Simulation</Text>
+      <Text style={[styles.src, centre && styles.srcCentre]}>{src === 'montre' ? 'Apple Watch' : 'Simulation'}</Text>
     </View>
   );
 }

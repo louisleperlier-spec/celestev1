@@ -6,7 +6,8 @@ import * as Location from 'expo-location';
 import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
-import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
+import { coeur, hrStats, type SourceFC, type StatsFC } from '@/lib/coeur';
+import { enregistrerEntrainement } from '@/lib/sante';
 import {
   ajouterPoint,
   caloriesVelo,
@@ -19,6 +20,7 @@ import {
   type Sim,
 } from '@/lib/velo';
 
+import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
 
 export type ModeVelo = 'ext' | 'int';
@@ -55,6 +57,7 @@ type Velo = {
   bpm: number;
   zone: number;
   hrv: number;
+  src: SourceFC;
 };
 
 type Actions = {
@@ -75,7 +78,7 @@ let attente: ReturnType<typeof setTimeout> | null = null;
 
 const live = () => {
   const hr = coeur(age());
-  return { bpm: hr.bpm, zone: hr.zone(), hrv: hr.rmssd() };
+  return { bpm: hr.bpm, zone: hr.zone(), hrv: hr.rmssd(), src: hr.src };
 };
 
 export const useVelo = create<Velo & Actions>()((set, get) => {
@@ -159,6 +162,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
       set({ run: true, paused: false, el: 0, pts: [], dist: 0, spd: 0, hr: [], rrs: [], res: null, gps: null, sim: null });
       if (horloge) clearInterval(horloge);
       horloge = setInterval(tick, 1000);
+      suivreMontre();
       if (get().mode === 'ext') gpsExterieur();
     },
     pause: () => set({ paused: !get().paused }),
@@ -168,6 +172,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
     /** Fin de sortie (bikeStop) : enregistrée à partir de 30 s, XP 30 + 4/km, quête vélo dès 5 km ou 20 min. */
     terminer: () => {
       arreterGps();
+      arreterMontre();
       if (horloge) clearInterval(horloge);
       horloge = null;
       const v = get();
@@ -183,6 +188,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
         if (v.dist >= 5 || v.el >= 1200) useProfil.getState().quest('velo');
         coeur(p.age).fatigue = 0.7;
         useProfil.getState().programmerPost('velo', st.hrv);
+        enregistrerEntrainement({ type: 'velo', debut: new Date(Date.now() - v.el * 1000), fin: new Date(), kcal: cal, km: v.dist });
         toast('Sortie enregistrée : +' + g + ' XP');
       } else toast('Sortie trop courte, non enregistrée');
       set({ run: false, paused: false, res });
