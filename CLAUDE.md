@@ -18,6 +18,9 @@ prototype) en haut de ces écrans ; les routes `/accueil`, `/ligue`, `/programme
 **4 coachs au lieu de 6** : Blaze et Rex retirés (coachs, 6 programmes, images) ; leurs 11 séances du catalogue passent à Luna (Blaze) et
 Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien état ou un joueur de la Ligue sur un coach existant ;
 `comparer-plan` ne compare plus `recoCoach`. Nouvelles images des 4 coachs (style de l'icône), têtes avec un espace sous le visage (`CoachFace`).
+**Onglet Programme allégé** : Mon plan (carrousel), « Séances prêtes » (onglets de lieu, 4 séances : accessibles puis proches du niveau,
+« Tout voir » → `/seances` avec recherche, lieu et objectif) et une carte « Bibliothèque » → `/exercices` (recherche, groupes, fiche) ;
+« À la une » et la recherche globale retirées ; morceaux communs dans `components/app/Catalogue.tsx`.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
@@ -117,6 +120,7 @@ src/
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
     chat.tsx        discussion avec le coach IA · plus.tsx : paywall NÉA Plus (?suite=compte dans l'onboarding)
+    seances.tsx     toutes les séances prêtes (?lieu=) · exercices.tsx : bibliothèque des 50 exercices
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system

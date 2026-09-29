@@ -2,286 +2,153 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
+import { catalogueStyles as cs, lieuDuProfil, OngletsLieux, SeanceLigne } from '@/components/app/Catalogue';
 import { CoachFace } from '@/components/app/CoachFace';
-import { ExerciceSheet } from '@/components/app/ExerciceSheet';
+import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Kcal } from '@/components/app/Kcal';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
 import { DayNum, Row, RowText, rowStyles } from '@/components/app/Rows';
 import { SectionHead } from '@/components/app/Section';
-import { Thumb } from '@/components/app/Thumb';
 import { Card, Icon, Text, toast } from '@/components/ui';
-import { COACH_IMAGES, EXERCICE_IMAGES, EXERCICES, GOALF, GROUPES, LIEUX, MATERIEL, PROGRAMMES, SEANCES, SEANCES_GRATUITES } from '@/data';
-import type { ExerciceId, GoalFiltre, GroupeId, LieuId, Seance, SeanceId } from '@/data/types';
+import { COACH_IMAGES, EXERCICE_IMAGES, EXERCICES, LIEUX, PROGRAMMES, SEANCES } from '@/data';
+import type { LieuId, Seance, SeanceId } from '@/data/types';
 import { fmt } from '@/lib/charges';
-import { coachById, LVLN, prog, progWeek, todayIdx } from '@/lib/plan';
-import { isPremium, progLocked, wkLocked } from '@/lib/premium';
-import { catSession, JOURS, nextSession, sessionForDay, weekDates } from '@/lib/semaine';
+import { coachById, lvlN, prog, progWeek, todayIdx } from '@/lib/plan';
+import { progLocked, wkLocked } from '@/lib/premium';
+import { JOURS, nextSession, sessionForDay, weekDates } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
-import { alpha, colors, fonts, glow, mix, ui } from '@/theme';
-
-type Filtre = 'Tous' | 'pecs' | 'dos' | 'epaules' | 'bras' | 'jambes' | 'abdos' | 'cardio';
-const FILTRES: readonly [Filtre, string][] = [
-  ['Tous', 'Tous'],
-  ['pecs', 'Pecs'],
-  ['dos', 'Dos'],
-  ['epaules', 'Épaules'],
-  ['bras', 'Bras'],
-  ['jambes', 'Jambes'],
-  ['abdos', 'Abdos'],
-  ['cardio', 'Cardio'],
-];
-const filtrer = (f: Filtre, g: GroupeId) =>
-  f === 'Tous' ||
-  g === f ||
-  (f === 'bras' && ['biceps', 'triceps'].includes(g)) ||
-  (f === 'jambes' && ['quads', 'ischios', 'fessiers', 'mollets'].includes(g));
-
-/** Recherche sans accents ni majuscules. */
-const n = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-
-const premierExo = (w: Seance) => w.ex[0].split(':')[0] as ExerciceId;
+import { alpha, colors, fonts, mix, ui } from '@/theme';
 
 /** Onglet Programme et sous-onglet Calendrier (vProg / vCal du prototype). */
 export default function Programme() {
   const { vue } = useLocalSearchParams<{ vue?: string }>();
-  const [exo, setExo] = useState<ExerciceId | null>(null);
   const [aPlanifier, setAPlanifier] = useState<SeanceId | null>(null);
   const cal = vue === 'calendrier';
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      {cal ? <Calendrier /> : <Catalogue onExo={setExo} onPlanifier={setAPlanifier} />}
-      <ExerciceSheet id={exo} onClose={() => setExo(null)} />
+      {cal ? <Calendrier /> : <Catalogue onPlanifier={setAPlanifier} />}
       <PlanifierSheet id={aPlanifier} onClose={() => setAPlanifier(null)} />
     </SafeAreaView>
   );
 }
 
-function Catalogue({ onExo, onPlanifier }: { onExo: (id: ExerciceId) => void; onPlanifier: (id: SeanceId) => void }) {
+/**
+ * Onglet Programme, allégé (écart validé) : mon plan (carrousel des 3 programmes), 4 séances prêtes pour mon lieu
+ * et mon niveau avec « Tout voir », et la bibliothèque d'exercices. Les listes complètes sont dans /seances et /exercices.
+ */
+function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
   const profil = useProfil();
   const p = selectProfil(profil);
   const sem = useSemaine();
   const c = coachById(p.coach);
   const pr = prog(p);
   const ns = nextSession(sem);
-  const [q, setQ] = useState('');
-  const [lieu, setLieu] = useState<LieuId>({ maison: 'maison', salle: 'salle', deux: 'salle' }[p.gear] as LieuId);
-  const [goalf, setGoalf] = useState<GoalFiltre>('Tous');
-  const [f, setF] = useState<Filtre>('Tous');
+  const [lieu, setLieu] = useState<LieuId>(lieuDuProfil(p.gear));
   const [page, setPage] = useState(0);
   const { width } = useWindowDimensions();
   const cardW = width - 60;
 
-  const wkRow = (w: Seance) => {
-    const s = catSession(w, null, p.weight, profil.wkMod[w.id] ?? 0);
-    const lk = wkLocked(w.id);
-    return (
-      <View key={w.id} style={styles.wrow}>
-        <Pressable accessibilityRole="button" style={styles.wmain} onPress={() => router.push(`/catalogue/${w.id}`)}>
-          <Thumb id={premierExo(w)} big locked={lk} />
-          <View style={styles.flex}>
-            <Text weight="bold" style={styles.wh5} numberOfLines={1}>
-              {w.t}
-            </Text>
-            <Text style={styles.wp}>
-              {s.min} min • {LVLN[w.lvl - 1]}
-              {lk ? ' • Plus' : SEANCES_GRATUITES.includes(w.id) && !isPremium() ? ' • Gratuit' : ''}
-            </Text>
-          </View>
-        </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Ajouter à ma semaine" style={styles.wadd} onPress={() => onPlanifier(w.id)}>
-          <Icon name="plus" color={colors.pinkLight} />
-        </Pressable>
-      </View>
-    );
-  };
-
-  const exoRow = (e: (typeof EXERCICES)[number], sub: string, chev: boolean) => (
-    <Row key={e.id} onPress={() => onExo(e.id)} accessibilityLabel={e.nom}>
-      <Thumb id={e.id} />
-      <RowText title={e.nom} sub={sub} />
-      {chev && <Icon name="right" color={colors.textSecondary} />}
-    </Row>
-  );
-
-  const k = n(q.trim());
-  const liste = SEANCES.filter((w) => w.lieu === lieu && (goalf === 'Tous' || w.goal === goalf));
+  // Les séances du lieu : celles que je peux ouvrir d'abord, puis les plus proches de mon niveau (ordre du catalogue sinon).
+  const niveau = lvlN(p.level);
+  const duLieu = SEANCES.filter((w) => w.lieu === lieu);
+  const rang = (w: Seance) => (wkLocked(w.id) ? 10 : 0) + Math.abs(w.lvl - niveau);
+  const choix = [...duLieu].sort((x, y) => rang(x) - rang(y)).slice(0, 4);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+    <ScrollView showsVerticalScrollIndicator={false}>
       <EnTete rubriques={ENTRAINEMENT} actif="Programme" />
-      {/* .srch */}
-      <View style={styles.srch}>
-        <Icon name="search" color={colors.textSecondary} />
-        <TextInput
-          value={q}
-          onChangeText={setQ}
-          placeholder="Rechercher des séances et exercices"
-          placeholderTextColor={colors.textSecondary}
-          style={styles.srchInput}
-          accessibilityLabel="Rechercher"
-          returnKeyType="search"
-        />
+      <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => router.push('/chat')} />
+      {/* .plans : carrousel des 3 programmes du coach */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={cardW + 12}
+        decelerationRate="fast"
+        contentContainerStyle={styles.plans}
+        onScroll={(ev) => setPage(Math.round(ev.nativeEvent.contentOffset.x / (cardW + 12)))}
+        scrollEventThrottle={32}
+      >
+        {PROGRAMMES[c.id].map((x) => {
+          const on = x.id === pr.id;
+          return (
+            <Pressable key={x.id} accessibilityRole="button" onPress={() => router.push(`/plan/${x.id}`)}>
+              <LinearGradient
+                colors={['#131316', '#131316', mix(c.c, 22, '#131316')]}
+                locations={[0, 0.5, 1]}
+                start={{ x: 0, y: 0.35 }}
+                end={{ x: 1, y: 0.65 }}
+                style={[styles.plancard, { width: cardW }, on && styles.plancardOn]}
+              >
+                <View style={styles.ptxt}>
+                  <Text weight="semibold" style={styles.ptag}>
+                    {on ? `En cours • semaine ${progWeek(p)}/${x.sem}` : progLocked(c.id, x.id) ? `🔒 NÉA Plus • ${x.sem} semaines` : `${x.sem} semaines`}
+                  </Text>
+                  <Text weight="extrabold" style={styles.ph3}>
+                    {x.nom}
+                  </Text>
+                  <Text style={styles.pp} numberOfLines={2}>
+                    {x.desc}
+                  </Text>
+                  <View style={styles.psmall}>
+                    <Icon name="dumb" size={15} color={colors.pinkLight} />
+                    <Text style={styles.psmallTxt}>{p.days} séances/sem.</Text>
+                    <Icon name="clock" size={15} color={colors.pinkLight} />
+                    <Text style={styles.psmallTxt}>{on ? ns.s.min : sem.plan.sessions[0].min} min</Text>
+                  </View>
+                </View>
+                <Image source={COACH_IMAGES[c.id].corps} style={styles.pimg} contentFit="contain" />
+              </LinearGradient>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+      <View style={styles.dots}>
+        {PROGRAMMES[c.id].map((x, i) => (
+          <View key={x.id} style={[styles.dot, i === page && styles.dotOn]} />
+        ))}
       </View>
 
-      {k ? (
-        <View style={[rowStyles.list, styles.res]}>
-          {(() => {
-            const ws = SEANCES.filter((w) => n(w.t + ' ' + w.goal + ' ' + LIEUX[w.lieu]).includes(k));
-            const es = EXERCICES.filter((e) => n(e.nom + ' ' + e.muscles + ' ' + GROUPES[e.groupe]).includes(k));
-            return (
-              <>
-                {ws.map(wkRow)}
-                {es.map((e) => exoRow(e, `Exercice • ${GROUPES[e.groupe]}`, false))}
-                {!ws.length && !es.length && <Text style={styles.note}>Aucun résultat.</Text>}
-              </>
-            );
-          })()}
-        </View>
-      ) : (
-        <>
-          <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => router.push('/chat')} />
-          {/* .plans : carrousel des 3 programmes du coach */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={cardW + 12}
-            decelerationRate="fast"
-            contentContainerStyle={styles.plans}
-            onScroll={(ev) => setPage(Math.round(ev.nativeEvent.contentOffset.x / (cardW + 12)))}
-            scrollEventThrottle={32}
-          >
-            {PROGRAMMES[c.id].map((x) => {
-              const on = x.id === pr.id;
-              return (
-                <Pressable key={x.id} accessibilityRole="button" onPress={() => router.push(`/plan/${x.id}`)}>
-                  <LinearGradient
-                    colors={['#131316', '#131316', mix(c.c, 22, '#131316')]}
-                    locations={[0, 0.5, 1]}
-                    start={{ x: 0, y: 0.35 }}
-                    end={{ x: 1, y: 0.65 }}
-                    style={[styles.plancard, { width: cardW }, on && styles.plancardOn]}
-                  >
-                    <View style={styles.ptxt}>
-                      <Text weight="semibold" style={styles.ptag}>
-                        {on
-                          ? `En cours • semaine ${progWeek(p)}/${x.sem}`
-                          : progLocked(c.id, x.id)
-                            ? `🔒 NÉA Plus • ${x.sem} semaines`
-                            : `${x.sem} semaines`}
-                      </Text>
-                      <Text weight="extrabold" style={styles.ph3}>
-                        {x.nom}
-                      </Text>
-                      <Text style={styles.pp} numberOfLines={2}>
-                        {x.desc}
-                      </Text>
-                      <View style={styles.psmall}>
-                        <Icon name="dumb" size={15} color={colors.pinkLight} />
-                        <Text style={styles.psmallTxt}>{p.days} séances/sem.</Text>
-                        <Icon name="clock" size={15} color={colors.pinkLight} />
-                        <Text style={styles.psmallTxt}>{on ? ns.s.min : sem.plan.sessions[0].min} min</Text>
-                      </View>
-                    </View>
-                    <Image source={COACH_IMAGES[c.id].corps} style={styles.pimg} contentFit="contain" />
-                  </LinearGradient>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-          <View style={styles.dots}>
-            {PROGRAMMES[c.id].map((x, i) => (
-              <View key={x.id} style={[styles.dot, i === page && styles.dotOn]} />
+      <SectionHead title="Séances prêtes" action={`Tout voir (${SEANCES.length})`} onAction={() => router.push({ pathname: '/seances', params: { lieu } })} />
+      <Card style={styles.lieux}>
+        <OngletsLieux lieu={lieu} onChange={setLieu} />
+        {choix.map((w, i) => (
+          <View key={w.id} style={i < choix.length - 1 && cs.wsep}>
+            <SeanceLigne w={w} onPlanifier={onPlanifier} />
+          </View>
+        ))}
+        {duLieu.length > choix.length && (
+          <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/seances', params: { lieu } })} style={styles.plus}>
+            <Text weight="semibold" style={styles.plusTxt}>
+              {duLieu.length - choix.length} autres séances {LIEUX[lieu].toLowerCase()}
+            </Text>
+            <Icon name="right" size={16} color={colors.pinkLight} />
+          </Pressable>
+        )}
+      </Card>
+
+      <SectionHead title="Bibliothèque" />
+      <Pressable accessibilityRole="button" onPress={() => router.push('/exercices')} style={styles.biblioWrap}>
+        <Card style={styles.biblio}>
+          <View style={styles.biblioImgs}>
+            {EXERCICES.slice(0, 3).map((e, i) => (
+              <Image key={e.id} source={EXERCICE_IMAGES[e.id]} style={[styles.biblioImg, { left: i * 26, zIndex: 3 - i }]} contentFit="contain" />
             ))}
           </View>
-
-          <SectionHead title="Plan d'entraînement" note="Tout est prêt, lance et suis" />
-          {/* .lieux */}
-          <Card style={styles.lieux}>
-            <View style={styles.ltabs}>
-              {(Object.entries(LIEUX) as [LieuId, string][]).map(([key, l]) => (
-                <Pressable key={key} accessibilityRole="tab" accessibilityState={{ selected: key === lieu }} onPress={() => setLieu(key)} style={styles.ltab}>
-                  <Text weight="semibold" style={[styles.ltabTxt, key === lieu && styles.ltabOn]}>
-                    {l}
-                  </Text>
-                  {key === lieu && <View style={[styles.ltabBar, glow(colors.pink, 8)]} />}
-                </Pressable>
-              ))}
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.gchips}>
-              {GOALF.map((g) => (
-                <Chip key={g} label={g} on={goalf === g} onPress={() => setGoalf(g)} petit />
-              ))}
-            </ScrollView>
-            {liste.length ? (
-              liste.map((w, i) => <View key={w.id} style={i < liste.length - 1 && styles.wsep}>{wkRow(w)}</View>)
-            ) : (
-              <Text style={[styles.note, styles.noteVide]}>Aucune séance pour cet objectif ici : essaie un autre lieu.</Text>
-            )}
-          </Card>
-
-          <SectionHead title="À la une" />
-          <View style={rowStyles.list}>
-            {SEANCES.filter((w) => w.feat).map((w) => {
-              const s = catSession(w, null, p.weight, profil.wkMod[w.id] ?? 0);
-              return (
-                <Pressable key={w.id} accessibilityRole="button" onPress={() => router.push(`/catalogue/${w.id}`)}>
-                  <Card style={styles.feat}>
-                    <View style={styles.featTxt}>
-                      {wkLocked(w.id) && (
-                        <LinearGradient colors={['#FFE38A', '#FFC23D']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={styles.plusb}>
-                          <Icon name="lock" size={11} color={ui.onGold} />
-                          <Text weight="extrabold" style={styles.plusbTxt}>
-                            PLUS
-                          </Text>
-                        </LinearGradient>
-                      )}
-                      <Text weight="extrabold" style={styles.fh3}>
-                        {w.t}
-                      </Text>
-                      <Text style={styles.fp} numberOfLines={2}>
-                        {w.desc}
-                      </Text>
-                      <View style={styles.psmall}>
-                        <Icon name="dumb" size={15} color={colors.pinkLight} />
-                        <Text style={styles.fsmall}>{w.ex.length} exercices</Text>
-                        <Icon name="clock" size={15} color={colors.pinkLight} />
-                        <Text style={styles.fsmall}>{s.min} min</Text>
-                      </View>
-                    </View>
-                    <Image source={EXERCICE_IMAGES[premierExo(w)]} style={styles.fimg} contentFit="contain" />
-                  </Card>
-                </Pressable>
-              );
-            })}
+          <View style={styles.flex}>
+            <Text weight="bold" style={styles.biblioH}>
+              {EXERCICES.length} exercices
+            </Text>
+            <Text style={styles.biblioP}>Technique, muscles travaillés et démo guidée</Text>
           </View>
-
-          <SectionHead title="Les 50 exercices" style={styles.mt14} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-            {FILTRES.map(([key, l]) => (
-              <Chip key={key} label={l} on={f === key} onPress={() => setF(key)} />
-            ))}
-          </ScrollView>
-          <View style={rowStyles.list}>
-            {EXERCICES.filter((e) => filtrer(f, e.groupe)).map((e) => exoRow(e, `${GROUPES[e.groupe]} • ${MATERIEL[e.materiel]}`, true))}
-          </View>
-        </>
-      )}
+          <Icon name="right" color={colors.textSecondary} />
+        </Card>
+      </Pressable>
       <View style={{ height: 10 }} />
     </ScrollView>
-  );
-}
-
-/** Filtre pilule (.filters button / .gchips button). */
-function Chip({ label, on, onPress, petit }: { label: string; on: boolean; onPress: () => void; petit?: boolean }) {
-  return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected: on }} onPress={onPress} style={[petit ? styles.gchip : styles.filter, on && styles.chipOn]}>
-      <Text style={[petit ? styles.gchipTxt : styles.filterTxt, on && styles.chipTxtOn]}>{label}</Text>
-    </Pressable>
   );
 }
 
@@ -363,24 +230,7 @@ function Calendrier() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
-  mt14: { marginTop: 14 },
-  srch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 14,
-    marginHorizontal: 20,
-    height: 48,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  srchInput: { flex: 1, color: colors.text, fontFamily: fonts.regular, fontSize: 14.5 },
-  res: { marginTop: 12 },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary },
-  noteVide: { paddingVertical: 12, paddingHorizontal: 4 },
   notePad: { paddingTop: 8, paddingHorizontal: 20 },
   plans: { gap: 12, paddingHorizontal: 20 },
   plancard: { minHeight: 180, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
@@ -405,25 +255,15 @@ const styles = StyleSheet.create({
   dots: { flexDirection: 'row', justifyContent: 'center', gap: 7, marginTop: 12 },
   dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.border2 },
   dotOn: { width: 18, backgroundColor: colors.pink },
+  plus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.border },
+  plusTxt: { fontSize: 13, lineHeight: 17, color: colors.pinkLight },
+  biblioWrap: { marginHorizontal: 20 },
+  biblio: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
+  biblioImgs: { width: 104, height: 56 },
+  biblioImg: { position: 'absolute', top: 0, width: 56, height: 56, borderRadius: 12, backgroundColor: ui.iconBg },
+  biblioH: { fontSize: 15.5, lineHeight: 20 },
+  biblioP: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 2 },
   lieux: { marginHorizontal: 20, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 8 },
-  ltabs: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 6 },
-  ltab: { paddingVertical: 10, paddingHorizontal: 4, alignItems: 'center' },
-  ltabTxt: { fontSize: 14, lineHeight: 18, color: colors.textSecondary },
-  ltabOn: { color: colors.text },
-  ltabBar: { position: 'absolute', bottom: 2, left: '30%', right: '30%', height: 3, borderRadius: 3, backgroundColor: colors.pink },
-  gchips: { gap: 6, paddingTop: 2, paddingBottom: 8 },
-  gchip: { height: 30, paddingHorizontal: 12, borderRadius: 999, backgroundColor: ui.dark, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
-  gchipTxt: { fontSize: 12, lineHeight: 15, color: '#C6C6CC' },
-  filters: { gap: 8, paddingHorizontal: 20, paddingBottom: 12 },
-  filter: { height: 32, paddingHorizontal: 14, borderRadius: 999, backgroundColor: ui.chipBg, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
-  filterTxt: { fontSize: 12.5, lineHeight: 16, color: '#C6C6CC' },
-  chipOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,79,163,0.14)' },
-  chipTxtOn: { color: colors.text },
-  wrow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 4 },
-  wsep: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  wmain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, minWidth: 0 },
-  wh5: { fontSize: 14.5, lineHeight: 19 },
-  wp: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 3 },
   wadd: {
     width: 38,
     height: 38,
@@ -434,14 +274,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  feat: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16, marginBottom: 10, minHeight: 150, overflow: 'hidden' },
-  featTxt: { flex: 1, gap: 6, zIndex: 2 },
-  plusb: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: 3, paddingHorizontal: 8, borderRadius: 999 },
-  plusbTxt: { fontSize: 10.5, lineHeight: 13, color: ui.onGold },
-  fh3: { fontSize: 17, lineHeight: 20.4, maxWidth: 230 },
-  fp: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, maxWidth: 220 },
-  fsmall: { fontSize: 12.5, lineHeight: 16, color: ui.text3, marginRight: 4 },
-  fimg: { position: 'absolute', right: -6, bottom: 4, height: 130, width: '46%', opacity: 0.95 },
   pheadWrap: { marginTop: 12, marginHorizontal: 20 },
   phead: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
   pheadH3: { fontSize: 15, lineHeight: 19 },
