@@ -89,6 +89,13 @@ const EX: Readonly<Record<ExerciceId, Exercice & { idx: number }>> = Object.from
 export const exercice = (id: ExerciceId) => EX[id];
 export const coachById = (id: CoachId): Coach => COACHES.find((c) => c.id === id) ?? COACHES[0];
 
+/** Coach d'un état sauvegardé ou d'un autre joueur : Blaze → Luna, Rex → Axel (coachs retirés), inconnu → Axel. */
+export function coachValide(id: string | null | undefined): CoachId {
+  if (id === 'blaze') return 'luna';
+  if (id === 'rex') return 'axel';
+  return COACHES.some((c) => c.id === id) ? (id as CoachId) : 'axel';
+}
+
 export const lvlN = (level: NiveauId): 1 | 2 | 3 => ({ deb: 1, int: 2, adv: 3 } as const)[level];
 
 /** FC max, formule de Tanaka. */
@@ -230,7 +237,7 @@ export function buildPlan(p: Profil, now: number = Date.now()): Plan {
     });
     notes.push('Retour au calme en fin de séance pour le mental');
   }
-  if (p.goals.includes('masse') && ['axel', 'blaze', 'rex'].includes(c.id)) {
+  if (p.goals.includes('masse') && c.id === 'axel') {
     sessions.forEach((s) =>
       s.items.slice(0, 2).forEach((i) => {
         if (i.sets && i.sets < 5) i.sets++;
@@ -282,15 +289,16 @@ export function nextSession(plan: Plan, today: number = todayIdx()): { s: PlanSe
 
 /** Coach recommandé selon les objectifs (et le niveau). */
 export function recoCoach(goals: readonly GoalId[], level: NiveauId): CoachId {
-  const sc: Record<CoachId, number> = { axel: 0, nova: 0, kai: 0, luna: 0, blaze: 0, rex: 0 };
+  const sc: Record<CoachId, number> = { axel: 0, nova: 0, kai: 0, luna: 0 };
   const m: Record<GoalId, (CoachId | number)[]> = {
-    masse: ['axel', 3, 'rex', 1],
+    // Blaze et Rex retirés : leurs points vont à Luna (Blaze) et Axel (Rex).
+    masse: ['axel', 4],
     poids: ['luna', 2, 'kai', 2],
     forme: ['nova', 2, 'luna', 1],
     endu: ['kai', 3],
     mental: ['nova', 3],
-    disc: ['rex', 2, 'axel', 1],
-    conf: ['blaze', 2, 'axel', 1],
+    disc: ['axel', 3],
+    conf: ['luna', 2, 'axel', 1],
   };
   goals.forEach((g) => {
     const a = m[g] || [];

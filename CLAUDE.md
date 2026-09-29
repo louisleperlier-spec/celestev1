@@ -15,6 +15,9 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 **3 onglets au lieu de 6** (`TabBar`) : « Aujourd'hui » (Accueil, puis la Ligue dessous : `components/app/Ligue.tsx` avec `integree`),
 « Entraînement » (Programme · Calendrier · Vélo) et « Moi » (Progrès · Profil) ; en-tête `EnTete` (style .phd « Programme Calendrier » du
 prototype) en haut de ces écrans ; les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
+**4 coachs au lieu de 6** : Blaze et Rex retirés (coachs, 6 programmes, images) ; leurs 11 séances du catalogue passent à Luna (Blaze) et
+Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien état ou un joueur de la Ligue sur un coach existant ;
+`comparer-plan` ne compare plus `recoCoach`. Nouvelles images des 4 coachs (style de l'icône), têtes avec un espace sous le visage (`CoachFace`).
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
@@ -160,10 +163,10 @@ Générées depuis `NEA-donnees-et-images.zip`, identiques aux constantes du pro
 
 | Export | Prototype | Contenu |
 |---|---|---|
-| `COACHES` | `COACHES` | 6 coachs |
+| `COACHES` | `COACHES` | 4 coachs (Blaze et Rex retirés) |
 | `EXERCICES` | `EXL` + `NAMES` | 50 exercices |
 | `SEANCES`, `SEANCES_GRATUITES` | `CAT`, `FREE_WK` | 41 séances, 3 gratuites |
-| `PROGRAMMES` | `PROGS` | 3 programmes par coach (18) |
+| `PROGRAMMES` | `PROGS` | 3 programmes par coach (12) |
 | `TEMPLATES`, `SPECIAL`, `DAYSPOS` | `TPL`, `SPECIAL`, `DAYSPOS` | modèles de séance pour `buildPlan` |
 | `GROUPES`, `MATERIEL`, `LIEUX`, `GEAR`, `GOALS`, `GOALF` | `GRP`, `EQN`, `LIEUX`, `GEAR`, `GOALS`, `GOALF` | référentiels |
 | `HEALTH_QUESTIONS` | `HQ` | questionnaire santé |
@@ -172,7 +175,7 @@ Générées depuis `NEA-donnees-et-images.zip`, identiques aux constantes du pro
 | `EXERCICE_IMAGES`, `COACH_IMAGES`, `DECO_IMAGES`, `VIDEO_ACCUEIL` | — | images dans `/assets` |
 
 Les exercices d'une séance gardent le format du prototype `id:séries:reps:repos` (`SeanceExercice`).
-Vérifier l'extraction : `npm run verifier-donnees` (6 / 50 / 41 / 18 + une image par coach et par exercice).
+Vérifier l'extraction : `npm run verifier-donnees` (4 / 50 / 41 / 12 + une image par coach et par exercice).
 
 ## Logique (`@/lib/plan`)
 

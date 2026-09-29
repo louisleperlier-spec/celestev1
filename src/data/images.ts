@@ -77,14 +77,6 @@ export const COACH_IMAGES: Readonly<Record<CoachId, { corps: ImageSourcePropType
     corps: require('@/assets/coachs/luna_corps.png'),
     tete: require('@/assets/coachs/luna_tete.webp'),
   },
-  blaze: {
-    corps: require('@/assets/coachs/blaze_corps.png'),
-    tete: require('@/assets/coachs/blaze_tete.webp'),
-  },
-  rex: {
-    corps: require('@/assets/coachs/rex_corps.png'),
-    tete: require('@/assets/coachs/rex_tete.webp'),
-  },
 };
 
 /** Décors de l'accueil : podium et poses d'Axel. */

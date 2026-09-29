@@ -35,7 +35,7 @@ Thème sombre premium, néon rose, effet de lueur (glow).
 - Mascottes : 6 robots chibi (grosse tête ronde, corps noir brillant, casque audio, yeux en arcs lumineux, « N » sur le torse),
   un par couleur de coach. Accueil : respiration, clignement des yeux, podium qui pulse, particules roses.
 
-## Les 6 coachs (3 programmes chacun, le 1er gratuit)
+## Les 4 coachs (3 programmes chacun, le 1er gratuit)
 
 | Coach | Couleur | Style | Reps | Repos | Particularité |
 |---|---|---|---|---|---|
@@ -43,8 +43,6 @@ Thème sombre premium, néon rose, effet de lueur (glow).
 | Nova | Bleu | Renfo doux | 12-15 | 45 s | Pas de barre, gainage, mobilité |
 | Kai | Vert | Endurance | 15-20 | 30 s | Circuits + vélo |
 | Luna | Jaune | HIIT fun | 40 s / 20 s | 20 s | Tout en intervalles |
-| Blaze | Orange | Intensité | 6-10 | 60 s | Explosif + finisher cardio |
-| Rex | Rouge | Force | 4-6 | 150 s | Gros mouvements lourds |
 
 ## Contenu
 

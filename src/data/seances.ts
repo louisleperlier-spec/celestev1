@@ -119,7 +119,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 2,
     goal: 'Tonification',
-    coach: 'blaze',
+    coach: 'luna',
     desc: 'Des cuisses et des fessiers plus forts avec seulement des haltères.',
     ex: [
       'goblet_squat:4:10-12:60',
@@ -155,7 +155,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 2,
     goal: 'Force',
-    coach: 'blaze',
+    coach: 'luna',
     feat: 1,
     desc: 'Mouvements polyarticulaires lourds puis isolation : une séance jambes complète en une demi-heure.',
     ex: [
@@ -173,7 +173,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 3,
     goal: 'Force',
-    coach: 'rex',
+    coach: 'axel',
     desc: 'Squat, développé couché et soulevé de terre. Lourd, peu de reps, longs repos. Échauffe-toi bien avant.',
     ex: [
       'squat_barre:5:5:180',
@@ -288,7 +288,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 3,
     goal: 'Force',
-    coach: 'blaze',
+    coach: 'luna',
     feat: 1,
     desc: 'Barres de traction et barres parallèles du parc : force au poids du corps pour les avancés.',
     ex: [
@@ -317,7 +317,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 2,
     goal: 'Endurance',
-    coach: 'blaze',
+    coach: 'luna',
     ride: 30,
     desc: "10 min d'échauffement, puis 6 fois 1 min vite et 2 min tranquille, 5 min de retour au calme.",
     ex: ['velo_stationnaire:1:30m:0'],
@@ -345,7 +345,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 2,
     goal: 'Endurance',
-    coach: 'blaze',
+    coach: 'luna',
     desc: 'Des jambes solides et un cardio qui grimpe, sur un simple banc.',
     ex: [
       'fentes_marche:4:12:45',
@@ -410,7 +410,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 2,
     goal: 'Prise de muscle',
-    coach: 'blaze',
+    coach: 'luna',
     desc: 'Pompes et haltères pour construire des pectoraux épais, sans banc de salle.',
     ex: [
       'pompes:4:12-15:60',
@@ -524,7 +524,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 3,
     goal: 'Force',
-    coach: 'rex',
+    coach: 'axel',
     desc: 'Développé, rowing et tractions lourds. Peu de reps, beaucoup de charge.',
     ex: [
       'developpe_couche_barre:5:5:180',
@@ -539,7 +539,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 3,
     goal: 'Force',
-    coach: 'rex',
+    coach: 'axel',
     desc: 'Squat lourd et soulevé roumain pour des jambes puissantes.',
     ex: [
       'squat_barre:5:5:180',
@@ -569,7 +569,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 2,
     goal: 'Prise de muscle',
-    coach: 'blaze',
+    coach: 'luna',
     desc: 'Tous les grands mouvements en une séance : idéal si tu vas en salle 2 ou 3 fois par semaine.',
     ex: [
       'squat_barre:4:8:90',
@@ -641,7 +641,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 3,
     goal: 'Perte de graisse',
-    coach: 'blaze',
+    coach: 'luna',
     feat: 1,
     desc: '20 secondes à fond, 10 secondes de repos, 8 tours par exercice. Court, mais très intense.',
     ex: ['mountain_climbers:8:20s:10', 'squat_poids_corps:8:20s:10', 'pompes:8:20s:10'],

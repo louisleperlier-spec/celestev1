@@ -1,7 +1,7 @@
 /// <reference types="node" />
 /**
- * Compare la logique de l'app à celle d'origine du prototype : buildPlan et recoCoach sur tous les
- * coachs × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés),
+ * Compare la logique de l'app à celle d'origine du prototype : buildPlan sur tous les
+ * coachs (les 4 gardés) × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés),
  * loadFor (charges), catSession (séances du catalogue × intensité), streak, lvlInfo/rankOf.
  *
  * Lancer : npm run comparer-plan
@@ -11,7 +11,7 @@ import { PROGRAMMES } from '../src/data/programmes';
 import { GOALS } from '../src/data/referentiels';
 import { SEANCES } from '../src/data/seances';
 import { loadFor } from '../src/lib/charges';
-import { buildPlan, recoCoach, type PlanItem, type Profil } from '../src/lib/plan';
+import { buildPlan, type PlanItem, type Profil } from '../src/lib/plan';
 import { catSession, type Intensite } from '../src/lib/semaine';
 import { Coeur, hrStats } from '../src/lib/coeur';
 import { baseHrv, hm, lastNight, recovStatus, sleepScore, type MesureVFC, type Nuit } from '../src/lib/sommeil';
@@ -80,8 +80,9 @@ for (const c of COACHES)
                 compter('loadFor', loadFor(it, p, NOW), prototype.load({ ...p, goals: [...goals] }, NOW, it), p);
               }
             const ref = prototype.run({ ...p, goals: [...goals] }, NOW);
-            const a = JSON.stringify([plan.sessions, plan.notes, recoCoach(goals, level)]);
-            const b = JSON.stringify([ref.plan.sessions, ref.plan.notes, ref.reco]);
+            // recoCoach n'est plus comparé : Blaze et Rex retirés, leurs points vont à Luna et Axel (écart validé).
+            const a = JSON.stringify([plan.sessions, plan.notes]);
+            const b = JSON.stringify([ref.plan.sessions, ref.plan.notes]);
             total++;
             if (a !== b && differences++ < 3) console.log('Différence :', JSON.stringify(p), '\n  app       ', a.slice(0, 300), '\n  prototype ', b.slice(0, 300));
           }

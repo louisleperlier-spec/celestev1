@@ -9,7 +9,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
 import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
-import { buildPlan, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
+import { buildPlan, coachValide, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
 import { toast } from '@/components/ui/Toast';
 import { autresActifs } from './ligue';
@@ -271,6 +271,8 @@ export const useProfil = create<Etat & Actions>()(
       name: 'nea2',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s): EtatSauvegarde => etatSauvegarde(s),
+      // État enregistré avant le retrait de Blaze et Rex : coach et programmes suivis remis à un coach existant.
+      merge: (sauve, actuel) => ({ ...actuel, ...nettoyer((sauve ?? {}) as Partial<EtatSauvegarde>) }),
     },
   ),
 );
@@ -311,7 +313,14 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */
-export const chargerEtat = (e: Partial<EtatSauvegarde>) => useProfil.setState({ ...defauts(), ...e, obCoachSet: true });
+/** Blaze et Rex retirés : leur coach devient Luna / Axel, leurs programmes suivis sont oubliés. */
+function nettoyer(e: Partial<EtatSauvegarde>): Partial<EtatSauvegarde> {
+  if (!e.coach && !e.progs) return e;
+  const progs = Object.fromEntries(Object.entries(e.progs ?? {}).filter(([c]) => coachValide(c) === c)) as EtatSauvegarde['progs'];
+  return { ...e, ...(e.coach ? { coach: coachValide(e.coach) } : {}), progs };
+}
+
+export const chargerEtat = (e: Partial<EtatSauvegarde>) => useProfil.setState({ ...defauts(), ...nettoyer(e), obCoachSet: true });
 
 /** Profil courant pour le générateur de programme. */
 export const selectProfil = (s: Etat): Profil => ({

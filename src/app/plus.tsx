@@ -10,7 +10,9 @@ import Svg, { Circle, Defs, LinearGradient as SvgGradient, Path, Stop } from 're
 import { Sheet } from '@/components/app/Sheet';
 import { BigNumber, Button, Card, Glow, Icon, RadialBackground, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
+import { COACHES } from '@/data/coaches';
 import { PLANS } from '@/data/monetisation';
+import { PROGRAMMES } from '@/data/programmes';
 import { SEANCES } from '@/data/seances';
 import { mmss } from '@/lib/coeur';
 import { coachById, prog } from '@/lib/plan';
@@ -91,7 +93,7 @@ export default function Plus() {
   };
 
   const feats: [IconName, string, string][] = [
-    ['clip', 'Tous les programmes des 6 coachs', '18 programmes complets et ' + SEANCES.length + ' séances prêtes'],
+    ['clip', `Tous les programmes des ${COACHES.length} coachs`, `${Object.values(PROGRAMMES).flat().length} programmes complets et ${SEANCES.length} séances prêtes`],
     ['coach', `${c.nom} en illimité`, 'Ton coach IA répond à toutes tes questions'],
     ['wave', 'Récupération avancée', 'VFC post-séance, score de nuit, alertes de fatigue'],
     ['bolt', "Turbo XP et boosts d'équipe", 'Monte plus vite dans la Ligue'],

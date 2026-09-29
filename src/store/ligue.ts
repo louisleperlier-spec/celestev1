@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 
-import { COACHES } from '@/data/coaches';
+import { coachValide } from '@/lib/plan';
 import type { CoachId } from '@/data/types';
 import { lundiISO } from '@/lib/ligue';
 import { supabase } from '@/lib/supabase';
@@ -39,7 +39,7 @@ export const useAutresActifs = () => useLigue(nbActifs);
 
 type Brut = { id: string; prenom: string; coach: string; xp: number; xp_semaine: number; actif?: boolean; nom?: string; n?: number };
 
-const coach = (c: string): CoachId => (COACHES.some((x) => x.id === c) ? (c as CoachId) : 'axel');
+const coach = (c: string): CoachId => coachValide(c);
 const ami = (r: Brut): Ami => ({ id: r.id, prenom: r.prenom || 'Sans nom', coach: coach(r.coach), xp: r.xp, xpSemaine: r.xp_semaine });
 
 export type Resultat = { ok: true; prenom?: string } | { ok: false; erreur: string };

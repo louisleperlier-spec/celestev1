@@ -1,14 +1,12 @@
 // Généré depuis NEA-donnees-et-images.zip (identique aux constantes du prototype `prototype/nea-app.html`).
 // Ne pas modifier à la main : corriger la source puis régénérer.
 
-/** Les 6 coachs (`COACHES`). */
+/** Les 4 coachs (`COACHES`) : Blaze et Rex du prototype ont été retirés (écart validé). */
 export type CoachId =
   | 'axel'
   | 'nova'
   | 'kai'
-  | 'luna'
-  | 'blaze'
-  | 'rex';
+  | 'luna';
 
 /** Les 50 exercices (`EXL`). */
 export type ExerciceId =
