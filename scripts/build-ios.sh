@@ -18,4 +18,4 @@ else
   { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$EXPO_ASC_API_KEY_P8" | tr -d ' \n\r' | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > "$cle"
 fi
 export EXPO_ASC_API_KEY_PATH="$cle"
-npx eas-cli@latest build --platform ios --profile "${1:-preview}" --non-interactive --no-wait
+npx eas-cli@latest build --platform ios --profile "${1:-preview}" --non-interactive --no-wait --auto-submit
