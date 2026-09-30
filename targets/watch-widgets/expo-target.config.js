@@ -15,6 +15,10 @@ module.exports = {
     nova: './images/nova.png',
     kai: './images/kai.png',
     luna: './images/luna.png',
+    axel_teinte: './images/axel_teinte.png',
+    nova_teinte: './images/nova_teinte.png',
+    kai_teinte: './images/kai_teinte.png',
+    luna_teinte: './images/luna_teinte.png',
   },
   frameworks: ['SwiftUI', 'WidgetKit', 'HealthKit'],
   entitlements: {

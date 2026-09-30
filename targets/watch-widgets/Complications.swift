@@ -206,16 +206,14 @@ struct SeanceWidget: Widget {
 
 // MARK: Mascotte (ton coach, lance la séance)
 
-/// Image du coach en couleurs : sur un cadran teinté (Modulaire coloré…), watchOS la dessinerait sinon en silhouette d'une couleur.
+/// Image du coach : sur un cadran teinté (Modulaire coloré…), watchOS ne garde que l'opacité de l'image ;
+/// la version `_teinte` porte les traits (yeux, casque, reflets) dans son opacité pour rester reconnaissable.
 struct ImageCoach: View {
+  @Environment(\.widgetRenderingMode) var rendu
   let nom: String
 
   var body: some View {
-    if #available(watchOS 11.0, *) {
-      Image(nom).resizable().widgetAccentedRenderingMode(.fullColor).scaledToFit()
-    } else {
-      Image(nom).resizable().scaledToFit()
-    }
+    Image(rendu == .fullColor ? nom : nom + "_teinte").resizable().scaledToFit()
   }
 }
 

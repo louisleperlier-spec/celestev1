@@ -55,9 +55,14 @@ struct Fournisseur: TimelineProvider {
 
 enum W {
   static let rose = Color(red: 1.0, green: 0.31, blue: 0.64)
-  static let fond = Color(red: 0.133, green: 0.137, blue: 0.157)
-  static let carte = Color(red: 0.176, green: 0.188, blue: 0.22)
-  static let texte2 = Color(red: 0.68, green: 0.69, blue: 0.73)
+  /// Fond rose NÉA (léger dégradé), texte graphite comme les boutons principaux de l'app.
+  static let fond = LinearGradient(
+    colors: [Color(red: 1.0, green: 0.4, blue: 0.7), Color(red: 0.96, green: 0.25, blue: 0.58)],
+    startPoint: .topLeading, endPoint: .bottomTrailing
+  )
+  static let encre = Color(red: 0.113, green: 0.118, blue: 0.137)
+  static let texte2 = encre.opacity(0.65)
+  static let carte = encre.opacity(0.15)
   static let lien = URL(string: "nea://accueil")!
 
   static func h(_ v: Double) -> String {
@@ -81,7 +86,7 @@ struct Barre: View {
       GeometryReader { g in
         ZStack(alignment: .leading) {
           Capsule().fill(W.carte)
-          Capsule().fill(W.rose).frame(width: g.size.width * CGFloat(max(0, min(1, part))))
+          Capsule().fill(Color.white).frame(width: g.size.width * CGFloat(max(0, min(1, part))))
         }
       }
       .frame(height: 5)
@@ -107,7 +112,7 @@ struct BilanVue: View {
       .gaugeStyle(.accessoryCircularCapacity)
     default:
       VStack(alignment: .leading, spacing: 6) {
-        Text("NÉA").font(.system(size: 13, weight: .heavy)).foregroundColor(W.rose)
+        Text("NÉA").font(.system(size: 13, weight: .heavy)).foregroundColor(W.encre)
         Text("Ton bilan").font(.system(size: 14, weight: .semibold))
         if let d = d {
           Barre(titre: "Effort", part: d.effort / 100, valeur: "\(Int(d.effort)) %")
@@ -125,6 +130,7 @@ struct BilanWidget: Widget {
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: "NeaBilan", provider: Fournisseur()) { e in
       BilanVue(e: e)
+        .foregroundStyle(W.encre)
         .containerBackground(W.fond, for: .widget)
         .widgetURL(W.lien)
     }
@@ -152,7 +158,7 @@ struct SeanceVue: View {
     default:
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
-          Text("NÉA").font(.system(size: 13, weight: .heavy)).foregroundColor(W.rose)
+          Text("NÉA").font(.system(size: 13, weight: .heavy)).foregroundColor(W.encre)
           Text("Bonjour \(d?.prenom ?? "")").font(.system(size: 12)).foregroundColor(W.texte2)
           Spacer(minLength: 0)
           if let s = d?.seance {
@@ -182,10 +188,10 @@ struct Anneau: View {
   var body: some View {
     VStack(spacing: 2) {
       ZStack {
-        Circle().stroke(W.rose.opacity(0.2), lineWidth: 5)
+        Circle().stroke(Color.white.opacity(0.35), lineWidth: 5)
         Circle()
           .trim(from: 0, to: max(0, min(1, part)))
-          .stroke(W.rose, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+          .stroke(Color.white, style: StrokeStyle(lineWidth: 5, lineCap: .round))
           .rotationEffect(.degrees(-90))
         Text("\(Int(part * 100))").font(.system(size: 11, weight: .bold))
       }
@@ -199,6 +205,7 @@ struct SeanceWidget: Widget {
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: "NeaSeance", provider: Fournisseur()) { e in
       SeanceVue(e: e)
+        .foregroundStyle(W.encre)
         .containerBackground(W.fond, for: .widget)
         .widgetURL(W.lien)
     }

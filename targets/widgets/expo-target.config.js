@@ -9,7 +9,7 @@ module.exports = {
   displayName: 'NÉA',
   bundleIdentifier: '.widgets',
   deploymentTarget: '17.0',
-  colors: { $accent: '#FF4FA3', $widgetBackground: '#222328' },
+  colors: { $accent: '#FF4FA3', $widgetBackground: '#FF4FA3' },
   entitlements: {
     'com.apple.security.application-groups': ['group.com.neacoach.app'],
   },
