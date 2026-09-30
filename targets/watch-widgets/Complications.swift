@@ -212,7 +212,7 @@ struct ImageCoach: View {
 
   var body: some View {
     if #available(watchOS 11.0, *) {
-      Image(nom).widgetAccentedRenderingMode(.fullColor).resizable().scaledToFit()
+      Image(nom).resizable().widgetAccentedRenderingMode(.fullColor).scaledToFit()
     } else {
       Image(nom).resizable().scaledToFit()
     }
