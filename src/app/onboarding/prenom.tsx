@@ -21,7 +21,7 @@ export default function Prenom() {
   };
 
   return (
-    <ObScaffold step="prenom" title="Comment tu t'appelles ?" sub="Ton coach va t'appeler comme ça." onNext={verifier}>
+    <ObScaffold step="prenom" eyebrow="FAISONS CONNAISSANCE" title="Comment tu t'appelles ?" sub="Ton coach va t'appeler comme ça." onNext={verifier}>
       <TextInput
         style={styles.input}
         value={valeur}
@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
     height: 64,
     paddingHorizontal: 16,
     backgroundColor: colors.surface,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    borderRadius: 18,
+    borderRadius: 16,
     color: colors.text,
     ...fonts.bold,
     fontSize: 22,

@@ -180,6 +180,21 @@ const ICONS = {
       <Path d="M4 11l5-4 5 3 5-6" />
     </>
   ),
+  /** Refonte (maquettes) : information, aller-retour, groupe, bulle. */
+  info: (
+    <>
+      <Circle cx="12" cy="12" r="9" />
+      <Path d="M12 11v5M12 8h.01" />
+    </>
+  ),
+  swap: <Path d="M7 4 3 8l4 4M3 8h14M17 12l4 4-4 4M21 16H7" />,
+  users: (
+    <>
+      <Circle cx="9" cy="8" r="3.2" />
+      <Path d="M3 20a6 6 0 0 1 12 0M16 4.5a3 3 0 0 1 0 6M18 14.5a5 5 0 0 1 3 4.5" />
+    </>
+  ),
+  bulle: <Path d="M4 5h16v11H9l-5 4z" />,
 } as const;
 
 export type IconName = keyof typeof ICONS;

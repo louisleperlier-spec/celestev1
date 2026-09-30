@@ -27,8 +27,8 @@ export const colors = {
   /** Erreur (sémantique). */
   error: '#FF5C6C',
 
-  /** Texte posé sur le bouton principal (rose plein). */
-  onPrimary: '#FFFFFF',
+  /** Texte posé sur le bouton principal (rose plein), graphite comme dans les maquettes. */
+  onPrimary: '#1D1E23',
 
   // Calories (badge)
   kcal: '#FF8A1F',
@@ -65,6 +65,8 @@ export const ui = {
   selTop: 'rgba(255,79,163,0.12)',
   selBottom: 'rgba(255,79,163,0.05)',
   pinkRing: 'rgba(255,79,163,0.35)',
+  /** Fond d'une carte choisie (rose 12 % sur l'ardoise). */
+  selFond: '#45303F',
   /** Podium du classement. */
   podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
   /** Éclair du Turbo x2. */

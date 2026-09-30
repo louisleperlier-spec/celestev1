@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -6,12 +5,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Icon, Text } from '@/components/ui';
-import { colors, fonts, glow, gradients } from '@/theme';
+import { colors, fonts } from '@/theme';
 
 import { OB_COUNT, OB_STEPS, obHref, obNext, type ObStep } from './steps';
 
 type Props = {
   step: ObStep;
+  /** Petit titre au-dessus (« TON EXPÉRIENCE »…). */
+  eyebrow?: string;
   title: string;
   sub?: string;
   children: ReactNode;
@@ -24,10 +25,12 @@ type Props = {
   header?: ReactNode;
   /** Ouvert depuis le Profil : pas de barre d'étapes, et le bouton mène ici. */
   horsOnboarding?: { suivant: () => void };
+  /** Petite phrase sous le bouton. */
+  apres?: string;
 };
 
-/** Écran d'onboarding (obWrap + obBar du prototype). */
-export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Continuer', onNext, header, horsOnboarding }: Props) {
+/** Écran d'onboarding (maquettes) : barre d'étapes, petit titre, titre, sous-titre, contenu, bouton. */
+export function ObScaffold({ step, eyebrow, title, sub, children, ok = true, cta = 'Continuer', onNext, header, horsOnboarding, apres }: Props) {
   const next = () => {
     if (onNext?.() === false) return;
     if (horsOnboarding) return horsOnboarding.suivant();
@@ -39,6 +42,7 @@ export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Conti
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {header ?? (
           <>
+            {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
             <Text style={styles.title}>{title}</Text>
             {sub ? <Text style={styles.sub}>{sub}</Text> : null}
           </>
@@ -52,6 +56,7 @@ export function ObScaffold({ step, title, sub, children, ok = true, cta = 'Conti
       </ScrollView>
       <View style={styles.foot}>
         <Button label={cta} arrow disabled={!ok} onPress={next} />
+        {apres ? <Text style={styles.apres}>{apres}</Text> : null}
       </View>
     </SafeAreaView>
   );
@@ -83,17 +88,7 @@ export function ObBar({ step }: { step: ObStep }) {
       </Pressable>
       <View style={styles.segs} accessibilityLabel={`Étape ${Math.min(i + 1, OB_COUNT)} sur ${OB_COUNT}`}>
         {Array.from({ length: OB_COUNT }, (_, k) =>
-          k <= i ? (
-            <LinearGradient
-              key={k}
-              colors={gradients.progress}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={[styles.seg, glow('rgba(255,79,163,0.5)', 8)]}
-            />
-          ) : (
-            <View key={k} style={[styles.seg, styles.segOff]} />
-          ),
+          <View key={k} style={[styles.seg, k <= i ? styles.segOn : styles.segOff]} />,
         )}
       </View>
       <Text style={styles.stepn}>
@@ -105,23 +100,25 @@ export function ObBar({ step }: { step: ObStep }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
-  bar: { flexDirection: 'row', alignItems: 'center', gap: 8, height: 52, paddingHorizontal: 12 },
+  bar: { flexDirection: 'row', alignItems: 'center', gap: 10, height: 52, paddingHorizontal: 12 },
   back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  segs: { flex: 1, flexDirection: 'row', gap: 5 },
-  seg: { flex: 1, height: 5, borderRadius: 4 },
+  segs: { flex: 1, flexDirection: 'row', gap: 6 },
+  seg: { flex: 1, height: 4, borderRadius: 2 },
+  segOn: { backgroundColor: colors.pink },
   segOff: { backgroundColor: colors.border },
-  stepn: { width: 40, fontSize: 12, lineHeight: 16, color: colors.textSecondary, textAlign: 'right' },
+  stepn: { width: 34, fontSize: 14, lineHeight: 18, color: colors.textSecondary, textAlign: 'right' },
   scroll: { paddingHorizontal: 20, paddingBottom: 16 },
-  title: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
-  sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
-  // .obbody
-  body: { marginTop: 22 },
-  foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
+  eyebrow: { ...fonts.semibold, fontSize: 13, lineHeight: 17, letterSpacing: 1.6, color: colors.textSecondary, marginTop: 18 },
+  title: { ...fonts.black, fontSize: 31, lineHeight: 37, letterSpacing: -0.5, marginTop: 8 },
+  sub: { color: colors.textSecondary, fontSize: 17, lineHeight: 23, marginTop: 6 },
+  body: { marginTop: 24 },
+  foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 12 },
+  apres: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
 });
 
 /** Styles partagés par les écrans d'onboarding (.lbl, .note, .warn…). */
 export const ob = StyleSheet.create({
-  lbl: { ...fonts.bold, fontSize: 14, lineHeight: 18, marginTop: 22, marginBottom: 10 },
+  lbl: { ...fonts.semibold, fontSize: 18, lineHeight: 23, marginTop: 24, marginBottom: 12 },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8 },
   /** Premier libellé : sa marge se confond avec celle du contenu (.obbody). */
   first: { marginTop: 0 },

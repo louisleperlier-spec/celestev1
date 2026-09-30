@@ -18,6 +18,7 @@ export default function Objectifs() {
   return (
     <ObScaffold
       step="objectifs"
+      eyebrow={profil ? undefined : 'TES OBJECTIFS'}
       title={profil ? 'Quel est ton objectif principal ?' : `Qu'est-ce qui te motive${name ? ', ' + name : ''} ?`}
       sub={profil ? 'Tu peux en choisir plusieurs.' : 'Choisis un ou plusieurs objectifs.'}
       ok={goals.length > 0}

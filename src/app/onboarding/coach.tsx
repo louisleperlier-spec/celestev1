@@ -1,20 +1,25 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CoachFace } from '@/components/app/CoachFace';
+import { Sheet } from '@/components/app/Sheet';
 import { ObBar, Retour } from '@/components/onboarding/ObScaffold';
-import { Button, Card, Glow, Icon, Text, toast } from '@/components/ui';
+import { Button, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
+import type { Coach as CoachT } from '@/data/types';
 import { coachById, recoCoach } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, fonts, glow, gradients, mix, ui } from '@/theme';
+import { colors, fonts } from '@/theme';
 
 const ORDRE = COACHES.map((c) => c.id);
+/** « PERFORMANCE » → « Performance ». */
+const casse = (s: string) => s.charAt(0) + s.slice(1).toLowerCase();
+const approche = (c: CoachT) => `${c.traits[0]} et ${c.traits[1].toLowerCase()}`;
 
-/** 8/8 — Choix du coach, le recommandé est présélectionné (vObCoach). */
+/** 8/8 — Choix du coach en carrousel ; le recommandé est présélectionné (vObCoach). */
 export default function Coach() {
   const goals = useProfil((s) => s.goals);
   const level = useProfil((s) => s.level);
@@ -22,7 +27,9 @@ export default function Coach() {
   const obCoachSet = useProfil((s) => s.obCoachSet);
   const set = useProfil((s) => s.set);
   const pickCoach = useProfil((s) => s.pickCoach);
-  const stepCoach = useProfil((s) => s.stepCoach);
+  const { width } = useWindowDimensions();
+  const [comparer, setComparer] = useState(false);
+  const defil = useRef<ScrollView>(null);
 
   // Depuis le Profil (« Changer de coach ») : pas de présélection, retour au programme (vCoach du prototype).
   const depuisProfil = useLocalSearchParams<{ depuis?: string }>().depuis === 'profil';
@@ -33,96 +40,101 @@ export default function Coach() {
   }, [obCoachSet, rc, set, depuisProfil]);
   const c = coachById(obCoachSet || depuisProfil ? coachId : rc);
   const reco = !depuisProfil && c.id === rc;
+  const idx = ORDRE.indexOf(c.id);
+
+  // Carrousel : le coach choisi au centre, les voisins dépassent sur les côtés.
+  const L = Math.round(width * 0.62);
+  const marge = (width - L) / 2;
+  useEffect(() => {
+    defil.current?.scrollTo({ x: idx * L, animated: true });
+  }, [idx, L]);
+
+  const infos: [IconName, string, string][] = [
+    ['dumb', 'Sa spécialité', c.style],
+    ['user', 'Son approche', approche(c)],
+  ];
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
       {depuisProfil ? <Retour /> : <ObBar step="coach" />}
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Choisis ton coach</Text>
-        <Text style={styles.sub}>
-          {depuisProfil
-            ? 'Chaque coach a une personnalité unique.\nLequel te correspond le plus ?'
-            : reco
-              ? 'Recommandé selon tes objectifs, mais tu peux changer.'
-              : 'Chaque coach a son propre style de programme.'}
-        </Text>
-
-        {/* .coachstage */}
-        <View style={styles.stage}>
-          <Glow width={300} height={270} color={c.c} intensity={0.45} />
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Coach précédent"
-            style={[styles.arrow, styles.arrowL]}
-            onPress={() => stepCoach(-1, ORDRE)}
-          >
-            <Icon name="left" />
-          </Pressable>
-          <Image
-            source={COACH_IMAGES[c.id].corps}
-            style={styles.bot}
-            contentFit="contain"
-            transition={250}
-            accessibilityLabel={`Coach ${c.nom}`}
-          />
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Coach suivant"
-            style={[styles.arrow, styles.arrowR]}
-            onPress={() => stepCoach(1, ORDRE)}
-          >
-            <Icon name="right" />
-          </Pressable>
-          {reco && (
-            <LinearGradient
-              colors={gradients.gold}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={[styles.reco, glow('rgba(255,200,60,0.5)', 14)]}
-            >
-              <Text weight="bold" style={styles.recoText}>
-                ★ Recommandé
-              </Text>
-            </LinearGradient>
-          )}
+        <View style={styles.pad}>
+          {!depuisProfil && <Text style={styles.eyebrow}>DERNIÈRE ÉTAPE</Text>}
+          <Text style={styles.title}>Choisis ton coach.</Text>
+          <Text style={styles.sub}>{depuisProfil ? 'Chaque coach a sa personnalité et son style de programme.' : 'La bonne énergie pour avancer.'}</Text>
         </View>
 
-        <Text style={styles.cname}>{c.nom}</Text>
-        <View style={[styles.badge, { backgroundColor: mix(c.c, 30, '#1a1a1e'), borderColor: alpha(c.c, 0.6) }]}>
-          <Text weight="extrabold" style={styles.badgeText}>
-            {c.spec}
-          </Text>
-        </View>
-        <View style={styles.coachstyle}>
-          {[c.style, c.time ? `${c.time} s / ${c.rest} s` : `${c.reps.join('-')} reps`, `Repos ${c.rest} s`].map((t) => (
-            <Text key={t} style={styles.styleChip}>
-              {t}
-            </Text>
-          ))}
-        </View>
-        <Card style={styles.quote}>
-          <Text style={styles.quoteText}>« {c.quote} »</Text>
-        </Card>
-
-        {/* .avatars */}
-        <View style={styles.avatars}>
-          {COACHES.map((x) => (
+        <ScrollView
+          ref={defil}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={L}
+          decelerationRate="fast"
+          contentOffset={{ x: idx * L, y: 0 }}
+          contentContainerStyle={{ paddingHorizontal: marge }}
+          onMomentumScrollEnd={(e) => {
+            const i = Math.max(0, Math.min(ORDRE.length - 1, Math.round(e.nativeEvent.contentOffset.x / L)));
+            if (ORDRE[i] !== c.id) pickCoach(ORDRE[i]);
+          }}
+          style={styles.carrousel}
+        >
+          {COACHES.map((x, i) => (
             <Pressable
               key={x.id}
               accessibilityRole="button"
-              accessibilityLabel={x.nom}
-              accessibilityState={{ selected: x.id === c.id }}
+              accessibilityLabel={`Coach ${x.nom}`}
+              accessibilityState={{ selected: i === idx }}
               onPress={() => pickCoach(x.id)}
-              style={[styles.av, x.id === c.id && styles.avOn]}
+              style={[styles.item, { width: L }, i !== idx && styles.itemLoin]}
             >
-              <Image source={COACH_IMAGES[x.id].tete} style={styles.avImg} contentFit="cover" contentPosition={{ top: '75%', left: '50%' }} />
+              {i === idx && <Glow width={L} height={300} color={x.c} intensity={0.35} />}
+              <Image source={COACH_IMAGES[x.id].corps} style={styles.bot} contentFit="contain" />
             </Pressable>
           ))}
+        </ScrollView>
+
+        <View style={styles.points}>
+          {COACHES.map((x, i) => (
+            <View key={x.id} style={[styles.point, i === idx && styles.pointOn]} />
+          ))}
+        </View>
+
+        <View style={styles.pad}>
+          {reco && (
+            <View style={styles.reco}>
+              <Icon name="star" size={13} color={colors.pink} />
+              <Text weight="semibold" style={styles.recoTxt}>
+                Recommandé pour toi
+              </Text>
+            </View>
+          )}
+          <Text style={styles.cname}>{c.nom}</Text>
+          <Text weight="semibold" style={styles.spec}>
+            {casse(c.spec)}
+          </Text>
+          <Text style={styles.quote}>{c.quote}</Text>
+
+          <View style={styles.infos}>
+            {infos.map(([ic, k, v], i) => (
+              <View key={k} style={[styles.info, i > 0 && styles.infoSep]}>
+                <Icon name={ic} size={24} color={colors.textSecondary} />
+                <Text style={styles.infoK}>{k}</Text>
+                <Text weight="semibold" style={styles.infoV}>
+                  {v}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <Pressable accessibilityRole="button" onPress={() => setComparer(true)} style={styles.comparer}>
+            <Icon name="sliders" size={20} color={colors.text} />
+            <Text style={styles.comparerTxt}>Comparer les {COACHES.length} coachs</Text>
+          </Pressable>
         </View>
       </ScrollView>
       <View style={styles.foot}>
         <Button
-          label={`Choisir ${c.nom}`}
+          label={depuisProfil ? `Choisir ${c.nom}` : `C'est parti avec ${c.nom}`}
           arrow
           onPress={() => {
             if (!depuisProfil) return router.push('/onboarding/preparation');
@@ -131,64 +143,69 @@ export default function Coach() {
             router.navigate('/programme');
           }}
         />
+        <Text style={styles.apres}>Tu pourras changer plus tard.</Text>
       </View>
+
+      <Sheet visible={comparer} onClose={() => setComparer(false)} title={`Les ${COACHES.length} coachs`}>
+        {COACHES.map((x) => (
+          <Pressable
+            key={x.id}
+            accessibilityRole="button"
+            onPress={() => {
+              pickCoach(x.id);
+              setComparer(false);
+            }}
+            style={[styles.cmp, x.id === c.id && styles.cmpOn]}
+          >
+            <CoachFace id={x.id} size={52} borderColor={x.id === c.id ? colors.pink : colors.border} />
+            <View style={styles.flex}>
+              <Text weight="semibold" style={styles.cmpNom}>
+                {x.nom} <Text style={styles.cmpSpec}>• {casse(x.spec)}</Text>
+              </Text>
+              <Text style={styles.cmpTxt}>
+                {x.style} • {x.reps[0]}-{x.reps[1]} reps • repos {x.rest} s
+              </Text>
+              <Text style={styles.cmpTxt}>{approche(x)}</Text>
+            </View>
+          </Pressable>
+        ))}
+      </Sheet>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
-  scroll: { paddingHorizontal: 20, paddingBottom: 16 },
-  title: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
-  sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
-  stage: { height: 270, alignItems: 'center', justifyContent: 'flex-end', marginTop: 6 },
-  bot: { height: 258, width: 258, zIndex: 2 },
-  arrow: {
-    position: 'absolute',
-    top: '44%',
-    zIndex: 3,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: ui.arrowBg,
-    borderWidth: 1,
-    borderColor: colors.border2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  arrowL: { left: 2 },
-  arrowR: { right: 2 },
-  reco: { position: 'absolute', top: 8, alignSelf: 'center', zIndex: 4, paddingVertical: 5, paddingHorizontal: 12, borderRadius: 999 },
-  recoText: { fontSize: 12, lineHeight: 15, color: ui.onGold },
-  cname: { textAlign: 'center', ...fonts.black, fontSize: 30, lineHeight: 36, letterSpacing: 0.6, marginTop: -4, zIndex: 3 },
-  badge: { alignSelf: 'center', marginTop: 4, paddingVertical: 3, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1 },
-  badgeText: { fontSize: 12, lineHeight: 16, letterSpacing: 0.72 },
-  coachstyle: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 8, marginTop: 10 },
-  styleChip: {
-    fontSize: 11.5,
-    lineHeight: 15,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    overflow: 'hidden',
-    backgroundColor: ui.chipBg,
-    borderWidth: 1,
-    borderColor: colors.border2,
-    color: ui.text3,
-  },
-  quote: { paddingVertical: 14, paddingHorizontal: 18, marginTop: 14, borderRadius: 18 },
-  quoteText: { fontSize: 14, lineHeight: 20.3, color: ui.text2, textAlign: 'center' },
-  avatars: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16, paddingHorizontal: 4 },
-  av: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: ui.avatarBg,
-    borderWidth: 2,
-    borderColor: colors.border2,
-    overflow: 'hidden',
-  },
-  avOn: { borderColor: colors.pink, ...glow('rgba(255,79,163,0.6)', 14) },
-  avImg: { width: '100%', height: '100%', transform: [{ scale: 1.35 }, { translateY: 4 }] },
-  foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
+  flex: { flex: 1 },
+  scroll: { paddingBottom: 12 },
+  pad: { paddingHorizontal: 20 },
+  eyebrow: { ...fonts.semibold, fontSize: 13, lineHeight: 17, letterSpacing: 1.6, color: colors.textSecondary, marginTop: 18 },
+  title: { ...fonts.black, fontSize: 34, lineHeight: 40, letterSpacing: -0.6, marginTop: 8 },
+  sub: { color: colors.textSecondary, fontSize: 17, lineHeight: 23, marginTop: 4 },
+  carrousel: { marginTop: 8 },
+  item: { height: 300, alignItems: 'center', justifyContent: 'center' },
+  itemLoin: { opacity: 0.45, transform: [{ scale: 0.82 }] },
+  bot: { width: '100%', height: 290 },
+  points: { flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 6 },
+  point: { width: 9, height: 9, borderRadius: 5, backgroundColor: colors.border2 },
+  pointOn: { backgroundColor: colors.pink },
+  reco: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center', marginTop: 14, paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, borderColor: colors.pink },
+  recoTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkLight },
+  cname: { textAlign: 'center', ...fonts.black, fontSize: 40, lineHeight: 48, letterSpacing: -0.6, marginTop: 8 },
+  spec: { textAlign: 'center', fontSize: 19, lineHeight: 24, color: colors.pink },
+  quote: { textAlign: 'center', fontSize: 17, lineHeight: 24, color: colors.textSecondary, marginTop: 10, paddingHorizontal: 10 },
+  infos: { marginTop: 20 },
+  info: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16, paddingHorizontal: 4 },
+  infoSep: { borderTopWidth: 1, borderTopColor: colors.border },
+  infoK: { flex: 1, fontSize: 16, lineHeight: 21, color: colors.textSecondary },
+  infoV: { fontSize: 16, lineHeight: 21, textAlign: 'right', flexShrink: 1 },
+  comparer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 14, paddingVertical: 8 },
+  comparerTxt: { fontSize: 16, lineHeight: 21, textDecorationLine: 'underline' },
+  foot: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 12 },
+  apres: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
+  cmp: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 12, borderRadius: 16, marginBottom: 8, backgroundColor: colors.surface2, borderWidth: 1.5, borderColor: 'transparent' },
+  cmpOn: { borderColor: colors.pink },
+  cmpNom: { fontSize: 17, lineHeight: 22 },
+  cmpSpec: { fontSize: 14, color: colors.pinkLight },
+  cmpTxt: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary, marginTop: 2 },
 });

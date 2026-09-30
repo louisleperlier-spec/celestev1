@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors, fonts, glow, gradients, radius, sizes, spacing, ui } from '@/theme';
+import { colors, fonts, gradients, radius, sizes, spacing, ui } from '@/theme';
 
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
@@ -26,7 +26,7 @@ type Props = {
 /** Bouton pilule, hauteur 52 (.btn du prototype). */
 export function Button({ label, onPress, variant = 'primary', disabled = false, arrow = false, icon, iconAfter, small = false, style }: Props) {
   const primary = variant === 'primary';
-  const fg = primary ? colors.onPrimary : colors.text;
+  const fg = primary ? (disabled ? colors.textTertiary : colors.onPrimary) : colors.text;
   return (
     <Pressable
       accessibilityRole="button"
@@ -35,13 +35,16 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
-        primary && !disabled && glow('rgba(255,79,163,0.28)', 16),
-        disabled && styles.disabled,
+        disabled && !primary && styles.disabled,
         pressed && styles.pressed,
         style,
       ]}
     >
-      {primary ? (
+      {primary && disabled ? (
+        <View style={[styles.fill, styles.dark, small && styles.smallGap]}>
+          <Label label={label} color={fg} arrow={arrow} icon={icon} iconAfter={iconAfter} small={small} />
+        </View>
+      ) : primary ? (
         <LinearGradient
           colors={gradients.primary}
           locations={[0, 0.55, 1]}
@@ -103,7 +106,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   dark: { backgroundColor: ui.dark },
-  label: { ...fonts.semibold, fontSize: 16 },
+  label: { ...fonts.bold, fontSize: 17 },
   small: { fontSize: 14 },
   smallGap: { gap: 6, paddingHorizontal: spacing.md },
 });

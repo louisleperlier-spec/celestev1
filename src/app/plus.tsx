@@ -1,25 +1,19 @@
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Circle, Defs, LinearGradient as SvgGradient, Path, Stop } from 'react-native-svg';
 
 import { Sheet } from '@/components/app/Sheet';
-import { BigNumber, Button, Card, Glow, Icon, RadialBackground, Text, toast, type IconName } from '@/components/ui';
-import { COACH_IMAGES } from '@/data';
+import { BigNumber, Button, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACHES } from '@/data/coaches';
 import { PLANS } from '@/data/monetisation';
-import { PROGRAMMES } from '@/data/programmes';
-import { SEANCES } from '@/data/seances';
 import { mmss } from '@/lib/coeur';
 import { coachById, prog } from '@/lib/plan';
 import { isPremium, money, type OffreId } from '@/lib/premium';
 import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, fonts, gradients, ui } from '@/theme';
+import { colors, fonts, gradients, ui } from '@/theme';
 
 type Offre = {
   id: OffreId;
@@ -92,164 +86,117 @@ export default function Plus() {
     } else toast(useCompte.getState().userId ? 'Aucun achat trouvé pour ce compte' : 'Connecte-toi pour restaurer tes achats');
   };
 
-  const feats: [IconName, string, string][] = [
-    ['clip', `Tous les programmes des ${COACHES.length} coachs`, `${Object.values(PROGRAMMES).flat().length} programmes complets et ${SEANCES.length} séances prêtes`],
-    ['coach', `${c.nom} en illimité`, 'Ton coach IA répond à toutes tes questions'],
-    ['wave', 'Récupération avancée', 'VFC post-séance, score de nuit, alertes de fatigue'],
-    ['bolt', "Turbo XP et boosts d'équipe", 'Monte plus vite dans la Ligue'],
-    ['bike', 'Vélo : zones cardio et historique complet', 'Chaque sortie analysée'],
+  const feats: [IconName, string][] = [
+    ['dumb', `Tous les programmes des ${COACHES.length} coachs`],
+    ['bulle', 'Ton coach IA en illimité'],
+    ['heart', 'Récupération avancée'],
+    ['users', "Turbo XP et boosts d'équipe"],
+    ['bike', 'Vélo : zones cardio et historique'],
   ];
-  const cta = plan.trial ? `Commencer mes ${plan.trial} jours gratuits` : `S'abonner : ${money(plan.prix)}/${plan.per}`;
+  const cta = plan.trial ? `Essayer ${plan.trial} jours gratuitement` : `S'abonner : ${money(plan.prix)}/${plan.per}`;
 
   return (
     <View style={styles.root}>
-      <RadialBackground layers={[{ rx: 90, ry: 40, cx: 50, cy: 0, color: alpha(c.c, 0.3) }]} />
       <SafeAreaView style={styles.flex} edges={['top', 'left', 'right', 'bottom']}>
+        {/* Croix : visible après 2 s */}
+        <View style={styles.haut}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Fermer" onPress={fermer} disabled={!croix} style={[styles.pwx, { opacity: croix ? 1 : 0 }]}>
+            <Icon name="x" size={24} />
+          </Pressable>
+        </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-          <Heros coachId={c.id} couleur={c.c} />
-          <View style={styles.center}>
-            <LinearGradient colors={gradients.gold} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={styles.plus}>
-              <Text weight="extrabold" style={styles.plusTxt}>
-                NÉA PLUS
-              </Text>
-            </LinearGradient>
-            <Text style={styles.h1}>
-              {p.name ? p.name + ', ton' : 'Ton'} programme <Text style={[styles.h1, { color: colors.pink }]}>{pr.nom}</Text> est prêt
-            </Text>
-            <Text style={styles.sub}>Débloque tout NÉA pour aller jusqu&apos;au bout avec {c.nom}.</Text>
-          </View>
+          <Text weight="bold" style={styles.eyebrow}>
+            NÉA PLUS
+          </Text>
+          <Text style={styles.h1}>Va plus loin avec {c.nom}.</Text>
+          <Text style={styles.sub}>
+            {p.name ? p.name + ', ton' : 'Ton'} programme « {pr.nom} » est prêt.
+          </Text>
 
-          {/* .proj : progression prévue */}
-          <Card style={styles.proj}>
-            <View style={styles.projh}>
-              <Text style={styles.projSmall}>Ta progression prévue</Text>
-              <Text weight="bold" style={styles.projB}>
-                {pr.sem} semaines
-              </Text>
-            </View>
-            <Svg width="100%" height={90} viewBox="0 0 300 90" preserveAspectRatio="none" style={styles.projSvg}>
-              <Defs>
-                <SvgGradient id="pj" x1="0" x2="1" y1="0" y2="0">
-                  <Stop offset="0" stopColor={colors.pinkLight} />
-                  <Stop offset="1" stopColor={colors.pink} />
-                </SvgGradient>
-                <SvgGradient id="pja" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={colors.pink} stopOpacity={0.35} />
-                  <Stop offset="1" stopColor={colors.pink} stopOpacity={0} />
-                </SvgGradient>
-              </Defs>
-              <Path d="M10 78 C 80 74, 120 60, 170 42 S 260 14, 290 10 L290 88 L10 88Z" fill="url(#pja)" />
-              <Path d="M10 78 C 80 74, 120 60, 170 42 S 260 14, 290 10" fill="none" stroke="url(#pj)" strokeWidth={3.5} strokeLinecap="round" />
-              <Circle cx={10} cy={78} r={5} fill={colors.text} />
-              <Circle cx={290} cy={10} r={7} fill={colors.pink} stroke={colors.text} strokeWidth={2} />
-            </Svg>
-            <View style={styles.projl}>
-              <Text style={styles.projLbl}>Aujourd&apos;hui</Text>
-              <Text style={styles.projLbl}>Semaine {Math.ceil(pr.sem / 2)}</Text>
-              <Text style={styles.projLbl}>Objectif</Text>
-            </View>
-          </Card>
-
-          {/* .feats */}
           <View style={styles.feats}>
-            {feats.map(([ic, t, s]) => (
+            {feats.map(([ic, t]) => (
               <View key={t} style={styles.feat}>
-                <View style={styles.featIco}>
-                  <Icon name={ic} size={19} color={colors.pink} />
-                </View>
-                <View style={styles.flex}>
-                  <Text weight="bold" style={styles.b14}>
-                    {t}
-                  </Text>
-                  <Text style={styles.small12}>{s}</Text>
-                </View>
+                <Icon name={ic} size={26} color={colors.text} />
+                <Text style={styles.featTxt}>{t}</Text>
               </View>
             ))}
           </View>
 
-          {/* .plans2 */}
           <View style={styles.plans}>
             {PLANS.map((x) => {
               const on = x.id === sel;
               return (
-                <Pressable key={x.id} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => setSel(x.id as OffreId)}>
-                  <View style={[styles.pl, on && styles.plOn]}>
-                    {on && <LinearGradient colors={[ui.selTop, ui.selBottom]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={StyleSheet.absoluteFill} />}
-                    <View style={[styles.rad, on && styles.radOn]} />
-                    <View style={styles.flex}>
+                <Pressable
+                  key={x.id}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: on }}
+                  onPress={() => setSel(x.id as OffreId)}
+                  style={[styles.pl, on && styles.plOn]}
+                >
+                  <View style={[styles.rad, on && styles.radOn]}>{on && <View style={styles.radPoint} />}</View>
+                  <View style={styles.flex}>
+                    <View style={styles.plTete}>
                       <Text weight="bold" style={styles.plNom}>
                         {x.nom}
                       </Text>
-                      <Text style={styles.small12}>
-                        {x.trial ? `${x.trial} jours gratuits, puis ${money(x.prix)}/an` : `${money(x.prix)} par mois`}
-                      </Text>
-                    </View>
-                    <View style={styles.plp}>
-                      <Text weight="bold" style={styles.plPrix}>
-                        {x.id === 'an' ? money(x.prix / 52) : money(x.prix / 4.33)}
-                      </Text>
-                      <Text style={styles.plSem}>/semaine</Text>
                       {x.id === 'an' && (
-                        <Text weight="bold" style={styles.plEco}>
-                          −{save} %
-                        </Text>
+                        <View style={styles.eco}>
+                          <Text weight="bold" style={styles.ecoTxt}>
+                            Économise {save} %
+                          </Text>
+                        </View>
                       )}
                     </View>
-                  </View>
-                  {x.badge && (
-                    <View style={styles.plb}>
-                      <Text weight="extrabold" style={styles.plbTxt}>
-                        {x.badge}
-                      </Text>
+                    <View style={styles.prixLigne}>
+                      <BigNumber value={`${money(x.prix)} CA`} size={26} style={styles.prix} />
+                      <Text style={styles.per}>/ {x.per}</Text>
                     </View>
-                  )}
+                    {x.trial ? <Text style={styles.plSous}>{x.trial} jours gratuits, puis facturation annuelle</Text> : null}
+                  </View>
                 </Pressable>
               );
             })}
           </View>
 
-          {/* .tl : frise de l'essai */}
+          {/* Frise de l'essai */}
           {plan.trial ? (
             <View style={styles.tl}>
-              <LinearGradient colors={[colors.pink, colors.border2]} style={styles.tlLigne} />
-              <Etape icon="bolt" on titre="Aujourd'hui" sous="Accès complet à NÉA Plus, gratuitement" />
-              <Etape icon="bell" titre={f(now + 2 * 864e5)} sous="On te rappelle que ton essai se termine demain" />
-              <Etape icon="star" titre={f(now + 3 * 864e5)} sous="Début de l'abonnement, annule avant si tu veux" />
+              <View style={styles.tlLigne} />
+              <View style={styles.tlRang}>
+                <View style={[styles.tlPoint, styles.tlPointOn]} />
+                <Text style={styles.tlTxt}>Aujourd&apos;hui : début de l&apos;essai</Text>
+              </View>
+              <View style={styles.tlRang}>
+                <View style={styles.tlPoint} />
+                <Text style={styles.tlTxt}>
+                  Dans {plan.trial} jours ({f(now + plan.trial * 864e5)}) : {money(plan.prix)} CA / {plan.per}
+                </Text>
+              </View>
             </View>
           ) : null}
-          <View style={styles.bas} />
         </ScrollView>
 
-        {/* .pwfoot */}
         <View style={styles.foot}>
-          <LinearGradient colors={['transparent', colors.bg]} locations={[0, 0.22]} style={StyleSheet.absoluteFill} pointerEvents="none" />
-          <Button label={cta} onPress={() => setAchat(plan)} style={styles.cta} />
-          <Text style={styles.mini}>
-            {plan.trial ? "✓ Aucun paiement aujourd'hui  ✓ Annule quand tu veux" : '✓ Sans engagement  ✓ Annule quand tu veux'}
-          </Text>
+          <Button label={cta} onPress={() => setAchat(plan)} />
           <Text style={styles.legal}>
             {plan.trial
-              ? `Essai gratuit de ${plan.trial} jours, puis ${money(plan.prix)} par an, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la période en cours.`
-              : `${money(plan.prix)} par mois, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la période.`}{' '}
-            Prix en dollars canadiens, taxes en sus.{' '}
+              ? `Puis ${money(plan.prix)} CA/${plan.per}, renouvelé automatiquement. Annule au moins 24 h avant la fin de l'essai pour éviter les frais. Taxes en sus.`
+              : `${money(plan.prix)} CA par mois, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la période. Taxes en sus.`}
+          </Text>
+          <View style={styles.liens}>
             <Text style={styles.lien} onPress={restaurer}>
               Restaurer
             </Text>
-            {' • '}
+            <Text style={styles.lienSep}>•</Text>
             <Text style={styles.lien} onPress={() => router.push('/legal/conditions')}>
               Conditions
             </Text>
-            {' • '}
+            <Text style={styles.lienSep}>•</Text>
             <Text style={styles.lien} onPress={() => router.push('/legal/confidentialite')}>
               Confidentialité
             </Text>
-          </Text>
+          </View>
         </View>
-
-        {/* .pwx : visible après 2 s */}
-        <Pressable accessibilityRole="button" accessibilityLabel="Fermer" onPress={fermer} disabled={!croix} style={[styles.pwx, { opacity: croix ? 0.8 : 0 }]}>
-          <Icon name="x" size={16} />
-        </Pressable>
       </SafeAreaView>
 
       <AchatSheet offre={achat} onClose={() => setAchat(null)} onConfirm={acheter} />
@@ -273,43 +220,6 @@ export default function Plus() {
           }}
         />
       )}
-    </View>
-  );
-}
-
-/** Coach qui flotte sur son halo (.pwhero). */
-function Heros({ coachId, couleur }: { coachId: Parameters<typeof coachById>[0]; couleur: string }) {
-  const y = useSharedValue(0);
-  useEffect(() => {
-    y.value = withRepeat(withTiming(-8, { duration: 1750, easing: Easing.inOut(Easing.ease) }), -1, true);
-  }, [y]);
-  const flotte = useAnimatedStyle(() => ({
-    transform: [{ translateY: y.value }],
-  }));
-  return (
-    <View style={styles.hero}>
-      <View style={styles.heroGlow}>
-        <Glow width={260} height={80} color={couleur} intensity={0.5} />
-      </View>
-      <Animated.View style={flotte}>
-        <Image source={COACH_IMAGES[coachId].corps} style={styles.heroImg} contentFit="contain" />
-      </Animated.View>
-    </View>
-  );
-}
-
-function Etape({ icon, titre, sous, on = false }: { icon: IconName; titre: string; sous: string; on?: boolean }) {
-  return (
-    <View style={styles.etape}>
-      <View style={[styles.tld, on && styles.tldOn]}>
-        <Icon name={icon} size={17} color={on ? colors.onPrimary : ui.text3} />
-      </View>
-      <View style={styles.flex}>
-        <Text weight="bold" style={styles.b14}>
-          {titre}
-        </Text>
-        <Text style={styles.small12}>{sous}</Text>
-      </View>
     </View>
   );
 }
@@ -411,11 +321,24 @@ function OffreSortie({ visible, prenom, onAccept, onRefus, onFin }: { visible: b
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
-  scroll: { paddingBottom: 12 },
-  hero: { height: 210, alignItems: 'center', justifyContent: 'flex-end' },
-  heroGlow: { position: 'absolute', bottom: -20, width: 260, height: 80 },
-  heroImg: { width: 200, height: 200 },
-  center: { alignItems: 'center', paddingHorizontal: 20 },
+  scroll: { paddingHorizontal: 20, paddingBottom: 12 },
+  haut: { height: 48, paddingHorizontal: 12, justifyContent: 'center' },
+  eyebrow: { fontSize: 15, lineHeight: 20, letterSpacing: 2.4, color: colors.pink, textAlign: 'center' },
+  featTxt: { flex: 1, fontSize: 17, lineHeight: 22 },
+  plTete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  eco: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999, backgroundColor: colors.pink },
+  ecoTxt: { fontSize: 13, lineHeight: 17, color: colors.onPrimary },
+  prixLigne: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: 2 },
+  prix: { justifyContent: 'flex-start' },
+  per: { fontSize: 17, lineHeight: 22, color: colors.textSecondary },
+  plSous: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, marginTop: 2 },
+  radPoint: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.pink },
+  tlRang: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  tlPoint: { width: 14, height: 14, borderRadius: 7, backgroundColor: colors.textSecondary },
+  tlPointOn: { backgroundColor: colors.pink },
+  tlTxt: { flex: 1, fontSize: 15.5, lineHeight: 21 },
+  liens: { flexDirection: 'row', justifyContent: 'center', gap: 10, marginTop: 10 },
+  lienSep: { fontSize: 13, lineHeight: 18, color: colors.textTertiary },
   plus: {
     paddingVertical: 5,
     paddingHorizontal: 12,
@@ -429,158 +352,34 @@ const styles = StyleSheet.create({
     letterSpacing: 2.2,
     color: ui.onGold,
   },
-  h1: {
-    ...fonts.black,
-    fontSize: 27,
-    lineHeight: 30,
-    letterSpacing: -0.27,
-    textAlign: 'center',
-    marginTop: 10,
-  },
-  sub: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 19.6,
-    marginTop: 6,
-    textAlign: 'center',
-  },
-  proj: { marginTop: 16, marginHorizontal: 20, padding: 14, gap: 0 },
-  projh: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  projSmall: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
-  projB: { fontSize: 14, lineHeight: 18, color: colors.pinkLight },
-  projSvg: { marginTop: 6 },
-  projl: { flexDirection: 'row', justifyContent: 'space-between' },
-  projLbl: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
-  feats: { gap: 12, paddingTop: 18, paddingHorizontal: 24 },
-  feat: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  featIco: {
-    width: 36,
-    height: 36,
-    borderRadius: 11,
-    backgroundColor: 'rgba(255,79,163,0.14)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  h1: { ...fonts.black, fontSize: 32, lineHeight: 38, letterSpacing: -0.5, textAlign: 'center', marginTop: 6 },
+  sub: { color: colors.textSecondary, fontSize: 15, lineHeight: 20, marginTop: 6, textAlign: 'center' },
+  feats: { gap: 16, paddingTop: 22, paddingHorizontal: 6 },
+  feat: { flexDirection: 'row', alignItems: 'center', gap: 18 },
   b14: { fontSize: 14, lineHeight: 18 },
-  small12: {
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  plans: { gap: 10, paddingTop: 20, paddingHorizontal: 20 },
+  small12: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
+  plans: { gap: 12, paddingTop: 24 },
   pl: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    alignItems: 'flex-start',
+    gap: 14,
     paddingVertical: 16,
-    paddingHorizontal: 14,
-    borderRadius: 16,
-    borderWidth: 1,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    borderWidth: 1.5,
     borderColor: colors.border,
     backgroundColor: colors.surface,
-    overflow: 'hidden',
   },
-  plOn: {
-    borderColor: colors.pink,
-    borderWidth: 2,
-    paddingVertical: 15,
-    paddingHorizontal: 13,
-    boxShadow: '0 0 20px rgba(255,79,163,0.25)',
-  },
-  rad: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: colors.border2,
-  },
-  radOn: { borderWidth: 7, borderColor: colors.pink },
-  plNom: { fontSize: 15.5, lineHeight: 20 },
-  plp: { alignItems: 'flex-end' },
-  plPrix: { fontSize: 15, lineHeight: 19 },
-  plSem: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
-  plEco: { fontSize: 11, lineHeight: 14, color: colors.green, marginTop: 2 },
-  plb: {
-    position: 'absolute',
-    top: -10,
-    right: 14,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: colors.pink,
-  },
-  plbTxt: {
-    fontSize: 10,
-    lineHeight: 13,
-    letterSpacing: 0.6,
-    color: colors.onPrimary,
-  },
-  tl: { marginTop: 18, marginHorizontal: 24, gap: 14 },
-  tlLigne: { position: 'absolute', left: 17, top: 18, bottom: 18, width: 2 },
-  etape: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  tld: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: ui.iconBg,
-    borderWidth: 1,
-    borderColor: colors.border2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tldOn: {
-    backgroundColor: colors.pink,
-    borderWidth: 0,
-    boxShadow: `0 0 12px ${colors.pink}`,
-  },
-  bas: { height: 170 },
-  foot: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingTop: 26,
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-  },
-  cta: { height: 56 },
-  mini: {
-    textAlign: 'center',
-    fontSize: 12.5,
-    lineHeight: 17,
-    color: ui.text3,
-    marginTop: 8,
-  },
-  legal: {
-    fontSize: 10,
-    lineHeight: 14,
-    color: colors.textTertiary,
-    textAlign: 'center',
-    marginTop: 6,
-  },
-  lien: {
-    fontSize: 10,
-    lineHeight: 14,
-    color: colors.textSecondary,
-    textDecorationLine: 'underline',
-  },
-  pwx: {
-    position: 'absolute',
-    top: 10,
-    left: 14,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: alpha(colors.surface2, 0.7),
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 20,
-  },
+  plOn: { borderColor: colors.pink, borderWidth: 2, backgroundColor: ui.selFond },
+  rad: { width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
+  radOn: { borderColor: colors.pink },
+  plNom: { fontSize: 18, lineHeight: 23 },
+  tl: { marginTop: 22, paddingTop: 18, gap: 18, borderTopWidth: 1, borderTopColor: colors.border, paddingHorizontal: 12 },
+  tlLigne: { position: 'absolute', left: 18, top: 30, bottom: 8, width: 2, backgroundColor: colors.border2 },
+  foot: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 8 },
+  legal: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, textAlign: 'center', marginTop: 10 },
+  lien: { fontSize: 13, lineHeight: 18, color: colors.textSecondary },
+  pwx: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   buyh: { alignItems: 'center', marginBottom: 14 },
   buyTitre: { fontSize: 17, lineHeight: 22 },
   buySimule: {

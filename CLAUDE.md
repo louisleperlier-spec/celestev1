@@ -21,6 +21,13 @@ pour les séries secondaires (zones cardio en dégradé mauve → rose, toujours
 (`EnTete` : titre, « + » → séances prêtes, segmenté Programme · Calendrier · Vélo), **Progrès** (+ Ligue dessous, `Ligue integree`)
 et **Coach** (`(tabs)/coach.tsx` : ressenti du jour, Adapter ma séance, Préparer ma semaine, dernier échange, saisie → `/chat`) ;
 les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
+**Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
+`BigChoice`, `Coche`, `NombresSegmentes`, `PetitChoix`, `ListeCoches`, `InfoCarte`), niveau en barres, lieu + « Ton matériel » (matériel du lieu
+d'après `GEAR`, pas de choix libre : `buildPlan` inchangé), rythme en bloc 2–7, poids sur une règle (`Regle.tsx`, affichage kg / lb, stocké en kg),
+âge modifiable, santé en libellés courts (questions complètes dans « Pourquoi ces questions ? ») + « Aucune de ces situations », coach en carrousel
+(spécialité = `style`, approche = 2 premiers `traits`, « Comparer les 4 coachs »), préparation en 4 étapes puis **`/onboarding/pret`** (« Ton
+programme est prêt », jours de la semaine, 1re séance, « Modifier mes réponses ») → paywall refait (5 avantages, Annuel « Économise 62 % » /
+Mensuel en $ CA, frise de l'essai) → compte. Bouton principal rose à texte graphite (`onPrimary`).
 **4 coachs au lieu de 6** : Blaze et Rex retirés (coachs, 6 programmes, images) ; leurs 11 séances du catalogue passent à Luna (Blaze) et
 Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien état ou un joueur de la Ligue sur un coach existant ;
 `comparer-plan` ne compare plus `recoCoach`. Nouvelles images des 4 coachs (style de l'icône), têtes avec un espace sous le visage (`CoachFace`).
@@ -121,7 +128,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
-    onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
+    onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation + pret
     (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), velo, progres.tsx (+ Ligue dessous), coach.tsx, ligue.tsx (Ligue seule), profil + barre à 4 onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme

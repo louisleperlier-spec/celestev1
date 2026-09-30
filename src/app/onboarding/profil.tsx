@@ -1,27 +1,33 @@
-import Slider from '@react-native-community/slider';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Warn } from '@/components/onboarding/Choices';
-import { ob, ObScaffold } from '@/components/onboarding/ObScaffold';
-import { BigNumber, Card, Icon, Text, toast } from '@/components/ui';
-import { AGE_MIN, hrMax } from '@/lib/plan';
+import { InfoCarte, Warn } from '@/components/onboarding/Choices';
+import { ObScaffold } from '@/components/onboarding/ObScaffold';
+import { Regle } from '@/components/onboarding/Regle';
+import { BigNumber, Icon, Segmente, Text, toast } from '@/components/ui';
+import { AGE_MIN } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
 
 /** Nombre à la française (dec() du prototype). */
 const dec = (n: number) => String(n).replace('.', ',');
+const LB = 2.20462;
 
-/** 6/8 — Profil physique : poids, âge, FC max. Réservé aux 14 ans et plus (vObBody). */
+/** 6/8 — Profil physique : âge et poids (en kg, affichable en lb). Réservé aux 14 ans et plus (vObBody). */
 export default function Profil() {
   const weight = useProfil((s) => s.weight);
   const age = useProfil((s) => s.age);
   const set = useProfil((s) => s.set);
+  const [unite, setUnite] = useState<'kg' | 'lb'>('kg');
+  const [ageEdite, setAgeEdite] = useState(false);
+  const enLb = unite === 'lb';
 
   return (
     <ObScaffold
       step="profil"
+      eyebrow="TES REPÈRES"
       title="Ton profil physique"
-      sub="Pour calculer tes charges, tes calories et ta fréquence cardiaque max."
+      sub="Quelques repères pour personnaliser ton suivi."
       onNext={() => {
         if (age < AGE_MIN) {
           toast(`NÉA est réservé aux ${AGE_MIN} ans et plus`);
@@ -29,78 +35,58 @@ export default function Profil() {
         }
       }}
     >
-      <Text style={[ob.lbl, ob.first]}>Poids</Text>
-      {/* .bignum : chiffre 56 px + « kg » 18 px grisé */}
-      <BigNumber value={dec(weight)} unit="kg" size={56} unitSize={18} gap={5} />
-      <Slider
-        style={styles.slider}
-        minimumValue={40}
-        maximumValue={150}
-        step={0.5}
-        value={weight}
-        onValueChange={(v) => set({ weight: Math.round(v * 2) / 2 })}
-        minimumTrackTintColor={colors.pink}
-        maximumTrackTintColor={colors.border2}
-        thumbTintColor={colors.text}
-        accessibilityLabel="Poids"
-      />
-
-      <Text style={ob.lbl}>Âge</Text>
-      <View style={styles.stepper}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Moins"
-          style={styles.stepBtn}
-          onPress={() => set({ age: Math.max(10, age - 1) })}
-        >
-          <Icon name="minus" />
+      <View style={styles.carte}>
+        <Pressable accessibilityRole="button" accessibilityLabel={`Âge : ${age} ans, modifier`} onPress={() => setAgeEdite(!ageEdite)} style={styles.ligne}>
+          <Text weight="semibold" style={styles.lbl}>
+            Âge
+          </Text>
+          <BigNumber value={age} unit="ans" size={30} unitSize={18} gap={6} />
+          <Icon name="edit" size={20} color={colors.textSecondary} />
         </Pressable>
-        {/* .stepper b (44 px) + « ans » collé (margin-left: -12px sur un gap de 18) */}
-        <BigNumber value={age} unit="ans" size={44} unitSize={15} gap={6} style={styles.stepVal} />
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Plus"
-          style={styles.stepBtn}
-          onPress={() => set({ age: Math.min(99, age + 1) })}
-        >
-          <Icon name="plus" />
-        </Pressable>
+        {ageEdite && (
+          <View style={styles.stepper}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Moins" style={styles.stepBtn} onPress={() => set({ age: Math.max(10, age - 1) })}>
+              <Icon name="minus" />
+            </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Plus" style={styles.stepBtn} onPress={() => set({ age: Math.min(99, age + 1) })}>
+              <Icon name="plus" />
+            </Pressable>
+          </View>
+        )}
+        <View style={styles.sep} />
+        <View style={styles.ligne}>
+          <Text weight="semibold" style={styles.lbl}>
+            Poids
+          </Text>
+          <BigNumber value={enLb ? Math.round(weight * LB) : dec(weight)} unit={unite} size={30} unitSize={18} gap={6} />
+          <Segmente options={['kg', 'lb'] as const} value={unite} onChange={setUnite} style={styles.unite} />
+        </View>
+        <Regle
+          key={unite}
+          label="Poids"
+          min={enLb ? 88 : 40}
+          max={enLb ? 330 : 150}
+          pas={enLb ? 1 : 0.5}
+          grand={enLb ? 10 : 5}
+          value={enLb ? Math.round(weight * LB) : weight}
+          onChange={(v) => set({ weight: enLb ? Math.round((v / LB) * 2) / 2 : v })}
+        />
       </View>
 
       {age < AGE_MIN && <Warn style={styles.warn}>{`NÉA est réservé aux personnes de ${AGE_MIN} ans et plus.`}</Warn>}
-
-      <Card style={styles.fcmax}>
-        <Icon name="heart" color={ui.heart} />
-        <View style={styles.fcText}>
-          <Text weight="bold" style={styles.fcB}>
-            FC max estimée : {hrMax(age)} bpm
-          </Text>
-          <Text style={styles.fcSmall}>Elle sert à calculer tes zones cardio.</Text>
-        </View>
-      </Card>
+      <InfoCarte texte="Ces informations restent modifiables." style={styles.info} />
     </ObScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  slider: { width: '100%', height: 30, marginTop: 6 },
-  // .stepper
-  stepper: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 18 },
-  stepBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: ui.dark,
-    borderWidth: 1,
-    borderColor: colors.border2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepVal: { minWidth: 70 },
-  warn: { marginTop: 18 },
-  // .fcmax
-  fcmax: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, marginTop: 22 },
-  fcText: { flex: 1 },
-  fcB: { fontSize: 14, lineHeight: 18 },
-  fcSmall: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
+  carte: { padding: 18, borderRadius: 20, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border },
+  ligne: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56 },
+  lbl: { flex: 1, fontSize: 18, lineHeight: 23 },
+  sep: { height: 1, backgroundColor: colors.border, marginVertical: 12 },
+  unite: { width: 104 },
+  stepper: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginTop: 4 },
+  stepBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: ui.dark, alignItems: 'center', justifyContent: 'center' },
+  warn: { marginTop: 16 },
+  info: { marginTop: 16 },
 });
