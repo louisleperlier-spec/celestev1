@@ -13,7 +13,8 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "appleTeamId": "K55493374H"
     },
     "android": {
       "adaptiveIcon": {
@@ -53,7 +54,8 @@
           "background": false
         }
       ],
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "@bacons/apple-targets"
     ],
     "experiments": {
       "typedRoutes": true,

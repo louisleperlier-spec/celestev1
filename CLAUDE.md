@@ -119,6 +119,18 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - reste : vrais achats App Store (RevenueCat `react-native-purchases`, build natif) : contrat « Paid Apps », banque et fiscalité dans
     App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel), compte RevenueCat ; puis la limite du coach côté
     serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
+- [ ] **App Apple Watch (maquettes de l'utilisateur, V1 = séances)** : **codée, 1er build à valider**
+  - cible watchOS SwiftUI `targets/watch/` (`@bacons/apple-targets`, nom `NeaWatch`, `com.neacoach.app.watchkitapp`, watchOS 10) :
+    Accueil (bonjour, coach, prochaine séance, Commencer), Tes séances, Détail (Démarrer), Répétitions (comptage **estimé** par
+    l'accéléromètre, `Compteur.swift`), Validation (reps −/+, charge modifiable), Repos (anneau, + 15 s, Passer, À suivre), Bilan
+    (durée, séries, FC moyenne, énergie, Enregistrer) ; FC et calories de la montre (`HKWorkoutSession`, `Entrainement.swift`),
+    séance enregistrée dans Apple Santé par la montre
+  - liaison `modules/nea-montre` (module Expo local, WatchConnectivity) + `store/liaisonMontre.ts` : l'iPhone envoie prénom, coach et
+    séances de la semaine avec les charges (`updateApplicationContext`) ; la montre renvoie la séance terminée (`transferUserInfo`),
+    ajoutée au journal avec XP, série, quête et rappel VFC ; contrat JSON commun `Modeles.swift` ↔ `liaisonMontre.ts`
+  - 2e temps : Vélo (GPS, carte), Récupération / Respiration, Réglages ; `targets/watch/Info.plist` : version 1.0.0 à garder
+    égale à celle de l'app (EAS remplace le numéro de build)
+  - build : identifiant de la montre + profil App Store dédiés ; `credentials.json` multi-cibles (`NA` et `NeaWatch`)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
@@ -170,6 +182,7 @@ assets/
 docs/               cahier des charges
 prototype/          nea-app.html (référence) + LISEZMOI des données
 supabase/           schema.sql, ligue.sql, coach.sql (SQL Editor) · functions/coach (fonction Edge, exclue du tsc et du lint de l'app)
+targets/watch/      app Apple Watch (SwiftUI) · modules/nea-montre : liaison WatchConnectivity (module Expo local)
 scripts/            verifier-donnees.ts, comparer-plan.ts (+ prototype-plan.cjs)
 ```
 

@@ -40,6 +40,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@bacons/apple-targets": "^5.0.0",
     "@types/node": "^26.6.2",
     "@types/react": "~19.2.2",
     "eslint": "^9.0.0",
@@ -50,8 +51,8 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
     "verifier-donnees": "tsx scripts/verifier-donnees.ts",

@@ -8,6 +8,7 @@ import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
+import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
 import { colors } from '@/theme';
 
@@ -40,6 +41,8 @@ export default function RootLayout() {
     SplashScreen.hideAsync();
     // Apple Santé : la nuit de la montre, une fois l'état de l'appareil chargé.
     demarrerSante();
+    // Apple Watch : séances de la semaine vers la montre, séances terminées vers l'iPhone.
+    demarrerLiaisonMontre();
   }, [ready]);
 
   if (!ready) return null;
