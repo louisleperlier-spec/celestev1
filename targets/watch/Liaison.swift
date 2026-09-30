@@ -56,7 +56,13 @@ final class LiaisonMontre: NSObject, WCSessionDelegate {
   /// Envoi fiable à l'iPhone (file d'attente du système, même si l'iPhone est loin) : séance, vélo, mesure, message au coach.
   func envoyer<T: Encodable>(_ type: String, _ valeur: T) {
     guard let d = try? JSONEncoder().encode(valeur), let json = String(data: d, encoding: .utf8) else { return }
-    WCSession.default.transferUserInfo(["type": type, "json": json])
+    let s = WCSession.default
+    s.transferUserInfo(["type": type, "json": json])
+    // Fin de séance ou de sortie : message direct en plus, qui réveille l'iPhone pour la notification et le récap
+    // (les doublons sont ignorés côté iPhone).
+    if (type == "seance" || type == "velo") && s.isReachable {
+      s.sendMessage(["type": type, "json": json], replyHandler: nil, errorHandler: nil)
+    }
   }
 
   func envoyer(_ r: ResultatMontre) {

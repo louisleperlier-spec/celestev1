@@ -135,6 +135,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     l'iPhone), Coach (message du jour, dernier échange, ressenti envoyé au coach via l'iPhone), Progrès, Réglages (iPhone, Santé,
     vibrations, unités, synchroniser) ; contrat v2 (champs optionnels, compatible avec le build 3) ; messages montre → iPhone
     `{type, json}` (seance, velo, mesure, coach), événement `messageMontre` (le JS gère aussi `seanceMontre` du build 3)
+  - **fin d'activité (build 5)** : la montre envoie aussi un message direct (réveille l'iPhone) ; le module iPhone démarre la liaison
+    au lancement (`NeaMontreAppDelegate`, `subscriberDidRegister`) et pose une **notification** « Vélo · 02:12 » / « <séance> · mm:ss »
+    quand NÉA n'est pas au premier plan (une fois par date de fin) ; au premier plan : bannière NÉA (`annoncer`, notification `activite`) ;
+    toucher → **récap `/activite?d=`** (durée, calories, distance / volume, vitesse, FC moy / max, courbe de FC et zones lues dans
+    Apple Santé via `fcEntre`) ; journal : `debut` et `src: 'montre'` ; calories estimées si la montre renvoie 0
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
@@ -162,6 +167,7 @@ src/
     seances.tsx     toutes les séances prêtes (?lieu=) · exercices.tsx : bibliothèque des 50 exercices
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
+    activite.tsx    récap d'une activité (montre) : FC d'Apple Santé, zones · personnaliser.tsx, widgets.tsx
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
     (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite

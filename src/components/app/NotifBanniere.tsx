@@ -19,7 +19,7 @@ export function NotifBanniere() {
   if (!n) return null;
   return (
     <Animated.View style={[styles.wrap, { top: insets.top + 8 }, anim]}>
-      <Pressable accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id)} style={styles.banner}>
+      <Pressable accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id, n.lien)} style={styles.banner}>
         <View style={[styles.nic, { backgroundColor: n.col }]}>
           <Icon name={n.icon} color={colors.text} />
         </View>

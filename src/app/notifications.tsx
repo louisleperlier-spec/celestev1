@@ -44,7 +44,7 @@ export default function Notifications() {
         <View style={styles.list}>
           {list.length ? (
             list.map((n) => (
-              <Pressable key={n.id} accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id)}>
+              <Pressable key={n.id} accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id, n.lien)}>
                 <Card style={styles.nrow}>
                   <View style={[styles.nic, { backgroundColor: n.col }]}>
                     <Icon name={n.icon} color={colors.text} />

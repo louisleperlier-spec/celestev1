@@ -6,15 +6,18 @@
  */
 import { toast } from '@/components/ui';
 import { cerclesJour, part, type IdCercle } from '@/lib/cercles';
-import { loadFor, rj } from '@/lib/charges';
+import { dec, loadFor, rj } from '@/lib/charges';
+import { mmss } from '@/lib/coeur';
 import { buildPlan, coachById, exercice, exKcal, hrMax, sesKcal, todayIdx } from '@/lib/plan';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
-import { xpVelo } from '@/lib/velo';
+import { caloriesVelo, xpVelo } from '@/lib/velo';
+import { colors } from '@/theme';
 import { sessionForDay, type Semaine } from '@/lib/semaine';
 import { lvlInfo, rankOf, streak } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { envoyer as envoyerAuCoach } from './coach';
+import { annoncer } from './notifs';
 import { selectProfil, useProfil } from './profil';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -180,13 +183,23 @@ function recevoir(json: string) {
   const st = useProfil.getState();
   if (st.logs.some((l) => l.d === r.fin && l.title === r.titre)) return;
   const min = Math.max(1, Math.round(r.sec / 60));
-  st.addLog({ d: r.fin, type: 'muscu', title: r.titre, min, cal: Math.round(r.kcal), vol: Math.round(r.volume), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  // Calories de la montre, sinon l'estimation de la séance sur l'iPhone (intensité du coach × poids × durée).
+  const cal = r.kcal > 0 ? Math.round(r.kcal) : Math.round(coachById(st.coach).int * 9 * st.weight * (Math.max(r.sec, 60) / 3600));
+  st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type: 'muscu', title: r.titre, min, cal, vol: Math.round(r.volume), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
   const apres = useProfil.getState();
   apres.addXp(2 * r.series, 'Série');
   apres.addXp(40 + 5 * Math.min(10, streak(apres.logs, apres.days)), 'Séance');
   apres.quest('seance');
   apres.programmerPost('muscu', null);
-  toast('Séance de la montre enregistrée');
+  annoncer({
+    type: 'activite',
+    icon: 'dumb',
+    col: colors.pink,
+    act: 'activite',
+    lien: r.fin,
+    title: `${r.titre} · ${mmss(r.sec)}`,
+    body: `${r.series} séries${r.fcMoy ? ` • FC moy. ${Math.round(r.fcMoy)} bpm` : ''} • Touche pour voir ton récap`,
+  });
 }
 
 /** Sortie vélo de la montre → journal, XP, quête (comme la fin d'une sortie sur l'iPhone). */
@@ -196,12 +209,21 @@ function recevoirVelo(json: string) {
   const st = useProfil.getState();
   if (st.logs.some((l) => l.d === r.fin && l.type === 'velo')) return;
   const min = Math.max(1, Math.round(r.sec / 60));
-  st.addLog({ d: r.fin, type: 'velo', title: 'Sortie vélo', min, cal: Math.round(r.kcal), vol: 0, dist: +r.km.toFixed(1), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  const cal = r.kcal > 0 ? Math.round(r.kcal) : caloriesVelo(r.km, r.sec, st.weight);
+  st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type: 'velo', title: 'Sortie vélo', min, cal, vol: 0, dist: +r.km.toFixed(1), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
   const apres = useProfil.getState();
   apres.addXp(xpVelo(r.km), 'Vélo');
   if (r.km >= 5 || r.sec >= 1200) apres.quest('velo');
   apres.programmerPost('velo', null);
-  toast('Sortie vélo de la montre enregistrée');
+  annoncer({
+    type: 'activite',
+    icon: 'bike',
+    col: colors.pink,
+    act: 'activite',
+    lien: r.fin,
+    title: `Vélo · ${mmss(r.sec)}`,
+    body: `${dec(r.km.toFixed(1))} km${r.fcMoy ? ` • FC moy. ${Math.round(r.fcMoy)} bpm` : ''} • Touche pour voir ton récap`,
+  });
 }
 
 /** Mesure de récupération faite sur la montre. */

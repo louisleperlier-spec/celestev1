@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { AppState, Platform } from 'react-native';
 import { create } from 'zustand';
 
-import { notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif } from '@/lib/notifs';
+import { notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif, type NouvelleNotif } from '@/lib/notifs';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
@@ -24,13 +24,19 @@ function banniere(n: Notif) {
 }
 
 /** Ouvre l'écran lié à la notification (openNotif). */
-export function ouvrirNotif(act: ActionNotif, id?: string) {
+export function ouvrirNotif(act: ActionNotif, id?: string, lien?: string) {
   if (id) useProfil.getState().lireNotif(id);
   useBanniere.setState({ n: null });
-  if (act === 'hrv') router.push('/recuperation');
+  if (act === 'activite' && lien) router.push({ pathname: '/activite', params: { d: lien } });
+  else if (act === 'hrv') router.push('/recuperation');
   else if (act === 'sleep') router.push('/sommeil');
   else if (act === 'sleepadd') router.push({ pathname: '/sommeil', params: { ajout: '1' } });
   else router.push('/notifications');
+}
+
+/** Nouvelle notification (activité de la montre…) : ajoutée à la liste et montrée en bannière. */
+export function annoncer(n: NouvelleNotif) {
+  banniere(useProfil.getState().notifier(n));
 }
 
 /** Une vérification : ajoute les notifications dues et montre la dernière en bannière. */
@@ -112,9 +118,9 @@ export function demarrerNotifs() {
     handleNotification: async () => ({ shouldPlaySound: false, shouldSetBadge: false, shouldShowBanner: false, shouldShowList: true }),
   });
   Notifications.addNotificationResponseReceivedListener((r) => {
-    const act = r.notification.request.content.data?.act as ActionNotif | undefined;
+    const data = r.notification.request.content.data as { act?: ActionNotif; d?: string } | undefined;
     verifierNotifs();
-    ouvrirNotif(act ?? 'notifs');
+    ouvrirNotif(data?.act ?? 'notifs', undefined, data?.d);
   });
   let t: ReturnType<typeof setTimeout> | null = null;
   const plus_tard = () => {

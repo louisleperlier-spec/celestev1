@@ -32,18 +32,21 @@ export const DELAIS: readonly (readonly [number, string])[] = [
 ];
 
 /** Où mène la notification : mesure VFC, sommeil, saisie de la nuit, liste. */
-export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs';
+/** `activite` : récap d'une séance ou d'une sortie terminée sur l'Apple Watch (`lien` = date de fin du journal). */
+export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs' | 'activite';
 
 export type Notif = {
   id: string;
   d: string;
   read: boolean;
-  type: 'post' | 'sleep' | 'bed' | 'trial';
-  icon: 'wave' | 'moon' | 'star';
+  type: 'post' | 'sleep' | 'bed' | 'trial' | 'activite';
+  icon: 'wave' | 'moon' | 'star' | 'bike' | 'dumb';
   col: string;
   act: ActionNotif;
   title: string;
   body: string;
+  /** Activité à ouvrir (date de fin du journal). */
+  lien?: string;
 };
 
 export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;

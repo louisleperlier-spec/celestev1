@@ -1,5 +1,7 @@
 import ExpoModulesCore
 import WatchConnectivity
+import UIKit
+import UserNotifications
 import WidgetKit
 
 /// Liaison avec l'app Apple Watch : l'iPhone envoie l'état (prénom, coach, séances de la semaine)
@@ -37,6 +39,14 @@ public final class NeaMontreModule: Module {
       UserDefaults(suiteName: "group.com.neacoach.app")?.set(json, forKey: "widget")
       WidgetCenter.shared.reloadAllTimelines()
     }
+  }
+}
+
+/// Au lancement de l'app (même en arrière-plan, réveillée par la montre) : la liaison démarre avant le JS,
+/// pour recevoir la séance et prévenir tout de suite.
+public final class NeaMontreAppDelegate: ExpoAppDelegateSubscriber {
+  public func subscriberDidRegister() {
+    Liaison.partagee.activer()
   }
 }
 
@@ -94,6 +104,15 @@ final class Liaison: NSObject, WCSessionDelegate {
   }
 
   func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+    recu(userInfo)
+  }
+
+  /// Message direct de la montre (fin de séance ou de sortie) : réveille l'app pour prévenir tout de suite.
+  func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+    recu(message)
+  }
+
+  private func recu(_ userInfo: [String: Any]) {
     // Build 3 : { seance: json } ; ensuite : { type, json } (seance, velo, mesure, coach).
     let type: String
     let json: String
@@ -106,6 +125,7 @@ final class Liaison: NSObject, WCSessionDelegate {
     } else {
       return
     }
+    if type == "seance" || type == "velo" { annoncer(type, json) }
     if let f = surMessage {
       DispatchQueue.main.async { f(type, json) }
     }
@@ -113,6 +133,40 @@ final class Liaison: NSObject, WCSessionDelegate {
     verrou.lock()
     enAttente.append(["type": type, "json": json])
     verrou.unlock()
+  }
+
+  /// Notification du téléphone quand NÉA n'est pas au premier plan (au premier plan, la bannière de l'app s'en charge).
+  /// Une seule fois par activité (date de fin), le message direct et la file d'attente de la montre pouvant arriver tous les deux.
+  private func annoncer(_ type: String, _ json: String) {
+    guard let d = json.data(using: .utf8),
+          let o = (try? JSONSerialization.jsonObject(with: d)) as? [String: Any],
+          let fin = o["fin"] as? String else { return }
+    let deja = UserDefaults.standard.stringArray(forKey: "nea.annoncees") ?? []
+    if deja.contains(fin) { return }
+    UserDefaults.standard.set(Array((deja + [fin]).suffix(50)), forKey: "nea.annoncees")
+    let sec = (o["sec"] as? NSNumber)?.intValue ?? 0
+    let fc = (o["fcMoy"] as? NSNumber)?.doubleValue ?? 0
+    let duree = String(format: "%02d:%02d", sec / 60, sec % 60)
+    let fcTxt = fc > 0 ? " • FC moy. \(Int(fc)) bpm" : ""
+    let c = UNMutableNotificationContent()
+    if type == "velo" {
+      let km = (o["km"] as? NSNumber)?.doubleValue ?? 0
+      c.title = "Vélo · \(duree)"
+      c.body = String(format: "%.1f km", km).replacingOccurrences(of: ".", with: ",") + fcTxt + " • Touche pour voir ton récap"
+    } else {
+      let titre = o["titre"] as? String ?? "Séance"
+      let series = (o["series"] as? NSNumber)?.intValue ?? 0
+      c.title = "\(titre) · \(duree)"
+      c.body = "\(series) séries" + fcTxt + " • Touche pour voir ton récap"
+    }
+    c.sound = .default
+    // expo-notifications lit les données de l'app dans « body ».
+    c.userInfo = ["body": ["act": "activite", "d": fin]]
+    DispatchQueue.main.async {
+      guard UIApplication.shared.applicationState != .active else { return }
+      let r = UNNotificationRequest(identifier: "nea-activite-\(fin)", content: c, trigger: nil)
+      UNUserNotificationCenter.current().add(r, withCompletionHandler: nil)
+    }
   }
 
   /// La montre demande l'état (première ouverture).

@@ -137,6 +137,24 @@ export async function activiteSante(debut: Date, now: Date = new Date()): Promis
   }
 }
 
+/** Mesures de FC d'Apple Santé entre deux instants (entraînement de la montre), dans l'ordre : [ms, bpm]. */
+export async function fcEntre(debut: Date, fin: Date): Promise<[number, number][]> {
+  const m = module();
+  if (!m) return [];
+  try {
+    await autoriser(m);
+    const s = await m.queryQuantitySamples('HKQuantityTypeIdentifierHeartRate', {
+      limit: 0,
+      ascending: true,
+      unit: 'count/min',
+      filter: { date: { startDate: debut, endDate: fin } },
+    });
+    return s.map((x) => [+new Date(x.startDate), Math.round(x.quantity)] as [number, number]);
+  } catch {
+    return [];
+  }
+}
+
 /** FC mesurée par la montre il y a moins de `maxSec` secondes, ou null (pas de montre, pas d'entraînement lancé dessus). */
 export async function fcRecente(maxSec = 20, now: Date = new Date()): Promise<number | null> {
   const m = module();

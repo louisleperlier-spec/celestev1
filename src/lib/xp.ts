@@ -5,7 +5,11 @@ import type { JoursParSemaine, Quest, Rank } from '@/data/types';
 
 /** Une activité terminée (séance ou sortie vélo). */
 export type Log = {
+  /** Fin de l'activité (ISO). */
   d: string;
+  /** Début (ISO) et source : activités de l'Apple Watch (récap avec la FC d'Apple Santé). */
+  debut?: string;
+  src?: 'montre';
   type: 'muscu' | 'velo';
   title: string;
   min: number;
