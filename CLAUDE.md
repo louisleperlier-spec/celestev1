@@ -163,6 +163,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   Prochaine séance (moyen, `nea://seance/<jour>`, + rectangulaire), Score NÉA (petit, même moyenne que la montre, + rond ; kind `NeaBilan`),
   Pas (petit, objectif 10 000), Fréquence cardiaque (moyen), Aperçu du jour (grand), Horloge (moyen) ; pas et dernière FC lus par
   l'extension dans Apple Santé (gardés dans le groupe pour l'écran verrouillé), le reste écrit par l'app (`ecrireWidget` : coach, jour) ;
+  **build 1.0.0 (11) compilé et envoyé à TestFlight** (widgets + territoires + course) ;
   page `/widgets` (aperçu + marche à suivre) ; le groupe d'apps se crée à la main sur developer.apple.com (pas d'API)
 - [ ] **Territoires + Course (hors cahier des charges, demandés par l'utilisateur, oct. 2026)** : **codés, à valider sur iPhone et montre**
   - règles validées : ville en hexagones (~150 m, `lib/territoires.ts`, grille Mercator pointe en haut, `TAILLE` 120) ; **cases traversées**
