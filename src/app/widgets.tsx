@@ -67,7 +67,7 @@ export default function Widgets() {
           </View>
         </View>
         <Text style={styles.note}>
-          Bientôt : bilan du jour (petit), prochaine séance (moyen) et un widget d&apos;écran verrouillé.
+          Bilan du jour (petit), prochaine séance (moyen) et widgets d&apos;écran verrouillé : ouvre NÉA une fois pour les remplir.
         </Text>
 
         <Text weight="semibold" style={styles.h3}>
