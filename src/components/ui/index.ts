@@ -11,3 +11,4 @@ export { SelectableCard } from './SelectableCard';
 export { Text } from './Text';
 export type { TextProps } from './Text';
 export { toast, ToastHost } from './Toast';
+export { Segmente } from './Segmente';

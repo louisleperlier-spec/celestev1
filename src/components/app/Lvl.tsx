@@ -13,7 +13,7 @@ export function Lvl({ n, color, big = false }: { n: number; color: string; big?:
       <Glow width={s + 12} height={s + 12} color={color} intensity={0.45} />
       <Svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
         <Polygon points={`${h},0 ${s},${s / 4} ${s},${(s * 3) / 4} ${h},${s} 0,${(s * 3) / 4} 0,${s / 4}`} fill={color} />
-        <SvgText x={h} y={h + (big ? 8 : 6)} fontSize={big ? 22 : 16} fontFamily={fonts.black} fill={colors.onPrimary} textAnchor="middle">
+        <SvgText x={h} y={h + (big ? 8 : 6)} fontSize={big ? 22 : 16} fontWeight={fonts.black.fontWeight} fill={colors.onPrimary} textAnchor="middle">
           {n}
         </SvgText>
       </Svg>

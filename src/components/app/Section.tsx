@@ -33,6 +33,6 @@ export function SectionHead({
 
 const styles = StyleSheet.create({
   head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 22, marginBottom: 10, marginHorizontal: 20 },
-  h4: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 19 },
+  h4: { ...fonts.bold, fontSize: 15, lineHeight: 19 },
   action: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
 });

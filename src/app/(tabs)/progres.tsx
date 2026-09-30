@@ -12,7 +12,7 @@ import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { BarresVFC } from '@/components/app/BarresVFC';
 import { Kpi } from '@/components/app/Recap';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
-import { Card, Text } from '@/components/ui';
+import { Card, Segmente, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
 import { coachById, hrMax } from '@/lib/plan';
@@ -20,7 +20,7 @@ import { santeDisponible } from '@/lib/sante';
 import { baseHrv, lastNight, sleepScore } from '@/lib/sommeil';
 import type { Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, mix, ui } from '@/theme';
 
 type Periode = 'Semaine' | 'Mois' | 'Année';
 const JOURS_PERIODE: Record<Periode, number> = { Semaine: 7, Mois: 30, Année: 365 };
@@ -81,26 +81,7 @@ export default function Progres() {
         <View style={styles.cercles}>
           <SemaineCercles />
         </View>
-        {/* .seg */}
-        <View style={styles.seg}>
-          {(['Semaine', 'Mois', 'Année'] as Periode[]).map((x) => (
-            <Pressable key={x} accessibilityRole="tab" accessibilityState={{ selected: x === p }} onPress={() => setP(x)} style={styles.flex}>
-              {x === p ? (
-                <LinearGradient colors={['#FFC6E0', '#FF8CC6']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.segBtn, styles.segOn]}>
-                  <Text weight="semibold" style={[styles.segTxt, { color: colors.onPrimary }]}>
-                    {x}
-                  </Text>
-                </LinearGradient>
-              ) : (
-                <View style={styles.segBtn}>
-                  <Text weight="semibold" style={styles.segTxt}>
-                    {x}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
-          ))}
-        </View>
+        <Segmente options={['Semaine', 'Mois', 'Année'] as const} value={p} onChange={setP} style={styles.seg} />
         <View style={styles.grid}>
           <Kpi icon="calcheck" label="Séances" value={String(cur.length)} em={pc(cur.length, prev.length)} emGris />
           <Kpi icon="trend" label="Volume" value={`${fmt(sum(cur, 'vol'))} kg`} em={pc(sum(cur, 'vol'), sum(prev, 'vol'))} />
@@ -162,7 +143,7 @@ export default function Progres() {
         </Card>
 
         {/* .qcard */}
-        <LinearGradient colors={[colors.surface, colors.surface, '#2A1220']} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
+        <LinearGradient colors={[colors.surface, colors.surface, mix(colors.mauve, 30, colors.surface)]} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
           <Text style={styles.qText}>« {c.prog} »</Text>
           <Text style={styles.qEm}>— {c.nom}</Text>
           <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
@@ -226,7 +207,7 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
       {ticks.map((v) => (
         <G key={v}>
           <Line x1={pl} x2={W - pr} y1={y(v)} y2={y(v)} stroke="#222228" />
-          <SvgText x={2} y={y(v) + 3} fill="#77777F" fontSize={9} fontFamily={fonts.regular}>
+          <SvgText x={2} y={y(v) + 3} fill="#77777F" fontSize={9} fontWeight={fonts.regular.fontWeight}>
             {v}
           </SvgText>
         </G>
@@ -236,10 +217,10 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
       <Circle cx={last[0]} cy={last[1]} r={4.5} fill="#FF8CC6" stroke="#FFFFFF" strokeWidth={1.5} />
       <G transform={`translate(${W - pr - 66},${Math.max(4, last[1] - 54)})`}>
         <Rect width={64} height={38} rx={8} fill="#1A1A1F" stroke="#34343A" />
-        <SvgText x={32} y={16} textAnchor="middle" fill="#FFFFFF" fontSize={11} fontFamily={fonts.bold}>
+        <SvgText x={32} y={16} textAnchor="middle" fill="#FFFFFF" fontSize={11} fontWeight={fonts.bold.fontWeight}>
           {dec(ws[ws.length - 1])} kg
         </SvgText>
-        <SvgText x={32} y={29} textAnchor="middle" fill={colors.green} fontSize={9} fontFamily={fonts.regular}>
+        <SvgText x={32} y={29} textAnchor="middle" fill={colors.green} fontSize={9} fontWeight={fonts.regular.fontWeight}>
           {diff} kg
         </SvgText>
       </G>
@@ -251,7 +232,7 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
           textAnchor={i === 0 ? 'start' : i === labels.length - 1 ? 'end' : 'middle'}
           fill="#77777F"
           fontSize={9}
-          fontFamily={fonts.regular}
+          fontWeight={fonts.regular.fontWeight}
         >
           {l}
         </SvgText>
@@ -265,18 +246,15 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   cercles: { paddingTop: 14, paddingHorizontal: 20 },
   ptitle: { fontSize: 24, lineHeight: 30, paddingTop: 14, paddingHorizontal: 20 },
-  seg: { flexDirection: 'row', gap: 8, paddingTop: 14, paddingHorizontal: 20 },
-  segBtn: { height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#17171B', borderWidth: 1, borderColor: colors.border },
-  segOn: { borderWidth: 0, boxShadow: [{ offsetX: 0, offsetY: 0, blurRadius: 14, spreadDistance: 0, color: 'rgba(255,79,163,0.4)' }] },
-  segTxt: { fontSize: 13, lineHeight: 17, color: '#C6C6CC' },
+  seg: { marginTop: 14, marginHorizontal: 20 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, paddingTop: 14, paddingHorizontal: 20 },
   chart: { marginTop: 10, marginHorizontal: 20, paddingTop: 14, paddingHorizontal: 14, paddingBottom: 8 },
   h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   h4Txt: { fontSize: 14, lineHeight: 18 },
-  h4Btn: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, fontFamily: fonts.medium },
-  voir: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, fontFamily: fonts.medium },
+  h4Btn: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, ...fonts.medium },
+  voir: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, ...fonts.medium },
   cplan: { flexDirection: 'row', gap: 8, marginTop: 10 },
-  cplanCell: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: '#1A1A1F', alignItems: 'center' },
+  cplanCell: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: ui.dark, alignItems: 'center' },
   cplanSmall: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary, textAlign: 'center' },
   cplanB: { fontSize: 14, lineHeight: 18 },
   svg: { marginTop: 10 },

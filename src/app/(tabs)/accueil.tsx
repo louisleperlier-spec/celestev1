@@ -17,7 +17,7 @@ import { estPremium } from '@/lib/premium';
 import { JOURS, nextSession, weekDates } from '@/lib/semaine';
 import { streak, type Log } from '@/lib/xp';
 import { useProfil, useSemaine } from '@/store/profil';
-import { colors, glow, gradients, ui } from '@/theme';
+import { colors, glow, gradients, mix, ui } from '@/theme';
 
 /** Moyenne des valeurs positives (avgOf du prototype). */
 const avgOf = (logs: readonly Log[], k: 'hrv') => {
@@ -94,7 +94,7 @@ export default function Accueil() {
             style={styles.today}
           >
             <Text weight="medium" style={styles.todaySmall}>
-              {when.toUpperCase()} • COACH {c.nom.toUpperCase()}
+              {when} • Coach {c.nom}
             </Text>
             <Text weight="extrabold" style={styles.todayH3}>
               {s.titre}
@@ -166,7 +166,7 @@ export default function Accueil() {
 
         {/* .qcard : citation du coach */}
         <Pressable accessibilityRole="button" onPress={() => router.push('/chat')} style={styles.qWrap}>
-          <LinearGradient colors={[colors.surface, colors.surface, '#2A1220']} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
+          <LinearGradient colors={[colors.surface, colors.surface, mix(colors.mauve, 30, colors.surface)]} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
             <Text style={styles.qText}>« {c.daily} »</Text>
             <Text style={styles.qEm}>— {c.nom} • Parler à ton coach</Text>
             <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />

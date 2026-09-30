@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   statSmall: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary },
   statRow: { flexDirection: 'row', alignItems: 'baseline', gap: 2 },
   statB: { fontSize: 18, lineHeight: 23, fontVariant: ['tabular-nums'] },
-  statI: { fontSize: 11, lineHeight: 14, color: colors.textSecondary, fontFamily: fonts.medium },
+  statI: { fontSize: 11, lineHeight: 14, color: colors.textSecondary, ...fonts.medium },
   zones: { flexDirection: 'row', height: 8, borderRadius: 6, overflow: 'hidden', marginTop: 10, marginHorizontal: 20, gap: 2 },
   zone: { flex: 1, opacity: 0.28 },
   bctrl: { flexDirection: 'row', gap: 10, paddingTop: 14, paddingHorizontal: 20 },

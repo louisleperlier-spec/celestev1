@@ -52,7 +52,7 @@ export default function Reglages() {
       </View>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          <Text style={styles.h1}>UN PROGRAMME VRAIMENT À TOI</Text>
+          <Text style={styles.h1}>Un programme vraiment à toi</Text>
           <Text style={styles.sub}>Dis-moi en plus pour personnaliser ton expérience.</Text>
 
           <Text style={ob.lbl}>Ton niveau</Text>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   head: { height: 52, paddingHorizontal: 12, justifyContent: 'center' },
   back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   scroll: { paddingHorizontal: 20, paddingBottom: 16 },
-  h1: { fontFamily: fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
+  h1: { ...fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   grid3: { flexDirection: 'row', gap: 10 },
   opt: { flex: 1, height: 78, alignItems: 'center', justifyContent: 'center', gap: 8 },
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 15,
   },
   two: { flexDirection: 'row', gap: 10 },

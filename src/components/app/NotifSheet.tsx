@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border2,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 13,
     textAlign: 'center',
   },

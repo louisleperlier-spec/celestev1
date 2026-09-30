@@ -77,7 +77,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
           return (
             <Pressable key={x.id} accessibilityRole="button" onPress={() => router.push(`/plan/${x.id}`)}>
               <LinearGradient
-                colors={['#131316', '#131316', mix(c.c, 22, '#131316')]}
+                colors={[colors.surface, colors.surface, mix(c.c, 22, colors.surface)]}
                 locations={[0, 0.5, 1]}
                 start={{ x: 0, y: 0.35 }}
                 end={{ x: 1, y: 0.65 }}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,79,163,0.16)',
     color: colors.pinkPale,
   },
-  ph3: { fontSize: 19, lineHeight: 22, fontFamily: fonts.extrabold },
+  ph3: { fontSize: 19, lineHeight: 22, ...fonts.extrabold },
   pp: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary },
   psmall: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 'auto' },
   psmallTxt: { fontSize: 12, lineHeight: 16, color: ui.text3, marginRight: 4 },

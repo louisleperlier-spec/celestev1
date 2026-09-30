@@ -23,7 +23,7 @@ import { coachById, exercice, exKcal, LVLN, type PlanItem } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
 import { catSession, seanceById, type Intensite } from '@/lib/semaine';
 import { selectProfil, useProfil } from '@/store/profil';
-import { colors, glow, ui } from '@/theme';
+import { alpha, colors, glow, ui } from '@/theme';
 
 /** Icône et libellé du matériel (EQI du prototype). */
 const EQI: Record<MaterielId, [IconName, string]> = {
@@ -125,7 +125,7 @@ export default function SeanceCatalogue() {
 
       {/* .floatf : pied flottant en dégradé */}
       <LinearGradient
-        colors={['rgba(7,7,8,0)', colors.bg, colors.bg]}
+        colors={[alpha(colors.bg, 0), colors.bg, colors.bg]}
         locations={[0, 0.35, 1]}
         style={[styles.floatf, { paddingBottom: 18 + insets.bottom }]}
         pointerEvents="box-none"

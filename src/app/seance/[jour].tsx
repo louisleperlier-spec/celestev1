@@ -33,7 +33,7 @@ export default function SeanceDuJour() {
       <DetailHead titre={`${JOURS[day]} ${weekDates()[day].getDate()}`} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.pad}>
-          <Text style={styles.h1}>{s.titre.toUpperCase()}</Text>
+          <Text style={styles.h1}>{s.titre}</Text>
           <Text style={styles.sub}>
             {s.min} min • {s.items.length} exercices • ≈ {s.kcal} kcal
           </Text>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   pad: { paddingHorizontal: 20 },
   mt12: { marginTop: 12 },
   mt6: { marginTop: 6 },
-  h1: { fontFamily: fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
+  h1: { ...fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   phead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 14, marginTop: 12, marginHorizontal: 20 },
   pheadH3: { fontSize: 15, lineHeight: 19 },

@@ -18,7 +18,7 @@ type Props = {
 
 /**
  * Grand chiffre (poids, âge, FC, compte à rebours, prix…).
- * Hauteur de ligne = hauteur naturelle d'Inter (1,21 × la taille), jamais moins, et pas de Text imbriqué :
+ * Hauteur de ligne = hauteur naturelle de la police (1,21 × la taille), jamais moins, et pas de Text imbriqué :
  * sur iOS, un texte imbriqué prend la hauteur de ligne de son parent et le haut des chiffres est rogné.
  * Le chiffre et l'unité sont deux textes frères alignés sur la ligne de base.
  */
@@ -35,6 +35,6 @@ export function BigNumber({ value, unit, size = 56, unitSize = 18, color = color
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center' },
-  value: { fontFamily: fonts.black, fontVariant: ['tabular-nums'], includeFontPadding: false },
+  value: { ...fonts.semibold, fontVariant: ['tabular-nums'], includeFontPadding: false },
   unit: { color: colors.textSecondary },
 });

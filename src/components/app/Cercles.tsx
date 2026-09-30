@@ -10,14 +10,14 @@ import { part, type Cercle, type IdCercle } from '@/lib/cercles';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { rafraichirActivite, useCercles } from '@/store/cercles';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, heartZones } from '@/theme';
+import { alpha, colors } from '@/theme';
 
 /** Couleur de chaque cercle (de l'extérieur vers l'intérieur). */
 export const COULEURS_CERCLES: Record<IdCercle, string> = {
   bouger: colors.pink,
-  exercice: colors.green,
-  sommeil: heartZones.z1,
-  recup: heartZones.z3,
+  exercice: colors.pinkPale,
+  sommeil: colors.mauve,
+  recup: colors.pinkLight,
 };
 
 /** Cercles concentriques, comme les anneaux d'activité d'Apple. */

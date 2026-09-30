@@ -1,4 +1,3 @@
-import { useFonts } from '@expo-google-fonts/inter';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -10,7 +9,7 @@ import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { demarrerSante } from '@/store/sante';
-import { colors, fontAssets } from '@/theme';
+import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 demarrerCompte();
@@ -34,9 +33,7 @@ function useHydrated() {
 }
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts(fontAssets);
-  const hydrated = useHydrated();
-  const ready = (loaded || !!error) && hydrated;
+  const ready = useHydrated();
 
   useEffect(() => {
     if (!ready) return;

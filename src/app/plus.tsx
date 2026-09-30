@@ -325,7 +325,7 @@ function AchatSheet({ offre: o, onClose, onConfirm }: { offre: Offre | null; onC
               Confirmer
             </Text>
             <Text weight="bold" style={styles.buySimule}>
-              ACHAT SIMULÉ : AUCUN PAIEMENT RÉEL
+              Achat simulé : aucun paiement réel
             </Text>
           </View>
           <View style={styles.buyr}>
@@ -430,11 +430,10 @@ const styles = StyleSheet.create({
     color: ui.onGold,
   },
   h1: {
-    fontFamily: fonts.black,
+    ...fonts.black,
     fontSize: 27,
     lineHeight: 30,
     letterSpacing: -0.27,
-    textTransform: 'uppercase',
     textAlign: 'center',
     marginTop: 10,
   },
@@ -577,7 +576,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(40,40,46,0.7)',
+    backgroundColor: alpha(colors.surface2, 0.7),
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 20,
@@ -650,7 +649,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-  exBlanc: { fontFamily: fonts.bold, color: colors.text },
+  exBlanc: { ...fonts.bold, color: colors.text },
   exclock: {
     flexDirection: 'row',
     alignItems: 'center',

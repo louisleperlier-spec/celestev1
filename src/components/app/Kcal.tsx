@@ -25,5 +25,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,138,31,0.3)',
   },
-  text: { fontFamily: fonts.semibold, fontSize: 11.5, lineHeight: 15, color: '#FFB27A' },
+  text: { ...fonts.semibold, fontSize: 11.5, lineHeight: 15, color: '#FFB27A' },
 });

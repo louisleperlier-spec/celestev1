@@ -32,7 +32,7 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
             <Glow width={260} height={240} intensity={0.45} />
             <Image source={COACH_IMAGES[c.id].corps} style={styles.botImg} contentFit="contain" />
           </View>
-          <Text style={styles.h1}>SÉANCE TERMINÉE !</Text>
+          <Text style={styles.h1}>Séance terminée !</Text>
           <Text style={styles.sub}>
             « {c.prog} » — {c.nom}
           </Text>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 20, paddingBottom: 12 },
   bot: { height: 220, alignItems: 'center', justifyContent: 'flex-end', marginTop: 10 },
   botImg: { height: 210, width: 210 },
-  h1: { fontFamily: fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27, marginTop: 14, textAlign: 'center' },
+  h1: { ...fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27, marginTop: 14, textAlign: 'center' },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6, textAlign: 'center' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, paddingTop: 18 },
   kpi: { width: '48%', flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, minHeight: 76 },

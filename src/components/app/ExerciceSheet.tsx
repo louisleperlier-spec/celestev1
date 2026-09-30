@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: '#222228',
+    backgroundColor: colors.surface2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   cplanB: { fontSize: 14, lineHeight: 18 },
   load: { marginTop: 10, paddingVertical: 12, paddingHorizontal: 14 },
   lh: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' },
-  lhB: { fontSize: 17, lineHeight: 22, fontFamily: fonts.extrabold },
+  lhB: { fontSize: 17, lineHeight: 22, ...fonts.extrabold },
   lhSmall: { fontSize: 11.5, lineHeight: 15, color: colors.textSecondary },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8 },
 });

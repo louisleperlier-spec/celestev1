@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   segOff: { backgroundColor: colors.border },
   stepn: { width: 40, fontSize: 12, lineHeight: 16, color: colors.textSecondary, textAlign: 'right' },
   scroll: { paddingHorizontal: 20, paddingBottom: 16 },
-  title: { fontFamily: fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
+  title: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   // .obbody
   body: { marginTop: 22 },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 
 /** Styles partagés par les écrans d'onboarding (.lbl, .note, .warn…). */
 export const ob = StyleSheet.create({
-  lbl: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 18, marginTop: 22, marginBottom: 10 },
+  lbl: { ...fonts.bold, fontSize: 14, lineHeight: 18, marginTop: 22, marginBottom: 10 },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8 },
   /** Premier libellé : sa marge se confond avec celle du contenu (.obbody). */
   first: { marginTop: 0 },

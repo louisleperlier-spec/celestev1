@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 15,
   },
 });

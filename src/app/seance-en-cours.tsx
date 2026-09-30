@@ -19,7 +19,7 @@ import { coachById, exercice, exKcal } from '@/lib/plan';
 import { catSession, seanceById, sessionForDay, type SeanceJour } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { useSeance } from '@/store/seance';
-import { colors, fonts, glow, ui } from '@/theme';
+import { alpha, colors, fonts, glow, ui } from '@/theme';
 
 /** Séance en cours (vWorkout du prototype), puis récap (vRecap). FC simulée en attendant Apple Santé. */
 export default function SeanceEnCours() {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   howbtn: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 34, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,79,163,0.5)' },
   howTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkPale },
   meta: { paddingTop: 6, paddingHorizontal: 20, fontSize: 13, lineHeight: 18, color: colors.textSecondary },
-  metaB: { color: colors.pinkLight, fontFamily: fonts.medium },
+  metaB: { color: colors.pinkLight, ...fonts.medium },
   load: { marginTop: 12, marginHorizontal: 20, paddingVertical: 12, paddingHorizontal: 14 },
   lh: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' },
   lhB: { fontSize: 17, lineHeight: 22 },
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     zIndex: 40,
-    backgroundColor: 'rgba(5,5,7,0.94)',
+    backgroundColor: alpha(colors.bg, 0.96),
     alignItems: 'center',
     justifyContent: 'center',
     gap: 16,

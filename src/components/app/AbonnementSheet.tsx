@@ -32,5 +32,5 @@ export function AbonnementSheet({ visible, onClose }: { visible: boolean; onClos
 
 const styles = StyleSheet.create({
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginBottom: 14 },
-  note: { fontFamily: fonts.regular, fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 10 },
+  note: { ...fonts.regular, fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 10 },
 });

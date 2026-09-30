@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  srchInput: { flex: 1, color: colors.text, fontFamily: fonts.regular, fontSize: 14.5 },
+  srchInput: { flex: 1, color: colors.text, ...fonts.regular, fontSize: 14.5 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 10 },
   back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  h1: { fontFamily: fonts.black, fontSize: 26, lineHeight: 32, letterSpacing: -0.4 },
+  h1: { ...fonts.black, fontSize: 26, lineHeight: 32, letterSpacing: -0.4 },
   sous: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary },
 });

@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   ringSmall: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
-  h1: { fontFamily: fonts.black, fontSize: 22, lineHeight: 26, letterSpacing: -0.2, textTransform: 'uppercase', marginTop: 18, textAlign: 'center' },
+  h1: { ...fonts.black, fontSize: 22, lineHeight: 26, letterSpacing: -0.2, marginTop: 18, textAlign: 'center' },
   h1Res: { fontSize: 24, lineHeight: 28 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6, textAlign: 'center' },
   cplan: { flexDirection: 'row', gap: 8, marginTop: 16, alignSelf: 'stretch' },

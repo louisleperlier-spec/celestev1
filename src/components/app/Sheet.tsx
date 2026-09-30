@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleShee
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from '@/components/ui';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, ui } from '@/theme';
 
 /** Feuille qui monte du bas (.sheet) ; toucher le fond la ferme. */
 export function Sheet({
@@ -39,12 +39,12 @@ export function Sheet({
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   panel: {
-    backgroundColor: '#131316',
+    backgroundColor: ui.sheet,
     borderTopWidth: 1,
     borderColor: colors.border2,
     borderTopLeftRadius: 22,
     borderTopRightRadius: 22,
     padding: 20,
   },
-  h3: { fontFamily: fonts.bold, fontSize: 17, lineHeight: 22, marginBottom: 12 },
+  h3: { ...fonts.bold, fontSize: 17, lineHeight: 22, marginBottom: 12 },
 });

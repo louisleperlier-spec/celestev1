@@ -2,11 +2,11 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import Svg, { G, Rect, Text as SvgText } from 'react-native-svg';
 
 import { Text } from '@/components/ui';
-import { colors, fonts, heartZones, ui } from '@/theme';
+import { colors, fonts, ui } from '@/theme';
 
 export type BarreVFC = { hrv: number; type: 'muscu' | 'velo' | 'nuit' };
 
-const couleur = (t: BarreVFC['type']) => (t === 'velo' ? heartZones.z1 : t === 'nuit' ? ui.sommeil : colors.pink);
+const couleur = (t: BarreVFC['type']) => (t === 'velo' ? colors.mauve : t === 'nuit' ? ui.sommeil : colors.pink);
 
 /** VFC en barres, 320 × 90 (vfcBars du prototype). Légende Muscu / Vélo sauf pour les nuits. */
 export function BarresVFC({ hl }: { hl: readonly BarreVFC[] }) {
@@ -25,7 +25,7 @@ export function BarresVFC({ hl }: { hl: readonly BarreVFC[] }) {
           return (
             <G key={i}>
               <Rect x={i * bw + bw * 0.2} y={H - h} width={bw * 0.6} height={h} rx={3} fill={couleur(l.type)} />
-              <SvgText x={i * bw + bw / 2} y={H + 11} textAnchor="middle" fill={ui.axe} fontSize={8} fontFamily={fonts.regular}>
+              <SvgText x={i * bw + bw / 2} y={H + 11} textAnchor="middle" fill={ui.axe} fontSize={8} fontWeight={fonts.regular.fontWeight}>
                 {l.hrv}
               </SvgText>
             </G>
@@ -39,7 +39,7 @@ export function BarresVFC({ hl }: { hl: readonly BarreVFC[] }) {
             <Text style={styles.legTxt}>Muscu</Text>
           </View>
           <View style={styles.legItem}>
-            <View style={[styles.dot, { backgroundColor: heartZones.z1 }]} />
+            <View style={[styles.dot, { backgroundColor: colors.mauve }]} />
             <Text style={styles.legTxt}>Vélo</Text>
           </View>
         </View>

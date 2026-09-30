@@ -15,7 +15,7 @@ import { dec } from '@/lib/charges';
 import { JOURS } from '@/lib/semaine';
 import { baseHrv, conseilNuit, lastNight, recovStatus, sleepScore, type Nuit } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, heartZones, ui } from '@/theme';
+import { colors, fonts, ui } from '@/theme';
 
 /** Sommeil : score de la nuit, 7 dernières nuits, VFC nocturne, mesures de récupération (vSleep du prototype). */
 export default function Sommeil() {
@@ -161,8 +161,8 @@ function BarresNuits({ ns }: { ns: readonly Nuit[] }) {
           <Stop offset="1" stopColor={ui.sommeilFonce} />
         </LinearGradient>
       </Defs>
-      <Line x1={0} x2={W} y1={y8} y2={y8} stroke={heartZones.z1} strokeDasharray="4 4" opacity={0.6} />
-      <SvgText x={W - 2} y={y8 - 4} textAnchor="end" fill={ui.sommeil} fontSize={9} fontFamily={fonts.regular}>
+      <Line x1={0} x2={W} y1={y8} y2={y8} stroke={ui.sommeil} strokeDasharray="4 4" opacity={0.6} />
+      <SvgText x={W - 2} y={y8 - 4} textAnchor="end" fill={ui.sommeil} fontSize={9} fontWeight={fonts.regular.fontWeight}>
         8 h
       </SvgText>
       {ns.map((n, i) => {
@@ -170,7 +170,7 @@ function BarresNuits({ ns }: { ns: readonly Nuit[] }) {
         return (
           <G key={n.d}>
             <Rect x={i * bw + bw * 0.22} y={H - h} width={bw * 0.56} height={h} rx={4} fill="url(#sg)" />
-            <SvgText x={i * bw + bw / 2} y={H + 12} textAnchor="middle" fill={ui.axe} fontSize={9} fontFamily={fonts.regular}>
+            <SvgText x={i * bw + bw / 2} y={H + 12} textAnchor="middle" fill={ui.axe} fontSize={9} fontWeight={fonts.regular.fontWeight}>
               {JOURS[(new Date(n.d + 'T12:00').getDay() + 6) % 7]}
             </SvgText>
           </G>

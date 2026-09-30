@@ -5,7 +5,7 @@ import { colors, radius, spacing } from '@/theme';
 
 type Props = { children: ReactNode; style?: StyleProp<ViewStyle> };
 
-/** Carte : surface #121215, bordure #26262B, radius 16. */
+/** Carte ardoise : surface #2D3038, sans bordure marquée, radius 20. */
 export function Card({ children, style }: Props) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
@@ -13,8 +13,6 @@ export function Card({ children, style }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderWidth: 1,
     borderRadius: radius.card,
     padding: spacing.lg,
     gap: spacing.sm,

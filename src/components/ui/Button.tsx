@@ -9,7 +9,7 @@ import { Text } from './Text';
 type Props = {
   label: string;
   onPress?: () => void;
-  /** primary : dégradé (.btn) ; dark : sombre bordé (.btn.dark) ; secondary : alias de dark. */
+  /** primary : rose plein ; dark : surface secondaire ; secondary : alias de dark. */
   variant?: 'primary' | 'dark' | 'secondary';
   disabled?: boolean;
   /** Flèche après le libellé, comme les boutons « Continuer » du prototype. */
@@ -35,7 +35,7 @@ export function Button({ label, onPress, variant = 'primary', disabled = false, 
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
-        primary && !disabled && glow('rgba(255,79,163,0.35)', 24),
+        primary && !disabled && glow('rgba(255,79,163,0.28)', 16),
         disabled && styles.disabled,
         pressed && styles.pressed,
         style,
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     overflow: 'hidden',
   },
-  dark: { backgroundColor: ui.dark, borderWidth: 1, borderColor: colors.border2 },
-  label: { fontFamily: fonts.bold, fontSize: 15 },
-  small: { fontSize: 13.5 },
+  dark: { backgroundColor: ui.dark },
+  label: { ...fonts.semibold, fontSize: 16 },
+  small: { fontSize: 14 },
   smallGap: { gap: 6, paddingHorizontal: spacing.md },
 });

@@ -85,7 +85,7 @@ export function KStat({ items }: { items: [IconName, string][] }) {
 
 export const detail = StyleSheet.create({
   pad: { paddingHorizontal: 20 },
-  h1: { fontFamily: fonts.black, fontSize: 25, lineHeight: 30, letterSpacing: -0.25, marginTop: 10 },
+  h1: { ...fonts.black, fontSize: 25, lineHeight: 30, letterSpacing: -0.25, marginTop: 10 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 12 },
 });
 

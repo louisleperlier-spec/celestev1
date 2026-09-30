@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 18,
     color: colors.text,
-    fontFamily: fonts.bold,
+    ...fonts.bold,
     fontSize: 22,
     textAlign: 'center',
   },

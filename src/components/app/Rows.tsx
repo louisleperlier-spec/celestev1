@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
   dnumLbl: { fontSize: 10, lineHeight: 13, color: colors.textSecondary },
   dnumB: { fontSize: 15, lineHeight: 18 },
   text: { flex: 1, minWidth: 0 },
-  h5: { fontSize: 14.5, lineHeight: 19, fontFamily: fonts.semibold },
+  h5: { fontSize: 14.5, lineHeight: 19, ...fonts.semibold },
   p: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
 });

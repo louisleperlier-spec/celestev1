@@ -34,7 +34,7 @@ export default function Legal() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   scroll: { paddingHorizontal: 20, paddingBottom: 20, gap: 12 },
-  h1: { fontFamily: fonts.black, fontSize: 24, lineHeight: 28, letterSpacing: -0.24, marginTop: 10 },
+  h1: { ...fonts.black, fontSize: 24, lineHeight: 28, letterSpacing: -0.24, marginTop: 10 },
   warn: { marginVertical: 0 },
   lgh: { fontSize: 15, lineHeight: 26 },
   lgp: { fontSize: 13.5, lineHeight: 21, color: '#CFCFD6' },

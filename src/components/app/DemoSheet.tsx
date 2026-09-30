@@ -104,7 +104,7 @@ function Demo({ id, onClose }: { id: ExerciceId; onClose: () => void }) {
 }
 
 const styles = StyleSheet.create({
-  close: { position: 'absolute', top: 0, right: 0, zIndex: 2, width: 34, height: 34, borderRadius: 17, backgroundColor: '#222228', alignItems: 'center', justifyContent: 'center' },
+  close: { position: 'absolute', top: 0, right: 0, zIndex: 2, width: 34, height: 34, borderRadius: 17, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   stage: { height: 240, alignItems: 'center', justifyContent: 'center', borderRadius: 18 },
   pulse: { position: 'absolute', bottom: 8 },
   img: { height: 220, width: 280 },
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   steps: { gap: 8, marginTop: 12 },
   step: { flexDirection: 'row', gap: 10, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
   stepOn: { backgroundColor: 'rgba(255,79,163,0.1)', borderColor: 'rgba(255,79,163,0.45)' },
-  num: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#222228', alignItems: 'center', justifyContent: 'center' },
+  num: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   numOn: { backgroundColor: colors.pink },
   numTxt: { fontSize: 12, lineHeight: 15 },
   numTxtOn: { color: colors.onPrimary },
@@ -120,5 +120,5 @@ const styles = StyleSheet.create({
   stepTxtOn: { color: colors.text },
   bar: { height: 4, borderRadius: 3, backgroundColor: colors.border, marginTop: 10, overflow: 'hidden' },
   fill: { height: '100%', backgroundColor: colors.pink },
-  note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8, fontFamily: fonts.regular },
+  note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8, ...fonts.regular },
 });

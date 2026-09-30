@@ -69,8 +69,8 @@ export default function Bienvenue() {
 
           <View style={styles.pad}>
             <Text style={styles.h1}>
-              {"PLUS QU'UN PROGRAMME.\n"}
-              <Text style={[styles.h1, styles.pk]}>UN COACH QUI TE CONNAÎT VRAIMENT.</Text>
+              {"Plus qu'un programme.\n"}
+              <Text style={[styles.h1, styles.pk]}>Un coach qui te connaît vraiment.</Text>
             </Text>
             <Text style={styles.sub}>
               Des entraînements personnalisés, une motivation constante et des résultats durables.
@@ -97,9 +97,9 @@ function MasqueRadial({ width, height }: { width: number; height: number }) {
     <Svg width={width} height={height}>
       <Defs>
         <RadialGradient id="masque" cx="50%" cy="50%" rx="50%" ry="50%">
-          <Stop offset="0.3" stopColor="#000" stopOpacity={1} />
-          <Stop offset="0.6" stopColor="#000" stopOpacity={0.6} />
-          <Stop offset="1" stopColor="#000" stopOpacity={0} />
+          <Stop offset="0.3" stopColor={colors.bg} stopOpacity={1} />
+          <Stop offset="0.6" stopColor={colors.bg} stopOpacity={0.6} />
+          <Stop offset="1" stopColor={colors.bg} stopOpacity={0} />
         </RadialGradient>
       </Defs>
       <Ellipse cx={width / 2} cy={height / 2} rx={width * 0.62} ry={height * 0.6} fill="url(#masque)" />
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   logoSub: { fontSize: 10.5, lineHeight: 14, letterSpacing: 10.5 * 0.32, color: colors.pinkLight, textAlign: 'center', marginTop: 4 },
   pad: { paddingHorizontal: 20, marginTop: 22 },
   // .h1
-  h1: { fontFamily: fonts.black, fontSize: 27, lineHeight: 28.6, letterSpacing: -0.27 },
+  h1: { ...fonts.black, fontSize: 27, lineHeight: 28.6, letterSpacing: -0.27 },
   pk: { color: colors.pink },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },

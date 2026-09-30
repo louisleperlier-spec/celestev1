@@ -87,7 +87,7 @@ export default function Coach() {
           )}
         </View>
 
-        <Text style={styles.cname}>{c.nom.toUpperCase()}</Text>
+        <Text style={styles.cname}>{c.nom}</Text>
         <View style={[styles.badge, { backgroundColor: mix(c.c, 30, '#1a1a1e'), borderColor: alpha(c.c, 0.6) }]}>
           <Text weight="extrabold" style={styles.badgeText}>
             {c.spec}
@@ -139,7 +139,7 @@ export default function Coach() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   scroll: { paddingHorizontal: 20, paddingBottom: 16 },
-  title: { fontFamily: fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
+  title: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 10 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   stage: { height: 270, alignItems: 'center', justifyContent: 'flex-end', marginTop: 6 },
   bot: { height: 258, width: 258, zIndex: 2 },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   arrowR: { right: 2 },
   reco: { position: 'absolute', top: 8, alignSelf: 'center', zIndex: 4, paddingVertical: 5, paddingHorizontal: 12, borderRadius: 999 },
   recoText: { fontSize: 12, lineHeight: 15, color: ui.onGold },
-  cname: { textAlign: 'center', fontFamily: fonts.black, fontSize: 30, lineHeight: 36, letterSpacing: 0.6, marginTop: -4, zIndex: 3 },
+  cname: { textAlign: 'center', ...fonts.black, fontSize: 30, lineHeight: 36, letterSpacing: 0.6, marginTop: -4, zIndex: 3 },
   badge: { alignSelf: 'center', marginTop: 4, paddingVertical: 3, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1 },
   badgeText: { fontSize: 12, lineHeight: 16, letterSpacing: 0.72 },
   coachstyle: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 8, marginTop: 10 },

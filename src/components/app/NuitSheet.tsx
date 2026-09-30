@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   two: { flexDirection: 'row', gap: 10 },
   // .lbl : 14 px gras, marge 22 / 10 (réduite en haut dans la feuille)
-  lbl: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 18, marginTop: 14, marginBottom: 10 },
+  lbl: { ...fonts.bold, fontSize: 14, lineHeight: 18, marginTop: 14, marginBottom: 10 },
   chips: { flexDirection: 'row', gap: 8 },
   inp: {
     height: 50,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 15,
   },
   espace: { height: 14 },

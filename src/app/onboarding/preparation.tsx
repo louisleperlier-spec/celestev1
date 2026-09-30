@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 20, paddingBottom: 16, alignItems: 'center' },
   botWrap: { width: 260, height: 236, alignItems: 'center', justifyContent: 'flex-end' },
   bot: { height: 200, width: 200, marginTop: 18 },
-  title: { fontFamily: fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 6, textAlign: 'center' },
+  title: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 6, textAlign: 'center' },
   // .bsteps
   steps: { gap: 10, marginTop: 22, width: '100%', maxWidth: 300 },
   step: { flexDirection: 'row', alignItems: 'center', gap: 10 },

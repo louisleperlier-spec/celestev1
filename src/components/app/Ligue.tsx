@@ -11,7 +11,7 @@ import { Lvl } from '@/components/app/Lvl';
 import { Row } from '@/components/app/Rows';
 import { SectionHead } from '@/components/app/Section';
 import { Sheet } from '@/components/app/Sheet';
-import { Button, Card, Icon, Text, toast, isIconName } from '@/components/ui';
+import { Button, Card, Icon, Segmente, Text, toast, isIconName } from '@/components/ui';
 import { QUESTS } from '@/data/ligue';
 import type { CoachId } from '@/data/types';
 import { dec, fmt } from '@/lib/charges';
@@ -167,7 +167,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
               <Text style={[styles.boostTxt, styles.muted]}>Aucun boost : garde ta série 3 jours pour x1,2</Text>
             </View>
           )}
-          <LinearGradient colors={[ui.segOn, colors.pinkLight]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.boost, styles.boostTot]}>
+          <LinearGradient colors={[colors.pink, colors.pink]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.boost, styles.boostTot]}>
             <Text weight="bold" style={[styles.boostTxt, { color: colors.onPrimary }]}>
               Total x{dec(m.toFixed(2))}
             </Text>
@@ -216,9 +216,12 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
 
         {/* .seg : Amis | Équipes | Cette semaine / Total */}
         <View style={styles.seg}>
-          <Seg label="Amis" on={seg === 'amis'} onPress={() => setSeg('amis')} />
-          <Seg label="Équipes" on={seg === 'equipes'} onPress={() => setSeg('equipes')} />
-          <Seg label={per === 'semaine' ? 'Cette semaine' : 'Total'} on onPress={() => setPer(per === 'semaine' ? 'total' : 'semaine')} />
+          <Segmente options={[['amis', 'Amis'], ['equipes', 'Équipes']] as const} value={seg} onChange={setSeg} style={styles.flex} />
+          <Pressable accessibilityRole="button" onPress={() => setPer(per === 'semaine' ? 'total' : 'semaine')} style={styles.perBtn}>
+            <Text weight="semibold" style={styles.perTxt}>
+              {per === 'semaine' ? 'Cette semaine' : 'Total'}
+            </Text>
+          </Pressable>
         </View>
         <View style={[styles.list, styles.mt12]}>
           {rows.map((r, i) => {
@@ -389,26 +392,6 @@ function Cadre({ integree, children }: { integree: boolean; children: ReactNode 
   return integree ? <View>{children}</View> : <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>;
 }
 
-/** Bouton du sélecteur (.seg button). */
-function Seg({ label, on, onPress }: { label: string; on: boolean; onPress: () => void }) {
-  return (
-    <Pressable accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={onPress} style={styles.flex}>
-      {on ? (
-        <LinearGradient colors={[ui.segOn, colors.pinkLight]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.segBtn, styles.segOn]}>
-          <Text weight="semibold" style={[styles.segTxt, { color: colors.onPrimary }]}>
-            {label}
-          </Text>
-        </LinearGradient>
-      ) : (
-        <View style={styles.segBtn}>
-          <Text weight="semibold" style={styles.segTxt}>
-            {label}
-          </Text>
-        </View>
-      )}
-    </Pressable>
-  );
-}
 
 /** Avatar d'un membre de l'équipe (.mem div), bordure verte s'il est actif cette semaine. */
 function Membre({ coach, nom, actif }: { coach: CoachId; nom: string; actif: boolean }) {
@@ -465,13 +448,12 @@ const styles = StyleSheet.create({
   list: { paddingHorizontal: 20 },
   qk: { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: colors.border2, alignItems: 'center', justifyContent: 'center' },
   qkDone: { backgroundColor: colors.pinkLight, borderColor: 'transparent' },
-  h5: { fontSize: 14.5, lineHeight: 19, fontFamily: fonts.semibold },
+  h5: { fontSize: 14.5, lineHeight: 19, ...fonts.semibold },
   barre: { textDecorationLine: 'line-through', color: colors.textSecondary },
   p: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
   seg: { flexDirection: 'row', gap: 8, paddingTop: 18, paddingHorizontal: 20 },
-  segBtn: { height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.segBg, borderWidth: 1, borderColor: colors.border },
-  segOn: { borderWidth: 0, boxShadow: [{ offsetX: 0, offsetY: 0, blurRadius: 14, spreadDistance: 0, color: 'rgba(255,79,163,0.4)' }] },
-  segTxt: { fontSize: 13, lineHeight: 17, color: ui.segTxt },
+  perBtn: { height: 38, paddingHorizontal: 14, borderRadius: 12, backgroundColor: ui.segBg, alignItems: 'center', justifyContent: 'center' },
+  perTxt: { fontSize: 14, lineHeight: 18, color: colors.pinkLight },
   lrow: { gap: 10 },
   lrowMoi: { borderColor: colors.pink, backgroundColor: 'rgba(255,79,163,0.08)' },
   pos: { width: 24, textAlign: 'center', fontSize: 14, lineHeight: 18, color: colors.textSecondary },
@@ -496,7 +478,7 @@ const styles = StyleSheet.create({
   membreNom: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
   quitter: { alignSelf: 'center', paddingVertical: 10 },
   rejoindre: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
-  code: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, color: colors.text, letterSpacing: 0.6 },
+  code: { ...fonts.semibold, fontSize: 12, lineHeight: 16, color: colors.text, letterSpacing: 0.6 },
   inp: {
     height: 50,
     paddingHorizontal: 16,
@@ -505,7 +487,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border2,
     borderRadius: 14,
     color: colors.text,
-    fontFamily: fonts.medium,
+    ...fonts.medium,
     fontSize: 15,
   },
   erreur: { fontSize: 13, lineHeight: 18, color: ui.heart, marginTop: 10 },

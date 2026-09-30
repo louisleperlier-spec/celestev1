@@ -1,33 +1,17 @@
-import {
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-  Inter_800ExtraBold,
-  Inter_900Black,
-} from '@expo-google-fonts/inter';
+import type { TextStyle } from 'react-native';
 
-/** Polices à charger au démarrage (Inter 300 à 900). */
-export const fontAssets = {
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-  Inter_800ExtraBold,
-  Inter_900Black,
-};
-
-/** Une famille par graisse : sur React Native, `fontWeight` ne sélectionne pas le fichier de police. */
+/**
+ * Police système (SF Pro sur iOS, Roboto sur Android) : chaque graisse est un style `fontWeight`.
+ * Graisses retenues avec retenue : les plus épaisses plafonnent à 700 (chiffres lisibles, pas écrasants).
+ */
 export const fonts = {
-  light: 'Inter_300Light',
-  regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
-  extrabold: 'Inter_800ExtraBold',
-  black: 'Inter_900Black',
-} as const;
+  light: { fontWeight: '300' },
+  regular: { fontWeight: '400' },
+  medium: { fontWeight: '500' },
+  semibold: { fontWeight: '600' },
+  bold: { fontWeight: '600' },
+  extrabold: { fontWeight: '700' },
+  black: { fontWeight: '700' },
+} as const satisfies Record<string, TextStyle>;
 
 export type FontWeightName = keyof typeof fonts;

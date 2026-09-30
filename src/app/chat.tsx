@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 14,
   },
   send: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },

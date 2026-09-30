@@ -102,7 +102,7 @@ export const warnText = () => s.warnText;
 
 const s = StyleSheet.create({
   goal: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14, paddingHorizontal: 16, marginBottom: 10 },
-  goalLabel: { flex: 1, fontFamily: fonts.medium, fontSize: 14, lineHeight: 18 },
+  goalLabel: { flex: 1, ...fonts.medium, fontSize: 14, lineHeight: 18 },
   ck: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   ckOn: { backgroundColor: colors.pinkLight },
   big2: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginBottom: 10 },

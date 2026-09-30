@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   bubbleTxt: { fontSize: 14, lineHeight: 19.6 },
   logo: { fontSize: 34, lineHeight: 42, letterSpacing: 34 * 0.42, paddingLeft: 34 * 0.42, textAlign: 'center', marginTop: 6 },
   logoSub: { fontSize: 10.5, lineHeight: 14, letterSpacing: 10.5 * 0.32, color: colors.pinkLight, textAlign: 'center', marginTop: 4 },
-  h1: { fontFamily: fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 18 },
+  h1: { ...fonts.black, fontSize: 28, lineHeight: 31, letterSpacing: -0.28, marginTop: 18 },
   gbtn: { height: 52, borderRadius: 999, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20 },
   gTxt: { fontSize: 15, lineHeight: 19, color: '#1F1F1F' },
   abtn: {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     color: colors.text,
-    fontFamily: fonts.regular,
+    ...fonts.regular,
     fontSize: 15,
   },
   mb10: { marginBottom: 10 },

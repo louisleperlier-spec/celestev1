@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, Text } from '@/components/ui';
 import { ouvrirNotif, useBanniere } from '@/store/notifs';
-import { colors, ui } from '@/theme';
+import { alpha, colors, ui } from '@/theme';
 
 /** Bannière de notification en haut de l'écran, 7 s, touchable (.nbanner). */
 export function NotifBanniere() {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 20,
-    backgroundColor: 'rgba(28,28,34,0.96)',
+    backgroundColor: alpha(ui.toast, 0.97),
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.12)',
     boxShadow: '0 10px 30px rgba(0,0,0,0.5)',

@@ -1,107 +1,113 @@
 /**
- * Palette NÉA — valeurs exactes du cahier des charges (section 3).
- * Ne pas ajouter de couleur qui n'existe pas dans le prototype `nea-app.html`.
+ * Palette NÉA (refonte graphite) : fonds graphite, cartes ardoise, rose néon réservé aux actions,
+ * sélections, courbes, anneaux et icônes actives. Jamais de noir pur.
  */
 export const colors = {
   // Fonds
-  bg: '#070708',
-  bgAlt: '#0A0A0C',
+  bg: '#222328',
+  bgAlt: '#1D1E23',
 
   // Surfaces
-  surface: '#121215',
-  surface2: '#18181C',
-  border: '#26262B',
-  border2: '#34343A',
+  surface: '#2D3038',
+  surface2: '#343740',
+  border: '#41444E',
+  border2: '#4C4F5A',
 
-  // Rose néon (accent)
+  // Rose néon (accent) et mauve (séries secondaires)
   pink: '#FF4FA3',
-  pinkLight: '#FF8CC6',
-  pinkPale: '#FFC2DF',
+  pinkLight: '#FF9BCA',
+  pinkPale: '#FFC7E1',
+  mauve: '#985275',
 
   // Texte
-  text: '#FFFFFF',
-  textSecondary: '#9A9AA3',
-  textTertiary: '#6C6C75',
+  text: '#F5F5F7',
+  textSecondary: '#ADB0BA',
+  textTertiary: '#80838D',
   green: '#3EE07A',
+  /** Erreur (sémantique). */
+  error: '#FF5C6C',
 
-  /** Texte posé sur le bouton principal */
-  onPrimary: '#0A0A0C',
+  /** Texte posé sur le bouton principal (rose plein). */
+  onPrimary: '#FFFFFF',
 
   // Calories (badge)
   kcal: '#FF8A1F',
 } as const;
 
-/** Teintes ponctuelles reprises telles quelles du CSS du prototype. */
+/** Teintes ponctuelles (surfaces secondaires, graphiques, sommeil…), accordées à la palette graphite. */
 export const ui = {
-  /** Bouton sombre, cases du récap (.btn.dark, .cplan div, .stepper button). */
-  dark: '#1A1A1F',
-  /** Fond de pastille d'icône (.big2 .gi). */
-  iconBg: '#1C1C21',
-  /** Pastilles du style de coach (.coachstyle span). */
-  chipBg: '#17171B',
-  /** Fond des avatars (.av). */
-  avatarBg: '#0D0D10',
-  /** Flèches du carrousel de coachs (.coachstage .arrow). */
-  arrowBg: 'rgba(20,20,24,0.85)',
-  /** Texte clair secondaire (.quote, .coachstyle, .ackb, .bsteps, .goal .gi). */
-  text2: '#E8E8EC',
-  text3: '#D6D6DB',
-  text4: '#E6E6EA',
-  icon: '#D9D9DE',
+  /** Bouton secondaire, cases du récap, steppers. */
+  dark: '#343740',
+  /** Fond de pastille d'icône. */
+  iconBg: '#3A3D47',
+  /** Pastilles et filtres. */
+  chipBg: '#343740',
+  /** Fond des avatars. */
+  avatarBg: '#343740',
+  /** Flèches du carrousel de coachs. */
+  arrowBg: 'rgba(52,55,64,0.9)',
+  /** Texte clair secondaire. */
+  text2: '#E4E5EA',
+  text3: '#CFD1D8',
+  text4: '#E4E5EA',
+  icon: '#D4D6DD',
   /** Avertissement (.warn). */
-  warnBg: 'rgba(255,79,100,0.08)',
-  warnBorder: 'rgba(255,79,100,0.3)',
-  warnText: '#F3D6DE',
-  /** Icône cœur de la FC max (.fcmax svg). */
-  heart: '#FF4F6D',
-  /** Texte du badge « Recommandé » (.reco). */
+  warnBg: 'rgba(255,92,108,0.10)',
+  warnBorder: 'rgba(255,92,108,0.35)',
+  warnText: '#F6D9DE',
+  /** Icône cœur de la FC max. */
+  heart: '#FF5C6C',
+  /** Texte du badge « Recommandé ». */
   onGold: '#1A1300',
-  /** Toast (.toast). */
-  toast: '#1D1D22',
-  /** Sélection : fond rose très léger (.sel.on). */
-  selTop: 'rgba(255,79,163,0.10)',
-  selBottom: 'rgba(255,79,163,0.03)',
+  /** Toast et bannières. */
+  toast: '#3A3D47',
+  /** Sélection : fond rose très léger. */
+  selTop: 'rgba(255,79,163,0.12)',
+  selBottom: 'rgba(255,79,163,0.05)',
   pinkRing: 'rgba(255,79,163,0.35)',
-  /** Podium du classement (.pos.p0, .p1, .p2). */
+  /** Podium du classement. */
   podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
-  /** Éclair du Turbo x2 (.turbo svg). */
+  /** Éclair du Turbo x2. */
   turbo: '#FFD21F',
-  /** Boutons du sélecteur (.seg button) et bouton actif (dégradé #ffc6e0 → #ff8cc6). */
-  segBg: '#17171B',
-  segTxt: '#C6C6CC',
-  segOn: '#FFC6E0',
-  /** Sommeil : barres et anneau (#8f9bff → #5a46d6), libellés des graphiques (#77777f). */
-  sommeil: '#8F9BFF',
-  sommeilFonce: '#5A46D6',
-  axe: '#77777F',
-  /** Carte du vélo : fond (.map) et quadrillage (grid). */
-  carte: '#0C0C10',
-  grille: '#16161C',
-  /** Texte de la bannière de notification (.nbanner small) et date d'une notification (--muted2). */
-  bannerTxt: '#CFCFD6',
-  /** Chat : bulle de l'utilisateur (#ffb3d6 → #ff79b9), bouton Envoyer (#ffc6e0 → #ff6fb5), lien NÉA Plus (.quota button). */
-  bulleMoi: ['#FFB3D6', '#FF79B9'],
-  envoyer: ['#FFC6E0', '#FF6FB5'],
+  /** Contrôle segmenté : fond, texte, segment actif. */
+  segBg: '#2D3038',
+  segTxt: '#ADB0BA',
+  segOn: '#41444E',
+  /** Sommeil : barres et anneau (mauve → rose clair), libellés des graphiques. */
+  sommeil: '#FF9BCA',
+  sommeilFonce: '#985275',
+  axe: '#80838D',
+  /** Carte du vélo : fond et quadrillage. */
+  carte: '#26282E',
+  grille: '#30333B',
+  /** Texte de la bannière de notification. */
+  bannerTxt: '#CFD1D8',
+  /** Chat : bulle de l'utilisateur, bouton Envoyer, lien NÉA Plus. */
+  bulleMoi: ['#FF4FA3', '#FF4FA3'],
+  envoyer: ['#FF4FA3', '#FF4FA3'],
   plusLien: '#FFC23D',
+  /** Fond des feuilles (bottom sheets) et voile derrière. */
+  sheet: '#2D3038',
+  voile: 'rgba(22,23,27,0.7)',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */
 export const gradients = {
-  /** Bouton principal : #FFFFFF → #FFD6EA (55 %) → #F7A9CF, horizontal (.btn). */
-  primary: ['#FFFFFF', '#FFD6EA', '#F7A9CF'],
-  /** Segments de progression actifs (.segs i.on). */
-  progress: ['#FF8CC6', '#FF4FA3'],
+  /** Bouton principal : rose plein. */
+  primary: ['#FF4FA3', '#FF4FA3', '#FF4FA3'],
+  /** Segments de progression actifs. */
+  progress: ['#FF4FA3', '#FF4FA3'],
   /** Or NÉA Plus : #FFE38A → #FFC23D */
   gold: ['#FFE38A', '#FFC23D'],
 } as const;
 
-/** Zones cardio Z1 → Z5. */
+/** Zones cardio Z1 → Z5 : du gris mauve au rose clair, toujours accompagnées de leur libellé. */
 export const heartZones = {
-  z1: '#6B7CFF',
-  z2: '#3EE07A',
-  z3: '#FFD21F',
-  z4: '#FF8A1F',
-  z5: '#FF3B5C',
+  z1: '#716C82',
+  z2: '#985275',
+  z3: '#C9508D',
+  z4: '#FF4FA3',
+  z5: '#FF9BCA',
 } as const;
 
 export type ColorName = keyof typeof colors;

@@ -45,7 +45,7 @@ export function EnTete({ rubriques, actif }: { rubriques: readonly Rubrique[]; a
 
 const styles = StyleSheet.create({
   phd: { flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', columnGap: 16, paddingTop: 14, paddingHorizontal: 20 },
-  h1: { fontFamily: fonts.black, fontSize: 32, lineHeight: 39, letterSpacing: -0.64 },
+  h1: { ...fonts.black, fontSize: 32, lineHeight: 39, letterSpacing: -0.64 },
   btn: { fontSize: 21, lineHeight: 26, color: colors.textTertiary },
   phdSerre: { columnGap: 14 },
   h1Serre: { fontSize: 28, lineHeight: 34, letterSpacing: -0.56 },
