@@ -147,10 +147,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     écran), Récupération (sommeil en grand), Respiration, **Mon coach** (grille des 4, « Choisir » → iPhone `coach-choix` → `pickCoach`),
     Réglages en liste
   - **complications** `targets/watch-widgets/` (`NeaComplications`, `com.neacoach.app.watchkitapp.complications`, embarquées dans la montre) :
-    Score santé (moyenne Effort / Récup. / Sommeil connus), Pas (Santé), Ma séance (`nea://seance` lance la séance du jour), Mascotte ;
+    Score santé (moyenne Effort / Récup. / Sommeil connus), Pas (Santé), Ma séance (`nea://seance` lance la séance du jour), Ton coach
+    (rond, ou grand : mascotte + séance du jour, build 7) ;
     données via le groupe `group.com.neacoach.app` (`Cadran.publier`) : groupe créé et coché sur les deux identifiants de la montre ;
     profils App Store avec le groupe : montre 972FATG5W5, complications Y98HZL5A52 (QR8XTVUJF3, jusqu'au 29/09/2027) ;
-    **build 1.0.0 (6)** lancé le 30 sept. 2026
+    **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;

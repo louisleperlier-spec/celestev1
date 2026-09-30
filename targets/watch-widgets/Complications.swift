@@ -207,14 +207,29 @@ struct SeanceWidget: Widget {
 // MARK: Mascotte (ton coach, lance la séance)
 
 struct MascotteVue: View {
+  @Environment(\.widgetFamily) var famille
   let e: EntreeC
 
   var body: some View {
-    ZStack {
-      Circle().fill(C.rose.opacity(0.2))
-      Image(e.d.coach).resizable().scaledToFit().padding(3)
+    switch famille {
+    case .accessoryRectangular:
+      // Grand format : le coach en grand, puis la séance du jour.
+      HStack(spacing: 6) {
+        Image(e.d.coach).resizable().scaledToFit().frame(maxHeight: .infinity).widgetAccentable(false)
+        VStack(alignment: .leading, spacing: 0) {
+          Text(e.d.coach.capitalized).font(.system(size: 12, weight: .semibold)).foregroundColor(C.rose).widgetAccentable()
+          Text(e.d.seance.isEmpty ? "Ouvre NÉA" : e.d.seance).font(.system(size: 15, weight: .bold)).lineLimit(2).minimumScaleFactor(0.8)
+          Text(e.d.min > 0 ? "\(e.d.min) min · C'est parti !" : "C'est parti !").font(.system(size: 12)).foregroundColor(.secondary).lineLimit(1)
+        }
+        Spacer(minLength: 0)
+      }
+    default:
+      ZStack {
+        Circle().fill(C.rose.opacity(0.2))
+        Image(e.d.coach).resizable().scaledToFit().padding(3)
+      }
+      .widgetAccentable(false)
     }
-    .widgetAccentable(false)
   }
 }
 
@@ -225,7 +240,7 @@ struct MascotteWidget: Widget {
     }
     .configurationDisplayName("Ton coach")
     .description("Ton coach NÉA : touche pour lancer ta séance.")
-    .supportedFamilies([.accessoryCircular])
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular])
   }
 }
 
