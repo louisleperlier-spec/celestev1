@@ -196,11 +196,12 @@ function widget(e: EtatMontre) {
   const s = e.semaine.find((x) => x.jour >= auj) ?? null;
   return {
     prenom: e.prenom,
+    coach: e.coach,
     effort: e.bilan.effort,
     recup: e.bilan.recup,
     sommeil: e.bilan.sommeil,
     score: e.bilan.score,
-    seance: s ? { titre: s.titre, quand: s.quand, min: Math.round(s.min), exos: s.exos.length } : null,
+    seance: s ? { titre: s.titre, quand: s.quand, min: Math.round(s.min), exos: s.exos.length, jour: s.jour } : null,
     maj: new Date().toISOString(),
   };
 }

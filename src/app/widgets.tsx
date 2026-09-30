@@ -67,7 +67,8 @@ export default function Widgets() {
           </View>
         </View>
         <Text style={styles.note}>
-          Bilan du jour (petit), prochaine séance (moyen) et widgets d&apos;écran verrouillé : ouvre NÉA une fois pour les remplir.
+          Prochaine séance, Score NÉA, Pas, Fréquence cardiaque, Aperçu du jour (grand) et Horloge, avec ton coach, plus l&apos;écran
+          verrouillé. Pas et FC viennent d&apos;Apple Santé : ouvre NÉA une fois pour les remplir.
         </Text>
 
         <Text weight="semibold" style={styles.h3}>

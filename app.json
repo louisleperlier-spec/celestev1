@@ -47,15 +47,15 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo pour tracer ton parcours et calculer ta distance et ta vitesse."
+          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours, calculer ta distance et conquérir des territoires, et pour centrer la carte des territoires."
         }
       ],
       "expo-notifications",
       [
         "@kingstinct/react-native-healthkit",
         {
-          "NSHealthShareUsageDescription": "NÉA lit ton sommeil, ta VFC, ta fréquence cardiaque, ton poids, tes calories actives et tes minutes d'exercice dans Apple Santé pour calculer ta récupération, remplir tes cercles et adapter tes séances.",
-          "NSHealthUpdateUsageDescription": "NÉA enregistre tes séances et tes sorties vélo dans Apple Santé (durée, calories, distance) pour qu'elles comptent dans tes cercles d'activité.",
+          "NSHealthShareUsageDescription": "NÉA lit ton sommeil, ta VFC, ta fréquence cardiaque, ton poids, tes calories actives, tes minutes d'exercice et tes pas dans Apple Santé pour calculer ta récupération, remplir tes cercles et tes widgets et adapter tes séances.",
+          "NSHealthUpdateUsageDescription": "NÉA enregistre tes séances, tes sorties vélo et tes courses dans Apple Santé (durée, calories, distance) pour qu'elles comptent dans tes cercles d'activité.",
           "background": false
         }
       ],

@@ -20,7 +20,7 @@
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>NÉA enregistre tes séances dans Apple Santé pour qu'elles comptent dans tes cercles d'activité.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NÉA utilise le GPS de ta montre pendant tes sorties vélo pour tracer ton parcours et calculer ta distance et ta vitesse.</string>
+	<string>NÉA utilise le GPS de ta montre pendant tes sorties vélo et tes courses pour tracer ton parcours, calculer ta distance et conquérir des territoires.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>NÉA utilise les mouvements de ta montre pour compter tes répétitions.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

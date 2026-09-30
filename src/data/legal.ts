@@ -36,6 +36,10 @@ export const CONFIDENTIALITE: readonly SectionLegale[] = [
     "Elles sont sensibles au sens de la Loi 25 : elles ne sont collectées qu'avec ton consentement explicite et ne sont jamais partagées sans ton accord.",
   ],
   ['Coach IA', "Tes messages et un résumé de ton profil sont envoyés à notre fournisseur d'IA pour générer les réponses, sans ton email."],
+  [
+    'Territoires',
+    "Avec un compte, les cases (environ 150 m) traversées pendant tes sorties vélo et tes courses au GPS sont envoyées à NÉA, sans le tracé exact ni l'heure de passage. Les autres joueurs voient sur la carte les cases que tu possèdes, avec ton prénom et ton coach.",
+  ],
   ['Conservation', 'Tant que ton compte existe. À la suppression du compte, tout est effacé.'],
   [
     'Tes droits',

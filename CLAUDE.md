@@ -18,7 +18,7 @@ pour les séries secondaires (zones cardio en dégradé mauve → rose, toujours
 600 max pour les titres, 700 pour les plus forts) ; très peu de majuscules ; contrôle segmenté commun `Segmente`.
 **4 onglets** (`TabBar`) : **Accueil** (Bonjour, anneaux « Ton bilan du jour » Effort / Récupération / Sommeil, mot du coach,
 « Ta prochaine séance » + Commencer, NÉA Plus, « Tes repères » VFC nocturne et FC au repos ; avatar → Profil), **Entraînement**
-(`EnTete` : titre, « + » → séances prêtes, segmenté Programme · Calendrier · Vélo), **Progrès** (+ Ligue dessous, `Ligue integree`)
+(`EnTete` : titre, « + » → séances prêtes, segmenté Programme · Calendrier · Sorties (vélo, course, stationnaire)), **Progrès** (+ Ligue dessous, `Ligue integree`)
 et **Coach** (`(tabs)/coach.tsx` : ressenti du jour, Adapter ma séance, Préparer ma semaine, dernier échange, saisie → `/chat`) ;
 les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
 **Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
@@ -158,9 +158,25 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     `credentials.json` multi-cibles (`NA` profil CD645KQZ8X avec le groupe, `NeaWatch`, `NeaComplications`, `NeaWidgets` A22Y52K2DH), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
 - [ ] **Profil, écran d'accueil, widgets** : Profil en sections (Mon programme, Mon écran, Alertes avec bascules, Santé, Abonnement et
   compte, Aide) ; « Mon écran d'accueil » (`/personnaliser`, `lib/accueil.ts`, `accueil` dans le profil : cartes affichées et ordre) ;
-  **widgets iPhone** `targets/widgets/` (build 8 ; WidgetKit, `com.neacoach.app.widgets` 68R3D4T25T ; groupe `group.com.neacoach.app` dans `app.json`) : Bilan du jour (petit + rond écran verrouillé) et
-  Prochaine séance (moyen + rectangulaire), données écrites par l'app dans le groupe `group.com.neacoach.app` (`ecrireWidget`) ;
+  **widgets iPhone** `targets/widgets/` (WidgetKit, `com.neacoach.app.widgets` 68R3D4T25T, HealthKit + groupe, profil PZ4KG737T5 ; groupe
+  `group.com.neacoach.app` dans `app.json`) ; **build 11 = maquette noire à lueur rose** avec la mascotte du coach (`<coach>_corps`) :
+  Prochaine séance (moyen, `nea://seance/<jour>`, + rectangulaire), Score NÉA (petit, même moyenne que la montre, + rond ; kind `NeaBilan`),
+  Pas (petit, objectif 10 000), Fréquence cardiaque (moyen), Aperçu du jour (grand), Horloge (moyen) ; pas et dernière FC lus par
+  l'extension dans Apple Santé (gardés dans le groupe pour l'écran verrouillé), le reste écrit par l'app (`ecrireWidget` : coach, jour) ;
   page `/widgets` (aperçu + marche à suivre) ; le groupe d'apps se crée à la main sur developer.apple.com (pas d'API)
+- [ ] **Territoires + Course (hors cahier des charges, demandés par l'utilisateur, oct. 2026)** : **codés, à valider sur iPhone et montre**
+  - règles validées : ville en hexagones (~150 m, `lib/territoires.ts`, grille Mercator pointe en haut, `TAILLE` 120) ; **cases traversées**
+    (`casesTrace`, pas d'un tiers de case, sauts GPS > 600 m ignorés) ; **tous les joueurs NÉA** (amis et équipe en mauve) ; **vol + bouclier
+    24 h** ; case sans passage depuis 14 jours = libre ; seul le vrai GPS compte (pas le simulé ni le stationnaire)
+  - `supabase/territoires.sql` à exécuter (après `ligue.sql`) : table `territoires` (q, r, proprio, pris, vu) fermée, RPC `conquerir`
+    (3 000 cases max), `territoires_zone` (4 000 max, lien moi / ami / equipe / autre, bouclier), `territoires_classement` (quartier ~20 cases,
+    ville ~100) ; testé sur un Postgres local (prise, bouclier, vol, carte, classement)
+  - `store/territoires.ts` : file d'attente sauvegardée (`nea-territoires`) envoyée à la connexion ; écran **`/territoires`** (carte Apple Plans
+    avec hexagones `CarteTerritoires`, légende, tes cases, surface, bouclier, classement Quartier / Ville, règles) ; entrée `EntreeTerritoires`
+    dans Sorties et Progrès ; résultat de la conquête dans « Dernière sortie »
+  - **Course** : 3e mode de l'onglet **Sorties** (ex-« Vélo ») : GPS, allure min/km, calories ≈ 1 kcal/kg/km, XP 30 + 8/km, log `course`,
+    Santé (HKWorkoutActivityType 37, distance course), rappel VFC ; **montre** : menu « Course » (`VeloView(course:)`, `.running`, allure),
+    le vélo et la course envoient `sport` et `pts` (500 points max) → l'iPhone conquiert les cases
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
@@ -180,6 +196,7 @@ src/
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     activite.tsx    récap d'une activité (montre) : FC d'Apple Santé, zones · personnaliser.tsx, widgets.tsx
+    territoires.tsx carte des territoires conquis (hexagones), classements quartier / ville, règles
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
     (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite
@@ -212,7 +229,7 @@ assets/
   images/           icône et écran de démarrage
 docs/               cahier des charges
 prototype/          nea-app.html (référence) + LISEZMOI des données
-supabase/           schema.sql, ligue.sql, coach.sql (SQL Editor) · functions/coach (fonction Edge, exclue du tsc et du lint de l'app)
+supabase/           schema.sql, ligue.sql, coach.sql, territoires.sql (SQL Editor) · functions/coach (fonction Edge, exclue du tsc et du lint de l'app)
 targets/watch/      app Apple Watch (SwiftUI) · targets/watch-widgets : complications du cadran · modules/nea-montre : liaison WatchConnectivity (module Expo local)
 scripts/            verifier-donnees.ts, comparer-plan.ts (+ prototype-plan.cjs)
 ```
