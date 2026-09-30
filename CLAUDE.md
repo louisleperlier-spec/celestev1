@@ -141,7 +141,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     `credentials.json` multi-cibles (`NA` et `NeaWatch`), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
 - [ ] **Profil, écran d'accueil, widgets** : Profil en sections (Mon programme, Mon écran, Alertes avec bascules, Santé, Abonnement et
   compte, Aide) ; « Mon écran d'accueil » (`/personnaliser`, `lib/accueil.ts`, `accueil` dans le profil : cartes affichées et ordre) ;
-  **widgets iPhone** `targets/widgets/` (WidgetKit, `com.neacoach.app.widgets`) : Bilan du jour (petit + rond écran verrouillé) et
+  **widgets iPhone mis de côté** dans `plus-tard/widgets/` (à remettre dans `targets/` + groupe d'apps à créer ; WidgetKit, `com.neacoach.app.widgets`) : Bilan du jour (petit + rond écran verrouillé) et
   Prochaine séance (moyen + rectangulaire), données écrites par l'app dans le groupe `group.com.neacoach.app` (`ecrireWidget`) ;
   page `/widgets` (aperçu + marche à suivre) ; le groupe d'apps se crée à la main sur developer.apple.com (pas d'API)
 - [ ] 12. Analytics, polish, accessibilité, performance

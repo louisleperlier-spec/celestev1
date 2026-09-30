@@ -67,8 +67,7 @@ export default function Widgets() {
           </View>
         </View>
         <Text style={styles.note}>
-          Les widgets arrivent avec la prochaine version TestFlight : bilan du jour (petit), prochaine séance (moyen) et un widget d&apos;écran
-          verrouillé.
+          Bientôt : bilan du jour (petit), prochaine séance (moyen) et un widget d&apos;écran verrouillé.
         </Text>
 
         <Text weight="semibold" style={styles.h3}>
