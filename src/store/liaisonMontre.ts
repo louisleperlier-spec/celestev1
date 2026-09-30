@@ -8,11 +8,13 @@ import { toast } from '@/components/ui';
 import { cerclesJour, part, type IdCercle } from '@/lib/cercles';
 import { dec, loadFor, rj } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
-import { buildPlan, coachById, exercice, exKcal, hrMax, sesKcal, todayIdx } from '@/lib/plan';
+import { COACHES, SEANCES } from '@/data';
+import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, sesKcal, todayIdx } from '@/lib/plan';
+import { wkLocked } from '@/lib/premium';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { caloriesVelo, xpVelo } from '@/lib/velo';
 import { colors } from '@/theme';
-import { sessionForDay, type Semaine } from '@/lib/semaine';
+import { catSession, sessionForDay, type SeanceJour, type Semaine } from '@/lib/semaine';
 import { lvlInfo, rankOf, streak } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
@@ -57,6 +59,8 @@ type EtatMontre = {
   progres: ProgresMontre;
   fcMax: number;
   poids: number;
+  explorer: SeanceMontre[];
+  coachs: { id: string; nom: string; spec: string }[];
 };
 
 /** Séance terminée sur la montre. */
@@ -71,38 +75,47 @@ function etat(): EtatMontre {
   const p = selectProfil(st);
   const sem: Semaine = { plan: buildPlan(p), weight: st.weight, added: st.added, wkMod: st.wkMod };
   const auj = todayIdx();
+  /** Séance au format de la montre (charges calculées pour ce profil). */
+  const versMontre = (s: SeanceJour, jour: number, quand: string): SeanceMontre => ({
+    jour,
+    quand,
+    titre: s.titre,
+    min: s.min,
+    kcal: s.kcal,
+    exos: s.items.map((it) => {
+      const ch = loadFor(it, p);
+      const e = exercice(it.id);
+      const double = e.materiel === 'hal' && !e.uneHaltere;
+      return {
+        id: it.id,
+        nom: e.nom,
+        series: it.sets,
+        reps: it.reps ? it.reps[1] : 0,
+        repsTxt: it.reps ? rj(it.reps) : '',
+        sec: it.sec ?? 0,
+        repos: it.rest,
+        charge: ch.txt,
+        kg: ch.kg ? (double ? ch.kg / 2 : ch.kg) : 0,
+        double,
+        pas: e.materiel === 'hal' ? 1 : 2.5,
+        kcal: exKcal(it, p.weight),
+      };
+    }),
+  });
   const semaine: SeanceMontre[] = [];
   for (let i = 0; i < 7; i++) {
     const s = sessionForDay(sem, i);
-    // Les sorties vélo restent sur l'iPhone (vélo de la montre : 2e temps).
+    // Les sorties vélo se lancent depuis « Vélo » sur la montre.
     if (!s || s.ride || !s.items.length) continue;
-    semaine.push({
-      jour: i,
-      quand: i === auj ? "Aujourd'hui" : i === auj + 1 ? 'Demain' : JOURS[i],
-      titre: s.titre,
-      min: s.min,
-      kcal: s.kcal,
-      exos: s.items.map((it) => {
-        const ch = loadFor(it, p);
-        const e = exercice(it.id);
-        const double = e.materiel === 'hal' && !e.uneHaltere;
-        return {
-          id: it.id,
-          nom: e.nom,
-          series: it.sets,
-          reps: it.reps ? it.reps[1] : 0,
-          repsTxt: it.reps ? rj(it.reps) : '',
-          sec: it.sec ?? 0,
-          repos: it.rest,
-          charge: ch.txt,
-          kg: ch.kg ? (double ? ch.kg / 2 : ch.kg) : 0,
-          double,
-          pas: e.materiel === 'hal' ? 1 : 2.5,
-          kcal: exKcal(it, p.weight),
-        };
-      }),
-    });
+    semaine.push(versMontre(s, i, i === auj ? "Aujourd'hui" : i === auj + 1 ? 'Demain' : JOURS[i]));
   }
+  // « Explorer » : séances prêtes accessibles du lieu choisi, les plus proches du niveau.
+  const lieu = st.gear === 'maison' ? 'maison' : 'salle';
+  const niveau = lvlN(st.level);
+  const explorer = SEANCES.filter((w) => w.lieu === lieu && !w.ride && !wkLocked(w.id))
+    .sort((a, b) => Math.abs(a.lvl - niveau) - Math.abs(b.lvl - niveau))
+    .slice(0, 6)
+    .map((w) => versMontre(catSession(w, null, st.weight, st.wkMod[w.id] ?? 0), -1, 'Séance prête'));
   // Bilan du jour (mêmes calculs que les anneaux de l'Accueil, sans l'activité Apple Santé que la montre a déjà).
   const objKcal = sem.plan.sessions.length ? sem.plan.sessions.reduce((a, x) => a + sesKcal(x, st.weight), 0) / sem.plan.sessions.length : 300;
   const jour = cerclesJour(new Date(), { logs: st.logs, nights: st.nights, hrvChecks: st.hrvChecks, objKcal, objMin: st.dur });
@@ -145,6 +158,8 @@ function etat(): EtatMontre {
     },
     fcMax: hrMax(st.age),
     poids: st.weight,
+    explorer,
+    coachs: COACHES.map((x) => ({ id: x.id, nom: x.nom, spec: x.spec.charAt(0) + x.spec.slice(1).toLowerCase() })),
   };
 }
 
@@ -249,7 +264,14 @@ function traiter(m: { type: string; json: string }) {
   if (m.type === 'seance') recevoir(m.json);
   else if (m.type === 'velo') recevoirVelo(m.json);
   else if (m.type === 'mesure') recevoirMesure(m.json);
-  else if (m.type === 'coach') {
+  else if (m.type === 'coach-choix') {
+    const c = lire<{ id: string }>(m.json);
+    const id = c ? coachValide(c.id) : null;
+    if (id && id !== useProfil.getState().coach) {
+      useProfil.getState().pickCoach(id);
+      toast('Coach ' + coachById(id).nom + ' choisi depuis ta montre');
+    }
+  } else if (m.type === 'coach') {
     const c = lire<CoachEnvoi>(m.json);
     if (c?.texte) envoyerAuCoach(c.texte);
   }

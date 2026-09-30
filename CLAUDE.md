@@ -140,6 +140,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     quand NÉA n'est pas au premier plan (une fois par date de fin) ; au premier plan : bannière NÉA (`annoncer`, notification `activite`) ;
     toucher → **récap `/activite?d=`** (durée, calories, distance / volume, vitesse, FC moy / max, courbe de FC et zones lues dans
     Apple Santé via `fcEntre`) ; journal : `debut` et `src: 'montre'` ; calories estimées si la montre renvoie 0
+  - **restructuration (maquettes 02–15 + cadran)** : titres roses avec retour (`.tint`), gros chiffres à lueur (`GrosChiffre`), Accueil =
+    prochaine séance + Démarrer + menu en lignes ; Séances (celle du jour en avant) + **Explorer** (6 séances prêtes accessibles envoyées
+    par l'iPhone) ; Détail avec **échauffement 5 min** (validé, `DUREE_ECHAUFFEMENT`) ; séance : Répétitions, Valider, Repos (barre),
+    **En pause** (bouton pause en haut, temps arrêté), Bilan ; Vélo (vitesse en grand, pause Reprendre / Terminer), Parcours (carte plein
+    écran), Récupération (sommeil en grand), Respiration, **Mon coach** (grille des 4, « Choisir » → iPhone `coach-choix` → `pickCoach`),
+    Réglages en liste
+  - **complications** `targets/watch-widgets/` (`NeaComplications`, `com.neacoach.app.watchkitapp.complications`, embarquées dans la montre) :
+    Score santé (moyenne Effort / Récup. / Sommeil connus), Pas (Santé), Ma séance (`nea://seance` lance la séance du jour), Mascotte ;
+    données via le groupe `group.com.neacoach.app` (`Cadran.publier`) : groupe à créer à la main et à cocher sur les deux identifiants de la montre
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
@@ -201,7 +210,7 @@ assets/
 docs/               cahier des charges
 prototype/          nea-app.html (référence) + LISEZMOI des données
 supabase/           schema.sql, ligue.sql, coach.sql (SQL Editor) · functions/coach (fonction Edge, exclue du tsc et du lint de l'app)
-targets/watch/      app Apple Watch (SwiftUI) · modules/nea-montre : liaison WatchConnectivity (module Expo local)
+targets/watch/      app Apple Watch (SwiftUI) · targets/watch-widgets : complications du cadran · modules/nea-montre : liaison WatchConnectivity (module Expo local)
 scripts/            verifier-donnees.ts, comparer-plan.ts (+ prototype-plan.cjs)
 ```
 

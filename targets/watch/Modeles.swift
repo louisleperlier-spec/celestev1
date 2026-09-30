@@ -77,6 +77,27 @@ struct EtatMontre: Codable {
   let progres: ProgresMontre?
   let fcMax: Double?
   let poids: Double?
+  let explorer: [SeanceMontre]?
+  let coachs: [CoachResume]?
+
+  /// Score santé (0–100) : moyenne des parts d'Effort, de Récupération et de Sommeil connues.
+  var score: Int? {
+    guard let b = bilan else { return nil }
+    var parts = [min(1, b.effort / 100)]
+    if b.recup > 0 { parts.append(min(1, b.recup / 100)) }
+    if b.sommeil > 0 { parts.append(min(1, b.sommeil / 8)) }
+    return Int((parts.reduce(0, +) / Double(parts.count) * 100).rounded())
+  }
+}
+
+struct CoachResume: Codable, Hashable {
+  let id: String
+  let nom: String
+  let spec: String
+}
+
+struct ChoixCoach: Codable {
+  let id: String
 }
 
 /// Séance terminée, envoyée à l'iPhone.

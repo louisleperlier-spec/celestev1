@@ -1,28 +1,23 @@
 import HealthKit
 import SwiftUI
 
-/// 10 · Récupération : sommeil, FC au repos, VFC nocturne de la dernière nuit, puis Respirer et Mesurer.
+/// 12 · Récupération : sommeil en grand, FC au repos, VFC nocturne, Respirer ; Mesurer en dessous.
 struct RecupView: View {
   @ObservedObject private var donnees = Donnees.partagees
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 6) {
-        Marque()
-        Text("Récupération").font(.system(size: 22, weight: .bold))
-        if let b = donnees.etat?.bilan {
-          Text(b.recup > 0 ? "\(Int(b.recup)) % \(b.recupTxt)" : b.recupTxt)
-            .font(.system(size: 14))
-            .foregroundColor(Nea.texte2)
-        }
+      VStack(spacing: 2) {
         if let n = donnees.etat?.nuit {
-          Mesure(icone: "moon.fill", titre: "Sommeil", valeur: heures(n.h), unite: "")
-          if n.rhr > 0 { Mesure(icone: "heart.fill", titre: "FC au repos", valeur: "\(Int(n.rhr))", unite: "bpm") }
-          if n.hrv > 0 { Mesure(icone: "waveform.path.ecg", titre: "VFC nocturne", valeur: "\(Int(n.hrv))", unite: "ms") }
-          Text("Dernière nuit · \(n.src)")
-            .font(.system(size: 13))
-            .foregroundColor(Nea.texte2)
-            .frame(maxWidth: .infinity)
+          GrosChiffre(texte: heures(n.h), taille: 46)
+          Text("de sommeil").font(.system(size: 15)).foregroundColor(Nea.texte2)
+          VStack(spacing: 0) {
+            if n.rhr > 0 { LigneValeur(titre: "FC au repos", valeur: "\(Int(n.rhr)) bpm") }
+            if n.hrv > 0 { LigneValeur(titre: "VFC nocturne", valeur: "\(Int(n.hrv)) ms") }
+            if let s = donnees.etat?.score { LigneValeur(titre: "Score santé", valeur: "\(s)") }
+          }
+          .padding(.top, 4)
+          Text("Dernière nuit · \(n.src)").font(.system(size: 12)).foregroundColor(Nea.texte2).padding(.vertical, 4)
         } else {
           Text("Pas encore de nuit : note-la dans NÉA sur l'iPhone ou porte ta montre la nuit.")
             .font(.system(size: 14))
@@ -31,17 +26,18 @@ struct RecupView: View {
         NavigationLink {
           RespirationView()
         } label: {
-          Text("Respirer · 2 min")
+          Label("Respirer · 2 min", systemImage: "wind")
         }
         .buttonStyle(BoutonRose())
         NavigationLink {
           MesureView()
         } label: {
-          Text("Mesurer · 1 min")
+          Label("Mesurer · 1 min", systemImage: "waveform.path.ecg")
         }
         .buttonStyle(BoutonSombre())
       }
     }
+    .navigationTitle("Récupération")
   }
 
   private func heures(_ h: Double) -> String {
@@ -86,25 +82,21 @@ struct RespirationView: View {
 
   var body: some View {
     VStack(spacing: 6) {
-      HStack {
-        Marque()
-        Spacer()
-      }
-      Text(fini ? "Bien joué" : "Respiration").font(.system(size: 20, weight: .bold)).frame(maxWidth: .infinity, alignment: .leading)
       ZStack {
-        Circle().stroke(Nea.rose.opacity(0.25), lineWidth: 10).scaleEffect(1.08)
+        Circle().fill(Nea.rose.opacity(0.12)).blur(radius: 12)
         Circle()
-          .stroke(Nea.rose, lineWidth: 6)
-          .scaleEffect(inspire ? 1.0 : 0.72)
+          .stroke(Nea.rose, lineWidth: 5)
+          .shadow(color: Nea.rose, radius: 8)
+          .scaleEffect(fini ? 0.9 : inspire ? 1.0 : 0.74)
           .animation(.easeInOut(duration: inspire ? 4 : 6), value: inspire)
         VStack(spacing: 0) {
-          Text(fini ? "Terminé" : inspire ? "Inspire" : "Expire").font(.system(size: 22, weight: .bold))
+          Text(fini ? "Terminé" : inspire ? "Inspire" : "Expire").font(.system(size: 24, weight: .bold))
           if !fini { Text("\(secondes) secondes").font(.system(size: 13)).foregroundColor(Nea.texte2) }
         }
       }
-      .frame(width: 118, height: 118)
+      .frame(width: 120, height: 120)
       HStack(spacing: 4) {
-        Text(Nea.mmss(reste)).font(.system(size: 17, weight: .heavy, design: .rounded)).monospacedDigit()
+        Text(Nea.mmss(reste)).font(.system(size: 18, weight: .heavy, design: .rounded)).monospacedDigit()
         Text("restantes").font(.system(size: 14)).foregroundColor(Nea.texte2)
       }
       if fini {
@@ -118,6 +110,7 @@ struct RespirationView: View {
         .buttonStyle(BoutonSombre())
       }
     }
+    .navigationTitle("Respiration")
     .onAppear {
       debut = Date()
       Vibre.jouer(.directionUp)

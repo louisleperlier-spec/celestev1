@@ -34,7 +34,7 @@ final class Entrainement: NSObject, ObservableObject {
     ]
     let lecture: Set<HKObjectType> = [
       HKQuantityType(.heartRate), HKQuantityType(.activeEnergyBurned), HKObjectType.workoutType(),
-      HKQuantityType(.heartRateVariabilitySDNN), HKQuantityType(.restingHeartRate),
+      HKQuantityType(.heartRateVariabilitySDNN), HKQuantityType(.restingHeartRate), HKQuantityType(.stepCount),
     ]
     sante.requestAuthorization(toShare: partage, read: lecture) { _, _ in }
   }

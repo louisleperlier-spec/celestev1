@@ -7,12 +7,15 @@ final class Donnees: ObservableObject {
 
   @Published var etat: EtatMontre?
   @Published var synchro: Date?
+  /// Ouverture par la complication « Ma séance » (nea://seance) : lance la prochaine séance.
+  @Published var demandeSeance = false
   private let cle = "nea.etat"
   private let cleSynchro = "nea.synchro"
 
   init() {
     if let s = UserDefaults.standard.string(forKey: cle) {
       etat = Donnees.decoder(s)
+      if let e = etat { Cadran.publier(e) }
     }
     let t = UserDefaults.standard.double(forKey: cleSynchro)
     if t > 0 { synchro = Date(timeIntervalSince1970: t) }
@@ -28,6 +31,7 @@ final class Donnees: ObservableObject {
     let maintenant = Date()
     UserDefaults.standard.set(s, forKey: cle)
     UserDefaults.standard.set(maintenant.timeIntervalSince1970, forKey: cleSynchro)
+    Cadran.publier(e)
     DispatchQueue.main.async {
       self.etat = e
       self.synchro = maintenant

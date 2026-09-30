@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Séance en plein écran : effort, validation, repos, bilan.
+/// Séance en plein écran : échauffement, répétitions (05), validation (06), repos (07), pause (08), bilan (09).
 struct SeanceView: View {
   @StateObject private var seance: SeanceEnCours
 
@@ -9,200 +9,249 @@ struct SeanceView: View {
   }
 
   var body: some View {
-    // ZStack (pas Group) : onAppear / onDisappear portent sur l'écran de séance, pas sur chaque étape.
-    ZStack {
-      switch seance.phase {
-      case .effort: EffortView(seance: seance)
-      case .validation: ValidationView(seance: seance)
-      case .repos: ReposView(seance: seance)
-      case .bilan: BilanView(seance: seance)
+    NavigationStack {
+      // ZStack (pas Group) : onAppear / onDisappear portent sur l'écran de séance, pas sur chaque étape.
+      ZStack {
+        switch seance.phase {
+        case .echauffement: EchauffementView(seance: seance)
+        case .effort: EffortView(seance: seance)
+        case .validation: ValidationView(seance: seance)
+        case .repos: ReposView(seance: seance)
+        case .pause: PauseView(seance: seance)
+        case .bilan: BilanView(seance: seance)
+        }
+      }
+      .navigationBarBackButtonHidden(true)
+      .toolbar {
+        if seance.phase != .pause && seance.phase != .bilan {
+          ToolbarItem(placement: .topBarLeading) {
+            Button {
+              seance.pause()
+            } label: {
+              Image(systemName: "pause.fill").foregroundColor(Nea.rose)
+            }
+            .accessibilityLabel("Pause")
+          }
+        }
       }
     }
+    .tint(Nea.rose)
     .onAppear { seance.commencer() }
     .onDisappear { seance.abandonner() }
   }
 }
 
-/// Bloc FC + charge.
+/// Échauffement : 5 minutes guidées avant le premier exercice.
+struct EchauffementView: View {
+  @ObservedObject var seance: SeanceEnCours
+
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 6) {
+        Image(systemName: "figure.run").font(.system(size: 26)).foregroundColor(Nea.rose)
+        GrosChiffre(texte: Nea.mmss(seance.echauffementReste), taille: 48)
+        Text("Mobilise tes articulations, monte doucement le cardio.")
+          .font(.system(size: 13))
+          .foregroundColor(Nea.texte2)
+          .multilineTextAlignment(.center)
+        if let e = seance.s.exos.first {
+          Text("Ensuite : \(e.nom)").font(.system(size: 13, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+        }
+        Button {
+          seance.finEchauffement()
+        } label: {
+          Label("Passer", systemImage: "forward.fill")
+        }
+        .buttonStyle(BoutonRose())
+      }
+    }
+    .navigationTitle("Échauffement")
+  }
+}
+
+/// Charge et FC sur une ligne.
 struct LigneFC: View {
   @ObservedObject var seance: SeanceEnCours
 
   var body: some View {
     HStack(spacing: 6) {
-      Image(systemName: "heart").foregroundColor(.white)
+      if seance.charge > 0 {
+        Image(systemName: "dumbbell.fill").foregroundColor(Nea.rose)
+        Text("\(Nea.kg(seance.charge)) kg").font(.system(size: 15, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+        Rectangle().fill(Nea.texte2.opacity(0.4)).frame(width: 1, height: 18)
+      }
+      Image(systemName: "heart").foregroundColor(Nea.rose)
       Text(seance.entrainement.bpm > 0 ? "\(Int(seance.entrainement.bpm)) bpm" : "-- bpm")
         .font(.system(size: 15, weight: .semibold))
         .lineLimit(1)
         .minimumScaleFactor(0.7)
-      if seance.charge > 0 {
-        Rectangle().fill(Nea.texte2.opacity(0.4)).frame(width: 1, height: 18)
-        Image(systemName: "dumbbell").foregroundColor(.white)
-        Text("\(Nea.kg(seance.charge)) kg")
-          .font(.system(size: 15, weight: .semibold))
-          .lineLimit(1)
-          .minimumScaleFactor(0.7)
-      }
     }
     .frame(maxWidth: .infinity)
-    .padding(8)
-    .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
   }
 }
 
-/// 04 · Répétitions : compteur estimé (ou minuteur pour un exercice en durée), « Fin de série ».
+/// 05 · Répétitions : compteur estimé (ou minuteur pour un exercice en durée), « Fin de série ».
 struct EffortView: View {
   @ObservedObject var seance: SeanceEnCours
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 4) {
-        Marque()
-        Text(seance.exo.nom).font(.system(size: 20, weight: .bold)).lineLimit(2).minimumScaleFactor(0.7)
-        Text("Série \(seance.serie + 1) sur \(seance.exo.series)").font(.system(size: 15)).foregroundColor(Nea.texte2)
+      VStack(spacing: 2) {
+        Text("Série \(seance.serie + 1)/\(seance.exo.series)").font(.system(size: 15)).foregroundColor(Nea.texte2)
         if seance.enDuree {
-          Text(Nea.mmss(seance.effortReste))
-            .font(.system(size: 50, weight: .heavy, design: .rounded))
-            .monospacedDigit()
-            .frame(maxWidth: .infinity)
-          Text("Tiens la position").font(.system(size: 14)).foregroundColor(Nea.texte2).frame(maxWidth: .infinity)
+          GrosChiffre(texte: Nea.mmss(seance.effortReste), taille: 50)
+          Text("Tiens la position").font(.system(size: 14)).foregroundColor(Nea.texte2)
         } else {
-          Text(String(format: "%02d", seance.compteur.reps))
-            .font(.system(size: 64, weight: .heavy, design: .rounded))
-            .monospacedDigit()
-            .frame(maxWidth: .infinity)
-          Text("/ \(seance.exo.repsTxt) reps").font(.system(size: 17, weight: .semibold)).foregroundColor(Nea.texte2).frame(maxWidth: .infinity)
-          HStack(spacing: 6) {
-            Image(systemName: "dot.radiowaves.left.and.right").foregroundColor(Nea.rose)
-            Text(seance.compteur.disponible ? "Détection auto · estimée" : "Compte tes reps").font(.system(size: 12)).foregroundColor(Nea.texte2)
+          ZStack {
+            Circle().fill(Nea.rose.opacity(0.18)).frame(width: 96, height: 96).blur(radius: 14)
+            GrosChiffre(texte: String(format: "%02d", seance.compteur.reps), taille: 64)
           }
-          .frame(maxWidth: .infinity)
+          Text("/ \(seance.exo.repsTxt) reps").font(.system(size: 17, weight: .semibold))
+          Text(seance.compteur.disponible ? "Auto · à vérifier" : "Compte tes reps").font(.system(size: 12)).foregroundColor(Nea.texte2)
         }
-        LigneFC(seance: seance).padding(.top, 4)
-        Button("Fin de série") { seance.finSerie() }
-          .buttonStyle(BoutonRose())
-          .padding(.top, 2)
+        Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 4)
+        LigneFC(seance: seance)
+        Button {
+          seance.finSerie()
+        } label: {
+          Label("Fin de série", systemImage: "stop.fill")
+        }
+        .buttonStyle(BoutonRose())
+        .padding(.top, 4)
       }
     }
+    .navigationTitle(seance.exo.nom)
   }
 }
 
-/// Bouton rond − / +.
+/// Bouton rond − / + bordé de rose.
 struct Rond: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.system(size: 22, weight: .bold))
-      .foregroundColor(.white)
+      .foregroundColor(Nea.rose)
       .frame(width: 44, height: 44)
       .background(Circle().fill(Nea.carte))
+      .overlay(Circle().stroke(Nea.rose.opacity(0.5), lineWidth: 1))
       .opacity(configuration.isPressed ? 0.7 : 1)
   }
 }
 
-/// 05 · Validation : reps corrigées, charge modifiable, « Valider la série ».
+/// 06 · Valider : répétitions −/+, charge modifiable, « Confirmer ».
 struct ValidationView: View {
   @ObservedObject var seance: SeanceEnCours
   @State private var edition = false
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 6) {
-        Text("Série terminée").font(.system(size: 20, weight: .bold))
-        Text("Corrige si nécessaire").font(.system(size: 14)).foregroundColor(Nea.texte2)
+      VStack(alignment: .leading, spacing: 4) {
+        Text("Répétitions").font(.system(size: 14)).foregroundColor(Nea.texte2)
         HStack {
           Button { seance.changerReps(-1) } label: { Image(systemName: "minus") }
             .buttonStyle(Rond())
-          VStack(spacing: 0) {
-            Text("\(seance.reps)")
-              .font(.system(size: 44, weight: .heavy, design: .rounded))
-              .monospacedDigit()
-            Text("reps").font(.system(size: 13)).foregroundColor(Nea.texte2)
-          }
-          .frame(maxWidth: .infinity)
+          GrosChiffre(texte: "\(seance.reps)", taille: 44)
           Button { seance.changerReps(1) } label: { Image(systemName: "plus") }
             .buttonStyle(Rond())
         }
         if seance.exo.kg > 0 {
-          HStack(spacing: 8) {
-            Image(systemName: "dumbbell.fill").foregroundColor(.white)
+          Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 4)
+          HStack {
             VStack(alignment: .leading, spacing: 0) {
-              Text(seance.exo.double ? "Charge / haltère" : "Charge").font(.system(size: 12)).foregroundColor(Nea.texte2)
-              Text("\(Nea.kg(seance.charge)) kg").font(.system(size: 18, weight: .bold))
+              Text(seance.exo.double ? "Charge / haltère" : "Charge").font(.system(size: 14)).foregroundColor(Nea.texte2)
+              Text("\(Nea.kg(seance.charge)) kg").font(.system(size: 22, weight: .bold))
             }
-            Spacer(minLength: 0)
+            Spacer(minLength: 4)
             if edition {
-              Button { seance.changerCharge(-1) } label: { Image(systemName: "minus") }
-                .buttonStyle(.plain)
-                .frame(width: 30, height: 30)
-              Button { seance.changerCharge(1) } label: { Image(systemName: "plus") }
-                .buttonStyle(.plain)
-                .frame(width: 30, height: 30)
+              Button { seance.changerCharge(-1) } label: { Image(systemName: "minus") }.buttonStyle(Rond())
+              Button { seance.changerCharge(1) } label: { Image(systemName: "plus") }.buttonStyle(Rond())
             } else {
-              Button { edition = true } label: { Image(systemName: "pencil").foregroundColor(Nea.texte2) }
-                .buttonStyle(.plain)
+              Button { edition = true } label: { Image(systemName: "pencil") }.buttonStyle(Rond())
             }
           }
-          .padding(10)
-          .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
+          Text("Corrige si nécessaire").font(.system(size: 12)).foregroundColor(Nea.texte2)
         }
-        Button("Valider la série") { seance.valider() }
-          .buttonStyle(BoutonRose())
+        Button {
+          seance.valider()
+        } label: {
+          Label("Confirmer", systemImage: "checkmark")
+        }
+        .buttonStyle(BoutonRose())
+        .padding(.top, 4)
       }
     }
+    .navigationTitle("Valider")
   }
 }
 
-/// 06 · Repos : anneau, FC, « À suivre », + 15 s et Passer.
+/// 07 · Repos : temps restant, barre de progression, « À suivre », + 15 s et Passer.
 struct ReposView: View {
   @ObservedObject var seance: SeanceEnCours
 
   private var part: Double {
-    seance.reposTotal > 0 ? Double(max(0, seance.reposReste)) / Double(seance.reposTotal) : 0
+    seance.reposTotal > 0 ? 1 - Double(max(0, seance.reposReste)) / Double(seance.reposTotal) : 0
   }
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 4) {
-        Marque()
-        Text("Récupération").font(.system(size: 20, weight: .bold))
-        HStack(spacing: 6) {
-          Image(systemName: "heart")
-          Text(seance.entrainement.bpm > 0 ? "\(Int(seance.entrainement.bpm)) bpm" : "-- bpm")
-        }
-        .font(.system(size: 14))
-        .foregroundColor(Nea.texte2)
-        ZStack {
-          Circle().stroke(Nea.carte, lineWidth: 8)
-          Circle()
-            .trim(from: 0, to: part)
-            .stroke(Nea.rose, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-          VStack(spacing: 0) {
-            Text(Nea.mmss(seance.reposReste))
-              .font(.system(size: 28, weight: .heavy, design: .rounded))
-              .monospacedDigit()
-            Text("sur \(seance.reposTotal) s").font(.system(size: 12)).foregroundColor(Nea.texte2)
+        GrosChiffre(texte: Nea.mmss(seance.reposReste), taille: 52)
+        Text("restantes").font(.system(size: 15)).foregroundColor(Nea.texte2).frame(maxWidth: .infinity)
+        GeometryReader { g in
+          ZStack(alignment: .leading) {
+            Capsule().fill(Nea.carte)
+            Capsule().fill(Nea.rose).frame(width: g.size.width * CGFloat(part)).shadow(color: Nea.rose.opacity(0.6), radius: 4)
           }
         }
-        .frame(width: 112, height: 112)
-        .frame(maxWidth: .infinity)
+        .frame(height: 6)
         .padding(.vertical, 4)
-        Text("À suivre").font(.system(size: 12)).foregroundColor(Nea.texte2)
-        Text("\(seance.exo.nom) · Série \(seance.serie + 1)/\(seance.exo.series)")
-          .font(.system(size: 14, weight: .semibold))
+        Text("À suivre").font(.system(size: 13)).foregroundColor(Nea.texte2)
+        Text("\(seance.exo.nom) · \(seance.serie + 1)/\(seance.exo.series)")
+          .font(.system(size: 15, weight: .semibold))
           .lineLimit(1)
           .minimumScaleFactor(0.7)
         HStack(spacing: 6) {
-          Button("+ 15 s") { seance.plus15() }
+          Button("+15 s") { seance.plus15() }
             .buttonStyle(BoutonSombre())
           Button("Passer") { seance.passerRepos() }
-            .buttonStyle(BoutonSombre(couleur: Nea.rose))
+            .buttonStyle(BoutonRose())
         }
+        .padding(.top, 4)
       }
     }
+    .navigationTitle("Repos")
   }
 }
 
-/// 07 · Bilan : durée, séries, FC moyenne, énergie, mot du coach, « Enregistrer ».
+/// 08 · En pause : temps écoulé, Reprendre, Terminer.
+struct PauseView: View {
+  @ObservedObject var seance: SeanceEnCours
+
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 4) {
+        Text(seance.s.titre).font(.system(size: 15)).foregroundColor(Nea.texte2).lineLimit(1)
+        GrosChiffre(texte: Nea.mmss(seance.secondes), taille: 52)
+        Text("temps écoulé").font(.system(size: 15)).foregroundColor(Nea.texte2)
+        Button {
+          seance.reprendre()
+        } label: {
+          Label("Reprendre", systemImage: "play.fill")
+        }
+        .buttonStyle(BoutonRose())
+        .padding(.top, 6)
+        Button {
+          seance.terminerMaintenant()
+        } label: {
+          Label("Terminer", systemImage: "stop.fill")
+        }
+        .buttonStyle(BoutonSombre())
+      }
+    }
+    .navigationTitle("En pause")
+  }
+}
+
+/// 09 · Bilan : durée totale, séries, FC moyenne, énergie, mot du coach, « Enregistrer ».
 struct BilanView: View {
   @ObservedObject var seance: SeanceEnCours
   @ObservedObject private var donnees = Donnees.partagees
@@ -210,39 +259,36 @@ struct BilanView: View {
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 6) {
-        HStack(spacing: 6) {
-          Image(systemName: "checkmark.circle.fill").font(.system(size: 26)).foregroundColor(Nea.rose)
-          VStack(alignment: .leading, spacing: 0) {
-            Text("Séance terminée").font(.system(size: 17, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
-            Text(seance.s.titre).font(.system(size: 13)).foregroundColor(Nea.texte2).lineLimit(1)
-          }
+      VStack(spacing: 2) {
+        Text(seance.s.titre).font(.system(size: 17, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+        GrosChiffre(texte: Nea.mmss(seance.secondes), taille: 46)
+        Text("durée totale").font(.system(size: 14)).foregroundColor(Nea.texte2)
+        VStack(spacing: 0) {
+          LigneValeur(titre: "Séries", valeur: "\(seance.seriesFaites)")
+          LigneValeur(titre: "FC moyenne", valeur: seance.entrainement.fcMoy > 0 ? "\(Int(seance.entrainement.fcMoy)) bpm" : "--")
+          LigneValeur(titre: "Énergie estimée", valeur: "\(Int(seance.kcal)) kcal")
         }
-        HStack(spacing: 6) {
-          Tuile(titre: "Durée", valeur: Nea.mmss(seance.secondes))
-          Tuile(titre: "Séries", valeur: "\(seance.seriesFaites)")
-        }
-        HStack(spacing: 6) {
-          Tuile(titre: "FC moyenne", valeur: seance.entrainement.fcMoy > 0 ? "\(Int(seance.entrainement.fcMoy)) bpm" : "--")
-          Tuile(titre: "Énergie estimée", valeur: "\(Int(seance.kcal)) kcal")
-        }
+        .padding(.top, 4)
         HStack(spacing: 8) {
-          Image(donnees.etat?.coach ?? "axel").resizable().scaledToFit().frame(width: 40, height: 40)
-          Text("Bien joué, \(donnees.etat?.prenom ?? "").").font(.system(size: 15, weight: .semibold)).lineLimit(2).minimumScaleFactor(0.7)
+          Image(donnees.etat?.coach ?? "axel").resizable().scaledToFit().frame(width: 38, height: 38)
+          Text("Bien joué, \(donnees.etat?.prenom ?? "") !").font(.system(size: 15, weight: .semibold)).lineLimit(2).minimumScaleFactor(0.7)
+          Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(8)
-        .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
-        Button(seance.enregistree ? "Enregistrement…" : "Enregistrer") {
+        .padding(.vertical, 6)
+        Button {
           seance.enregistrer { fermer() }
+        } label: {
+          Label(seance.enregistree ? "Enregistrement…" : "Enregistrer", systemImage: "checkmark")
         }
         .buttonStyle(BoutonRose())
         .disabled(seance.enregistree)
       }
     }
+    .navigationTitle("Bilan")
   }
 }
 
+/// Petite case chiffrée (vélo, progrès).
 struct Tuile: View {
   let titre: String
   let valeur: String

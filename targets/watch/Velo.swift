@@ -169,6 +169,15 @@ struct SortieView: View {
   }
 
   var body: some View {
+    NavigationStack {
+      contenu
+    }
+    .tint(Nea.rose)
+    .onAppear { sortie.demarrer() }
+    .onDisappear { sortie.abandonner() }
+  }
+
+  @ViewBuilder private var contenu: some View {
     ZStack {
       switch sortie.etape {
       case .route, .pause:
@@ -181,8 +190,6 @@ struct SortieView: View {
         BilanVelo(sortie: sortie)
       }
     }
-    .onAppear { sortie.demarrer() }
-    .onDisappear { sortie.abandonner() }
   }
 }
 
@@ -194,110 +201,115 @@ private func km1(_ v: Double) -> String {
   String(format: "%.1f", v).replacingOccurrences(of: ".", with: ",")
 }
 
-/// 08 · Vélo : durée, distance, vitesse, FC et zone, Pause / Carte.
+/// 10 · Vélo : vitesse en grand, distance et durée, FC et zone, Pause / Carte ; en pause : Reprendre / Terminer.
 struct DonneesVelo: View {
   @ObservedObject var sortie: SortieVelo
   let ouvrirCarte: () -> Void
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 4) {
-        HStack(spacing: 6) {
-          Image(systemName: "bicycle").foregroundColor(Nea.rose)
-          Text(sortie.etape == .pause ? "En pause" : "Vélo extérieur").font(.system(size: 15, weight: .bold))
-          Spacer()
-          Image(systemName: "location.fill").foregroundColor(sortie.gpsActif ? Nea.rose : Nea.texte2)
-        }
-        Text(duree(sortie.secondes))
-          .font(.system(size: 46, weight: .heavy, design: .rounded))
-          .monospacedDigit()
-          .frame(maxWidth: .infinity)
-          .lineLimit(1)
-          .minimumScaleFactor(0.6)
-        HStack {
-          VStack(alignment: .leading, spacing: 0) {
-            Text("\(km1(sortie.km)) km").font(.system(size: 20, weight: .heavy, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6)
-            Text("Distance").font(.system(size: 12)).foregroundColor(Nea.texte2)
-          }
-          Spacer()
-          VStack(alignment: .leading, spacing: 0) {
-            Text("\(km1(sortie.vitesse)) km/h").font(.system(size: 20, weight: .heavy, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6)
-            Text("Vitesse").font(.system(size: 12)).foregroundColor(Nea.texte2)
-          }
-        }
-        HStack(spacing: 6) {
-          Image(systemName: "heart")
-          Text(sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm)) bpm" : "-- bpm").font(.system(size: 15, weight: .semibold))
-          Spacer(minLength: 4)
-          VStack(spacing: 2) {
-            HStack(spacing: 2) {
-              ForEach(1...5, id: \.self) { z in
-                RoundedRectangle(cornerRadius: 2)
-                  .fill(z <= sortie.zone ? Nea.rose : Nea.texte2.opacity(0.3))
-                  .frame(width: 10, height: 5)
-              }
-            }
-            Text(sortie.zone > 0 ? "Zone \(sortie.zone)" : "Zone –").font(.system(size: 11)).foregroundColor(Nea.texte2)
-          }
-        }
-        .padding(8)
-        .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
-        HStack(spacing: 6) {
-          if sortie.etape == .pause {
-            Button("Reprendre") { sortie.reprendre() }.buttonStyle(BoutonRose())
-          } else {
-            Button("Pause") { sortie.pause() }.buttonStyle(BoutonRose())
-          }
-          Button("Carte") { ouvrirCarte() }.buttonStyle(BoutonSombre())
-        }
+      VStack(spacing: 2) {
         if sortie.etape == .pause {
-          Button("Terminer") { sortie.terminer() }.buttonStyle(BoutonSombre(couleur: Nea.rose))
+          GrosChiffre(texte: duree(sortie.secondes), taille: 48)
+          Text("temps écoulé").font(.system(size: 14)).foregroundColor(Nea.texte2)
+          Button {
+            sortie.reprendre()
+          } label: {
+            Label("Reprendre", systemImage: "play.fill")
+          }
+          .buttonStyle(BoutonRose())
+          .padding(.top, 6)
+          Button {
+            sortie.terminer()
+          } label: {
+            Label("Terminer", systemImage: "stop.fill")
+          }
+          .buttonStyle(BoutonSombre())
+        } else {
+          GrosChiffre(texte: km1(sortie.vitesse), taille: 54)
+          Text("km/h").font(.system(size: 15)).foregroundColor(Nea.texte2)
+          Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 3)
+          HStack {
+            VStack(spacing: 0) {
+              Text(km1(sortie.km)).font(.system(size: 24, weight: .heavy, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6)
+              Text("km").font(.system(size: 12)).foregroundColor(Nea.texte2)
+            }
+            .frame(maxWidth: .infinity)
+            Rectangle().fill(Nea.texte2.opacity(0.35)).frame(width: 0.5, height: 30)
+            Text(duree(sortie.secondes))
+              .font(.system(size: 24, weight: .heavy, design: .rounded))
+              .monospacedDigit()
+              .lineLimit(1)
+              .minimumScaleFactor(0.6)
+              .frame(maxWidth: .infinity)
+          }
+          Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 3)
+          HStack(spacing: 6) {
+            Image(systemName: "heart.fill").foregroundColor(Nea.rose)
+            Text(sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm)) bpm" : "-- bpm").font(.system(size: 15, weight: .semibold))
+            Text(sortie.zone > 0 ? "· Zone \(sortie.zone)" : "").font(.system(size: 15, weight: .semibold))
+          }
+          HStack(spacing: 6) {
+            Button {
+              sortie.pause()
+            } label: {
+              Image(systemName: "pause.fill")
+            }
+            .buttonStyle(BoutonRose())
+            .accessibilityLabel("Pause")
+            Button {
+              ouvrirCarte()
+            } label: {
+              Image(systemName: "map")
+            }
+            .buttonStyle(BoutonSombre())
+            .accessibilityLabel("Carte")
+          }
+          .padding(.top, 4)
         }
       }
     }
+    .navigationTitle(sortie.etape == .pause ? "En pause" : "Vélo")
   }
 }
 
-/// 09 · Ton parcours : tracé rose sur la carte, GPS actif, distance et durée.
+/// 11 · Parcours : tracé rose sur la carte, distance et GPS, retour aux données.
 struct CarteVelo: View {
   @ObservedObject var sortie: SortieVelo
   let retour: () -> Void
   @State private var camera: MapCameraPosition = .userLocation(fallback: .automatic)
 
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 6) {
-        Text("Ton parcours").font(.system(size: 18, weight: .bold))
-        ZStack(alignment: .topLeading) {
-          Map(position: $camera) {
-            if sortie.points.count > 1 {
-              MapPolyline(coordinates: sortie.points).stroke(Nea.rose, lineWidth: 4)
-            }
-            if let p = sortie.points.last {
-              Annotation("", coordinate: p) {
-                Circle().fill(Nea.rose).frame(width: 12, height: 12).overlay(Circle().stroke(Color.white, lineWidth: 2))
-              }
-            }
-          }
-          .frame(height: 110)
-          .clipShape(RoundedRectangle(cornerRadius: 14))
-          HStack(spacing: 4) {
-            Image(systemName: "location.fill").foregroundColor(sortie.gpsActif ? .green : Nea.texte2)
-            Text(sortie.gpsActif ? "GPS actif" : "Recherche GPS").font(.system(size: 11, weight: .semibold))
-          }
-          .padding(.horizontal, 8)
-          .padding(.vertical, 4)
-          .background(Capsule().fill(Color.black.opacity(0.7)))
-          .padding(6)
+    ZStack(alignment: .bottom) {
+      Map(position: $camera) {
+        if sortie.points.count > 1 {
+          MapPolyline(coordinates: sortie.points).stroke(Nea.rose, lineWidth: 5)
         }
-        HStack {
-          Label("\(km1(sortie.km)) km", systemImage: "road.lanes").font(.system(size: 15, weight: .bold))
-          Spacer()
-          Label(duree(sortie.secondes), systemImage: "stopwatch").font(.system(size: 15, weight: .bold)).monospacedDigit()
+        if let p = sortie.points.last {
+          Annotation("", coordinate: p) {
+            Circle().fill(Nea.rose).frame(width: 14, height: 14).overlay(Circle().stroke(Color.white, lineWidth: 3)).shadow(color: Nea.rose, radius: 6)
+          }
         }
-        Button("Retour aux données") { retour() }.buttonStyle(BoutonSombre())
       }
+      .mapStyle(.standard(emphasis: .muted))
+      VStack(spacing: 6) {
+        HStack(spacing: 5) {
+          Image(systemName: "location.fill").foregroundColor(Nea.rose)
+          Text("\(km1(sortie.km)) km · \(sortie.gpsActif ? "GPS actif" : "Recherche GPS")").font(.system(size: 13, weight: .semibold))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(Capsule().fill(Color.black.opacity(0.75)))
+        Button {
+          retour()
+        } label: {
+          Label("Données", systemImage: "chart.bar.fill")
+        }
+        .buttonStyle(BoutonSombre())
+      }
+      .padding(.bottom, 4)
     }
+    .navigationTitle("Parcours")
   }
 }
 

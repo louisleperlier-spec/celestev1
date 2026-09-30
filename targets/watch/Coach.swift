@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Coach : son message du jour, sa dernière réponse, et ton ressenti envoyé au coach (réponse sur l'iPhone).
+/// 14 · Mon coach : les 4 coachs, « Choisir … » (envoyé à l'iPhone), puis son message du jour et ton ressenti.
 struct CoachView: View {
   @ObservedObject private var donnees = Donnees.partagees
+  @State private var choix: String?
   @State private var envoye: String?
 
   private let ressentis: [(String, String, String)] = [
@@ -11,42 +12,69 @@ struct CoachView: View {
     ("Courbatures", "bandage.fill", "J'ai des courbatures"),
   ]
 
+  private var coachs: [CoachResume] { donnees.etat?.coachs ?? [] }
+  private var courant: String { choix ?? donnees.etat?.coach ?? "axel" }
+
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 6) {
-        Marque()
-        if let e = donnees.etat {
-          HStack(spacing: 6) {
-            Image(e.coach).resizable().scaledToFit().frame(width: 46, height: 46)
-            VStack(alignment: .leading, spacing: 0) {
-              Text("Coach \(e.coachInfo?.nom ?? "")").font(.system(size: 18, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
-              Text(e.coachInfo?.style ?? "").font(.system(size: 13)).foregroundColor(Nea.texte2)
-            }
-          }
-          if let c = e.coachInfo {
-            Text("« \(c.daily) »").font(.system(size: 14)).padding(8).background(RoundedRectangle(cornerRadius: 12).fill(Nea.carte))
-            if !c.dernier.isEmpty {
-              Text("Dernier échange").font(.system(size: 12)).foregroundColor(Nea.texte2)
-              Text(c.dernier).font(.system(size: 14)).lineLimit(6).padding(8).background(RoundedRectangle(cornerRadius: 12).fill(Nea.carte))
-            }
-          }
-          Text("Comment te sens-tu ?").font(.system(size: 15, weight: .semibold)).padding(.top, 2)
-          ForEach(ressentis, id: \.0) { r in
+      VStack(spacing: 6) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 6) {
+          ForEach(coachs, id: \.id) { c in
             Button {
-              LiaisonMontre.partagee.envoyer("coach", CoachEnvoi(texte: r.2))
-              envoye = r.0
-              Vibre.jouer(.success)
+              choix = c.id
             } label: {
-              Label(r.0, systemImage: r.1)
+              ZStack(alignment: .bottomTrailing) {
+                Image(c.id).resizable().scaledToFit().padding(4)
+                  .frame(maxWidth: .infinity, minHeight: 58, maxHeight: 64)
+                  .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
+                  .overlay(RoundedRectangle(cornerRadius: 14).stroke(c.id == courant ? Nea.rose : .clear, lineWidth: 2))
+                  .shadow(color: c.id == courant ? Nea.rose.opacity(0.6) : .clear, radius: 6)
+                if c.id == courant {
+                  Image(systemName: "checkmark.circle.fill").foregroundColor(Nea.rose).background(Circle().fill(Color.white)).padding(3)
+                }
+              }
             }
-            .buttonStyle(BoutonSombre())
+            .buttonStyle(.plain)
           }
-          if let x = envoye {
-            Text("« \(x) » envoyé : la réponse arrive dans NÉA sur l'iPhone.").font(.system(size: 12)).foregroundColor(Nea.texte2)
+        }
+        if let c = coachs.first(where: { $0.id == courant }) {
+          Text(c.nom).font(.system(size: 20, weight: .bold))
+          Text(c.spec).font(.system(size: 14)).foregroundColor(Nea.texte2)
+          if c.id != donnees.etat?.coach {
+            Button("Choisir \(c.nom)") {
+              LiaisonMontre.partagee.envoyer("coach-choix", ChoixCoach(id: c.id))
+              Vibre.jouer(.success)
+              envoye = "\(c.nom) choisi : ton programme se met à jour sur l'iPhone."
+            }
+            .buttonStyle(BoutonRose())
           }
+        }
+        if let m = envoye {
+          Text(m).font(.system(size: 12)).foregroundColor(Nea.texte2).multilineTextAlignment(.center)
+        }
+        if let info = donnees.etat?.coachInfo {
+          Text("« \(info.daily) »").font(.system(size: 14)).padding(8).frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
+            .padding(.top, 4)
+          if !info.dernier.isEmpty {
+            Text(info.dernier).font(.system(size: 13)).foregroundColor(Nea.texte2).lineLimit(5)
+              .frame(maxWidth: .infinity, alignment: .leading)
+          }
+        }
+        Text("Comment te sens-tu ?").font(.system(size: 15, weight: .semibold)).frame(maxWidth: .infinity, alignment: .leading).padding(.top, 2)
+        ForEach(ressentis, id: \.0) { r in
+          Button {
+            LiaisonMontre.partagee.envoyer("coach", CoachEnvoi(texte: r.2))
+            envoye = "« \(r.0) » envoyé : la réponse arrive dans NÉA sur l'iPhone."
+            Vibre.jouer(.success)
+          } label: {
+            Label(r.0, systemImage: r.1)
+          }
+          .buttonStyle(BoutonSombre())
         }
       }
     }
+    .navigationTitle("Mon coach")
   }
 }
 
@@ -57,8 +85,6 @@ struct ProgresView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 6) {
-        Marque()
-        Text("Progrès").font(.system(size: 22, weight: .bold))
         if let p = donnees.etat?.progres {
           HStack(spacing: 10) {
             ZStack {
@@ -97,5 +123,6 @@ struct ProgresView: View {
         }
       }
     }
+    .navigationTitle("Progrès")
   }
 }

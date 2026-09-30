@@ -12,6 +12,10 @@ struct NeaWatchApp: App {
       NavigationStack {
         AccueilView()
       }
+      .tint(Nea.rose)
+      .onOpenURL { url in
+        if url.host == "seance" { Donnees.partagees.demandeSeance = true }
+      }
     }
   }
 }

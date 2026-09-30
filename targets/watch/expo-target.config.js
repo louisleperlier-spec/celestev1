@@ -17,9 +17,10 @@ module.exports = {
     kai: './images/kai.png',
     luna: './images/luna.png',
   },
-  frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion', 'CoreLocation', 'MapKit'],
+  frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion', 'CoreLocation', 'MapKit', 'WidgetKit'],
   entitlements: {
     'com.apple.developer.healthkit': true,
     'com.apple.developer.healthkit.access': [],
+    'com.apple.security.application-groups': ['group.com.neacoach.app'],
   },
 };

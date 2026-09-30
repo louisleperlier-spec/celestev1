@@ -16,6 +16,7 @@ enum Nea {
   }
 
   static func quand(_ jour: Int) -> String {
+    if jour < 0 { return "Séance prête" }
     let a = aujourdhui()
     if jour == a { return "Aujourd'hui" }
     if jour == a + 1 { return "Demain" }
@@ -33,26 +34,85 @@ enum Nea {
   }
 }
 
+/// Bouton principal : rose plein avec lueur rose (maquettes).
 struct BoutonRose: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.system(size: 17, weight: .bold))
       .foregroundColor(Nea.surRose)
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .background(RoundedRectangle(cornerRadius: 22).fill(Nea.rose))
+      .frame(maxWidth: .infinity, minHeight: 46)
+      .background(RoundedRectangle(cornerRadius: 23).fill(Nea.rose))
+      .shadow(color: Nea.rose.opacity(0.55), radius: 8)
       .opacity(configuration.isPressed ? 0.75 : 1)
   }
 }
 
+/// Bouton secondaire : noir bordé de rose (Pause, Terminer, Synchroniser…).
 struct BoutonSombre: ButtonStyle {
   var couleur: Color = .white
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .font(.system(size: 17, weight: .bold))
       .foregroundColor(couleur)
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .background(RoundedRectangle(cornerRadius: 22).fill(Nea.carte))
+      .frame(maxWidth: .infinity, minHeight: 46)
+      .background(RoundedRectangle(cornerRadius: 23).fill(Nea.carte))
+      .overlay(RoundedRectangle(cornerRadius: 23).stroke(Nea.rose.opacity(0.45), lineWidth: 1))
       .opacity(configuration.isPressed ? 0.75 : 1)
+  }
+}
+
+/// Gros chiffre blanc avec lueur rose (temps, reps, vitesse…).
+struct GrosChiffre: View {
+  let texte: String
+  var taille: CGFloat = 56
+
+  var body: some View {
+    Text(texte)
+      .font(.system(size: taille, weight: .heavy, design: .rounded))
+      .monospacedDigit()
+      .lineLimit(1)
+      .minimumScaleFactor(0.5)
+      .foregroundColor(.white)
+      .shadow(color: Nea.rose.opacity(0.8), radius: 10)
+      .frame(maxWidth: .infinity)
+  }
+}
+
+/// Ligne « libellé … valeur » séparée par un filet (bilan, récupération, réglages).
+struct LigneValeur: View {
+  let titre: String
+  let valeur: String
+
+  var body: some View {
+    VStack(spacing: 0) {
+      HStack {
+        Text(titre).font(.system(size: 15)).foregroundColor(Nea.texte2).lineLimit(1).minimumScaleFactor(0.7)
+        Spacer(minLength: 4)
+        Text(valeur).font(.system(size: 16, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+      }
+      .padding(.vertical, 7)
+      Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5)
+    }
+  }
+}
+
+/// Ligne de menu : icône rose, titre, valeur, chevron.
+struct LigneMenu: View {
+  let icone: String
+  let titre: String
+  var valeur: String = ""
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Image(systemName: icone).font(.system(size: 18)).foregroundColor(Nea.rose).frame(width: 24)
+      Text(titre).font(.system(size: 16, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+      Spacer(minLength: 4)
+      if !valeur.isEmpty { Text(valeur).font(.system(size: 14)).foregroundColor(Nea.texte2) }
+      Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Nea.texte2)
+    }
+    .padding(.vertical, 11)
+    .padding(.horizontal, 12)
+    .background(RoundedRectangle(cornerRadius: 18).fill(Nea.carte))
   }
 }
 

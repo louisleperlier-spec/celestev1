@@ -3,8 +3,11 @@ import Foundation
 import WatchKit
 
 enum Phase: Equatable {
-  case effort, validation, repos, bilan
+  case echauffement, effort, validation, repos, pause, bilan
 }
+
+/// Échauffement de début de séance (5 min, passable).
+let DUREE_ECHAUFFEMENT = 300
 
 /// Séance guidée sur la montre : séries (reps comptées puis corrigées, ou durée), repos, bilan.
 final class SeanceEnCours: ObservableObject {
@@ -14,7 +17,9 @@ final class SeanceEnCours: ObservableObject {
 
   @Published var ex = 0
   @Published var serie = 0
-  @Published var phase: Phase = .effort
+  @Published var phase: Phase = .echauffement
+  /// Échauffement : secondes restantes.
+  @Published var echauffementReste = DUREE_ECHAUFFEMENT
   /// Validation : reps retenues et charge (kg par haltère ou total ; 0 sans charge).
   @Published var reps = 0
   @Published var charge = 0.0
@@ -29,6 +34,8 @@ final class SeanceEnCours: ObservableObject {
   private(set) var volume = 0.0
   private let debut = Date()
   private var minuterie: Timer?
+  /// Étape reprise après la pause.
+  private var avantPause: Phase = .effort
   private var liens = Set<AnyCancellable>()
 
   init(_ s: SeanceMontre) {
@@ -48,7 +55,8 @@ final class SeanceEnCours: ObservableObject {
     guard !lance else { return }
     lance = true
     entrainement.demarrer()
-    demarrerSerie()
+    phase = .echauffement
+    echauffementReste = DUREE_ECHAUFFEMENT
     minuterie = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in self?.tick() }
   }
 
@@ -61,9 +69,43 @@ final class SeanceEnCours: ObservableObject {
     }
   }
 
+  /// Fin de l'échauffement (minuteur ou « Passer ») : première série.
+  func finEchauffement() {
+    Vibre.jouer(.start)
+    demarrerSerie()
+  }
+
+  func pause() {
+    guard phase != .pause, phase != .bilan else { return }
+    avantPause = phase
+    compteur.arreter()
+    entrainement.pause()
+    phase = .pause
+    Vibre.jouer(.stop)
+  }
+
+  func reprendre() {
+    guard phase == .pause else { return }
+    entrainement.reprendre()
+    phase = avantPause
+    if phase == .effort && !enDuree { compteur.demarrer() }
+    Vibre.jouer(.start)
+  }
+
+  /// « Terminer » depuis la pause : bilan avec ce qui a été fait.
+  func terminerMaintenant() {
+    entrainement.reprendre()
+    terminer()
+  }
+
   private func tick() {
-    secondes = Int(Date().timeIntervalSince(debut))
+    // Le temps de la séance ne compte pas pendant la pause.
+    if phase == .pause || phase == .bilan { return }
+    secondes += 1
     switch phase {
+    case .echauffement:
+      echauffementReste -= 1
+      if echauffementReste <= 0 { finEchauffement() }
     case .repos:
       reposReste -= 1
       if reposReste == 3 { Vibre.jouer(.notification) }
@@ -140,7 +182,6 @@ final class SeanceEnCours: ObservableObject {
     minuterie?.invalidate()
     minuterie = nil
     compteur.arreter()
-    secondes = Int(Date().timeIntervalSince(debut))
     Vibre.jouer(.success)
     phase = .bilan
   }
