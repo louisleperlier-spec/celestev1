@@ -119,7 +119,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - reste : vrais achats App Store (RevenueCat `react-native-purchases`, build natif) : contrat « Paid Apps », banque et fiscalité dans
     App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel), compte RevenueCat ; puis la limite du coach côté
     serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
-- [ ] **App Apple Watch (maquettes de l'utilisateur, V1 = séances)** : **codée, 1er build à valider**
+- [ ] **App Apple Watch (maquettes de l'utilisateur, V1 = séances)** : **build TestFlight 1.0.0 (3) compilé et envoyé (30 sept. 2026), à valider sur la montre**
   - cible watchOS SwiftUI `targets/watch/` (`@bacons/apple-targets`, nom `NeaWatch`, `com.neacoach.app.watchkitapp`, watchOS 10) :
     Accueil (bonjour, coach, prochaine séance, Commencer), Tes séances, Détail (Démarrer), Répétitions (comptage **estimé** par
     l'accéléromètre, `Compteur.swift`), Validation (reps −/+, charge modifiable), Repos (anneau, + 15 s, Passer, À suivre), Bilan
@@ -130,7 +130,8 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     ajoutée au journal avec XP, série, quête et rappel VFC ; contrat JSON commun `Modeles.swift` ↔ `liaisonMontre.ts`
   - 2e temps : Vélo (GPS, carte), Récupération / Respiration, Réglages ; `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
-  - build : identifiant de la montre + profil App Store dédiés ; `credentials.json` multi-cibles (`NA` et `NeaWatch`)
+  - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
+    `credentials.json` multi-cibles (`NA` et `NeaWatch`), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
