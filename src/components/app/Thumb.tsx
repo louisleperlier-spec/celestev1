@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '@/components/ui';
 import { EXERCICE_IMAGES } from '@/data';
 import type { ExerciceId } from '@/data/types';
+import { ui } from '@/theme';
 
 /** Vignette d'exercice (.thumb, .thumb.big), avec cadenas NÉA Plus (.lk). */
 export function Thumb({ id, big = false, locked = false }: { id: ExerciceId; big?: boolean; locked?: boolean }) {
@@ -21,7 +22,7 @@ export function Thumb({ id, big = false, locked = false }: { id: ExerciceId; big
 }
 
 const styles = StyleSheet.create({
-  thumb: { backgroundColor: '#0F0F12', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  thumb: { backgroundColor: ui.dark, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   lk: {
     position: 'absolute',
     top: 4,

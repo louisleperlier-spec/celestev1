@@ -6,7 +6,8 @@ import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
-import { EnTete, MOI } from '@/components/app/EnTete';
+import { TitreOnglet } from '@/components/app/EnTete';
+import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { BarresVFC } from '@/components/app/BarresVFC';
@@ -77,7 +78,7 @@ export default function Progres() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnTete rubriques={MOI} actif="Progrès" />
+        <TitreOnglet titre="Progrès" />
         <View style={styles.cercles}>
           <SemaineCercles />
         </View>
@@ -148,6 +149,9 @@ export default function Progres() {
           <Text style={styles.qEm}>— {c.nom}</Text>
           <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
         </LinearGradient>
+        {/* La Ligue (niveau, quêtes, classements) suit les progrès. */}
+        <Ligue integree />
+        <View style={styles.basPage} />
       </ScrollView>
       <Pesee visible={pesee} onClose={() => setPesee(false)} />
     </SafeAreaView>
@@ -247,6 +251,7 @@ const styles = StyleSheet.create({
   cercles: { paddingTop: 14, paddingHorizontal: 20 },
   ptitle: { fontSize: 24, lineHeight: 30, paddingTop: 14, paddingHorizontal: 20 },
   seg: { marginTop: 14, marginHorizontal: 20 },
+  basPage: { height: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, paddingTop: 14, paddingHorizontal: 20 },
   chart: { marginTop: 10, marginHorizontal: 20, paddingTop: 14, paddingHorizontal: 14, paddingBottom: 8 },
   h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

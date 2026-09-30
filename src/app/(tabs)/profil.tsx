@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { EnTete, MOI } from '@/components/app/EnTete';
+import { EnTetePage } from '@/components/app/Catalogue';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { confirmer } from '@/components/app/confirmer';
@@ -49,7 +49,7 @@ export default function Profil() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnTete rubriques={MOI} actif="Profil" />
+        <EnTetePage titre="Profil" retour="/accueil" />
         {/* .prof */}
         <View style={styles.prof}>
           <View style={styles.bot}>

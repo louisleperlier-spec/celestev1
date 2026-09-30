@@ -60,7 +60,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <EnTete rubriques={ENTRAINEMENT} actif="Programme" />
+      <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Programme" />
       <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => router.push('/chat')} />
       {/* .plans : carrousel des 3 programmes du coach */}
       <ScrollView
@@ -166,7 +166,7 @@ function Calendrier() {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <EnTete rubriques={ENTRAINEMENT} actif="Calendrier" />
+      <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Calendrier" />
       <Pressable accessibilityRole="button" onPress={() => router.push(`/plan/${pr.id}`)} style={styles.pheadWrap}>
         <Card style={styles.phead}>
           <CoachFace id={c.id} size={52} borderColor={c.c} />

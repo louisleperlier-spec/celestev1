@@ -1,53 +1,58 @@
 import { router, type Href } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Text } from '@/components/ui';
-import { colors, fonts } from '@/theme';
+import { Icon, Segmente, Text } from '@/components/ui';
+import { colors, fonts, ui } from '@/theme';
 
 export type Rubrique = { label: string; href: Href };
 
-/** Rubriques de l'onglet « Entraînement » et de l'onglet « Moi ». */
+/** Rubriques de l'onglet « Entraînement ». */
 export const ENTRAINEMENT: Rubrique[] = [
   { label: 'Programme', href: '/programme' },
   { label: 'Calendrier', href: { pathname: '/programme', params: { vue: 'calendrier' } } },
   { label: 'Vélo', href: '/velo' },
 ];
-export const MOI: Rubrique[] = [
-  { label: 'Progrès', href: '/progres' },
-  { label: 'Profil', href: '/profil' },
-];
 
-/**
- * En-tête d'un onglet qui regroupe plusieurs écrans : la rubrique ouverte en grand titre, les autres à côté,
- * comme « Programme  Calendrier » dans le prototype (.phd).
- */
-export function EnTete({ rubriques, actif }: { rubriques: readonly Rubrique[]; actif: string }) {
-  // Trois rubriques : un peu plus petit pour tenir sur une ligne.
-  const serre = rubriques.length > 2;
+/** En-tête d'onglet : grand titre, bouton « + » (séances prêtes), puis le contrôle segmenté des rubriques. */
+export function EnTete({ titre, rubriques, actif }: { titre: string; rubriques: readonly Rubrique[]; actif: string }) {
   return (
-    <View style={[styles.phd, serre && styles.phdSerre]} accessibilityRole="tablist">
-      {rubriques.map((r) =>
-        r.label === actif ? (
-          <Text key={r.label} style={[styles.h1, serre && styles.h1Serre]} accessibilityRole="header">
-            {r.label}
-          </Text>
-        ) : (
-          <Pressable key={r.label} accessibilityRole="tab" accessibilityState={{ selected: false }} onPress={() => router.navigate(r.href)} hitSlop={6}>
-            <Text weight="bold" style={[styles.btn, serre && styles.btnSerre]}>
-              {r.label}
-            </Text>
-          </Pressable>
-        ),
-      )}
+    <View style={styles.wrap}>
+      <View style={styles.ligne}>
+        <Text style={styles.h1} accessibilityRole="header">
+          {titre}
+        </Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Ajouter une séance" onPress={() => router.push('/seances')} style={styles.plus}>
+          <Icon name="plus" size={20} color={colors.text} />
+        </Pressable>
+      </View>
+      <Segmente
+        options={rubriques.map((r) => r.label)}
+        value={actif}
+        onChange={(l) => {
+          const r = rubriques.find((x) => x.label === l);
+          if (r && l !== actif) router.navigate(r.href);
+        }}
+      />
+    </View>
+  );
+}
+
+/** Grand titre d'un onglet sans rubriques (Progrès, Coach). */
+export function TitreOnglet({ titre, droite }: { titre: string; droite?: React.ReactNode }) {
+  return (
+    <View style={[styles.ligne, styles.titreSeul]}>
+      <Text style={styles.h1} accessibilityRole="header">
+        {titre}
+      </Text>
+      {droite}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  phd: { flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', columnGap: 16, paddingTop: 14, paddingHorizontal: 20 },
-  h1: { ...fonts.black, fontSize: 32, lineHeight: 39, letterSpacing: -0.64 },
-  btn: { fontSize: 21, lineHeight: 26, color: colors.textTertiary },
-  phdSerre: { columnGap: 14 },
-  h1Serre: { fontSize: 28, lineHeight: 34, letterSpacing: -0.56 },
-  btnSerre: { fontSize: 18, lineHeight: 23 },
+  wrap: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 6, gap: 14 },
+  ligne: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  titreSeul: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 4 },
+  h1: { ...fonts.semibold, fontSize: 30, lineHeight: 36, letterSpacing: -0.3 },
+  plus: { width: 38, height: 38, borderRadius: 19, backgroundColor: ui.dark, alignItems: 'center', justifyContent: 'center' },
 });

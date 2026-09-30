@@ -12,16 +12,22 @@ App iOS/Android (Expo, React Native, TypeScript, Expo Router). Langue : **franç
 
 **Écarts validés avec le prototype** : âge minimum **14 ans partout** (`AGE_MIN`), le 13 ans de l'écran de réglages du prototype était une erreur ;
 **pas d'offre « À vie »** : NÉA Plus = Annuel 59,99 $/an (3 jours gratuits) et Mensuel 12,99 $/mois (+ offre de sortie 39,99 $ la 1re année).
-**3 onglets au lieu de 6** (`TabBar`) : « Aujourd'hui » (Accueil, puis la Ligue dessous : `components/app/Ligue.tsx` avec `integree`),
-« Entraînement » (Programme · Calendrier · Vélo) et « Moi » (Progrès · Profil) ; en-tête `EnTete` (style .phd « Programme Calendrier » du
-prototype) en haut de ces écrans ; les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
+**Refonte graphite (sept. 2026, maquettes de l'utilisateur)** : fonds graphite `#222328`, cartes ardoise `#2D3038` (radius 20, sans
+bordure), rose `#FF4FA3` réservé aux boutons principaux (rose plein), sélections, courbes, anneaux et icônes actives, mauve `#985275`
+pour les séries secondaires (zones cardio en dégradé mauve → rose, toujours avec leur libellé) ; **police système** (`fonts.*` = graisses,
+600 max pour les titres, 700 pour les plus forts) ; très peu de majuscules ; contrôle segmenté commun `Segmente`.
+**4 onglets** (`TabBar`) : **Accueil** (Bonjour, anneaux « Ton bilan du jour » Effort / Récupération / Sommeil, mot du coach,
+« Ta prochaine séance » + Commencer, NÉA Plus, « Tes repères » VFC nocturne et FC au repos ; avatar → Profil), **Entraînement**
+(`EnTete` : titre, « + » → séances prêtes, segmenté Programme · Calendrier · Vélo), **Progrès** (+ Ligue dessous, `Ligue integree`)
+et **Coach** (`(tabs)/coach.tsx` : ressenti du jour, Adapter ma séance, Préparer ma semaine, dernier échange, saisie → `/chat`) ;
+les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
 **4 coachs au lieu de 6** : Blaze et Rex retirés (coachs, 6 programmes, images) ; leurs 11 séances du catalogue passent à Luna (Blaze) et
 Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien état ou un joueur de la Ligue sur un coach existant ;
 `comparer-plan` ne compare plus `recoCoach`. Nouvelles images des 4 coachs (style de l'icône), têtes avec un espace sous le visage (`CoachFace`).
 **Onglet Programme allégé** : Mon plan (carrousel), « Séances prêtes » (onglets de lieu, 4 séances : accessibles puis proches du niveau,
 « Tout voir » → `/seances` avec recherche, lieu et objectif) et une carte « Bibliothèque » → `/exercices` (recherche, groupes, fiche) ;
 « À la une » et la recherche globale retirées ; morceaux communs dans `components/app/Catalogue.tsx`.
-**Finitions** : barre d'XP de l'Accueil retirée (la Ligue est juste dessous) ; « Connecter un capteur » (Progrès) et « Apple Santé et
+**Finitions** : barre d'XP de l'Accueil retirée ; « Connecter un capteur » (Progrès) et « Apple Santé et
 Apple Watch » (Profil) ouvrent l'app Santé (`ouvrirSante`) ; bouton Google masqué (`GOOGLE_PRET` dans `compte.tsx`) tant qu'il n'est pas configuré.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
@@ -116,7 +122,7 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation
-    (tabs)/         accueil.tsx (+ Ligue dessous), programme.tsx (?vue=calendrier), velo, ligue.tsx (Ligue seule), progres.tsx, profil + barre à 3 onglets
+    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), velo, progres.tsx (+ Ligue dessous), coach.tsx, ligue.tsx (Ligue seule), profil + barre à 4 onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
@@ -127,11 +133,11 @@ src/
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)
     (tabs)/profil   onglet Profil · legal/[doc] : conditions, confidentialite
-  components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Icon, Glow, RadialBackground, Toast, Screen)
+  components/ui/    design system (Text, BigNumber, Button, Card, SelectableCard, Segmente, Icon, Glow, RadialBackground, Toast, Screen)
   components/app/  TabBar, Sheet, ExerciceSheet, DemoSheet, PlanifierSheet, ZoneBar, LivePills, Recap, Coeur (courbe FC, zones),
                     Detail (en-tête, hero, tags…), Rows, CoachFace, Kcal, Thumb, Lvl (hexagone du niveau), confirmer,
                     BarresVFC, NuitSheet, NotifSheet, NotifBanniere, AbonnementSheet, ouvrirPlus, Carte (.web : SVG du prototype), CarteVide, lancerSortie,
-                    Cercles (anneaux Bouger / Exercice / Sommeil / Récupération), MotDePasseSheet, Ligue (écran de la Ligue), EnTete (rubriques d'un onglet)
+                    Cercles (anneaux Bouger / Exercice / Sommeil / Récupération, BilanDuJour), Reperes, MotDePasseSheet, Ligue (écran de la Ligue), EnTete (titre + segmenté d'un onglet)
   components/onboarding/  ObScaffold (barre 1/8…8/8), choix (.goal, .big2, .chip, .opt, .hq, .ackb, .warn), ordre des étapes
   lib/plan.ts       buildPlan et calculs (portage fidèle du prototype, fonctions pures)
   lib/semaine.ts    semaine, séances du catalogue ajoutées (catSession, sessionForDay, nextSession)
@@ -147,7 +153,7 @@ src/
   store/ligue.ts    Ligue en ligne (non sauvegardée) : code ami, amis, équipe, classement ; RPC de supabase/ligue.sql
   lib/ligue.ts      semaine de la Ligue : lundiISO, xpSemaine (myWeekXp), actifSemaine, actifsEquipe (teamActiveN)
   lib/supabase.ts   client Supabase (session : lib/stockage.ts via expo-sqlite, stockage.web.ts dans le navigateur)
-  theme/            tokens : couleurs, dégradés, zones cardio, typo Inter, rayons, glow
+  theme/            tokens : couleurs, dégradés, zones cardio, typo système, rayons, glow
   data/             données statiques extraites du prototype (typées, voir « Données »)
 assets/
   exercices/        50 illustrations <id-exercice>.webp
@@ -196,8 +202,8 @@ le sommeil, le vélo (hav, proj) et les notifications dues (notifTick).
 ## Design system
 
 - Toujours passer par `@/theme` (jamais de couleur en dur dans un écran).
-- Polices : utiliser `<Text weight="black">` etc. ; sur RN chaque graisse est une famille Inter distincte (`fonts.*`), `fontWeight` seul ne suffit pas.
-- Cartes radius 16, boutons pilule hauteur 52, sélection = bordure rose + `glow()`.
+- Polices : police système ; `<Text weight="semibold">` etc. ou `...fonts.semibold` dans un style (`fonts.*` = `fontWeight`).
+- Cartes radius 20 sans bordure, boutons pilule hauteur 52 (principal rose plein), sélection = bordure rose.
 - Couleurs ponctuelles du CSS du prototype dans `ui` (`@/theme`) ; `mix()` et `alpha()` pour `color-mix`.
 - Lueurs : `<Glow>` (dégradé radial SVG) ou `<RadialBackground>`, jamais de `textShadow` coloré (rectangle sur iOS).
 - Avec le React Compiler, ne jamais modifier un objet d'état en place (il ne serait pas redessiné) : copies immuables, valeurs simples en props.

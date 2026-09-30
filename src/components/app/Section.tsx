@@ -25,14 +25,15 @@ export function SectionHead({
           <Text style={styles.action}>{action}</Text>
         </Pressable>
       ) : note ? (
-        <Text style={styles.action}>{note}</Text>
+        <Text style={styles.note}>{note}</Text>
       ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 22, marginBottom: 10, marginHorizontal: 20 },
-  h4: { ...fonts.bold, fontSize: 15, lineHeight: 19 },
-  action: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
+  head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 26, marginBottom: 12, marginHorizontal: 20 },
+  h4: { ...fonts.semibold, fontSize: 19, lineHeight: 24 },
+  action: { fontSize: 14, lineHeight: 18, color: colors.pinkLight },
+  note: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
 });

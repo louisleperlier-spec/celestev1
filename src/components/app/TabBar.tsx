@@ -2,32 +2,32 @@ import { router, usePathname } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Glow, Icon, Text, type IconName } from '@/components/ui';
+import { Icon, Text, type IconName } from '@/components/ui';
 import { colors } from '@/theme';
 
-
-type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/progres' | '/profil';
+type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/progres' | '/profil' | '/coach';
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
 /**
- * 3 onglets (écart validé avec les 6 du prototype) : Aujourd'hui (Accueil + Ligue dessous),
- * Entraînement (Programme, Calendrier, Vélo) et Moi (Progrès, Profil). Les écrans gardent leurs adresses.
+ * 4 onglets (refonte) : Accueil (+ Profil, ouvert par l'avatar), Entraînement (Programme, Calendrier, Vélo),
+ * Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
  */
 const ONGLETS: Onglet[] = [
-  { label: "Aujourd'hui", icon: 'home', href: '/accueil', ecrans: ['/accueil', '/ligue'] },
-  { label: 'Entraînement', icon: 'clip', href: '/programme', ecrans: ['/programme', '/velo'] },
-  { label: 'Moi', icon: 'user', href: '/progres', ecrans: ['/progres', '/profil'] },
+  { label: 'Accueil', icon: 'home', href: '/accueil', ecrans: ['/accueil', '/profil'] },
+  { label: 'Entraînement', icon: 'dumb', href: '/programme', ecrans: ['/programme', '/velo'] },
+  { label: 'Progrès', icon: 'chart', href: '/progres', ecrans: ['/progres', '/ligue'] },
+  { label: 'Coach', icon: 'coach', href: '/coach', ecrans: ['/coach'] },
 ];
 
-/** Barre d'onglets flottante arrondie (.tabs). */
+/** Barre d'onglets en bas de l'écran : icône et libellé, rose pour l'onglet ouvert. */
 export function TabBar() {
   const path = usePathname();
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.tabs, { marginBottom: 10 + Math.max(0, insets.bottom - 14) }]} accessibilityRole="tablist">
+    <View style={[styles.tabs, { paddingBottom: Math.max(8, insets.bottom - 6) }]} accessibilityRole="tablist">
       {ONGLETS.map((o) => {
         const on = o.ecrans.some((e) => path.startsWith(e));
-        const color = on ? colors.pink : '#A9A9B0';
+        const color = on ? colors.pink : colors.textSecondary;
         return (
           <Pressable
             key={o.label}
@@ -37,11 +37,10 @@ export function TabBar() {
             style={styles.tab}
             onPress={() => router.navigate(o.href)}
           >
-            <View style={styles.icon}>
-              {on && <Glow width={34} height={34} intensity={0.35} />}
-              <Icon name={o.icon} size={19} color={color} />
-            </View>
-            <Text style={[styles.label, { color }]}>{o.label}</Text>
+            <Icon name={o.icon} size={22} color={color} />
+            <Text weight={on ? 'semibold' : 'medium'} style={[styles.label, { color }]}>
+              {o.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -53,16 +52,12 @@ const styles = StyleSheet.create({
   tabs: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 6,
-    marginHorizontal: 8,
-    paddingVertical: 7,
-    paddingHorizontal: 2,
-    borderRadius: 22,
-    backgroundColor: '#111114',
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingTop: 8,
+    paddingHorizontal: 4,
+    backgroundColor: colors.bgAlt,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
   },
-  tab: { flex: 1, alignItems: 'center', gap: 4, paddingVertical: 4, paddingHorizontal: 2, borderRadius: 12 },
-  icon: { width: 19, height: 19, alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: 10, lineHeight: 13 },
+  tab: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 2 },
+  label: { fontSize: 11, lineHeight: 14 },
 });

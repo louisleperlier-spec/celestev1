@@ -44,7 +44,7 @@ export default function Velo() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnTete rubriques={ENTRAINEMENT} actif="Vélo" />
+        <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Vélo" />
 
         {/* .modes */}
         <View style={styles.modes}>

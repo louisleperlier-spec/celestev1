@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { Icon, Text } from '@/components/ui';
@@ -130,10 +130,10 @@ export function Recherche({ value, onChange, placeholder }: { value: string; onC
 }
 
 /** En-tête d'une page de la bibliothèque : retour + titre. */
-export function EnTetePage({ titre, sous }: { titre: string; sous?: string }) {
+export function EnTetePage({ titre, sous, retour }: { titre: string; sous?: string; retour?: Href }) {
   return (
     <View style={styles.head}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (retour ? router.navigate(retour) : router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
         <Icon name="left" />
       </Pressable>
       <View style={styles.flex}>
@@ -196,6 +196,6 @@ const styles = StyleSheet.create({
   srchInput: { flex: 1, color: colors.text, ...fonts.regular, fontSize: 14.5 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 10 },
   back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  h1: { ...fonts.black, fontSize: 26, lineHeight: 32, letterSpacing: -0.4 },
+  h1: { ...fonts.semibold, fontSize: 28, lineHeight: 34, letterSpacing: -0.3 },
   sous: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary },
 });
