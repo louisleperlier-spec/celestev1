@@ -206,6 +206,19 @@ struct SeanceWidget: Widget {
 
 // MARK: Mascotte (ton coach, lance la séance)
 
+/// Image du coach en couleurs : sur un cadran teinté (Modulaire coloré…), watchOS la dessinerait sinon en silhouette d'une couleur.
+struct ImageCoach: View {
+  let nom: String
+
+  var body: some View {
+    if #available(watchOS 11.0, *) {
+      Image(nom).widgetAccentedRenderingMode(.fullColor).resizable().scaledToFit()
+    } else {
+      Image(nom).resizable().scaledToFit()
+    }
+  }
+}
+
 struct MascotteVue: View {
   @Environment(\.widgetFamily) var famille
   let e: EntreeC
@@ -215,7 +228,7 @@ struct MascotteVue: View {
     case .accessoryRectangular:
       // Grand format : le coach en grand, puis la séance du jour.
       HStack(spacing: 6) {
-        Image(e.d.coach).resizable().scaledToFit().frame(maxHeight: .infinity).widgetAccentable(false)
+        ImageCoach(nom: e.d.coach).frame(maxHeight: .infinity)
         VStack(alignment: .leading, spacing: 0) {
           Text(e.d.coach.capitalized).font(.system(size: 12, weight: .semibold)).foregroundColor(C.rose).widgetAccentable()
           Text(e.d.seance.isEmpty ? "Ouvre NÉA" : e.d.seance).font(.system(size: 15, weight: .bold)).lineLimit(2).minimumScaleFactor(0.8)
@@ -226,7 +239,7 @@ struct MascotteVue: View {
     default:
       ZStack {
         Circle().fill(C.rose.opacity(0.2))
-        Image(e.d.coach).resizable().scaledToFit().padding(3)
+        ImageCoach(nom: e.d.coach).padding(3)
       }
       .widgetAccentable(false)
     }
