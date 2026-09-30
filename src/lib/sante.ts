@@ -17,9 +17,12 @@ const LECTURE = [
   'HKQuantityTypeIdentifierActiveEnergyBurned',
   'HKQuantityTypeIdentifierAppleExerciseTime',
   'HKQuantityTypeIdentifierHeartRate',
+  'HKQuantityTypeIdentifierStepCount',
 ] as const;
 
-const ECRITURE = ['HKWorkoutTypeIdentifier', 'HKQuantityTypeIdentifierActiveEnergyBurned', 'HKQuantityTypeIdentifierDistanceCycling'] as const;
+const ECRITURE = ['HKWorkoutTypeIdentifier', 'HKQuantityTypeIdentifierActiveEnergyBurned', 'HKQuantityTypeIdentifierDistanceCycling',
+  'HKQuantityTypeIdentifierDistanceWalkingRunning',
+] as const;
 
 let hk: HK | null | undefined;
 
@@ -173,8 +176,8 @@ export async function fcRecente(maxSec = 20, now: Date = new Date()): Promise<nu
   }
 }
 
-/** Enregistre une séance (renforcement) ou une sortie vélo dans Apple Santé : elle compte pour les cercles d'Apple. */
-export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo'; debut: Date; fin: Date; kcal: number; km?: number }): Promise<void> {
+/** Enregistre une séance (renforcement), une sortie vélo ou une course dans Apple Santé : elle compte pour les cercles d'Apple. */
+export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo' | 'course'; debut: Date; fin: Date; kcal: number; km?: number }): Promise<void> {
   const m = module();
   if (!m || +e.fin <= +e.debut) return;
   try {
@@ -182,9 +185,15 @@ export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo'; debut
     const mesures: Parameters<HK['saveWorkoutSample']>[1][number][] = [
       { startDate: e.debut, endDate: e.fin, quantityType: 'HKQuantityTypeIdentifierActiveEnergyBurned', quantity: Math.max(0, e.kcal), unit: 'kcal' },
     ];
-    if (e.km) mesures.push({ startDate: e.debut, endDate: e.fin, quantityType: 'HKQuantityTypeIdentifierDistanceCycling', quantity: e.km * 1000, unit: 'm' });
-    // 50 = renforcement musculaire traditionnel, 13 = vélo (HKWorkoutActivityType)
-    await m.saveWorkoutSample(e.type === 'velo' ? 13 : 50, mesures, e.debut, e.fin, { energyBurned: Math.max(0, e.kcal), distance: e.km ? e.km * 1000 : undefined });
+    if (e.km) mesures.push({
+        startDate: e.debut,
+        endDate: e.fin,
+        quantityType: e.type === 'course' ? 'HKQuantityTypeIdentifierDistanceWalkingRunning' : 'HKQuantityTypeIdentifierDistanceCycling',
+        quantity: e.km * 1000,
+        unit: 'm',
+      });
+    // 50 = renforcement musculaire traditionnel, 13 = vélo, 37 = course (HKWorkoutActivityType)
+    await m.saveWorkoutSample(e.type === 'velo' ? 13 : e.type === 'course' ? 37 : 50, mesures, e.debut, e.fin, { energyBurned: Math.max(0, e.kcal), distance: e.km ? e.km * 1000 : undefined });
   } catch {
     // Refus de l'écriture ou erreur : la séance reste enregistrée dans NÉA.
   }

@@ -113,7 +113,7 @@ type Actions = {
   /** Nouveaux réglages : le bilan et le coucher peuvent revenir aujourd'hui. */
   reglerNotifs: (n: ReglagesNotifs) => void;
   /** Rappel VFC après une séance ou une sortie (schedulePost). */
-  programmerPost: (kind: 'muscu' | 'velo', endHrv: number | null) => void;
+  programmerPost: (kind: 'muscu' | 'velo' | 'course', endHrv: number | null) => void;
   /** Achat NÉA Plus (buySheet) : abonnement, rappel de fin d'essai au jour 2, +50 XP. */
   acheterPlus: (id: OffreId) => void;
   /** Annuler / réactiver le renouvellement (subSheet). */

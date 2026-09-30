@@ -29,7 +29,7 @@ final class Entrainement: NSObject, ObservableObject {
   static func autoriser() {
     guard HKHealthStore.isHealthDataAvailable() else { return }
     let partage: Set<HKSampleType> = [
-      HKObjectType.workoutType(), HKQuantityType(.activeEnergyBurned), HKQuantityType(.distanceCycling),
+      HKObjectType.workoutType(), HKQuantityType(.activeEnergyBurned), HKQuantityType(.distanceCycling), HKQuantityType(.distanceWalkingRunning),
       HKSeriesType.workoutRoute(), HKCategoryType(.mindfulSession),
     ]
     let lecture: Set<HKObjectType> = [

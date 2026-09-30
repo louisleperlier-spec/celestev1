@@ -27,10 +27,11 @@ export function ajouterPoint(pts: readonly Pt[], dist: number, pt: Pt): { pts: P
 export type Sim = { lat: number; lng: number; h: number };
 export const simDepart = (random: () => number = Math.random): Sim => ({ lat: 45.5312, lng: -73.5181, h: random() * 6.28 });
 
-/** Une seconde de parcours simulé (bikeTick, mode extérieur sans GPS). */
-export function pasSimule(s: Sim, spd: number, pts: readonly Pt[], dist: number, random: () => number = Math.random) {
+/** Une seconde de parcours simulé (bikeTick, mode extérieur sans GPS) ; `course` : allure de course à pied (7 à 14 km/h). */
+export function pasSimule(s: Sim, spd: number, pts: readonly Pt[], dist: number, random: () => number = Math.random, course = false) {
   const h = s.h + (random() - 0.5) * 0.35;
-  const v = Math.max(12, Math.min(32, (spd || 20) + (random() - 0.5) * 1.6));
+  const [vMin, vMax, v0] = course ? [7, 14, 10] : [12, 32, 20];
+  const v = Math.max(vMin, Math.min(vMax, (spd || v0) + (random() - 0.5) * (course ? 0.6 : 1.6)));
   const m = v / 3.6;
   const lat = s.lat + (Math.cos(h) * m) / 110540;
   const lng = s.lng + (Math.sin(h) * m) / (111320 * Math.cos((lat * Math.PI) / 180));
@@ -55,6 +56,19 @@ export function caloriesVelo(dist: number, sec: number, weight: number): number 
 /** XP de base d'une sortie : 30 + 4 par km. */
 export const xpVelo = (dist: number) => 30 + Math.round(dist * 4);
 
+/** Calories d'une course à pied : ≈ 1 kcal par kg et par km (hors prototype). */
+export const caloriesCourse = (dist: number, weight: number) => Math.round(dist * weight);
+
+/** XP de base d'une course : 30 + 8 par km (1 km de course ≈ 2 km de vélo). */
+export const xpCourse = (dist: number) => 30 + Math.round(dist * 8);
+
+/** Allure de course (min/km) : « 5:32 », ou « – » à l'arrêt. */
+export function allure(kmh: number): string {
+  if (kmh < 1) return '–';
+  const s = Math.round(3600 / kmh);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
 /** Projection plane du tracé en mètres (proj). */
 export function proj(pts: readonly Pt[]): [number, number][] {
   if (!pts.length) return [];
@@ -76,6 +90,6 @@ export function tracePlan(pts: readonly Pt[], W = 340, H = 230): [number, number
   return q.map((p) => [(p[0] - x0) * sc + ox, (p[1] - y0) * sc + oy]);
 }
 
-/** Lien « Ouvrir dans Plans » : itinéraire à vélo du départ à l'arrivée. */
-export const lienPlans = (a: Pt, b: Pt) =>
-  `https://maps.apple.com/?saddr=${a[0].toFixed(5)},${a[1].toFixed(5)}&daddr=${b[0].toFixed(5)},${b[1].toFixed(5)}&dirflg=b`;
+/** Lien « Ouvrir dans Plans » : itinéraire à vélo (ou à pied pour une course) du départ à l'arrivée. */
+export const lienPlans = (a: Pt, b: Pt, aPied = false) =>
+  `https://maps.apple.com/?saddr=${a[0].toFixed(5)},${a[1].toFixed(5)}&daddr=${b[0].toFixed(5)},${b[1].toFixed(5)}&dirflg=${aPied ? 'w' : 'b'}`;

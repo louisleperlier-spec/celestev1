@@ -1,6 +1,7 @@
 /**
  * Sortie vélo en cours (objet `V` du prototype), non sauvegardée : GPS réel ou parcours simulé,
  * stationnaire selon la résistance, FC simulée. L'horloge tourne même si on quitte l'onglet.
+ * Mode `course` (hors prototype) : course à pied au GPS. Les sorties dehors au vrai GPS conquièrent des territoires.
  */
 import * as Location from 'expo-location';
 import { create } from 'zustand';
@@ -8,13 +9,16 @@ import { create } from 'zustand';
 import { toast } from '@/components/ui/Toast';
 import { coeur, hrStats, type SourceFC, type StatsFC } from '@/lib/coeur';
 import { enregistrerEntrainement } from '@/lib/sante';
+import { casesTrace } from '@/lib/territoires';
 import {
   ajouterPoint,
+  caloriesCourse,
   caloriesVelo,
   intensiteVelo,
   pasSimule,
   simDepart,
   vitesseStationnaire,
+  xpCourse,
   xpVelo,
   type Pt,
   type Sim,
@@ -22,8 +26,9 @@ import {
 
 import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
+import { conquerirTrace, type Conquete } from './territoires';
 
-export type ModeVelo = 'ext' | 'int';
+export type ModeVelo = 'ext' | 'int' | 'course';
 /** Source du tracé : GPS réel, simulation, ou pas encore connue. */
 export type Gps = 'gps' | 'sim' | null;
 
@@ -36,7 +41,11 @@ export type ResultatVelo = {
   start: Pt | null;
   end: Pt | null;
   gps: Gps;
+  mode: ModeVelo;
   xp?: number;
+  /** Territoires : cases traversées (vrai GPS) et résultat du serveur (null tant qu'il n'a pas répondu ou sans compte). */
+  cases?: number;
+  conquete?: Conquete | null;
 };
 
 type Velo = {
@@ -125,9 +134,9 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
         spd = vitesseStationnaire(v.lvl);
         dist += spd / 3600;
       } else if (v.gps === 'sim' && sim) {
-        ({ sim, spd, pts, dist } = pasSimule(sim, spd, pts, dist));
+        ({ sim, spd, pts, dist } = pasSimule(sim, spd, pts, dist, Math.random, v.mode === 'course'));
       }
-      hr.intensity = intensiteVelo(v.mode, v.lvl, spd);
+      hr.intensity = v.mode === 'course' ? Math.min(0.95, Math.max(0.4, spd / 13)) : intensiteVelo(v.mode === 'int' ? 'int' : 'ext', v.lvl, spd);
       hr.tick();
       // Mêmes battements que la séance : les derniers ajoutés par tick() (correction du bug RR du prototype).
       const rrs = [...v.rrs, ...hr.rr.slice(-Math.max(1, Math.round(hr.bpm / 60)))];
@@ -163,7 +172,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
       if (horloge) clearInterval(horloge);
       horloge = setInterval(tick, 1000);
       suivreMontre();
-      if (get().mode === 'ext') gpsExterieur();
+      if (get().mode !== 'int') gpsExterieur();
     },
     pause: () => set({ paused: !get().paused }),
     tickRepos: () => {
@@ -179,17 +188,29 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
       const p = useProfil.getState();
       const st = hrStats(v.hr, v.rrs, p.age);
       const min = Math.max(1, Math.round(v.el / 60));
-      const cal = caloriesVelo(v.dist, v.el, p.weight);
-      const res: ResultatVelo = { dist: v.dist, sec: v.el, hr: v.hr, st, cal, end: v.pts[v.pts.length - 1] ?? null, start: v.pts[0] ?? null, gps: v.gps };
+      const course = v.mode === 'course';
+      const cal = course ? caloriesCourse(v.dist, p.weight) : caloriesVelo(v.dist, v.el, p.weight);
+      const res: ResultatVelo = { dist: v.dist, sec: v.el, hr: v.hr, st, cal, end: v.pts[v.pts.length - 1] ?? null, start: v.pts[0] ?? null, gps: v.gps, mode: v.mode };
+      const fin = new Date().toISOString();
       if (v.el >= 30) {
-        p.addLog({ d: new Date().toISOString(), type: 'velo', title: v.mode === 'ext' ? 'Sortie vélo' : 'Vélo stationnaire', min, cal, vol: 0, dist: +v.dist.toFixed(1), hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
-        const g = useProfil.getState().addXp(xpVelo(v.dist), 'Vélo');
+        const titre = course ? 'Course' : v.mode === 'ext' ? 'Sortie vélo' : 'Vélo stationnaire';
+        p.addLog({ d: fin, type: course ? 'course' : 'velo', title: titre, min, cal, vol: 0, dist: +v.dist.toFixed(1), hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
+        const g = useProfil.getState().addXp(course ? xpCourse(v.dist) : xpVelo(v.dist), course ? 'Course' : 'Vélo');
         res.xp = g;
-        if (v.dist >= 5 || v.el >= 1200) useProfil.getState().quest('velo');
+        if (!course && (v.dist >= 5 || v.el >= 1200)) useProfil.getState().quest('velo');
         coeur(p.age).fatigue = 0.7;
-        useProfil.getState().programmerPost('velo', st.hrv);
-        enregistrerEntrainement({ type: 'velo', debut: new Date(Date.now() - v.el * 1000), fin: new Date(), kcal: cal, km: v.dist });
-        toast('Sortie enregistrée : +' + g + ' XP');
+        useProfil.getState().programmerPost(course ? 'course' : 'velo', st.hrv);
+        enregistrerEntrainement({ type: course ? 'course' : 'velo', debut: new Date(Date.now() - v.el * 1000), fin: new Date(), kcal: cal, km: v.dist });
+        toast((course ? 'Course enregistrée : +' : 'Sortie enregistrée : +') + g + ' XP');
+        // Territoires : seulement avec la vraie position (jamais le parcours simulé).
+        if (v.gps === 'gps' && v.pts.length > 1) {
+          res.cases = casesTrace(v.pts).length;
+          res.conquete = null;
+          conquerirTrace(v.pts, fin).then((c) => {
+            const r = get().res;
+            if (c && r && r === res) set({ res: { ...r, conquete: c } });
+          });
+        }
       } else toast('Sortie trop courte, non enregistrée');
       set({ run: false, paused: false, res });
     },

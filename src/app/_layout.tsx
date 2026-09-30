@@ -10,6 +10,8 @@ import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
+// Territoires : envoie les cases gardées hors ligne dès la connexion au compte.
+import '@/store/territoires';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();

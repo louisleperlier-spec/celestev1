@@ -40,7 +40,7 @@ export type Notif = {
   d: string;
   read: boolean;
   type: 'post' | 'sleep' | 'bed' | 'trial' | 'activite';
-  icon: 'wave' | 'moon' | 'star' | 'bike' | 'dumb';
+  icon: 'wave' | 'moon' | 'star' | 'bike' | 'run' | 'dumb';
   col: string;
   act: ActionNotif;
   title: string;
@@ -52,7 +52,7 @@ export type Notif = {
 export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;
 
 /** Rappel en attente (S.pending) : VFC post-entraînement, ou veille de la fin de l'essai NÉA Plus. */
-export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo'; endHrv: number | null } | { at: number; type: 'trial' };
+export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo' | 'course'; endHrv: number | null } | { at: number; type: 'trial' };
 
 /** Couleurs des pastilles (.nic) reprises du prototype. */
 export const COULEURS_NOTIF = { post: '#ff4fa3', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000' } as const;
@@ -71,7 +71,7 @@ export function notifEssai(p: Premium | null): NouvelleNotif | null {
 }
 
 /** Rappel VFC à programmer après une séance ou une sortie (schedulePost), ou rien si désactivé. */
-export function rappelPost(n: ReglagesNotifs, kind: 'muscu' | 'velo', endHrv: number | null, now = Date.now()): EnAttente | null {
+export function rappelPost(n: ReglagesNotifs, kind: 'muscu' | 'velo' | 'course', endHrv: number | null, now = Date.now()): EnAttente | null {
   return n.post ? { at: now + n.delay * 60000, type: 'post', kind, endHrv } : null;
 }
 
@@ -84,7 +84,7 @@ export function notifPost(p: Extract<EnAttente, { type: 'post' }>, n: ReglagesNo
     col: COULEURS_NOTIF.post,
     act: 'hrv',
     title: 'VFC post-entraînement',
-    body: `${p.kind === 'velo' ? 'Sortie vélo' : 'Séance'} terminée il y a ${n.delay} min.${p.endHrv ? ` VFC de fin : ${p.endHrv} ms (${d! >= 0 ? '+' : ''}${d} % vs ta moyenne).` : ''} Mesure ta récupération en 1 minute.`,
+    body: `${p.kind === 'velo' ? 'Sortie vélo' : p.kind === 'course' ? 'Course' : 'Séance'} terminée il y a ${n.delay} min.${p.endHrv ? ` VFC de fin : ${p.endHrv} ms (${d! >= 0 ? '+' : ''}${d} % vs ta moyenne).` : ''} Mesure ta récupération en 1 minute.`,
   };
 }
 

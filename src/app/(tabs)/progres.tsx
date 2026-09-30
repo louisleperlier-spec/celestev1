@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { TitreOnglet } from '@/components/app/EnTete';
+import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
 import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
@@ -149,7 +150,8 @@ export default function Progres() {
           <Text style={styles.qEm}>— {c.nom}</Text>
           <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
         </LinearGradient>
-        {/* La Ligue (niveau, quêtes, classements) suit les progrès. */}
+        {/* Territoires (vélo et course), puis la Ligue (niveau, quêtes, classements). */}
+        <EntreeTerritoires />
         <Ligue integree />
         <View style={styles.basPage} />
       </ScrollView>

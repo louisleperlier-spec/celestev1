@@ -124,6 +124,10 @@ struct VeloMontre: Codable {
   let kcal: Double
   let fcMoy: Double
   let fcMax: Double
+  /// « course » ou « velo » (absent avant le build 11 = vélo).
+  var sport: String? = nil
+  /// Tracé GPS [latitude, longitude] (500 points au plus) : l'iPhone en déduit les territoires conquis.
+  var pts: [[Double]]? = nil
 }
 
 /// Mesure de récupération d'1 minute.

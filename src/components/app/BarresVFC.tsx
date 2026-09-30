@@ -4,9 +4,9 @@ import Svg, { G, Rect, Text as SvgText } from 'react-native-svg';
 import { Text } from '@/components/ui';
 import { colors, fonts, ui } from '@/theme';
 
-export type BarreVFC = { hrv: number; type: 'muscu' | 'velo' | 'nuit' };
+export type BarreVFC = { hrv: number; type: 'muscu' | 'velo' | 'course' | 'nuit' };
 
-const couleur = (t: BarreVFC['type']) => (t === 'velo' ? colors.mauve : t === 'nuit' ? ui.sommeil : colors.pink);
+const couleur = (t: BarreVFC['type']) => (t === 'velo' || t === 'course' ? colors.mauve : t === 'nuit' ? ui.sommeil : colors.pink);
 
 /** VFC en barres, 320 × 90 (vfcBars du prototype). Légende Muscu / Vélo sauf pour les nuits. */
 export function BarresVFC({ hl }: { hl: readonly BarreVFC[] }) {

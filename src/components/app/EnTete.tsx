@@ -10,7 +10,7 @@ export type Rubrique = { label: string; href: Href };
 export const ENTRAINEMENT: Rubrique[] = [
   { label: 'Programme', href: '/programme' },
   { label: 'Calendrier', href: { pathname: '/programme', params: { vue: 'calendrier' } } },
-  { label: 'Vélo', href: '/velo' },
+  { label: 'Sorties', href: '/velo' },
 ];
 
 /** En-tête d'onglet : grand titre, bouton « + » (séances prêtes), puis le contrôle segmenté des rubriques. */

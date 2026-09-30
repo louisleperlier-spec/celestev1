@@ -1,16 +1,19 @@
+import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Carte } from '@/components/app/Carte';
+import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
 import { CourbeFC, ListeZones } from '@/components/app/Coeur';
 import { LivePills } from '@/components/app/LivePills';
 import { SectionHead } from '@/components/app/Section';
 import { Button, Card, Icon, SelectableCard, Text, type IconName } from '@/components/ui';
 import { dec } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
-import { lienPlans } from '@/lib/velo';
+import { allure, lienPlans } from '@/lib/velo';
+import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { useVelo, type ModeVelo } from '@/store/velo';
 import { colors, fonts, heartZones, ui } from '@/theme';
@@ -18,12 +21,16 @@ import { colors, fonts, heartZones, ui } from '@/theme';
 const ZC = [heartZones.z1, heartZones.z2, heartZones.z3, heartZones.z4, heartZones.z5];
 const RESISTANCES = [2, 4, 5, 6, 8, 10];
 
-/** Onglet Vélo (vBike du prototype) : extérieur (GPS, carte, tracé) ou stationnaire (résistance), FC, historique. */
+/**
+ * Onglet Sorties (vBike du prototype) : vélo dehors (GPS, carte, tracé) ou stationnaire (résistance), FC, historique ;
+ * plus la course à pied (hors prototype). Dehors au vrai GPS, chaque sortie conquiert les territoires traversés.
+ */
 export default function Velo() {
   const v = useVelo();
   const p = useProfil();
   const age = p.age;
-  const rides = p.logs.filter((l) => l.type === 'velo').slice(0, 6);
+  const rides = p.logs.filter((l) => l.type === 'velo' || l.type === 'course').slice(0, 6);
+  const connecte = useCompte((s) => !!s.userId);
 
   // FC au repos affichée même sans sortie (horloge unique du prototype).
   useEffect(() => {
@@ -32,8 +39,9 @@ export default function Velo() {
   }, []);
 
   const r = v.res;
+  const course = v.mode === 'course';
   const note =
-    v.mode === 'ext'
+    v.mode !== 'int'
       ? v.gps === 'gps'
         ? 'Position GPS réelle.'
         : v.gps === 'sim'
@@ -44,15 +52,16 @@ export default function Velo() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Vélo" />
+        <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Sorties" />
 
         {/* .modes */}
         <View style={styles.modes}>
-          <Mode id="ext" icon="pin" label="Extérieur" on={v.mode === 'ext'} bloque={v.run} onPress={v.setMode} />
-          <Mode id="int" icon="bike" label="Stationnaire" on={v.mode === 'int'} bloque={v.run} onPress={v.setMode} />
+          <Mode id="ext" icon="bike" label="Vélo" on={v.mode === 'ext'} bloque={v.run} onPress={v.setMode} />
+          <Mode id="course" icon="run" label="Course" on={course} bloque={v.run} onPress={v.setMode} />
+          <Mode id="int" icon="sliders" label="Stationnaire" on={v.mode === 'int'} bloque={v.run} onPress={v.setMode} />
         </View>
 
-        {v.mode === 'ext' ? (
+        {v.mode !== 'int' ? (
           <Carte pts={v.pts} gps={v.gps === 'gps'} />
         ) : (
           <>
@@ -81,7 +90,7 @@ export default function Velo() {
         <View style={styles.bstats}>
           <Stat label="Durée" value={mmss(v.el)} />
           <Stat label="Distance" value={dec(v.dist.toFixed(2))} unit="km" />
-          <Stat label="Vitesse" value={dec(v.spd.toFixed(1))} unit="km/h" />
+          {course ? <Stat label="Allure" value={allure(v.spd)} unit="/km" /> : <Stat label="Vitesse" value={dec(v.spd.toFixed(1))} unit="km/h" />}
         </View>
 
         {/* .zones : zone cardio actuelle */}
@@ -106,12 +115,15 @@ export default function Velo() {
           {note} Calories estimées pour {dec(p.weight)} kg.
         </Text>
 
+        {/* Territoires : conquête du quartier en vélo et en course */}
+        <EntreeTerritoires />
+
         {/* Dernière sortie */}
         {r && (
           <Card style={styles.hrchart}>
             <View style={styles.h4}>
               <Text weight="semibold" style={styles.h4Txt}>
-                Dernière sortie
+                {r.mode === 'course' ? 'Dernière course' : 'Dernière sortie'}
               </Text>
               <Text style={styles.h4Small}>
                 {dec(r.dist.toFixed(1))} km • {mmss(r.sec)}
@@ -124,9 +136,34 @@ export default function Velo() {
               <Case label="Calories" value={String(r.cal)} />
             </View>
             <ListeZones z={r.st.z} />
+            {r.cases ? (
+              <Pressable accessibilityRole="button" onPress={() => router.push('/territoires')} style={styles.conq}>
+                <Icon name="hexa" color={colors.pink} />
+                <View style={styles.flex}>
+                  <Text weight="semibold" style={styles.h5}>
+                    {r.cases} case{r.cases > 1 ? 's' : ''} traversée{r.cases > 1 ? 's' : ''}
+                  </Text>
+                  <Text style={styles.p}>
+                    {r.conquete
+                      ? [
+                          r.conquete.prises && `${r.conquete.prises} prise${r.conquete.prises > 1 ? 's' : ''}`,
+                          r.conquete.volees && `${r.conquete.volees} volée${r.conquete.volees > 1 ? 's' : ''}`,
+                          r.conquete.gardees && `${r.conquete.gardees} défendue${r.conquete.gardees > 1 ? 's' : ''}`,
+                          r.conquete.protegees && `${r.conquete.protegees} sous bouclier`,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ') || 'Aucune case prise'
+                      : connecte
+                        ? 'Conquête en cours d\u2019envoi…'
+                        : 'Crée ton compte pour les conquérir : elles sont gardées en attendant.'}
+                  </Text>
+                </View>
+                <Icon name="right" size={18} color={colors.textSecondary} />
+              </Pressable>
+            ) : null}
             {r.end && r.start && (
               <>
-                <Button label="Ouvrir dans Plans" icon="pin" variant="dark" onPress={() => Linking.openURL(lienPlans(r.start!, r.end!))} style={styles.plans} />
+                <Button label="Ouvrir dans Plans" icon="pin" variant="dark" onPress={() => Linking.openURL(lienPlans(r.start!, r.end!, r.mode === 'course'))} style={styles.plans} />
                 {r.gps !== 'gps' && <Text style={styles.noteSim}>Parcours simulé : les points ne sont pas ta vraie position.</Text>}
               </>
             )}
@@ -139,7 +176,7 @@ export default function Velo() {
             rides.map((l) => (
               <Card key={l.d} style={styles.ride}>
                 <View style={styles.rideIco}>
-                  <Icon name="bike" />
+                  <Icon name={l.type === 'course' ? 'run' : 'bike'} />
                 </View>
                 <View style={styles.flex}>
                   <Text weight="semibold" style={styles.h5}>
@@ -240,4 +277,5 @@ const styles = StyleSheet.create({
   p: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
   vide: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary },
   bas: { height: 12 },
+  conq: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, padding: 10, borderRadius: 12, backgroundColor: ui.dark },
 });

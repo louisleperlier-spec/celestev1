@@ -12,7 +12,8 @@ import { COACHES, SEANCES } from '@/data';
 import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, sesKcal, todayIdx } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
-import { caloriesVelo, xpVelo } from '@/lib/velo';
+import { casesTrace } from '@/lib/territoires';
+import { caloriesCourse, caloriesVelo, xpCourse, xpVelo } from '@/lib/velo';
 import { colors } from '@/theme';
 import { catSession, sessionForDay, type SeanceJour, type Semaine } from '@/lib/semaine';
 import { lvlInfo, rankOf, streak } from '@/lib/xp';
@@ -21,6 +22,7 @@ import { NeaMontre } from '../../modules/nea-montre/src';
 import { envoyer as envoyerAuCoach } from './coach';
 import { annoncer } from './notifs';
 import { selectProfil, useProfil } from './profil';
+import { conquerirTrace } from './territoires';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
@@ -66,7 +68,19 @@ type EtatMontre = {
 /** Séance terminée sur la montre. */
 type ResultatMontre = { id: string; debut: string; fin: string; titre: string; sec: number; kcal: number; fcMoy: number; fcMax: number; series: number; volume: number };
 /** Sortie vélo, mesure de récupération d'1 min, message au coach (depuis la montre). */
-type VeloMontre = { id: string; debut: string; fin: string; sec: number; km: number; kcal: number; fcMoy: number; fcMax: number };
+type VeloMontre = {
+  id: string;
+  debut: string;
+  fin: string;
+  sec: number;
+  km: number;
+  kcal: number;
+  fcMoy: number;
+  fcMax: number;
+  /** Build 11 : sport et tracé (territoires). */
+  sport?: 'velo' | 'course';
+  pts?: [number, number][];
+};
 type MesureMontre = { d: string; hrv: number; bpm: number };
 type CoachEnvoi = { texte: string };
 
@@ -217,28 +231,34 @@ function recevoir(json: string) {
   });
 }
 
-/** Sortie vélo de la montre → journal, XP, quête (comme la fin d'une sortie sur l'iPhone). */
+/** Sortie vélo ou course de la montre → journal, XP, quête (comme sur l'iPhone), puis territoires conquis avec son tracé. */
 function recevoirVelo(json: string) {
   const r = lire<VeloMontre>(json);
   if (!r) return;
+  const course = r.sport === 'course';
+  const type = course ? 'course' : 'velo';
   const st = useProfil.getState();
-  if (st.logs.some((l) => l.d === r.fin && l.type === 'velo')) return;
+  if (st.logs.some((l) => l.d === r.fin && l.type === type)) return;
   const min = Math.max(1, Math.round(r.sec / 60));
-  const cal = r.kcal > 0 ? Math.round(r.kcal) : caloriesVelo(r.km, r.sec, st.weight);
-  st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type: 'velo', title: 'Sortie vélo', min, cal, vol: 0, dist: +r.km.toFixed(1), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  const cal = r.kcal > 0 ? Math.round(r.kcal) : course ? caloriesCourse(r.km, st.weight) : caloriesVelo(r.km, r.sec, st.weight);
+  const titre = course ? 'Course' : 'Sortie vélo';
+  st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type, title: titre, min, cal, vol: 0, dist: +r.km.toFixed(1), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
   const apres = useProfil.getState();
-  apres.addXp(xpVelo(r.km), 'Vélo');
-  if (r.km >= 5 || r.sec >= 1200) apres.quest('velo');
-  apres.programmerPost('velo', null);
+  apres.addXp(course ? xpCourse(r.km) : xpVelo(r.km), course ? 'Course' : 'Vélo');
+  if (!course && (r.km >= 5 || r.sec >= 1200)) apres.quest('velo');
+  apres.programmerPost(type, null);
+  const pts = (r.pts ?? []).filter((p): p is [number, number] => Array.isArray(p) && p.length === 2);
+  const nb = pts.length > 1 ? casesTrace(pts).length : 0;
   annoncer({
     type: 'activite',
-    icon: 'bike',
+    icon: course ? 'run' : 'bike',
     col: colors.pink,
     act: 'activite',
     lien: r.fin,
-    title: `Vélo · ${mmss(r.sec)}`,
-    body: `${dec(r.km.toFixed(1))} km${r.fcMoy ? ` • FC moy. ${Math.round(r.fcMoy)} bpm` : ''} • Touche pour voir ton récap`,
+    title: `${course ? 'Course' : 'Vélo'} · ${mmss(r.sec)}`,
+    body: `${dec(r.km.toFixed(1))} km${r.fcMoy ? ` • FC moy. ${Math.round(r.fcMoy)} bpm` : ''}${nb ? ` • ${nb} cases traversées` : ''} • Touche pour voir ton récap`,
   });
+  if (nb) void conquerirTrace(pts, r.fin);
 }
 
 /** Mesure de récupération faite sur la montre. */

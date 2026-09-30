@@ -7,10 +7,12 @@ enum EtapeVelo {
   case route, pause, bilan
 }
 
-/// Sortie vélo en extérieur : GPS de la montre (distance, vitesse, tracé), FC et calories, enregistrée dans Santé.
+/// Sortie vélo ou course en extérieur : GPS de la montre (distance, vitesse, tracé), FC et calories, enregistrée dans Santé.
+/// Le tracé part à l'iPhone, qui en déduit les territoires conquis.
 final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
-  let entrainement = Entrainement(activite: .cycling, lieu: .outdoor)
+  let entrainement: Entrainement
   let fcMax: Double
+  let course: Bool
 
   @Published var etape: EtapeVelo = .route
   @Published var secondes = 0
@@ -27,8 +29,10 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   private var liens = Set<AnyCancellable>()
   private(set) var debut = Date()
 
-  init(fcMax: Double) {
+  init(fcMax: Double, course: Bool = false) {
     self.fcMax = fcMax > 0 ? fcMax : 190
+    self.course = course
+    entrainement = Entrainement(activite: course ? .running : .cycling, lieu: .outdoor)
     super.init()
     gps.delegate = self
     gps.desiredAccuracy = kCLLocationAccuracyBest
@@ -44,6 +48,15 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 
   var vitesseMoy: Double { secondes > 0 ? km / (Double(secondes) / 3600) : 0 }
+
+  /// Tracé allégé pour l'iPhone : au plus 500 points, arrondis à 5 décimales (~1 m).
+  var traceEnvoi: [[Double]] {
+    guard !points.isEmpty else { return [] }
+    let pas = max(1, Int((Double(points.count) / 500).rounded(.up)))
+    var r = stride(from: 0, to: points.count, by: pas).map { points[$0] }
+    if let d = points.last, r.last.map({ $0.latitude != d.latitude || $0.longitude != d.longitude }) ?? true { r.append(d) }
+    return r.map { [($0.latitude * 1e5).rounded() / 1e5, ($0.longitude * 1e5).rounded() / 1e5] }
+  }
 
   func demarrer() {
     guard !lance else { return }
@@ -94,7 +107,9 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
       km: km,
       kcal: entrainement.kcal,
       fcMoy: entrainement.fcMoy,
-      fcMax: entrainement.fcMax
+      fcMax: entrainement.fcMax,
+      sport: course ? "course" : "velo",
+      pts: traceEnvoi
     )
     entrainement.terminer(sauver: true) {
       LiaisonMontre.partagee.envoyer("velo", v)
@@ -135,17 +150,18 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 }
 
-/// Entrée du vélo : « Vélo extérieur », Démarrer.
+/// Entrée du vélo (ou de la course) : titre, Démarrer.
 struct VeloView: View {
+  var course = false
   @ObservedObject private var donnees = Donnees.partagees
   @State private var lance = false
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 8) {
-        Image(systemName: "bicycle").font(.system(size: 30)).foregroundColor(Nea.rose)
-        Text("Vélo extérieur").font(.system(size: 22, weight: .bold))
-        Text("GPS de la montre, FC et zones cardio, tracé enregistré dans Santé.")
+        Image(systemName: course ? "figure.run" : "bicycle").font(.system(size: 30)).foregroundColor(Nea.rose)
+        Text(course ? "Course" : "Vélo extérieur").font(.system(size: 22, weight: .bold))
+        Text("GPS de la montre, FC et zones cardio. Chaque case traversée conquiert un territoire.")
           .font(.system(size: 14))
           .foregroundColor(Nea.texte2)
         Button("Démarrer") { lance = true }
@@ -154,7 +170,7 @@ struct VeloView: View {
       }
     }
     .fullScreenCover(isPresented: $lance) {
-      SortieView(fcMax: donnees.etat?.fcMax ?? 190)
+      SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: course)
     }
   }
 }
@@ -164,8 +180,8 @@ struct SortieView: View {
   @StateObject private var sortie: SortieVelo
   @State private var carte = false
 
-  init(fcMax: Double) {
-    _sortie = StateObject(wrappedValue: SortieVelo(fcMax: fcMax))
+  init(fcMax: Double, course: Bool = false) {
+    _sortie = StateObject(wrappedValue: SortieVelo(fcMax: fcMax, course: course))
   }
 
   var body: some View {
@@ -201,6 +217,13 @@ private func km1(_ v: Double) -> String {
   String(format: "%.1f", v).replacingOccurrences(of: ".", with: ",")
 }
 
+/// Allure de course (min/km), « – » à l'arrêt.
+private func allure(_ kmh: Double) -> String {
+  guard kmh >= 1 else { return "–" }
+  let s = Int((3600 / kmh).rounded())
+  return String(format: "%d:%02d", s / 60, s % 60)
+}
+
 /// 10 · Vélo : vitesse en grand, distance et durée, FC et zone, Pause / Carte ; en pause : Reprendre / Terminer.
 struct DonneesVelo: View {
   @ObservedObject var sortie: SortieVelo
@@ -226,8 +249,8 @@ struct DonneesVelo: View {
           }
           .buttonStyle(BoutonSombre())
         } else {
-          GrosChiffre(texte: km1(sortie.vitesse), taille: 54)
-          Text("km/h").font(.system(size: 15)).foregroundColor(Nea.texte2)
+          GrosChiffre(texte: sortie.course ? allure(sortie.vitesse) : km1(sortie.vitesse), taille: 54)
+          Text(sortie.course ? "min/km" : "km/h").font(.system(size: 15)).foregroundColor(Nea.texte2)
           Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 3)
           HStack {
             VStack(spacing: 0) {
@@ -269,7 +292,7 @@ struct DonneesVelo: View {
         }
       }
     }
-    .navigationTitle(sortie.etape == .pause ? "En pause" : "Vélo")
+    .navigationTitle(sortie.etape == .pause ? "En pause" : sortie.course ? "Course" : "Vélo")
   }
 }
 
@@ -323,14 +346,17 @@ struct BilanVelo: View {
       VStack(alignment: .leading, spacing: 6) {
         HStack(spacing: 6) {
           Image(systemName: "checkmark.circle.fill").font(.system(size: 26)).foregroundColor(Nea.rose)
-          Text("Sortie terminée").font(.system(size: 17, weight: .bold))
+          Text(sortie.course ? "Course terminée" : "Sortie terminée").font(.system(size: 17, weight: .bold))
         }
         HStack(spacing: 6) {
           Tuile(titre: "Durée", valeur: duree(sortie.secondes))
           Tuile(titre: "Distance", valeur: "\(km1(sortie.km)) km")
         }
         HStack(spacing: 6) {
-          Tuile(titre: "Vitesse moy.", valeur: "\(km1(sortie.vitesseMoy)) km/h")
+          Tuile(
+            titre: sortie.course ? "Allure moy." : "Vitesse moy.",
+            valeur: sortie.course ? "\(allure(sortie.vitesseMoy)) /km" : "\(km1(sortie.vitesseMoy)) km/h"
+          )
           Tuile(titre: "FC moyenne", valeur: sortie.entrainement.fcMoy > 0 ? "\(Int(sortie.entrainement.fcMoy)) bpm" : "--")
         }
         Tuile(titre: "Énergie estimée", valeur: "\(Int(sortie.entrainement.kcal)) kcal")

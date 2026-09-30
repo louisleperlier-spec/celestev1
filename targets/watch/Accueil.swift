@@ -34,6 +34,7 @@ struct AccueilView: View {
           }
           NavigationLink { SeancesView() } label: { LigneMenu(icone: "calendar", titre: "Mes séances") }.buttonStyle(.plain)
           NavigationLink { VeloView() } label: { LigneMenu(icone: "bicycle", titre: "Vélo") }.buttonStyle(.plain)
+          NavigationLink { VeloView(course: true) } label: { LigneMenu(icone: "figure.run", titre: "Course") }.buttonStyle(.plain)
           NavigationLink { RecupView() } label: {
             LigneMenu(icone: "heart.fill", titre: "Récupération", valeur: e.score.map { "\($0)" } ?? "")
           }

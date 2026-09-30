@@ -10,6 +10,7 @@ import { Button, Card, Icon, Text } from '@/components/ui';
 import { dec } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
 import { hrMax } from '@/lib/plan';
+import { allure } from '@/lib/velo';
 import { fcEntre, santeDisponible } from '@/lib/sante';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
@@ -60,7 +61,8 @@ export default function Activite() {
     );
   }
 
-  const velo = l.type === 'velo';
+  const course = l.type === 'course';
+  const velo = l.type === 'velo' || course;
   const bpm = mesures?.map((m) => m[1]) ?? [];
   const moy = l.hrAvg || (bpm.length ? Math.round(bpm.reduce((a, b) => a + b, 0) / bpm.length) : 0);
   const max = l.hrMax || (bpm.length ? Math.max(...bpm) : 0);
@@ -72,7 +74,7 @@ export default function Activite() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.tete}>
           <View style={styles.tuile}>
-            <Icon name={velo ? 'bike' : 'dumb'} size={26} color={colors.pink} />
+            <Icon name={course ? 'run' : velo ? 'bike' : 'dumb'} size={26} color={colors.pink} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.h1} numberOfLines={2}>
@@ -95,8 +97,12 @@ export default function Activite() {
           <Kpi icon="flame" label="Calories actives" value={`${l.cal} kcal`} />
           {velo ? (
             <>
-              <Kpi icon="bike" label="Distance" value={`${dec((l.dist ?? 0).toFixed(1))} km`} />
-              <Kpi icon="trend" label="Vitesse moyenne" value={`${dec(vitesse.toFixed(1))} km/h`} />
+              <Kpi icon={course ? 'run' : 'bike'} label="Distance" value={`${dec((l.dist ?? 0).toFixed(1))} km`} />
+              {course ? (
+                <Kpi icon="trend" label="Allure moyenne" value={`${allure(vitesse)} /km`} />
+              ) : (
+                <Kpi icon="trend" label="Vitesse moyenne" value={`${dec(vitesse.toFixed(1))} km/h`} />
+              )}
             </>
           ) : (
             <Kpi icon="dumb" label="Volume" value={l.vol ? `${l.vol} kg` : '—'} />
