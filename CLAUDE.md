@@ -151,7 +151,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (rond, ou grand : mascotte + séance du jour, build 7) ;
     données via le groupe `group.com.neacoach.app` (`Cadran.publier`) : groupe créé et coché sur les deux identifiants de la montre ;
     profils App Store avec le groupe : montre 972FATG5W5, complications Y98HZL5A52 (QR8XTVUJF3, jusqu'au 29/09/2027) ;
-    **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand ; **build 9** : + widgets iPhone et mascotte en couleurs (watchOS 11+)
+    **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand ; **build 9** : + widgets iPhone ; **build 10** : widgets roses, mascotte `_teinte` (opacité = clarté) sur les cadrans teintés (`widgetRenderingMode`)
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
