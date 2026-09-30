@@ -11,3 +11,8 @@ export function ouvrirSante() {
   if (!santeDisponible()) return toast("Apple Santé fonctionne dans l'app installée (TestFlight / App Store)");
   Linking.openURL('x-apple-health://').catch(() => toast("Ouvre l'app Santé pour gérer tes sources"));
 }
+
+/** « Apple Watch » du Profil : ouvre l'app Watch de l'iPhone (installer NÉA sur la montre). */
+export function ouvrirWatch() {
+  Linking.openURL('itms-watchs://').catch(() => toast("Ouvre l'app Watch de l'iPhone, onglet « Ma montre »"));
+}

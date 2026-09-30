@@ -1,26 +1,30 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Children, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EnTetePage } from '@/components/app/Catalogue';
-import { ouvrirSante } from '@/components/app/ouvrirSante';
+import { ouvrirSante, ouvrirWatch } from '@/components/app/ouvrirSante';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { confirmer } from '@/components/app/confirmer';
 import { AbonnementSheet } from '@/components/app/AbonnementSheet';
 import { NotifSheet } from '@/components/app/NotifSheet';
 import { PeseeSheet } from '@/components/app/PeseeSheet';
-import { Card, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
+import { Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
 import { dec } from '@/lib/charges';
-import { coachById } from '@/lib/plan';
+import { ordreAccueil } from '@/lib/accueil';
+import type { ReglagesNotifs } from '@/lib/notifs';
+import { coachById, LVLN, lvlN, prog, progWeek } from '@/lib/plan';
 import { estPremium, ligneAbonnement } from '@/lib/premium';
 import { santeDisponible } from '@/lib/sante';
 import { lvlInfo, rankOf } from '@/lib/xp';
 import { deconnecter, supprimerCompte, useCompte } from '@/store/compte';
-import { useProfil } from '@/store/profil';
+import { selectProfil, useProfil } from '@/store/profil';
+
+import { NeaMontre } from '../../../modules/nea-montre/src';
 import { colors, fonts, glow, ui } from '@/theme';
 
 /** Onglet Profil (vProfile du prototype). */
@@ -33,6 +37,11 @@ export default function Profil() {
   const [pesee, setPesee] = useState(false);
   const [reglages, setReglages] = useState(false);
   const [abonnement, setAbonnement] = useState(false);
+  const profil = selectProfil(p);
+  const pr = prog(profil);
+  const cartesOn = ordreAccueil(p.accueil).filter((x) => x.on).length;
+  const montre = !!NeaMontre?.estDisponible();
+  const alerte = (r: Partial<ReglagesNotifs>) => p.reglerNotifs({ ...p.nset, ...r });
 
   const supprimer = () =>
     confirmer(
@@ -80,52 +89,23 @@ export default function Profil() {
           </View>
         </View>
 
-        <View style={styles.menu}>
-          {/* subRow : NÉA Plus */}
+        <Section titre="Mon programme">
           <Ligne
-            icon="star"
-            couleur={ui.plusLien}
-            titre="NÉA Plus"
-            sous={ligneAbonnement(p.premium)}
-            onPress={() => (estPremium(p.premium) ? setAbonnement(true) : ouvrirPlus())}
+            icon="clip"
+            titre={pr.nom}
+            sous={`Semaine ${progWeek(profil)} sur ${pr.sem} • ${p.days} séances de ${p.dur} min`}
+            onPress={() => router.push(`/plan/${pr.id}`)}
           />
-          {/* accRow */}
-          {email ? (
-            <Card style={[styles.row, styles.acc]}>
-              <Icon name="user" color={colors.pink} />
-              <View style={styles.flex}>
-                <Text weight="semibold" style={styles.h5} numberOfLines={1}>
-                  {email}
-                </Text>
-                <Text style={styles.p}>Compte email • sauvegardé au Canada</Text>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                style={styles.logout}
-                onPress={() =>
-                  confirmer('Te déconnecter ?', 'Tes données restent sauvegardées sur ton compte.', 'Déconnexion', async () => {
-                    await deconnecter();
-                    router.replace('/bienvenue');
-                  })
-                }
-              >
-                <Text weight="bold" style={styles.logoutTxt}>
-                  Déconnexion
-                </Text>
-              </Pressable>
-            </Card>
-          ) : (
-            <Ligne
-              icon="user"
-              titre="Créer mon compte"
-              sous="Sauvegarde ta progression avec Apple ou ton email"
-              onPress={() => router.push({ pathname: '/compte', params: { mode: 'signup' } })}
-            />
-          )}
+          <Ligne
+            icon="cal"
+            titre="Ma semaine"
+            sous="Calendrier, déplacer ou ajouter une séance"
+            onPress={() => router.navigate({ pathname: '/programme', params: { vue: 'calendrier' } })}
+          />
           <Ligne
             icon="coach"
-            titre="Changer de coach"
-            sous="Ton programme sera recréé avec son style"
+            titre="Mon coach"
+            sous={`${c.nom} • ${c.style}`}
             onPress={() => router.push({ pathname: '/onboarding/coach', params: { depuis: 'profil' } })}
           />
           <Ligne
@@ -134,16 +114,93 @@ export default function Profil() {
             sous={p.goals.map((g) => GOALS.find((x) => x[0] === g)?.[1]).join(', ')}
             onPress={() => router.push({ pathname: '/onboarding/objectifs', params: { depuis: 'profil' } })}
           />
-          <Ligne icon="edit" titre="Niveau, matériel, poids, âge" sous={`${p.days} jours par semaine`} onPress={() => router.push('/reglages')} />
-          <Ligne icon="bell" titre="Notifications" sous="VFC post-séance, bilan de nuit, coucher" onPress={() => setReglages(true)} />
+          <Ligne
+            icon="edit"
+            titre="Niveau, matériel, poids, âge"
+            sous={`${LVLN[lvlN(p.level) - 1]} • ${dec(p.weight)} kg • ${p.age} ans`}
+            onPress={() => router.push('/reglages')}
+          />
+        </Section>
+
+        <Section titre="Mon écran">
+          <Ligne
+            icon="sliders"
+            titre="Mon écran d'accueil"
+            sous={`${cartesOn} cartes affichées • ordre et choix`}
+            onPress={() => router.push('/personnaliser')}
+          />
+          <Ligne
+            icon="home"
+            titre="Widgets de l'iPhone"
+            sous="Bilan du jour et prochaine séance sur ton écran"
+            onPress={() => router.push('/widgets')}
+          />
+          <Ligne
+            icon="clock"
+            titre="Apple Watch"
+            sous={montre ? 'NÉA est installée sur ta montre' : 'Installe NÉA depuis l’app Watch de l’iPhone'}
+            onPress={ouvrirWatch}
+          />
+        </Section>
+
+        <Section titre="Alertes">
+          <Bascule titre="VFC après la séance" sous="Rappel pour mesurer ta récupération" on={p.nset.post} onChange={(v) => alerte({ post: v })} />
+          <Bascule titre="Bilan de la nuit" sous={`Le matin à ${p.nset.wake}`} on={p.nset.sleep} onChange={(v) => alerte({ sleep: v })} />
+          <Bascule titre="Rappel du coucher" sous={`À ${p.nset.bedT}, pour viser 8 h`} on={p.nset.bed} onChange={(v) => alerte({ bed: v })} />
+          <Ligne icon="bell" titre="Heures et délai" sous="Réveil, coucher, délai après la séance" onPress={() => setReglages(true)} />
+        </Section>
+
+        <Section titre="Santé">
           <Ligne icon="moon" titre="Sommeil" sous="Tes nuits, ta VFC nocturne et ton score" onPress={() => router.push('/sommeil')} />
+          <Ligne icon="wave" titre="Mesure de récupération" sous="1 minute au calme" onPress={() => router.push('/recuperation')} />
           <Ligne
             icon="heart"
-            titre="Apple Santé et Apple Watch"
+            titre="Apple Santé"
             sous={santeDisponible() ? 'Nuits, FC, calories et séances synchronisées' : "Dans l'app installée (TestFlight / App Store)"}
             onPress={ouvrirSante}
           />
           <Ligne icon="scale" titre="Ajouter mon poids" sous={`Dernier : ${dec(p.weight)} kg`} chevron="plus" onPress={() => setPesee(true)} />
+        </Section>
+
+        <Section titre="Abonnement et compte">
+          <Ligne
+            icon="star"
+            couleur={ui.plusLien}
+            titre="NÉA Plus"
+            sous={ligneAbonnement(p.premium)}
+            onPress={() => (estPremium(p.premium) ? setAbonnement(true) : ouvrirPlus())}
+          />
+          {email ? (
+            <Ligne
+              icon="user"
+              titre={email}
+              sous="Sauvegardé au Canada • toucher pour te déconnecter"
+              chevron={null}
+              onPress={() =>
+                confirmer('Te déconnecter ?', 'Tes données restent sauvegardées sur ton compte.', 'Déconnexion', async () => {
+                  await deconnecter();
+                  router.replace('/bienvenue');
+                })
+              }
+            />
+          ) : (
+            <Ligne
+              icon="user"
+              titre="Créer mon compte"
+              sous="Sauvegarde ta progression avec Apple ou ton email"
+              onPress={() => router.push({ pathname: '/compte', params: { mode: 'signup' } })}
+            />
+          )}
+        </Section>
+
+        <Section titre="Aide et confidentialité">
+          <Ligne icon="book" titre="Conditions d'utilisation" sous="Et avertissement santé" onPress={() => router.push('/legal/conditions')} />
+          <Ligne
+            icon="book"
+            titre="Politique de confidentialité"
+            sous="Tes données et tes droits (Loi 25)"
+            onPress={() => router.push('/legal/confidentialite')}
+          />
           <Ligne
             icon="refresh"
             titre="Recommencer l'onboarding"
@@ -156,8 +213,6 @@ export default function Profil() {
               })
             }
           />
-          <Ligne icon="book" titre="Conditions d'utilisation" sous="Et avertissement santé" onPress={() => router.push('/legal/conditions')} />
-          <Ligne icon="book" titre="Politique de confidentialité" sous="Tes données et tes droits (Loi 25)" onPress={() => router.push('/legal/confidentialite')} />
           <Ligne
             icon="x"
             titre={email ? 'Supprimer mon compte' : 'Effacer toutes mes données'}
@@ -166,7 +221,7 @@ export default function Profil() {
             danger
             onPress={supprimer}
           />
-        </View>
+        </Section>
         <View style={{ height: 10 }} />
       </ScrollView>
       <PeseeSheet visible={pesee} onClose={() => setPesee(false)} />
@@ -176,7 +231,27 @@ export default function Profil() {
   );
 }
 
-/** Ligne du menu (.menu .card.row). */
+/** Section du menu : petit titre, puis ses lignes dans une seule carte. */
+function Section({ titre, children }: { titre: string; children: React.ReactNode }) {
+  const lignes = Children.toArray(children).filter(Boolean);
+  return (
+    <View style={styles.section}>
+      <Text weight="semibold" style={styles.sectionTitre}>
+        {titre}
+      </Text>
+      <View style={styles.groupe}>
+        {lignes.map((l, i) => (
+          <View key={i}>
+            {i > 0 && <View style={styles.sep} />}
+            {l}
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+/** Ligne du menu : icône dans une pastille, titre, précision, chevron. */
 function Ligne({
   icon,
   titre,
@@ -194,20 +269,45 @@ function Ligne({
   chevron?: IconName | null;
   danger?: boolean;
 }) {
-  const couleur = danger ? '#FF6B85' : (teinte ?? colors.pink);
+  const couleur = danger ? colors.error : (teinte ?? colors.pink);
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={titre} onPress={onPress}>
-      <Card style={styles.row}>
-        <Icon name={icon} color={couleur} />
-        <View style={styles.flex}>
-          <Text weight="semibold" style={[styles.h5, danger && { color: couleur }]}>
-            {titre}
+    <Pressable accessibilityRole="button" accessibilityLabel={titre} onPress={onPress} style={({ pressed }) => [styles.row, pressed && styles.appui]}>
+      <View style={styles.tuile}>
+        <Icon name={icon} size={19} color={couleur} />
+      </View>
+      <View style={styles.flex}>
+        <Text weight="semibold" style={[styles.h5, danger && { color: couleur }]} numberOfLines={1}>
+          {titre}
+        </Text>
+        {sous ? (
+          <Text style={styles.p} numberOfLines={2}>
+            {sous}
           </Text>
-          {sous ? <Text style={styles.p}>{sous}</Text> : null}
-        </View>
-        {chevron && <Icon name={chevron} color={colors.textSecondary} />}
-      </Card>
+        ) : null}
+      </View>
+      {chevron && <Icon name={chevron} size={18} color={colors.textTertiary} />}
     </Pressable>
+  );
+}
+
+/** Alerte activable directement dans le menu. */
+function Bascule({ titre, sous, on, onChange }: { titre: string; sous: string; on: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <View style={styles.row}>
+      <View style={styles.flex}>
+        <Text weight="semibold" style={styles.h5}>
+          {titre}
+        </Text>
+        <Text style={styles.p}>{sous}</Text>
+      </View>
+      <Switch
+        value={on}
+        onValueChange={onChange}
+        trackColor={{ true: colors.pink, false: ui.dark }}
+        thumbColor={colors.text}
+        accessibilityLabel={titre}
+      />
+    </View>
   );
 }
 
@@ -224,20 +324,13 @@ const styles = StyleSheet.create({
   xpFill: { height: '100%' },
   xpLbl: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
   xpTxt: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
-  menu: { paddingHorizontal: 20, marginTop: 14 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, marginBottom: 8 },
-  acc: {},
-  h5: { fontSize: 14.5, lineHeight: 19, ...fonts.semibold },
-  p: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
-  logout: {
-    height: 36,
-    paddingHorizontal: 12,
-    borderRadius: 999,
-    backgroundColor: ui.dark,
-    borderWidth: 1,
-    borderColor: colors.border2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoutTxt: { fontSize: 12.5, lineHeight: 16 },
+  section: { marginTop: 22, paddingHorizontal: 20 },
+  sectionTitre: { fontSize: 14, lineHeight: 18, color: colors.textSecondary, marginBottom: 8, paddingHorizontal: 4 },
+  groupe: { borderRadius: 20, backgroundColor: colors.surface, overflow: 'hidden' },
+  sep: { position: 'absolute', top: 0, left: 62, right: 0, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14, minHeight: 60 },
+  appui: { backgroundColor: colors.surface2 },
+  tuile: { width: 36, height: 36, borderRadius: 10, backgroundColor: ui.dark, alignItems: 'center', justifyContent: 'center' },
+  h5: { fontSize: 16, lineHeight: 21, ...fonts.semibold },
+  p: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, marginTop: 1 },
 });

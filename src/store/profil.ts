@@ -11,6 +11,7 @@ import { useShallow } from 'zustand/react/shallow';
 import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, coachValide, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
+import { ACCUEIL_DEFAUT, type CarteAccueil } from '@/lib/accueil';
 import { toast } from '@/components/ui/Toast';
 import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
@@ -65,6 +66,8 @@ type Etat = Profil & {
   pending: EnAttente[];
   /** Notifications reçues (40 dernières, la plus récente en premier). */
   notifs: Notif[];
+  /** Cartes de l'Accueil : ordre et visibilité (« Mon écran d'accueil »). */
+  accueil: CarteAccueil[];
   /** Jour du dernier bilan de nuit et du dernier rappel du coucher. */
   lastWake: string | null;
   lastBed: string | null;
@@ -154,6 +157,7 @@ const defauts = (): Etat => ({
   notifs: [],
   lastWake: null,
   lastBed: null,
+  accueil: [...ACCUEIL_DEFAUT],
   chat: [],
   chatCoach: null,
   chatQ: null,
@@ -304,6 +308,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   notifs: s.notifs,
   lastWake: s.lastWake,
   lastBed: s.lastBed,
+  accueil: s.accueil,
   chat: s.chat,
   chatCoach: s.chatCoach,
   chatQ: s.chatQ,
