@@ -1,4 +1,5 @@
 import SwiftUI
+import WatchKit
 
 /// Couleurs et boutons de NÉA sur la montre : fond noir, rose néon, cartes grises.
 enum Nea {
@@ -59,5 +60,35 @@ struct BoutonSombre: ButtonStyle {
 struct Marque: View {
   var body: some View {
     Text("NÉA").font(.system(size: 15, weight: .heavy)).foregroundColor(Nea.rose)
+  }
+}
+
+/// Vibrations, coupables dans Réglages.
+enum Vibre {
+  static let cle = "nea.vibrations"
+
+  static var actif: Bool {
+    UserDefaults.standard.object(forKey: cle) as? Bool ?? true
+  }
+
+  static func jouer(_ t: WKHapticType) {
+    if actif { WKInterfaceDevice.current().play(t) }
+  }
+}
+
+/// Anneau de progression (bilan, repos, respiration).
+struct Anneau: View {
+  let part: Double
+  var couleur: Color = Nea.rose
+  var trait: CGFloat = 6
+
+  var body: some View {
+    ZStack {
+      Circle().stroke(couleur.opacity(0.2), lineWidth: trait)
+      Circle()
+        .trim(from: 0, to: max(0, min(1, part)))
+        .stroke(couleur, style: StrokeStyle(lineWidth: trait, lineCap: .round))
+        .rotationEffect(.degrees(-90))
+    }
   }
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 01 · Accueil : bonjour, le coach, la prochaine séance et « Commencer ».
+/// 01 · Accueil (hub) : bonjour, scores du jour, prochaine séance, et le menu de l'app.
 struct AccueilView: View {
   @ObservedObject private var donnees = Donnees.partagees
   @State private var lancement: SeanceMontre?
@@ -13,44 +13,48 @@ struct AccueilView: View {
           .font(.system(size: 22, weight: .bold))
           .lineLimit(1)
           .minimumScaleFactor(0.7)
-        if let e = donnees.etat, let s = donnees.prochaine {
+        if let e = donnees.etat {
+          if let b = e.bilan {
+            NavigationLink {
+              RecupView()
+            } label: {
+              Scores(b: b)
+            }
+            .buttonStyle(.plain)
+          }
+          if let s = donnees.prochaine {
+            VStack(alignment: .leading, spacing: 8) {
+              NavigationLink(value: s) {
+                CarteSeance(s: s)
+              }
+              .buttonStyle(.plain)
+              Button("Commencer") { lancement = s }
+                .buttonStyle(BoutonRose())
+            }
+            .padding(8)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
+          }
           HStack(spacing: 6) {
             Image(e.coach)
               .resizable()
               .scaledToFit()
-              .frame(width: 54, height: 54)
-            Text("Prêt pour ta séance ?")
-              .font(.system(size: 14, weight: .semibold))
-              .padding(8)
-              .background(RoundedRectangle(cornerRadius: 12).fill(Nea.carte))
+              .frame(width: 44, height: 44)
+            Text(e.coachInfo?.daily ?? "Prêt pour ta séance ?")
+              .font(.system(size: 13, weight: .semibold))
+              .lineLimit(3)
+              .minimumScaleFactor(0.8)
           }
-          VStack(alignment: .leading, spacing: 8) {
-            NavigationLink(value: s) {
-              CarteSeance(s: s)
-            }
-            .buttonStyle(.plain)
-            Button("Commencer") { lancement = s }
-              .buttonStyle(BoutonRose())
-          }
-          .padding(8)
-          .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
-          NavigationLink {
-            SeancesView()
-          } label: {
-            HStack {
-              Image(systemName: "list.bullet").foregroundColor(Nea.rose)
-              Text("Tes séances").font(.system(size: 16, weight: .semibold))
-              Spacer()
-              Image(systemName: "chevron.right").foregroundColor(Nea.texte2)
-            }
-            .padding(10)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
-          }
-          .buttonStyle(.plain)
+          MenuNea()
         } else {
           Text("Ouvre NÉA sur ton iPhone pour recevoir tes séances.")
             .font(.system(size: 15))
             .foregroundColor(Nea.texte2)
+          NavigationLink {
+            ReglagesView()
+          } label: {
+            Tuile2(icone: "gearshape.fill", titre: "Réglages")
+          }
+          .buttonStyle(.plain)
         }
       }
     }
@@ -60,6 +64,76 @@ struct AccueilView: View {
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)
     }
+  }
+}
+
+/// Trois anneaux : Effort, Récupération, Sommeil.
+struct Scores: View {
+  let b: BilanMontre
+
+  var body: some View {
+    HStack(spacing: 4) {
+      Score(titre: "Effort", part: b.effort / 100, valeur: "\(Int(b.effort))%")
+      Score(titre: "Récup.", part: b.recup / 100, valeur: b.recup > 0 ? "\(Int(b.recup))%" : "–")
+      Score(titre: "Sommeil", part: b.sommeil / 8, valeur: b.sommeil > 0 ? Nea.kg(b.sommeil) + "h" : "–")
+    }
+    .padding(.vertical, 8)
+    .padding(.horizontal, 4)
+    .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
+  }
+}
+
+struct Score: View {
+  let titre: String
+  let part: Double
+  let valeur: String
+
+  var body: some View {
+    VStack(spacing: 3) {
+      ZStack {
+        Anneau(part: part, trait: 5)
+        Text(valeur).font(.system(size: 12, weight: .bold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6).padding(.horizontal, 6)
+      }
+      .frame(width: 46, height: 46)
+      Text(titre).font(.system(size: 11)).foregroundColor(Nea.texte2).lineLimit(1)
+    }
+    .frame(maxWidth: .infinity)
+  }
+}
+
+/// Menu de l'app sur la montre.
+struct MenuNea: View {
+  var body: some View {
+    VStack(spacing: 6) {
+      HStack(spacing: 6) {
+        NavigationLink { SeancesView() } label: { Tuile2(icone: "dumbbell.fill", titre: "Séances") }.buttonStyle(.plain)
+        NavigationLink { VeloView() } label: { Tuile2(icone: "bicycle", titre: "Vélo") }.buttonStyle(.plain)
+      }
+      HStack(spacing: 6) {
+        NavigationLink { RecupView() } label: { Tuile2(icone: "heart.fill", titre: "Récup.") }.buttonStyle(.plain)
+        NavigationLink { RespirationView() } label: { Tuile2(icone: "wind", titre: "Respirer") }.buttonStyle(.plain)
+      }
+      HStack(spacing: 6) {
+        NavigationLink { CoachView() } label: { Tuile2(icone: "bubble.left.fill", titre: "Coach") }.buttonStyle(.plain)
+        NavigationLink { ProgresView() } label: { Tuile2(icone: "chart.bar.fill", titre: "Progrès") }.buttonStyle(.plain)
+      }
+      NavigationLink { ReglagesView() } label: { Tuile2(icone: "gearshape.fill", titre: "Réglages") }.buttonStyle(.plain)
+    }
+  }
+}
+
+/// Case du menu : icône rose, titre.
+struct Tuile2: View {
+  let icone: String
+  let titre: String
+
+  var body: some View {
+    VStack(spacing: 4) {
+      Image(systemName: icone).font(.system(size: 20)).foregroundColor(Nea.rose)
+      Text(titre).font(.system(size: 14, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.8)
+    }
+    .frame(maxWidth: .infinity, minHeight: 62)
+    .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
   }
 }
 

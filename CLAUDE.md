@@ -128,10 +128,22 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - liaison `modules/nea-montre` (module Expo local, WatchConnectivity) + `store/liaisonMontre.ts` : l'iPhone envoie prénom, coach et
     séances de la semaine avec les charges (`updateApplicationContext`) ; la montre renvoie la séance terminée (`transferUserInfo`),
     ajoutée au journal avec XP, série, quête et rappel VFC ; contrat JSON commun `Modeles.swift` ↔ `liaisonMontre.ts`
-  - 2e temps : Vélo (GPS, carte), Récupération / Respiration, Réglages ; `targets/watch/Info.plist` : version 1.0.0 à garder
+  - **hub (build 4)** : Accueil = scores du jour (anneaux Effort / Récup. / Sommeil) + prochaine séance + mot du coach + menu (Séances, Vélo,
+    Récup., Respirer, Coach, Progrès, Réglages) ; Récupération (sommeil, FC au repos, VFC nocturne), Respiration guidée 2 min (4 s / 6 s,
+    enregistrée en pleine conscience), Mesure 1 min (FC du capteur + dernière VFC SDNN de Santé → `noterMesure`), Vélo extérieur (GPS,
+    km, km/h, zone sur la FC max envoyée par l'iPhone, carte MapKit avec tracé, route enregistrée dans Santé → journal + XP comme sur
+    l'iPhone), Coach (message du jour, dernier échange, ressenti envoyé au coach via l'iPhone), Progrès, Réglages (iPhone, Santé,
+    vibrations, unités, synchroniser) ; contrat v2 (champs optionnels, compatible avec le build 3) ; messages montre → iPhone
+    `{type, json}` (seance, velo, mesure, coach), événement `messageMontre` (le JS gère aussi `seanceMontre` du build 3)
+  - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
     `credentials.json` multi-cibles (`NA` et `NeaWatch`), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
+- [ ] **Profil, écran d'accueil, widgets** : Profil en sections (Mon programme, Mon écran, Alertes avec bascules, Santé, Abonnement et
+  compte, Aide) ; « Mon écran d'accueil » (`/personnaliser`, `lib/accueil.ts`, `accueil` dans le profil : cartes affichées et ordre) ;
+  **widgets iPhone** `targets/widgets/` (WidgetKit, `com.neacoach.app.widgets`) : Bilan du jour (petit + rond écran verrouillé) et
+  Prochaine séance (moyen + rectangulaire), données écrites par l'app dans le groupe `group.com.neacoach.app` (`ecrireWidget`) ;
+  page `/widgets` (aperçu + marche à suivre) ; le groupe d'apps se crée à la main sur developer.apple.com (pas d'API)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

@@ -14,7 +14,12 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "usesAppleSignIn": true,
-      "appleTeamId": "K55493374H"
+      "appleTeamId": "K55493374H",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.neacoach.app"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

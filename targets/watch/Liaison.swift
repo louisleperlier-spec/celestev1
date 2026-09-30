@@ -6,12 +6,16 @@ final class Donnees: ObservableObject {
   static let partagees = Donnees()
 
   @Published var etat: EtatMontre?
+  @Published var synchro: Date?
   private let cle = "nea.etat"
+  private let cleSynchro = "nea.synchro"
 
   init() {
     if let s = UserDefaults.standard.string(forKey: cle) {
       etat = Donnees.decoder(s)
     }
+    let t = UserDefaults.standard.double(forKey: cleSynchro)
+    if t > 0 { synchro = Date(timeIntervalSince1970: t) }
   }
 
   static func decoder(_ s: String) -> EtatMontre? {
@@ -21,8 +25,13 @@ final class Donnees: ObservableObject {
 
   func recevoir(_ s: String) {
     guard let e = Donnees.decoder(s) else { return }
+    let maintenant = Date()
     UserDefaults.standard.set(s, forKey: cle)
-    DispatchQueue.main.async { self.etat = e }
+    UserDefaults.standard.set(maintenant.timeIntervalSince1970, forKey: cleSynchro)
+    DispatchQueue.main.async {
+      self.etat = e
+      self.synchro = maintenant
+    }
   }
 
   /// Prochaine séance : aujourd'hui ou plus tard dans la semaine, sinon la première.
@@ -44,9 +53,35 @@ final class LiaisonMontre: NSObject, WCSessionDelegate {
     s.activate()
   }
 
+  /// Envoi fiable à l'iPhone (file d'attente du système, même si l'iPhone est loin) : séance, vélo, mesure, message au coach.
+  func envoyer<T: Encodable>(_ type: String, _ valeur: T) {
+    guard let d = try? JSONEncoder().encode(valeur), let json = String(data: d, encoding: .utf8) else { return }
+    WCSession.default.transferUserInfo(["type": type, "json": json])
+  }
+
   func envoyer(_ r: ResultatMontre) {
-    guard let d = try? JSONEncoder().encode(r), let json = String(data: d, encoding: .utf8) else { return }
-    WCSession.default.transferUserInfo(["seance": json])
+    envoyer("seance", r)
+  }
+
+  /// iPhone joignable en ce moment.
+  var joignable: Bool {
+    WCSession.isSupported() && WCSession.default.activationState == .activated && WCSession.default.isReachable
+  }
+
+  /// Demande l'état à l'iPhone (bouton « Synchroniser ») ; `fin(true)` s'il a répondu.
+  func synchroniser(fin: @escaping (Bool) -> Void) {
+    let s = WCSession.default
+    if let c = s.receivedApplicationContext["etat"] as? String { Donnees.partagees.recevoir(c) }
+    guard joignable else {
+      fin(false)
+      return
+    }
+    s.sendMessage([:], replyHandler: { rep in
+      if let e = rep["etat"] as? String, !e.isEmpty { Donnees.partagees.recevoir(e) }
+      DispatchQueue.main.async { fin(true) }
+    }, errorHandler: { _ in
+      DispatchQueue.main.async { fin(false) }
+    })
   }
 
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {

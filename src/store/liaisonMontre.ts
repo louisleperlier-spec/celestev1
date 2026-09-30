@@ -5,12 +5,16 @@
  * (journal, XP, série, quête, rappel VFC). La montre écrit elle-même l'entraînement dans Apple Santé.
  */
 import { toast } from '@/components/ui';
+import { cerclesJour, part, type IdCercle } from '@/lib/cercles';
 import { loadFor, rj } from '@/lib/charges';
-import { buildPlan, exercice, exKcal, todayIdx } from '@/lib/plan';
+import { buildPlan, coachById, exercice, exKcal, hrMax, sesKcal, todayIdx } from '@/lib/plan';
+import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
+import { xpVelo } from '@/lib/velo';
 import { sessionForDay, type Semaine } from '@/lib/semaine';
-import { streak } from '@/lib/xp';
+import { lvlInfo, rankOf, streak } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
+import { envoyer as envoyerAuCoach } from './coach';
 import { selectProfil, useProfil } from './profil';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -34,10 +38,30 @@ type ExoMontre = {
   kcal: number;
 };
 type SeanceMontre = { jour: number; quand: string; titre: string; min: number; kcal: number; exos: ExoMontre[] };
-type EtatMontre = { v: 1; prenom: string; coach: string; semaine: SeanceMontre[] };
+/** Hub de la montre : bilan du jour, dernière nuit, coach, progrès, FC max (zones du vélo). */
+type BilanMontre = { effort: number; recup: number; sommeil: number; score: number; recupTxt: string };
+type NuitMontre = { h: number; rhr: number; hrv: number; src: string } | null;
+type CoachMontre = { nom: string; style: string; daily: string; dernier: string };
+type ProgresMontre = { seances: number; objectif: number; serie: number; niveau: number; xp: number; xpNiveau: number; rang: string; derniere: string };
+type EtatMontre = {
+  v: 2;
+  prenom: string;
+  coach: string;
+  semaine: SeanceMontre[];
+  bilan: BilanMontre;
+  nuit: NuitMontre;
+  coachInfo: CoachMontre;
+  progres: ProgresMontre;
+  fcMax: number;
+  poids: number;
+};
 
 /** Séance terminée sur la montre. */
 type ResultatMontre = { id: string; debut: string; fin: string; titre: string; sec: number; kcal: number; fcMoy: number; fcMax: number; series: number; volume: number };
+/** Sortie vélo, mesure de récupération d'1 min, message au coach (depuis la montre). */
+type VeloMontre = { id: string; debut: string; fin: string; sec: number; km: number; kcal: number; fcMoy: number; fcMax: number };
+type MesureMontre = { d: string; hrv: number; bpm: number };
+type CoachEnvoi = { texte: string };
 
 function etat(): EtatMontre {
   const st = useProfil.getState();
@@ -76,7 +100,49 @@ function etat(): EtatMontre {
       }),
     });
   }
-  return { v: 1, prenom: st.name, coach: st.coach, semaine };
+  // Bilan du jour (mêmes calculs que les anneaux de l'Accueil, sans l'activité Apple Santé que la montre a déjà).
+  const objKcal = sem.plan.sessions.length ? sem.plan.sessions.reduce((a, x) => a + sesKcal(x, st.weight), 0) / sem.plan.sessions.length : 300;
+  const jour = cerclesJour(new Date(), { logs: st.logs, nights: st.nights, hrvChecks: st.hrvChecks, objKcal, objMin: st.dur });
+  const get = (id: IdCercle) => jour.find((c) => c.id === id)!;
+  const base = baseHrv(st.nights, st.hrvChecks);
+  const ln = lastNight(st.nights);
+  const lc = st.hrvChecks[st.hrvChecks.length - 1];
+  const mesureAuj = lc && new Date(lc.d).toDateString() === new Date().toDateString() ? lc : null;
+  const bilan: BilanMontre = {
+    effort: Math.round(((Math.min(1, part(get('bouger'))) + Math.min(1, part(get('exercice')))) / 2) * 100),
+    recup: get('recup').val,
+    sommeil: get('sommeil').val,
+    score: sleepScore(ln, base) ?? 0,
+    recupTxt: mesureAuj ? recovStatus(mesureAuj.hrv, base)[0] : get('recup').val ? 'de ta moyenne' : 'Mesure-la (1 min)',
+  };
+  const c = coachById(st.coach);
+  const dernier = [...st.chat].reverse().find((m) => m.r === 'bot');
+  const li = lvlInfo(st.xp);
+  const lundi = new Date();
+  lundi.setHours(0, 0, 0, 0);
+  lundi.setDate(lundi.getDate() - auj);
+  const der = st.logs[0];
+  return {
+    v: 2,
+    prenom: st.name,
+    coach: st.coach,
+    semaine,
+    bilan,
+    nuit: ln ? { h: ln.h, rhr: ln.rhr ?? 0, hrv: ln.hrv ?? 0, src: ln.src === 'sante' ? 'Apple Santé' : 'NÉA' } : null,
+    coachInfo: { nom: c.nom, style: c.style, daily: c.daily, dernier: dernier?.t ?? '' },
+    progres: {
+      seances: st.logs.filter((l) => new Date(l.d) >= lundi).length,
+      objectif: st.days,
+      serie: streak(st.logs, st.days),
+      niveau: li.n,
+      xp: li.cur,
+      xpNiveau: li.need,
+      rang: rankOf(li.n)[0],
+      derniere: der ? `${der.title} • ${der.min} min` : '',
+    },
+    fcMax: hrMax(st.age),
+    poids: st.weight,
+  };
 }
 
 let dernier = '';
@@ -88,16 +154,29 @@ function envoyer() {
   if (json === dernier) return;
   dernier = json;
   NeaMontre.envoyerEtat(json);
+  // Widgets de l'iPhone (à partir du build 4).
+  if (typeof NeaMontre.ecrireWidget === 'function') NeaMontre.ecrireWidget(JSON.stringify(widget(JSON.parse(json) as EtatMontre)));
+}
+
+/** Données des widgets : bilan du jour et prochaine séance (contrat de `targets/widgets`). */
+function widget(e: EtatMontre) {
+  const auj = todayIdx();
+  const s = e.semaine.find((x) => x.jour >= auj) ?? null;
+  return {
+    prenom: e.prenom,
+    effort: e.bilan.effort,
+    recup: e.bilan.recup,
+    sommeil: e.bilan.sommeil,
+    score: e.bilan.score,
+    seance: s ? { titre: s.titre, quand: s.quand, min: Math.round(s.min), exos: s.exos.length } : null,
+    maj: new Date().toISOString(),
+  };
 }
 
 /** Séance de la montre → journal, XP, série, quête (comme la fin d'une séance sur l'iPhone). */
 function recevoir(json: string) {
-  let r: ResultatMontre;
-  try {
-    r = JSON.parse(json) as ResultatMontre;
-  } catch {
-    return;
-  }
+  const r = lire<ResultatMontre>(json);
+  if (!r) return;
   const st = useProfil.getState();
   if (st.logs.some((l) => l.d === r.fin && l.title === r.titre)) return;
   const min = Math.max(1, Math.round(r.sec / 60));
@@ -110,15 +189,63 @@ function recevoir(json: string) {
   toast('Séance de la montre enregistrée');
 }
 
+/** Sortie vélo de la montre → journal, XP, quête (comme la fin d'une sortie sur l'iPhone). */
+function recevoirVelo(json: string) {
+  const r = lire<VeloMontre>(json);
+  if (!r) return;
+  const st = useProfil.getState();
+  if (st.logs.some((l) => l.d === r.fin && l.type === 'velo')) return;
+  const min = Math.max(1, Math.round(r.sec / 60));
+  st.addLog({ d: r.fin, type: 'velo', title: 'Sortie vélo', min, cal: Math.round(r.kcal), vol: 0, dist: +r.km.toFixed(1), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  const apres = useProfil.getState();
+  apres.addXp(xpVelo(r.km), 'Vélo');
+  if (r.km >= 5 || r.sec >= 1200) apres.quest('velo');
+  apres.programmerPost('velo', null);
+  toast('Sortie vélo de la montre enregistrée');
+}
+
+/** Mesure de récupération faite sur la montre. */
+function recevoirMesure(json: string) {
+  const m = lire<MesureMontre>(json);
+  if (!m || !m.hrv) return;
+  const st = useProfil.getState();
+  if (st.hrvChecks.some((c) => c.d === m.d)) return;
+  st.noterMesure({ d: m.d, hrv: Math.round(m.hrv), bpm: Math.round(m.bpm), kind: new Date(m.d).getHours() < 11 ? 'matin' : 'post' });
+  toast('Mesure de récupération de la montre enregistrée');
+}
+
+function lire<T>(json: string): T | null {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return null;
+  }
+}
+
+/** Message de la montre (type + JSON) vers le bon traitement. */
+function traiter(m: { type: string; json: string }) {
+  if (m.type === 'seance') recevoir(m.json);
+  else if (m.type === 'velo') recevoirVelo(m.json);
+  else if (m.type === 'mesure') recevoirMesure(m.json);
+  else if (m.type === 'coach') {
+    const c = lire<CoachEnvoi>(m.json);
+    if (c?.texte) envoyerAuCoach(c.texte);
+  }
+}
+
 /** À l'ouverture (état chargé) : envoie l'état, puis le renvoie à chaque changement ; écoute les séances de la montre. */
 export function demarrerLiaisonMontre() {
   if (!NeaMontre) return;
   const m = NeaMontre;
-  m.recupererEnAttente().forEach(recevoir);
-  m.addListener('seanceMontre', (e) => {
-    recevoir(e.json);
+  // Build 3 : chaînes JSON de séances et événement « seanceMontre » ; ensuite { type, json } et « messageMontre ».
+  const normaliser = (x: { type: string; json: string } | string) => (typeof x === 'string' ? { type: 'seance', json: x } : x);
+  (m.recupererEnAttente() as ({ type: string; json: string } | string)[]).map(normaliser).forEach(traiter);
+  const ecoute = (e: { type?: string; json: string }) => {
+    traiter({ type: e.type ?? 'seance', json: e.json });
     m.recupererEnAttente();
-  });
+  };
+  m.addListener('messageMontre', ecoute);
+  (m.addListener as (evt: string, f: typeof ecoute) => { remove(): void })('seanceMontre', ecoute);
   envoyer();
   useProfil.subscribe(() => {
     if (minuterie) clearTimeout(minuterie);

@@ -1,5 +1,6 @@
 import ExpoModulesCore
 import WatchConnectivity
+import WidgetKit
 
 /// Liaison avec l'app Apple Watch : l'iPhone envoie l'état (prénom, coach, séances de la semaine)
 /// en contexte d'application, la montre renvoie chaque séance terminée (transferUserInfo).
@@ -7,11 +8,11 @@ public final class NeaMontreModule: Module {
   public func definition() -> ModuleDefinition {
     Name("NeaMontre")
 
-    Events("seanceMontre")
+    Events("messageMontre")
 
     OnCreate {
-      Liaison.partagee.surSeance = { [weak self] json in
-        self?.sendEvent("seanceMontre", ["json": json])
+      Liaison.partagee.surMessage = { [weak self] type, json in
+        self?.sendEvent("messageMontre", ["type": type, "json": json])
       }
       Liaison.partagee.activer()
     }
@@ -26,9 +27,15 @@ public final class NeaMontreModule: Module {
       Liaison.partagee.envoyer(json)
     }
 
-    /// Séances reçues avant que l'app n'écoute (JSON), vidées à la lecture.
-    Function("recupererEnAttente") { () -> [String] in
+    /// Messages reçus avant que l'app n'écoute (type + JSON), vidés à la lecture.
+    Function("recupererEnAttente") { () -> [[String: String]] in
       Liaison.partagee.vider()
+    }
+
+    /// Données des widgets de l'iPhone, dans le groupe d'apps partagé avec l'extension.
+    Function("ecrireWidget") { (json: String) in
+      UserDefaults(suiteName: "group.com.neacoach.app")?.set(json, forKey: "widget")
+      WidgetCenter.shared.reloadAllTimelines()
     }
   }
 }
@@ -36,8 +43,8 @@ public final class NeaMontreModule: Module {
 final class Liaison: NSObject, WCSessionDelegate {
   static let partagee = Liaison()
 
-  var surSeance: ((String) -> Void)?
-  private var enAttente: [String] = []
+  var surMessage: ((String, String) -> Void)?
+  private var enAttente: [[String: String]] = []
   private var dernierEtat: String?
   private let verrou = NSLock()
 
@@ -62,7 +69,7 @@ final class Liaison: NSObject, WCSessionDelegate {
     try? s.updateApplicationContext(["etat": json, "t": Date().timeIntervalSince1970])
   }
 
-  func vider() -> [String] {
+  func vider() -> [[String: String]] {
     verrou.lock()
     defer { verrou.unlock() }
     let l = enAttente
@@ -87,13 +94,24 @@ final class Liaison: NSObject, WCSessionDelegate {
   }
 
   func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
-    guard let json = userInfo["seance"] as? String else { return }
-    if let f = surSeance {
-      DispatchQueue.main.async { f(json) }
+    // Build 3 : { seance: json } ; ensuite : { type, json } (seance, velo, mesure, coach).
+    let type: String
+    let json: String
+    if let j = userInfo["seance"] as? String {
+      type = "seance"
+      json = j
+    } else if let t = userInfo["type"] as? String, let j = userInfo["json"] as? String {
+      type = t
+      json = j
+    } else {
+      return
     }
-    // Gardée aussi : l'app la lit au démarrage si l'événement est arrivé avant l'écoute (doublons ignorés par id).
+    if let f = surMessage {
+      DispatchQueue.main.async { f(type, json) }
+    }
+    // Gardé aussi : l'app le lit au démarrage si l'événement est arrivé avant l'écoute (doublons ignorés).
     verrou.lock()
-    enAttente.append(json)
+    enAttente.append(["type": type, "json": json])
     verrou.unlock()
   }
 

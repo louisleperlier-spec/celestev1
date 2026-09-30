@@ -66,15 +66,15 @@ final class SeanceEnCours: ObservableObject {
     switch phase {
     case .repos:
       reposReste -= 1
-      if reposReste == 3 { WKInterfaceDevice.current().play(.notification) }
+      if reposReste == 3 { Vibre.jouer(.notification) }
       if reposReste <= 0 {
-        WKInterfaceDevice.current().play(.start)
+        Vibre.jouer(.start)
         demarrerSerie()
       }
     case .effort where enDuree:
       effortReste -= 1
       if effortReste <= 0 {
-        WKInterfaceDevice.current().play(.success)
+        Vibre.jouer(.success)
         reps = 0
         valider()
       }
@@ -141,7 +141,7 @@ final class SeanceEnCours: ObservableObject {
     minuterie = nil
     compteur.arreter()
     secondes = Int(Date().timeIntervalSince(debut))
-    WKInterfaceDevice.current().play(.success)
+    Vibre.jouer(.success)
     phase = .bilan
   }
 

@@ -44,3 +44,4 @@ example
 
 # généré par @bacons/apple-targets au prebuild
 targets/*/Assets.xcassets
+targets/widgets/Assets.xcassets

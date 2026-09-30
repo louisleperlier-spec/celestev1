@@ -17,7 +17,7 @@ module.exports = {
     kai: './images/kai.png',
     luna: './images/luna.png',
   },
-  frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion'],
+  frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion', 'CoreLocation', 'MapKit'],
   entitlements: {
     'com.apple.developer.healthkit': true,
     'com.apple.developer.healthkit.access': [],
