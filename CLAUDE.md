@@ -151,11 +151,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (rond, ou grand : mascotte + séance du jour, build 7) ;
     données via le groupe `group.com.neacoach.app` (`Cadran.publier`) : groupe créé et coché sur les deux identifiants de la montre ;
     profils App Store avec le groupe : montre 972FATG5W5, complications Y98HZL5A52 (QR8XTVUJF3, jusqu'au 29/09/2027) ;
-    **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand
+    **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand ; **build 9** : + widgets iPhone et mascotte en couleurs (watchOS 11+)
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
-    `credentials.json` multi-cibles (`NA`, `NeaWatch`, `NeaComplications`), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
+    `credentials.json` multi-cibles (`NA` profil CD645KQZ8X avec le groupe, `NeaWatch`, `NeaComplications`, `NeaWidgets` A22Y52K2DH), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
 - [ ] **Profil, écran d'accueil, widgets** : Profil en sections (Mon programme, Mon écran, Alertes avec bascules, Santé, Abonnement et
   compte, Aide) ; « Mon écran d'accueil » (`/personnaliser`, `lib/accueil.ts`, `accueil` dans le profil : cartes affichées et ordre) ;
   **widgets iPhone** `targets/widgets/` (build 8 ; WidgetKit, `com.neacoach.app.widgets` 68R3D4T25T ; groupe `group.com.neacoach.app` dans `app.json`) : Bilan du jour (petit + rond écran verrouillé) et
