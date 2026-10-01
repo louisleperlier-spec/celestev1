@@ -178,7 +178,9 @@ for (let k = 0; k < 600; k++) {
   };
   const mien = notifsDues(etat, new Date(now));
   const proto = prototype.notifs(etat, now) as { notifs: object[] };
-  compter('notifications', { ...mien, notifs: mien.notifs }, { ...proto, notifs: proto.notifs }, { k });
+  // Écart validé : l'accent rose du prototype (#ff4fa3) est devenu orange (#FF6B1A, oct. 2026).
+  const orange = (n: object) => ('col' in n && n.col === '#ff4fa3' ? { ...n, col: '#FF6B1A' } : n);
+  compter('notifications', { ...mien, notifs: mien.notifs }, { ...proto, notifs: proto.notifs.map(orange) }, { k });
 }
 
 for (const [k, v] of Object.entries(parFonction)) console.log(`  ${k.padEnd(20)} ${v.total} cas, ${v.diff} différence(s)`);

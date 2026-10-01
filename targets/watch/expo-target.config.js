@@ -10,7 +10,7 @@ module.exports = {
   bundleIdentifier: '.watchkitapp',
   deploymentTarget: '10.0',
   icon: '../../assets/images/icon.png',
-  colors: { $accent: '#FF4FA3' },
+  colors: { $accent: '#FF6B1A' },
   images: {
     axel: './images/axel.png',
     nova: './images/nova.png',

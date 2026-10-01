@@ -64,7 +64,7 @@ export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;
 export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo' | 'course'; endHrv: number | null } | { at: number; type: 'trial' };
 
 /** Couleurs des pastilles (.nic) reprises du prototype. */
-export const COULEURS_NOTIF = { post: '#ff4fa3', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000' } as const;
+export const COULEURS_NOTIF = { post: '#FF6B1A', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000' } as const;
 
 /** « Ton essai se termine demain » (obligatoire), envoyé seulement si le renouvellement est actif. */
 export function notifEssai(p: Premium | null): NouvelleNotif | null {

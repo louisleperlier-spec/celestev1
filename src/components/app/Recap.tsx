@@ -16,7 +16,7 @@ import { colors, fonts } from '@/theme';
 import { CourbeFC, ListeZones } from './Coeur';
 
 /** Fond .recap : halo rose en haut. */
-const FOND = [{ rx: 70, ry: 45, cx: 50, cy: 30, color: 'rgba(255,79,163,0.28)' }] as const;
+const FOND = [{ rx: 70, ry: 45, cx: 50, cy: 30, color: 'rgba(255,107,26,0.28)' }] as const;
 
 /** Récap de séance (vRecap du prototype). */
 export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) {

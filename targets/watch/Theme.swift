@@ -3,7 +3,7 @@ import WatchKit
 
 /// Couleurs et boutons de NÉA sur la montre : fond noir, rose néon, cartes grises.
 enum Nea {
-  static let rose = Color(red: 1.0, green: 0.31, blue: 0.64)
+  static let rose = Color(red: 1.0, green: 0.42, blue: 0.10)
   static let carte = Color(red: 0.13, green: 0.13, blue: 0.15)
   static let texte2 = Color(red: 0.68, green: 0.69, blue: 0.73)
   static let surRose = Color(red: 0.11, green: 0.12, blue: 0.14)

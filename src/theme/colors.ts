@@ -14,10 +14,10 @@ export const colors = {
   border2: '#4C4F5A',
 
   // Rose néon (accent) et mauve (séries secondaires)
-  pink: '#FF4FA3',
-  pinkLight: '#FF9BCA',
-  pinkPale: '#FFC7E1',
-  mauve: '#985275',
+  pink: '#FF6B1A',
+  pinkLight: '#FFA266',
+  pinkPale: '#FFD2B3',
+  mauve: '#A0522D',
 
   // Texte
   text: '#F5F5F7',
@@ -31,7 +31,7 @@ export const colors = {
   onPrimary: '#1D1E23',
 
   // Calories (badge)
-  kcal: '#FF8A1F',
+  kcal: '#FFB547',
 } as const;
 
 /** Teintes ponctuelles (surfaces secondaires, graphiques, sommeil…), accordées à la palette graphite. */
@@ -62,11 +62,11 @@ export const ui = {
   /** Toast et bannières. */
   toast: '#3A3D47',
   /** Sélection : fond rose très léger. */
-  selTop: 'rgba(255,79,163,0.12)',
-  selBottom: 'rgba(255,79,163,0.05)',
-  pinkRing: 'rgba(255,79,163,0.35)',
+  selTop: 'rgba(255,107,26,0.12)',
+  selBottom: 'rgba(255,107,26,0.05)',
+  pinkRing: 'rgba(255,107,26,0.35)',
   /** Fond d'une carte choisie (rose 12 % sur l'ardoise). */
-  selFond: '#45303F',
+  selFond: '#463734',
   /** Podium du classement. */
   podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
   /** Éclair du Turbo x2. */
@@ -76,8 +76,8 @@ export const ui = {
   segTxt: '#ADB0BA',
   segOn: '#41444E',
   /** Sommeil : barres et anneau (mauve → rose clair), libellés des graphiques. */
-  sommeil: '#FF9BCA',
-  sommeilFonce: '#985275',
+  sommeil: '#FFA266',
+  sommeilFonce: '#A0522D',
   axe: '#80838D',
   /** Carte du vélo : fond et quadrillage. */
   carte: '#26282E',
@@ -85,8 +85,8 @@ export const ui = {
   /** Texte de la bannière de notification. */
   bannerTxt: '#CFD1D8',
   /** Chat : bulle de l'utilisateur, bouton Envoyer, lien NÉA Plus. */
-  bulleMoi: ['#FF4FA3', '#FF4FA3'],
-  envoyer: ['#FF4FA3', '#FF4FA3'],
+  bulleMoi: ['#FF6B1A', '#FF6B1A'],
+  envoyer: ['#FF6B1A', '#FF6B1A'],
   plusLien: '#FFC23D',
   /** Fond des feuilles (bottom sheets) et voile derrière. */
   sheet: '#2D3038',
@@ -96,20 +96,20 @@ export const ui = {
 /** Dégradés (du premier au dernier stop). */
 export const gradients = {
   /** Bouton principal : rose plein. */
-  primary: ['#FF4FA3', '#FF4FA3', '#FF4FA3'],
+  primary: ['#FF6B1A', '#FF6B1A', '#FF6B1A'],
   /** Segments de progression actifs. */
-  progress: ['#FF4FA3', '#FF4FA3'],
+  progress: ['#FF6B1A', '#FF6B1A'],
   /** Or NÉA Plus : #FFE38A → #FFC23D */
   gold: ['#FFE38A', '#FFC23D'],
 } as const;
 
 /** Zones cardio Z1 → Z5 : du gris mauve au rose clair, toujours accompagnées de leur libellé. */
 export const heartZones = {
-  z1: '#716C82',
-  z2: '#985275',
-  z3: '#C9508D',
-  z4: '#FF4FA3',
-  z5: '#FF9BCA',
+  z1: '#7A6E66',
+  z2: '#A0522D',
+  z3: '#D35E23',
+  z4: '#FF6B1A',
+  z5: '#FFA266',
 } as const;
 
 export type ColorName = keyof typeof colors;

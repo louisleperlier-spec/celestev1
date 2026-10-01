@@ -13,7 +13,7 @@ import { colors, fonts } from '@/theme';
 
 /** Fond .wel : halo rose au centre et violet en haut à gauche. */
 const FOND = [
-  { rx: 90, ry: 55, cx: 50, cy: 35, color: 'rgba(255,79,163,0.22)' },
+  { rx: 90, ry: 55, cx: 50, cy: 35, color: 'rgba(255,107,26,0.22)' },
   { rx: 40, ry: 30, cx: 15, cy: 20, color: 'rgba(120,60,255,0.18)' },
 ] as const;
 

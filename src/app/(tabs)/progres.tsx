@@ -219,8 +219,8 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
         </G>
       ))}
       <Path d={area} fill="url(#ag)" />
-      <Path d={line} fill="none" stroke="#FF6FB5" strokeWidth={2} strokeLinejoin="round" />
-      <Circle cx={last[0]} cy={last[1]} r={4.5} fill="#FF8CC6" stroke="#FFFFFF" strokeWidth={1.5} />
+      <Path d={line} fill="none" stroke="#FF8A47" strokeWidth={2} strokeLinejoin="round" />
+      <Circle cx={last[0]} cy={last[1]} r={4.5} fill="#FFA366" stroke="#FFFFFF" strokeWidth={1.5} />
       <G transform={`translate(${W - pr - 66},${Math.max(4, last[1] - 54)})`}>
         <Rect width={64} height={38} rx={8} fill="#1A1A1F" stroke="#34343A" />
         <SvgText x={32} y={16} textAnchor="middle" fill="#FFFFFF" fontSize={11} fontWeight={fonts.bold.fontWeight}>
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     paddingRight: 120,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,79,163,0.4)',
+    borderColor: 'rgba(255,107,26,0.4)',
     overflow: 'hidden',
   },
   qText: { fontSize: 13.5, lineHeight: 19.6 },

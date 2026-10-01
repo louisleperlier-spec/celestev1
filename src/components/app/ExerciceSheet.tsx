@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   demo: { marginTop: 14 },
   h4: { fontSize: 14, lineHeight: 18, marginTop: 18, marginBottom: 8 },
   step: { flexDirection: 'row', gap: 10, marginBottom: 9 },
-  stepN: { width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,79,163,0.18)', alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  stepN: { width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,107,26,0.18)', alignItems: 'center', justifyContent: 'center', marginTop: 1 },
   stepNTxt: { fontSize: 12, lineHeight: 15, color: colors.pinkLight },
   stepTxt: { flex: 1, fontSize: 14, lineHeight: 20.3, color: ui.text4 },
   warnTxt: { fontSize: 13.5, lineHeight: 19, color: ui.warnText },

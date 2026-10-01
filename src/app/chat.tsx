@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   point: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.textSecondary },
   quickWrap: { flexGrow: 0 },
   quick: { gap: 8, paddingVertical: 6, paddingHorizontal: 16 },
-  chip: { height: 32, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,79,163,0.45)', justifyContent: 'center' },
+  chip: { height: 32, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,107,26,0.45)', justifyContent: 'center' },
   chipTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkPale },
   quota: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', paddingTop: 4, paddingHorizontal: 16 },
   quotaTxt: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },

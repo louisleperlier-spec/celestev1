@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   subTxt: { fontSize: 13, lineHeight: 17, color: ui.text3 },
   delais: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingBottom: 10, marginTop: -4 },
   delai: { paddingVertical: 7, paddingHorizontal: 10, borderRadius: 10, backgroundColor: ui.iconBg, borderWidth: 1, borderColor: colors.border2 },
-  delaiOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,79,163,0.16)' },
+  delaiOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,107,26,0.16)' },
   delaiTxt: { fontSize: 13, lineHeight: 17 },
   inp: {
     minWidth: 84,

@@ -65,7 +65,7 @@ struct FournisseurC: TimelineProvider {
 }
 
 enum C {
-  static let rose = Color(red: 1.0, green: 0.31, blue: 0.64)
+  static let rose = Color(red: 1.0, green: 0.42, blue: 0.10)
   static let seance = URL(string: "nea://seance")!
   static let accueil = URL(string: "nea://accueil")!
 

@@ -37,6 +37,12 @@ Axel (Rex), leurs points de `recoCoach` aussi ; `coachValide()` remet un ancien 
 **Finitions** : barre d'XP de l'Accueil retirée ; « Connecter un capteur » (Progrès) et « Apple Santé et
 Apple Watch » (Profil) ouvrent l'app Santé (`ouvrirSante`) ; bouton Google masqué (`GOOGLE_PRET` dans `compte.tsx`) tant qu'il n'est pas configuré.
 
+**Accent orange (oct. 2026, choix de l'utilisateur) : tout le rose devient orange vif `#FF6B1A`** (les noms `colors.pink`, `pinkLight`,
+`Nea.rose`… sont gardés) ; mauve secondaire → orange brûlé `#A0522D`, rose clair → `#FFA266`, zones Z1–Z5 `#7A6E66` → `#FFA266`,
+badge kcal → `#FFB547` ; images recolorées (teinte +51°, script de décalage de teinte) : Axel, icône, démarrage, décor, 50 illustrations,
+mascottes de la montre et des widgets, vidéo d'accueil (ffmpeg `hue=h=51:s=1.2`) ; `comparer-plan` traduit le rose du prototype en orange.
+Partout ci-dessous, « rose » = cet orange.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

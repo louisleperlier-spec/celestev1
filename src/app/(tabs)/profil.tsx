@@ -81,7 +81,7 @@ export default function Profil() {
           <View style={styles.xp}>
             <View style={styles.xpBar}>
               <LinearGradient
-                colors={['#FF8CC6', colors.pink]}
+                colors={['#FFA366', colors.pink]}
                 start={{ x: 0, y: 0.5 }}
                 end={{ x: 1, y: 0.5 }}
                 style={[styles.xpFill, { width: `${Math.round((li.cur / li.need) * 100)}%` }, glow(colors.pink, 10)]}

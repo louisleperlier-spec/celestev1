@@ -10,7 +10,7 @@ module.exports = {
   displayName: 'NÉA',
   bundleIdentifier: '.widgets',
   deploymentTarget: '17.0',
-  colors: { $accent: '#FF4FA3', $widgetBackground: '#0A0A0E' },
+  colors: { $accent: '#FF6B1A', $widgetBackground: '#0A0A0E' },
   images: {
     axel_corps: './images/axel_corps.png',
     nova_corps: './images/nova_corps.png',

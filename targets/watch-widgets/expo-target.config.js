@@ -9,7 +9,7 @@ module.exports = {
   displayName: 'NÉA',
   bundleIdentifier: 'com.neacoach.app.watchkitapp.complications',
   deploymentTarget: '10.0',
-  colors: { $accent: '#FF4FA3', $widgetBackground: '#000000' },
+  colors: { $accent: '#FF6B1A', $widgetBackground: '#000000' },
   images: {
     axel: './images/axel.png',
     nova: './images/nova.png',

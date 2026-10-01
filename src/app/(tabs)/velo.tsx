@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   resHead: { marginTop: 14 },
   res: { flexDirection: 'row', gap: 6, paddingHorizontal: 20, marginTop: -2 },
   resBtn: { flex: 1, height: 34, borderRadius: 9, backgroundColor: ui.segBg, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
-  resOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,79,163,0.16)' },
+  resOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,107,26,0.16)' },
   resTxt: { fontSize: 12.5, lineHeight: 16 },
   bstats: { flexDirection: 'row', gap: 8, paddingTop: 10, paddingHorizontal: 20 },
   stat: { flex: 1, paddingVertical: 10, paddingHorizontal: 8, alignItems: 'center', gap: 0 },

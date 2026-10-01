@@ -158,7 +158,7 @@ export default function SeanceEnCours() {
             return (
               <Pressable key={i} accessibilityRole="button" accessibilityLabel={`Série ${i + 1}${ok ? ', faite' : ''}`} onPress={() => seance.choisirSerie(i)}>
                 {on ? (
-                  <LinearGradient colors={['#FFB3D6', '#FF6FB5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sn, styles.snOn, glow('rgba(255,79,163,0.6)', 12)]}>
+                  <LinearGradient colors={['#FFC299', '#FF8A47']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sn, styles.snOn, glow('rgba(255,107,26,0.6)', 12)]}>
                     <Text weight="bold" style={[styles.snTxt, { color: colors.onPrimary }]}>
                       {ok ? '✓' : i + 1}
                     </Text>
@@ -201,7 +201,7 @@ export default function SeanceEnCours() {
 function Rb({ icon, label, onPress }: { icon: 'plus' | 'minus'; label: string; onPress: () => void }) {
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}>
-      <LinearGradient colors={['#FFFFFF', '#FFC6E0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.rb, glow('rgba(255,79,163,0.45)', 16)]}>
+      <LinearGradient colors={['#FFFFFF', '#FFD9BF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.rb, glow('rgba(255,107,26,0.45)', 16)]}>
         <Icon name={icon} strokeWidth={2.4} color={colors.onPrimary} />
       </LinearGradient>
     </Pressable>
@@ -213,11 +213,11 @@ function BoutonRose({ label, onPress }: { label: string; onPress: () => void }) 
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [pressed && { transform: [{ scale: 0.98 }] }]}>
       <LinearGradient
-        colors={['#FFB3D6', '#FF7FBD', '#FF9BCB']}
+        colors={['#FFC299', '#FF9A52', '#FFA266']}
         locations={[0, 0.6, 1]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
-        style={[styles.pinkBtn, glow('rgba(255,79,163,0.45)', 28)]}
+        style={[styles.pinkBtn, glow('rgba(255,107,26,0.45)', 28)]}
       >
         <Text weight="bold" style={styles.pinkTxt}>
           {label}
@@ -246,12 +246,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     fontSize: 12,
     lineHeight: 15,
-    backgroundColor: 'rgba(255,79,163,0.18)',
+    backgroundColor: 'rgba(255,107,26,0.18)',
     color: colors.pinkLight,
     marginTop: 4,
   },
   h2: { flex: 1, fontSize: 20, lineHeight: 23 },
-  howbtn: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 34, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,79,163,0.5)' },
+  howbtn: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 34, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,107,26,0.5)' },
   howTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkPale },
   meta: { paddingTop: 6, paddingHorizontal: 20, fontSize: 13, lineHeight: 18, color: colors.textSecondary },
   metaB: { color: colors.pinkLight, ...fonts.medium },
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   seriesLbl: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, marginRight: 6 },
   sn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg, borderWidth: 1, borderColor: colors.border2 },
   snOn: { borderWidth: 0 },
-  snOk: { borderColor: 'rgba(255,79,163,0.5)' },
+  snOk: { borderColor: 'rgba(255,107,26,0.5)' },
   snTxt: { fontSize: 14, lineHeight: 18 },
   rest: {
     position: 'absolute',

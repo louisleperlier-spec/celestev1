@@ -123,7 +123,7 @@ struct Fournisseur: TimelineProvider {
 
 enum W {
   static let groupe = "group.com.neacoach.app"
-  static let rose = Color(red: 1.0, green: 0.31, blue: 0.64)
+  static let rose = Color(red: 1.0, green: 0.42, blue: 0.10)
   static let texte2 = Color.white.opacity(0.62)
   static let accueil = URL(string: "nea://accueil")!
   static let recup = URL(string: "nea://recuperation")!

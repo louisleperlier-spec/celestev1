@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   bycTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkPale },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   tag: { fontSize: 13, lineHeight: 17, paddingVertical: 6, paddingHorizontal: 12, borderRadius: 10, overflow: 'hidden', backgroundColor: ui.dark, color: ui.text3 },
-  tagPk: { backgroundColor: 'rgba(255,79,163,0.16)', color: colors.pinkPale },
+  tagPk: { backgroundColor: 'rgba(255,107,26,0.16)', color: colors.pinkPale },
   kstat: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', rowGap: 6, columnGap: 14, marginTop: 12 },
   kstatItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kstatTxt: { fontSize: 13.5, lineHeight: 18, color: ui.text3 },

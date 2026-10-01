@@ -9,7 +9,7 @@ export const COACHES: readonly Coach[] = [
     id: 'axel',
     nom: 'Axel',
     spec: 'PERFORMANCE',
-    c: '#ff4fa3',
+    c: '#FF6B1A',
     traits: ['Discipliné', 'Motivant', 'Résultats'],
     style: 'Hypertrophie',
     quote: 'Je suis là pour te pousser à donner le meilleur de toi. Ensemble, on va plus loin.',

@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   gchipTxt: { fontSize: 12, lineHeight: 15, color: ui.text3 },
   filter: { height: 32, paddingHorizontal: 14, borderRadius: 999, backgroundColor: ui.chipBg, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
   filterTxt: { fontSize: 12.5, lineHeight: 16, color: ui.text3 },
-  chipOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,79,163,0.14)' },
+  chipOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,107,26,0.14)' },
   chipTxtOn: { color: colors.text },
   srch: {
     flexDirection: 'row',

@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   h3: { fontSize: 17, lineHeight: 22, marginTop: 8 },
   steps: { gap: 8, marginTop: 12 },
   step: { flexDirection: 'row', gap: 10, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
-  stepOn: { backgroundColor: 'rgba(255,79,163,0.1)', borderColor: 'rgba(255,79,163,0.45)' },
+  stepOn: { backgroundColor: 'rgba(255,107,26,0.1)', borderColor: 'rgba(255,107,26,0.45)' },
   num: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   numOn: { backgroundColor: colors.pink },
   numTxt: { fontSize: 12, lineHeight: 15 },

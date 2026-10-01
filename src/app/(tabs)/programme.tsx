@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     borderRadius: 999,
     overflow: 'hidden',
-    backgroundColor: 'rgba(255,79,163,0.16)',
+    backgroundColor: 'rgba(255,107,26,0.16)',
     color: colors.pinkPale,
   },
   ph3: { fontSize: 19, lineHeight: 22, ...fonts.extrabold },

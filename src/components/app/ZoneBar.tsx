@@ -52,10 +52,10 @@ export function ZoneBar({ it, cur }: { it: PlanItem; cur?: number }) {
 function Cible({ left, width }: { left: number; width: number }) {
   return (
     <LinearGradient
-      colors={['#FF8CC6', colors.pink]}
+      colors={['#FFA366', colors.pink]}
       start={{ x: 0, y: 0.5 }}
       end={{ x: 1, y: 0.5 }}
-      style={[styles.target, { left: `${left}%`, width: `${width}%` }, glow('rgba(255,79,163,0.7)', 12)]}
+      style={[styles.target, { left: `${left}%`, width: `${width}%` }, glow('rgba(255,107,26,0.7)', 12)]}
     />
   );
 }
