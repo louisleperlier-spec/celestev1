@@ -9,6 +9,8 @@ final class Donnees: ObservableObject {
   @Published var synchro: Date?
   /// Ouverture par la complication « Ma séance » (nea://seance) : lance la prochaine séance.
   @Published var demandeSeance = false
+  /// Ouverture par « Ouvrir sur la montre » sur l'iPhone : affiche « Ma séance ».
+  @Published var ouvrirChoisie = false
   private let cle = "nea.etat"
   private let cleSynchro = "nea.synchro"
 
@@ -38,8 +40,9 @@ final class Donnees: ObservableObject {
     }
   }
 
-  /// Prochaine séance : aujourd'hui ou plus tard dans la semaine, sinon la première.
+  /// Prochaine séance : celle choisie sur l'iPhone, sinon aujourd'hui ou plus tard dans la semaine, sinon la première.
   var prochaine: SeanceMontre? {
+    if let c = etat?.choisie { return c }
     guard let l = etat?.semaine, !l.isEmpty else { return nil }
     let a = Nea.aujourdhui()
     return l.first(where: { $0.jour >= a }) ?? l.first

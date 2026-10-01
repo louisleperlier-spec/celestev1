@@ -79,6 +79,9 @@ struct EtatMontre: Codable {
   let poids: Double?
   let explorer: [SeanceMontre]?
   let coachs: [CoachResume]?
+  /// Séance choisie sur l'iPhone (« Ouvrir sur la montre ») et son programme (build 18).
+  let choisie: SeanceMontre?
+  let choisieProg: String?
 
   /// Score santé (0–100) : moyenne des parts d'Effort, de Récupération et de Sommeil connues.
   var score: Int? {

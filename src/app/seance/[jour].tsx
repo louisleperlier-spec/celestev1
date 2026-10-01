@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BoutonMontre } from '@/components/app/BoutonMontre';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { CoachFace } from '@/components/app/CoachFace';
 import { DetailHead } from '@/components/app/Detail';
@@ -73,6 +74,7 @@ export default function SeanceDuJour() {
         )}
       </ScrollView>
       <View style={styles.foot}>
+        {!s.ride && <BoutonMontre choix={{ jour: day }} style={styles.mb8} />}
         <Button
           label="Lancer la séance"
           iconAfter="play"
@@ -91,6 +93,7 @@ const styles = StyleSheet.create({
   pad: { paddingHorizontal: 20 },
   mt12: { marginTop: 12 },
   mt6: { marginTop: 6 },
+  mb8: { marginBottom: 8 },
   h1: { ...fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   phead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 14, marginTop: 12, marginHorizontal: 20 },

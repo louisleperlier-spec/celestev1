@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
+import { BoutonMontre } from '@/components/app/BoutonMontre';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { DetailHead, detail, Hero, KStat, ParCoach, Tags } from '@/components/app/Detail';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
@@ -133,7 +134,9 @@ export default function SeanceCatalogue() {
         {lk ? (
           <Button label="Débloquer avec l'essai gratuit" icon="lock" onPress={() => ouvrirPlus()} />
         ) : (
-          <View style={styles.two}>
+          <>
+            {!w.ride && <BoutonMontre choix={{ cat: w.id }} style={styles.mb8} />}
+            <View style={styles.two}>
             <Button label="Modifier" variant="dark" small icon="sliders" onPress={() => setIntensite(true)} style={styles.flex} />
             <Button label="Planifier" variant="dark" small icon="cal" onPress={() => setPlanifier(true)} style={styles.flex} />
             <Button
@@ -142,7 +145,8 @@ export default function SeanceCatalogue() {
               onPress={() => (w.ride ? lancerSortie(w.ride, w.id) : router.push({ pathname: '/seance-en-cours', params: { cat: w.id } }))}
               style={styles.flex}
             />
-          </View>
+            </View>
+          </>
         )}
       </LinearGradient>
 
@@ -179,6 +183,7 @@ export default function SeanceCatalogue() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
+  mb8: { marginBottom: 8 },
   more: { color: colors.pinkLight, fontSize: 13.5, lineHeight: 18, marginTop: 4 },
   eqs: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
   eq: { width: 66, alignItems: 'center', gap: 6 },

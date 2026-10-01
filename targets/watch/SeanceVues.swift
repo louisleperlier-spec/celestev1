@@ -141,7 +141,7 @@ struct LigneFC: View {
         Text("\(Nea.kg(seance.charge)) kg").font(.system(size: 15, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
         Rectangle().fill(Nea.texte2.opacity(0.4)).frame(width: 1, height: 18)
       }
-      Image(systemName: "heart").foregroundColor(Nea.rose)
+      Image(systemName: "heart.fill").foregroundColor(Nea.rose)
       Text(seance.entrainement.bpm > 0 ? "\(Int(seance.entrainement.bpm)) bpm" : "-- bpm")
         .font(.system(size: 15, weight: .semibold))
         .lineLimit(1)
@@ -151,31 +151,40 @@ struct LigneFC: View {
   }
 }
 
-/// 05 · Répétitions : compteur estimé (ou minuteur pour un exercice en durée), « Fin de série ».
+/// 05 · Répétitions (maquette « Suivre les exercices ») : exercice n/N, reps comptées / visées (ou minuteur), série,
+/// charge et FC, « Fin de série ».
 struct EffortView: View {
   @ObservedObject var seance: SeanceEnCours
 
   var body: some View {
     ScrollView {
-      VStack(spacing: 2) {
-        Text("Série \(seance.serie + 1)/\(seance.exo.series)").font(.system(size: 15)).foregroundColor(Nea.texte2)
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Exercice \(seance.ex + 1)/\(seance.s.exos.count)").font(.system(size: 15)).foregroundColor(Nea.texte2)
         if seance.enDuree {
           GrosChiffre(texte: Nea.mmss(seance.effortReste), taille: 50)
           Text("Tiens la position").font(.system(size: 14)).foregroundColor(Nea.texte2)
         } else {
-          ZStack {
-            Circle().fill(Nea.rose.opacity(0.18)).frame(width: 96, height: 96).blur(radius: 14)
-            GrosChiffre(texte: String(format: "%02d", seance.compteur.reps), taille: 64)
+          HStack(alignment: .lastTextBaseline, spacing: 6) {
+            Text(String(format: "%02d", seance.compteur.reps))
+              .font(.system(size: 64, weight: .heavy, design: .rounded))
+              .monospacedDigit()
+              .lineLimit(1)
+              .minimumScaleFactor(0.6)
+            Text("/ \(seance.exo.repsTxt) reps").font(.system(size: 18, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
           }
-          Text("/ \(seance.exo.repsTxt) reps").font(.system(size: 17, weight: .semibold))
-          Text(seance.compteur.disponible ? "Auto · à vérifier" : "Compte tes reps").font(.system(size: 12)).foregroundColor(Nea.texte2)
+        }
+        HStack(spacing: 4) {
+          Text("Série \(seance.serie + 1)/\(seance.exo.series)").font(.system(size: 15)).foregroundColor(Nea.texte2)
+          if !seance.enDuree {
+            Text(seance.compteur.disponible ? "· auto" : "· compte tes reps").font(.system(size: 12)).foregroundColor(Nea.texte2)
+          }
         }
         Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 4)
         LigneFC(seance: seance)
         Button {
           seance.finSerie()
         } label: {
-          Label("Fin de série", systemImage: "stop.fill")
+          Text("Fin de série")
         }
         .buttonStyle(BoutonRose())
         .padding(.top, 4)

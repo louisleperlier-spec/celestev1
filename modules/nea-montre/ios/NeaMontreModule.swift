@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import HealthKit
 import WatchConnectivity
 import UIKit
 import UserNotifications
@@ -7,6 +8,8 @@ import WidgetKit
 /// Liaison avec l'app Apple Watch : l'iPhone envoie l'état (prénom, coach, séances de la semaine)
 /// en contexte d'application, la montre renvoie chaque séance terminée (transferUserInfo).
 public final class NeaMontreModule: Module {
+  static let sante = HKHealthStore()
+
   public func definition() -> ModuleDefinition {
     Name("NeaMontre")
 
@@ -22,6 +25,15 @@ public final class NeaMontreModule: Module {
     /// Montre jumelée et app NÉA installée dessus.
     Function("estDisponible") { () -> Bool in
       Liaison.partagee.disponible()
+    }
+
+    /// « Ouvrir sur la montre » : lance l'app NÉA de la montre (entraînement de musculation), qui ouvre « Ma séance ».
+    Function("ouvrirSurMontre") {
+      guard HKHealthStore.isHealthDataAvailable() else { return }
+      let c = HKWorkoutConfiguration()
+      c.activityType = .traditionalStrengthTraining
+      c.locationType = .indoor
+      NeaMontreModule.sante.startWatchApp(with: c) { _, _ in }
     }
 
     /// Dernier état de l'iPhone pour la montre (JSON).

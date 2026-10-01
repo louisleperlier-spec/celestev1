@@ -4,12 +4,17 @@
  * la montre renvoie chaque séance terminée, enregistrée ici comme une séance faite sur l'iPhone
  * (journal, XP, série, quête, rappel VFC). La montre écrit elle-même l'entraînement dans Apple Santé.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
 import { toast } from '@/components/ui';
 import { cerclesJour, part, type IdCercle } from '@/lib/cercles';
 import { dec, loadFor, rj } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
 import { COACHES, SEANCES } from '@/data';
-import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, sesKcal, todayIdx } from '@/lib/plan';
+import type { SeanceId } from '@/data/types';
+import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, prog, progWeek, sesKcal, todayIdx } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
 import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { casesTrace } from '@/lib/territoires';
@@ -63,6 +68,9 @@ type EtatMontre = {
   poids: number;
   explorer: SeanceMontre[];
   coachs: { id: string; nom: string; spec: string }[];
+  /** Séance choisie sur l'iPhone (« Ouvrir sur la montre ») et son programme, pour aujourd'hui (build 18). */
+  choisie: SeanceMontre | null;
+  choisieProg: string;
 };
 
 /** Séance terminée sur la montre. */
@@ -81,6 +89,17 @@ type VeloMontre = {
   sport?: 'velo' | 'course';
   pts?: [number, number][];
 };
+/** Séance choisie sur l'iPhone pour la montre : un jour de la semaine ou une séance prête, valable le jour même. */
+export type ChoixMontre = { jour: number } | { cat: SeanceId };
+export const useChoixMontre = create<{ choix: ChoixMontre | null; d: string }>()(
+  persist(() => ({ choix: null as ChoixMontre | null, d: '' }), {
+    name: 'nea-montre-choix',
+    storage: createJSONStorage(() => AsyncStorage),
+  }),
+);
+const memeChoix = (a: ChoixMontre | null, b: ChoixMontre) =>
+  !!a && ('jour' in a ? 'jour' in b && a.jour === b.jour : 'cat' in b && a.cat === b.cat);
+
 type MesureMontre = { d: string; hrv: number; bpm: number };
 type CoachEnvoi = { texte: string };
 
@@ -124,6 +143,27 @@ function etat(): EtatMontre {
     semaine.push(versMontre(s, i, i === auj ? "Aujourd'hui" : i === auj + 1 ? 'Demain' : JOURS[i]));
   }
   // « Explorer » : séances prêtes accessibles du lieu choisi, les plus proches du niveau.
+  // Séance choisie aujourd'hui sur l'iPhone.
+  const ch = useChoixMontre.getState();
+  let choisie: SeanceMontre | null = null;
+  let choisieProg = '';
+  if (ch.choix && ch.d === new Date().toDateString()) {
+    if ('jour' in ch.choix) {
+      const s = sessionForDay(sem, ch.choix.jour);
+      if (s && !s.ride && s.items.length) {
+        const pr = prog(p);
+        choisie = versMontre(s, ch.choix.jour, ch.choix.jour === auj ? "Aujourd'hui" : JOURS[ch.choix.jour]);
+        choisieProg = `${pr.nom} · semaine ${progWeek(p)}/${pr.sem}`;
+      }
+    } else {
+      const id = ch.choix.cat;
+      const w = SEANCES.find((x) => x.id === id);
+      if (w && !w.ride) {
+        choisie = versMontre(catSession(w, null, st.weight, st.wkMod[w.id] ?? 0), -1, 'Séance prête');
+        choisieProg = 'Séance prête';
+      }
+    }
+  }
   const lieu = st.gear === 'maison' ? 'maison' : 'salle';
   const niveau = lvlN(st.level);
   const explorer = SEANCES.filter((w) => w.lieu === lieu && !w.ride && !wkLocked(w.id))
@@ -174,6 +214,8 @@ function etat(): EtatMontre {
     poids: st.weight,
     explorer,
     coachs: COACHES.map((x) => ({ id: x.id, nom: x.nom, spec: x.spec.charAt(0) + x.spec.slice(1).toLowerCase() })),
+    choisie,
+    choisieProg,
   };
 }
 
@@ -188,6 +230,24 @@ function envoyer() {
   NeaMontre.envoyerEtat(json);
   // Widgets de l'iPhone (à partir du build 4).
   if (typeof NeaMontre.ecrireWidget === 'function') NeaMontre.ecrireWidget(JSON.stringify(widget(JSON.parse(json) as EtatMontre)));
+}
+
+/** La montre est jumelée et l'app NÉA y est installée. */
+export const montreDisponible = () => !!NeaMontre && NeaMontre.estDisponible();
+
+/** « Ouvrir sur la montre » : la séance devient « Ma séance » sur la montre, qui s'ouvre (build 18+). */
+export function ouvrirSurMontre(choix: ChoixMontre) {
+  useChoixMontre.setState({ choix, d: new Date().toDateString() });
+  if (!NeaMontre) return;
+  if (minuterie) clearTimeout(minuterie);
+  envoyer();
+  if (typeof NeaMontre.ouvrirSurMontre === 'function') NeaMontre.ouvrirSurMontre();
+  toast('Séance envoyée sur ta montre ⌚');
+}
+
+/** Cette séance est celle envoyée aujourd'hui sur la montre. */
+export function useEstSurMontre(choix: ChoixMontre) {
+  return useChoixMontre((s) => s.d === new Date().toDateString() && memeChoix(s.choix, choix));
 }
 
 /** Données des widgets : bilan du jour et prochaine séance (contrat de `targets/widgets`). */
@@ -216,6 +276,8 @@ function recevoir(json: string) {
   // Calories de la montre, sinon l'estimation de la séance sur l'iPhone (intensité du coach × poids × durée).
   const cal = r.kcal > 0 ? Math.round(r.kcal) : Math.round(coachById(st.coach).int * 9 * st.weight * (Math.max(r.sec, 60) / 3600));
   st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type: 'muscu', title: r.titre, min, cal, vol: Math.round(r.volume), hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  // Séance faite : elle n'est plus « Ma séance » sur la montre.
+  useChoixMontre.setState({ choix: null });
   const apres = useProfil.getState();
   apres.addXp(2 * r.series, 'Série');
   apres.addXp(40 + 5 * Math.min(10, streak(apres.logs, apres.days)), 'Séance');
@@ -312,8 +374,10 @@ export function demarrerLiaisonMontre() {
   m.addListener('messageMontre', ecoute);
   (m.addListener as (evt: string, f: typeof ecoute) => { remove(): void })('seanceMontre', ecoute);
   envoyer();
-  useProfil.subscribe(() => {
+  const plusTard = () => {
     if (minuterie) clearTimeout(minuterie);
     minuterie = setTimeout(envoyer, 1500);
-  });
+  };
+  useProfil.subscribe(plusTard);
+  useChoixMontre.subscribe(plusTard);
 }

@@ -8,6 +8,7 @@ struct AccueilView: View {
   @State private var lancement: SeanceMontre?
   @State private var sortie: TypeActivite?
   @State private var voirSeances = false
+  @State private var voirChoisie = false
 
   private var type: TypeActivite { TypeActivite(rawValue: choix) ?? .muscu }
 
@@ -37,6 +38,10 @@ struct AccueilView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 8) {
+        if let c = donnees.etat?.choisie {
+          BlocMaSeance(s: c, programme: donnees.etat?.choisieProg ?? "", demarrer: { lancement = c })
+            .padding(.bottom, 8)
+        }
         Text("Entraînement").font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
         ForEach(TypeActivite.allCases) { t in
           Button {
@@ -72,17 +77,85 @@ struct AccueilView: View {
     .navigationDestination(isPresented: $voirSeances) {
       SeancesView()
     }
+    .navigationDestination(isPresented: $voirChoisie) {
+      MaSeanceView()
+    }
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)
     }
     .fullScreenCover(item: $sortie) { t in
       SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: t == .course)
     }
+    // « Ouvrir sur la montre » sur l'iPhone : « Ma séance ».
+    .onReceive(donnees.$ouvrirChoisie) { o in
+      guard o else { return }
+      donnees.ouvrirChoisie = false
+      if lancement == nil && sortie == nil { voirChoisie = true }
+    }
     // Complication « Ma séance » : ouvre directement la séance du jour.
     .onReceive(donnees.$demandeSeance) { d in
       guard d, let s = donnees.prochaine else { return }
       donnees.demandeSeance = false
       lancement = s
+    }
+  }
+}
+
+/// Maquette « Du téléphone au poignet » · 02 : la séance choisie sur l'iPhone, Démarrer, Voir les exercices.
+struct BlocMaSeance: View {
+  let s: SeanceMontre
+  let programme: String
+  let demarrer: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Ma séance").font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+        HStack(spacing: 6) {
+          Image(systemName: "link.circle.fill").font(.system(size: 16)).foregroundColor(Nea.rose)
+          Text("Liée à l'iPhone").font(.system(size: 14)).foregroundColor(Nea.texte2)
+        }
+      }
+      VStack(alignment: .leading, spacing: 2) {
+        if !programme.isEmpty {
+          Text(programme).font(.system(size: 13, weight: .semibold)).foregroundColor(Nea.rose).lineLimit(1).minimumScaleFactor(0.7)
+        }
+        Text(s.titre).font(.system(size: 19, weight: .bold)).lineLimit(3).minimumScaleFactor(0.7)
+        Text("\(Int(s.min)) min · \(s.exos.count) exercices").font(.system(size: 14)).foregroundColor(Nea.texte2)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(12)
+      .background(RoundedRectangle(cornerRadius: 18).fill(Nea.carte))
+      Button(action: demarrer) {
+        Text("Démarrer")
+      }
+      .buttonStyle(BoutonRose())
+      NavigationLink(value: s) {
+        Text("Voir les exercices")
+      }
+      .buttonStyle(BoutonSombre())
+    }
+  }
+}
+
+/// « Ma séance » seule (ouverte par l'iPhone).
+struct MaSeanceView: View {
+  @ObservedObject private var donnees = Donnees.partagees
+  @State private var lancement: SeanceMontre?
+
+  var body: some View {
+    ScrollView {
+      if let c = donnees.etat?.choisie {
+        BlocMaSeance(s: c, programme: donnees.etat?.choisieProg ?? "", demarrer: { lancement = c })
+      } else {
+        Text("Choisis une séance sur ton iPhone, puis « Ouvrir sur la montre ».")
+          .font(.system(size: 15))
+          .foregroundColor(Nea.texte2)
+      }
+    }
+    .navigationTitle("NÉA")
+    .fullScreenCover(item: $lancement) { s in
+      SeanceView(s: s)
     }
   }
 }

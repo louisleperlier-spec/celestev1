@@ -169,6 +169,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     réglages) ; séance et sortie en pages à glisser comme l'app Exercice : Commandes (Terminer, Pause, Nouveau = enregistre et revient
     au choix, Segment) ← Suivre (chrono orange, kcal actives / totales, BPM ; km, vitesse ou allure pour les sorties) → séance guidée
     (revient devant à chaque étape) ou Parcours (carte fixe) ; `Activite.swift`, kcal au repos lues dans Santé
+  - **« Du téléphone au poignet » (maquette, build 18)** : « Ouvrir sur la montre » (`BoutonMontre`, détail d'une séance de la
+    semaine ou d'une séance prête, si une montre est jumelée) → `useChoixMontre` (`nea-montre-choix`, valable le jour même, effacé
+    quand la montre renvoie une séance) → `choisie` + `choisieProg` (programme · semaine n/N, ou « Séance prête ») dans l'état ;
+    le module lance l'app de la montre (`ouvrirSurMontre`, `startWatchApp`) qui ouvre « Ma séance · Liée à l'iPhone »
+    (`BlocMaSeance` en haut de l'accueil, Démarrer, Voir les exercices ; `DelegueMontre.handle`) ; Musculation lance cette séance ;
+    écran des reps : « Exercice n/N », « 08 / 10 reps », série, charge et FC, Fin de série
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;

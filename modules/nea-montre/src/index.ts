@@ -10,6 +10,8 @@ type Module = {
   ecrireWidget(json: string): void;
   /** Réglages des alertes santé (VFC toutes les heures, eau, vélo, pas) : notifications posées par l'iPhone, même app fermée. */
   configurerAlertes(json: string): void;
+  /** Lance l'app NÉA de la montre (build 18+), qui ouvre la séance choisie sur l'iPhone. */
+  ouvrirSurMontre?(): void;
 };
 
 /** Module natif de liaison avec l'Apple Watch ; absent dans Expo Go, le navigateur et Android. */
