@@ -115,16 +115,22 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     rejoint celle d'un ami ; boost Équipe x1,2 si 3 membres actifs dans la semaine ; classement « Équipes » = toutes les équipes (nom + XP)
   - sans compte : niveau, boosts, Turbo et quêtes locaux, classement réduit à soi, carte « Créer mon compte »
   - Turbo « Activer » renvoie à NÉA Plus (étape 11) ; icône `bolt` absente du prototype (éclair ajouté)
-- [ ] 11. NÉA Plus (RevenueCat) : **paywall et accès codés, achats encore simulés**
+- [ ] 11. NÉA Plus (RevenueCat) : **paywall, accès et vrais achats codés (en attente de la clé RevenueCat)**
   - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 2 offres (annuel, mensuel), frise de l'essai, X après 2 s, textes
     légaux, Restaurer / Conditions / Confidentialité) ; `?suite=compte` après « C'est parti » de l'onboarding (puis création de compte)
   - offre de sortie une seule fois (39,99 $ la 1re année, compte à rebours réel de 10 min), feuille d'achat, « Ton abonnement »
     (annuler / réactiver) depuis la ligne NÉA Plus du Profil, rappel « Ton essai se termine demain » au jour 2 (notifications)
   - `lib/premium.ts` : isPremium lit `premium` du profil (sauvegardé et synchronisé avec le compte) ; séances, programmes, coach illimité,
     Turbo et carte « Essaie NÉA Plus » suivent l'abonnement ; tous les boutons « NÉA Plus » passent par `ouvrirPlus()`
-  - reste : vrais achats App Store (RevenueCat `react-native-purchases`, build natif) : contrat « Paid Apps », banque et fiscalité dans
-    App Store Connect, produits (annuel avec essai 3 j, offre 39,99 $, mensuel), compte RevenueCat ; puis la limite du coach côté
-    serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
+  - **vrais achats codés (build 16)** : `store/achats.ts` (RevenueCat `react-native-purchases`, droit `plus`) actif si
+    `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (clé publique, variable EAS de l'environnement preview/production) et hors Expo Go, sinon achat simulé ;
+    paywall → feuille de paiement d'Apple, Restaurer → `restorePurchases`, « Ton abonnement » → `showManageSubscriptions` ; compte NÉA =
+    `appUserID` RevenueCat ; l'abonnement reçu remplace `premium` du profil (`recompenserAchat` : +50 XP, rappel de fin d'essai)
+  - **produits créés via l'API** (groupe « NÉA Plus » 22431970, 175 pays, prix équivalents au Canada) : `com.neacoach.app.plus.annuel`
+    (59,99 $/an, essai gratuit 3 j), `…plus.annuel.offre` (59,99 $/an, 1re année payée d'avance 39,99 $), `…plus.mensuel` (12,99 $/mois)
+  - reste (utilisateur) : contrat « Paid Apps » + banque + fiscalité dans App Store Connect ; compte RevenueCat (projet, app iOS
+    `com.neacoach.app`, clé In-App Purchase .p8, droit `plus` avec les 3 produits, offering par défaut) ; capture de revue de chaque
+    abonnement ; puis la limite du coach côté serveur doit lire l'abonnement (aujourd'hui 3 messages/jour pour tous côté serveur)
 - [ ] **App Apple Watch (maquettes de l'utilisateur, V1 = séances)** : **build TestFlight 1.0.0 (3) compilé et envoyé (30 sept. 2026), à valider sur la montre**
   - cible watchOS SwiftUI `targets/watch/` (`@bacons/apple-targets`, nom `NeaWatch`, `com.neacoach.app.watchkitapp`, watchOS 10) :
     Accueil (bonjour, coach, prochaine séance, Commencer), Tes séances, Détail (Démarrer), Répétitions (comptage **estimé** par
@@ -200,7 +206,8 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   `site/` sur l'hébergement Expo **https://nea-coach.expo.app** (`npm run site` : `scripts/generer-site.ts` génère confidentialite.html,
   conditions.html, support.html depuis `src/data/legal.ts` ; `index.html` gardé s'il existe, à remplacer par la page ChatGPT) ; URL de
   confidentialité, support et marketing renseignées ; contact : NÉA, édité par Louis Leperlier, Québec, nea.coach.app@gmail.com
-  - reste avant soumission : catégorie, classification d'âge, questionnaire « App Privacy », vrais achats (RevenueCat, contrat Paid Apps)
+  - catégories Santé et forme + Sports, classification d'âge remplie (13+, l'app impose 14 ans) ; reste : questionnaire « App Privacy »
+    (pas d'API, à remplir dans App Store Connect), vrais achats (RevenueCat, contrat Paid Apps)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

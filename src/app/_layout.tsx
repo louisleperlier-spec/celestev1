@@ -8,6 +8,7 @@ import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
+import { demarrerAchats } from '@/store/achats';
 import { demarrerAlertes } from '@/store/alertes';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
@@ -48,6 +49,8 @@ export default function RootLayout() {
     demarrerLiaisonMontre();
     // Alertes santé de l'iPhone (VFC, eau, vélo, pas), posées même app fermée.
     demarrerAlertes();
+    // NÉA Plus : vrais achats App Store (RevenueCat) quand la clé est fournie.
+    demarrerAchats();
   }, [ready]);
 
   if (!ready) return null;

@@ -118,6 +118,8 @@ type Actions = {
   programmerPost: (kind: 'muscu' | 'velo' | 'course', endHrv: number | null) => void;
   /** Achat NÉA Plus (buySheet) : abonnement, rappel de fin d'essai au jour 2, +50 XP. */
   acheterPlus: (id: OffreId) => void;
+  /** Après un vrai achat App Store (l'abonnement vient de RevenueCat) : +50 XP et rappel de fin d'essai. */
+  recompenserAchat: () => void;
   /** Annuler / réactiver le renouvellement (subSheet). */
   basculerRenouvellement: () => void;
   /** Ajoute les notifications dues et les renvoie (notifTick). */
@@ -242,6 +244,11 @@ export const useProfil = create<Etat & Actions>()(
         const premium = nouvelAbonnement(id, now);
         const pending = premium.plan === 'an' ? [...get().pending, { at: now + 2 * 864e5, type: 'trial' as const }] : get().pending;
         set({ premium, pending });
+        get().addXp(50, 'NÉA Plus');
+      },
+      recompenserAchat: () => {
+        const p = get().premium;
+        if (p?.trialEnd) set({ pending: [...get().pending, { at: p.trialEnd - 864e5, type: 'trial' as const }] });
         get().addXp(50, 'NÉA Plus');
       },
       basculerRenouvellement: () => {

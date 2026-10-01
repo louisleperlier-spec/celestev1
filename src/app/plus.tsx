@@ -11,6 +11,7 @@ import { PLANS } from '@/data/monetisation';
 import { mmss } from '@/lib/coeur';
 import { coachById, prog } from '@/lib/plan';
 import { isPremium, money, type OffreId } from '@/lib/premium';
+import { achatsReels, acheterReel, restaurerReel } from '@/store/achats';
 import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, gradients, ui } from '@/theme';
@@ -72,14 +73,27 @@ export default function Plus() {
     partir();
   };
 
-  const acheter = (o: Offre) => {
-    useProfil.getState().acheterPlus(o.id);
+  const acheter = async (o: Offre) => {
     setAchat(null);
+    if (achatsReels()) {
+      // Vrai achat : feuille de paiement d'Apple, l'abonnement arrive par RevenueCat.
+      const r = await acheterReel(o.id);
+      if (r === 'annule') return;
+      if (r === 'erreur') return toast("L'achat n'a pas abouti, réessaie");
+      useProfil.getState().recompenserAchat();
+    } else useProfil.getState().acheterPlus(o.id);
     toast(o.trial ? 'Essai activé : 3 jours offerts' : 'Bienvenue dans NÉA Plus');
     setTimeout(partir, 900);
   };
 
-  const restaurer = () => {
+  const restaurer = async () => {
+    if (achatsReels()) {
+      if (await restaurerReel()) {
+        toast('Achat restauré');
+        partir();
+      } else toast('Aucun abonnement trouvé pour ce compte Apple');
+      return;
+    }
     if (isPremium()) {
       toast('Achat restauré');
       partir();
@@ -177,7 +191,7 @@ export default function Plus() {
         </ScrollView>
 
         <View style={styles.foot}>
-          <Button label={cta} onPress={() => setAchat(plan)} />
+          <Button label={cta} onPress={() => (achatsReels() ? acheter(plan) : setAchat(plan))} />
           <Text style={styles.legal}>
             {plan.trial
               ? `Puis ${money(plan.prix)} CA/${plan.per}, renouvelé automatiquement. Annule au moins 24 h avant la fin de l'essai pour éviter les frais. Taxes en sus.`
@@ -207,7 +221,8 @@ export default function Plus() {
           prenom={p.name}
           onAccept={() => {
             setSortie(false);
-            setAchat(OFFRE_SORTIE);
+            if (achatsReels()) void acheter(OFFRE_SORTIE);
+            else setAchat(OFFRE_SORTIE);
           }}
           onRefus={() => {
             useProfil.getState().set({ exitDeclined: true });
@@ -224,7 +239,7 @@ export default function Plus() {
   );
 }
 
-/** Confirmation d'achat (buySheet). Simulé tant que les achats App Store (RevenueCat) ne sont pas branchés. */
+/** Confirmation d'achat simulée (buySheet), sans clé RevenueCat ; sinon la feuille de paiement d'Apple la remplace. */
 function AchatSheet({ offre: o, onClose, onConfirm }: { offre: Offre | null; onClose: () => void; onConfirm: (o: Offre) => void }) {
   return (
     <Sheet visible={!!o} onClose={onClose}>

@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { Button, Text, toast } from '@/components/ui';
 import { enEssai } from '@/lib/premium';
+import { achatsReels, gererAbonnement } from '@/store/achats';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
@@ -24,8 +25,24 @@ export function AbonnementSheet({ visible, onClose }: { visible: boolean; onClos
             ? "Essai gratuit en cours. Si tu annules, tu gardes l'accès jusqu'à la fin de l'essai et rien n'est facturé."
             : "Si tu annules, tu gardes l'accès jusqu'à la fin de la période payée."}
       </Text>
-      {<Button label={p.renew ? 'Annuler le renouvellement' : 'Réactiver le renouvellement'} variant="dark" onPress={basculer} />}
-      <Text style={styles.note}>Dans l&apos;app publiée, la gestion passe par les réglages App Store ou Google Play.</Text>
+      {achatsReels() ? (
+        <>
+          <Button
+            label="Gérer mon abonnement"
+            variant="dark"
+            onPress={() => {
+              onClose();
+              void gererAbonnement();
+            }}
+          />
+          <Text style={styles.note}>Annulation et changement d&apos;offre se font dans l&apos;App Store, sans frais jusqu&apos;à 24 h avant le renouvellement.</Text>
+        </>
+      ) : (
+        <>
+          <Button label={p.renew ? 'Annuler le renouvellement' : 'Réactiver le renouvellement'} variant="dark" onPress={basculer} />
+          <Text style={styles.note}>Dans l&apos;app publiée, la gestion passe par les réglages App Store ou Google Play.</Text>
+        </>
+      )}
     </Sheet>
   );
 }
