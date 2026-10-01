@@ -19,8 +19,9 @@ const FOND = [
 
 /** Accueil (vWelcome du prototype). */
 export default function Bienvenue() {
-  const { width } = useWindowDimensions();
-  const videoW = Math.min(width, 440);
+  const { width, height } = useWindowDimensions();
+  // Hauteur limitée pour que le titre, le texte et les boutons tiennent sans défiler.
+  const videoW = Math.min(width, 440, (height * 0.42 * 720) / 760);
   const videoH = (videoW * 760) / 720;
   const player = useVideoPlayer(VIDEO_ACCUEIL, (p) => {
     p.loop = true;
