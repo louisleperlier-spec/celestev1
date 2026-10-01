@@ -86,15 +86,15 @@ final class AlertesSante {
         if r.vfc, (8..<22).contains(h), let v = vfc, let e = etat, self.depuis("nea.alerte.vfc") >= 55 * 60 {
           self.marquer("nea.alerte.vfc")
           let heure = DateFormatter.localizedString(from: v.date, dateStyle: .none, timeStyle: .short)
-          self.notifier(id: "vfc", titre: "VFC \(Int(v.ms.rounded())) ms · \(e.nom) · \(heure)", texte: e.texte)
+          self.notifier(id: "vfc", titre: "\(e.emoji) VFC \(Int(v.ms.rounded())) ms · \(e.nom) · \(heure)", texte: e.texte)
         }
         // Pas : 80 % puis objectif atteint, une fois chacun par jour.
         if r.pas, let n = pas, r.objectifPas > 0 {
           if n >= r.objectifPas, self.premiereFoisAujourdhui("nea.alerte.pas100") {
-            self.notifier(id: "pas", titre: "Objectif de pas atteint", texte: "\(Self.nombre(n)) pas aujourd'hui, bravo ! Ton corps te dit merci.")
+            self.notifier(id: "pas", titre: "👏 Objectif de pas atteint", texte: "\(Self.nombre(n)) pas aujourd'hui, bravo ! Ton corps te dit merci 🏅")
           } else if n >= r.objectifPas * 0.8, n < r.objectifPas, self.premiereFoisAujourdhui("nea.alerte.pas80") {
             let reste = r.objectifPas - n
-            self.notifier(id: "pas", titre: "Déjà 80 % de tes pas", texte: "\(Self.nombre(n)) pas : encore \(Self.nombre(reste)) pour ton objectif, environ \(Int((reste / 110).rounded())) min de marche.")
+            self.notifier(id: "pas", titre: "🚶 Déjà 80 % de tes pas", texte: "\(Self.nombre(n)) pas : encore \(Self.nombre(reste)) pour ton objectif, environ \(Int((reste / 110).rounded())) min de marche 💪")
           }
         }
         // Vélo et dépense du jour : une fois, entre 16 h et 20 h, selon la forme.
@@ -104,17 +104,17 @@ final class AlertesSante {
           var titre = ""
           var texte = ""
           if reste <= 0 {
-            titre = "Dépense du jour bouclée"
-            texte = "\(Int(k)) kcal actives : objectif atteint. Profite de ta soirée, la récupération fait aussi partie du plan."
+            titre = "✅ Dépense du jour bouclée"
+            texte = "\(Int(k)) kcal actives : objectif atteint. Profite de ta soirée, la récupération fait aussi partie du plan 🛋️"
           } else if etat?.niveau == 3 {
-            titre = "Journée chargée pour ton corps"
-            texte = "Ta VFC est basse : pas d'effort intense ce soir. Une marche ou 15 min de vélo très doux suffisent, puis repos."
+            titre = "🛑 Journée chargée pour ton corps"
+            texte = "Ta VFC est basse : pas d'effort intense ce soir. Une marche ou 15 min de vélo très doux suffisent, puis repos 🧘"
           } else if etat?.niveau == 2 {
-            titre = "Il te reste \(Int(reste)) kcal"
-            texte = "Un peu de fatigue aujourd'hui : une sortie vélo tranquille de \(max(10, minVelo)) min boucle ta journée sans te surcharger."
+            titre = "🚲 Il te reste \(Int(reste)) kcal"
+            texte = "Un peu de fatigue aujourd'hui : une sortie vélo tranquille de \(max(10, minVelo)) min boucle ta journée sans te surcharger 🌿"
           } else {
-            titre = "Il te reste \(Int(reste)) kcal à dépenser"
-            texte = "Ta forme est bonne : \(max(10, minVelo)) min de vélo et ta journée est bouclée. On y va ?"
+            titre = "🚴 Il te reste \(Int(reste)) kcal à dépenser"
+            texte = "Ta forme est bonne : \(max(10, minVelo)) min de vélo et ta journée est bouclée. On y va ? 🔥"
           }
           self.notifier(id: "velo", titre: titre, texte: texte)
         }
@@ -128,6 +128,8 @@ final class AlertesSante {
     let niveau: Int
     let nom: String
     let texte: String
+    /// Pastille du titre : 💚 excellente, 🙂 bonne, 😮‍💨 fatigue, 🚨 surcharge.
+    var emoji: String { ["💚", "🙂", "😮‍💨", "🚨"][niveau] }
 
     init(ms: Double, moyenne: Double) {
       let ecart = moyenne > 0 ? (ms - moyenne) / moyenne : 0
@@ -135,16 +137,16 @@ final class AlertesSante {
       let signe = p >= 0 ? "+\(p)" : "\(p)"
       if ecart >= 0.1 {
         niveau = 0; nom = "Excellent"
-        texte = "Ta VFC est au-dessus de ta moyenne (\(signe) %) : tu récupères très bien et ton stress est bas. Bon moment pour t'entraîner !"
+        texte = "Ta VFC est au-dessus de ta moyenne (\(signe) %) : tu récupères très bien et ton stress est bas. Bon moment pour t'entraîner ! 💪"
       } else if ecart >= -0.1 {
         niveau = 1; nom = "Bon"
-        texte = "Ta VFC est dans ta moyenne (\(signe) %) : forme stable. Continue comme ça et pense à boire."
+        texte = "Ta VFC est dans ta moyenne (\(signe) %) : forme stable. Continue comme ça et pense à boire 💧"
       } else if ecart >= -0.25 {
         niveau = 2; nom = "Fatigue"
-        texte = "Ta VFC est sous ta moyenne (\(signe) %) : un peu de fatigue. Hydrate-toi, respire 2 min et garde une séance modérée."
+        texte = "Ta VFC est sous ta moyenne (\(signe) %) : un peu de fatigue. Hydrate-toi, respire 2 min et garde une séance modérée 🧘"
       } else {
         niveau = 3; nom = "Surcharge"
-        texte = "Ta VFC est nettement sous ta moyenne (\(signe) %) : ton corps est en surcharge. Repos, sommeil et effort très léger aujourd'hui."
+        texte = "Ta VFC est nettement sous ta moyenne (\(signe) %) : ton corps est en surcharge. Repos, sommeil et effort très léger aujourd'hui 🛌"
       }
     }
   }
@@ -201,12 +203,12 @@ final class AlertesSante {
   }
 
   private static let messagesEau = [
-    "Un grand verre d'eau maintenant : ta VFC et ta récupération te diront merci.",
-    "Pense à boire : même une petite déshydratation fait baisser ta forme.",
-    "Pause eau ! Garde ta bouteille près de toi.",
-    "Hydrate-toi : c'est le geste le plus simple pour mieux récupérer.",
-    "Un verre d'eau avant ta prochaine activité ?",
-    "Dernier rappel de la journée : bois un verre d'eau.",
+    "🥤 Un grand verre d'eau maintenant : ta VFC et ta récupération te diront merci !",
+    "💦 Pense à boire : même une petite déshydratation fait baisser ta forme.",
+    "🚰 Pause eau ! Garde ta bouteille près de toi.",
+    "💧 Hydrate-toi : c'est le geste le plus simple pour mieux récupérer.",
+    "🏃 Un verre d'eau avant ta prochaine activité ?",
+    "🌙 Dernier rappel de la journée : bois un verre d'eau.",
   ]
 
   /// Rappels d'eau quotidiens (10 h → 20 h, toutes les 2 h), ou retirés.
@@ -217,7 +219,7 @@ final class AlertesSante {
     guard actif else { return }
     for (i, h) in heures.enumerated() {
       let c = UNMutableNotificationContent()
-      c.title = "C'est l'heure de boire de l'eau"
+      c.title = "💧 C'est l'heure de boire de l'eau"
       c.body = Self.messagesEau[i]
       c.sound = .default
       c.threadIdentifier = "nea.eau"
