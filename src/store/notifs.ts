@@ -84,7 +84,9 @@ function prochaine(h: string, now: Date): Date {
 export async function reprogrammer(now: Date = new Date()) {
   if (!natif) return;
   if ((await Notifications.getPermissionsAsync()).status !== 'granted') return;
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  // Seulement les nôtres : les rappels d'eau posés par le module natif (« nea.… ») restent programmés.
+  const prevues = await Notifications.getAllScheduledNotificationsAsync();
+  await Promise.all(prevues.filter((n) => !n.identifier.startsWith('nea.')).map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)));
   const st = useProfil.getState();
   if (!st.onboarded) return;
   const base = baseHrv(st.nights, st.hrvChecks);

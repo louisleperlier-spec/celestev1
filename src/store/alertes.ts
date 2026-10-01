@@ -2,6 +2,9 @@
  * Alertes santé (hors prototype) : réglages du Profil envoyés au module natif, qui pose les notifications même app
  * fermée (modules/nea-montre/ios/AlertesSante.swift : VFC et fatigue toutes les heures, eau, vélo et dépense du jour, pas).
  */
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+
 import { OBJECTIF_PAS } from '@/lib/notifs';
 import { buildPlan, sesKcal } from '@/lib/plan';
 
@@ -36,4 +39,31 @@ export function demarrerAlertes() {
   useProfil.subscribe((s, avant) => {
     if (s.alertesSante !== avant.alertesSante || s.weight !== avant.weight || s.days !== avant.days || s.dur !== avant.dur || s.onboarded !== avant.onboarded) envoyer();
   });
+}
+
+/** Exemples des alertes (mêmes textes que AlertesSante.swift), envoyés à 5 s d'intervalle pour essayer. */
+const EXEMPLES = [
+  { title: '💚 VFC 84 ms · Excellent · maintenant', body: 'Ton système nerveux est en vacances à Cancún 🏖️ Profites-en pour t\'entraîner 💪', act: 'hrv' },
+  { title: "💧 C'est l'heure de boire de l'eau", body: '🌱 Ta plante verte boit plus que toi. Inacceptable.', act: 'accueil' },
+  { title: '🚴 Il te reste 220 kcal à dépenser', body: "25 min de vélo et c'est plié. Ton vélo s'ennuie, il me l'a dit 🔥", act: 'sortie' },
+  { title: '👏 Objectif de pas atteint', body: '10 240 pas : objectif pulvérisé. Le trottoir porte plainte 🚔😂', act: 'accueil' },
+] as const;
+
+/**
+ * « Tester mes alertes » : 4 exemples à 5, 10, 15 et 20 s. App ouverte, NÉA cache les bannières du téléphone :
+ * il faut quitter l'app (ou verrouiller l'iPhone) pour les voir arriver.
+ */
+export async function testerAlertes(): Promise<boolean> {
+  if (Platform.OS === 'web') return false;
+  if ((await demanderAutorisation()) !== 'granted') return false;
+  await Promise.all(
+    EXEMPLES.map((e, i) =>
+      Notifications.scheduleNotificationAsync({
+        identifier: `nea.test.${i}`,
+        content: { title: e.title, body: e.body, data: { act: e.act } },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 5 * (i + 1) },
+      }),
+    ),
+  );
+  return true;
 }

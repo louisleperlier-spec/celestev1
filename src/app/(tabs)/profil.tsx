@@ -17,6 +17,7 @@ import { COACH_IMAGES, GOALS } from '@/data';
 import { dec } from '@/lib/charges';
 import { ordreAccueil } from '@/lib/accueil';
 import type { AlertesSante, ReglagesNotifs } from '@/lib/notifs';
+import { testerAlertes } from '@/store/alertes';
 import { demanderAutorisation } from '@/store/notifs';
 import { coachById, LVLN, lvlN, prog, progWeek } from '@/lib/plan';
 import { estPremium, ligneAbonnement } from '@/lib/premium';
@@ -171,6 +172,16 @@ export default function Profil() {
             onChange={(v) => alerteSante({ velo: v })}
           />
           <Bascule titre="Objectif de pas" sous="À 80 % puis à 10 000 pas" on={p.alertesSante.pas} onChange={(v) => alerteSante({ pas: v })} />
+          <Ligne
+            icon="bell"
+            titre="Tester mes alertes"
+            sous="4 exemples dans les 20 s : quitte l'app pour les voir"
+            onPress={() =>
+              testerAlertes().then((ok) =>
+                toast(ok ? 'Quitte NÉA ou verrouille ton iPhone : 4 alertes arrivent 😉' : 'Autorise les notifications de NÉA dans Réglages'),
+              )
+            }
+          />
         </Section>
 
         <Section titre="Santé">
