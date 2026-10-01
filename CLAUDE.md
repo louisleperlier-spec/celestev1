@@ -178,7 +178,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - **Course** : 3e mode de l'onglet **Sorties** (ex-« Vélo ») : GPS, allure min/km, calories ≈ 1 kcal/kg/km, XP 30 + 8/km, log `course`,
     Santé (HKWorkoutActivityType 37, distance course), rappel VFC ; **montre** : menu « Course » (`VeloView(course:)`, `.running`, allure),
     le vélo et la course envoient `sport` et `pts` (500 points max) → l'iPhone conquiert les cases
-- [ ] **Alertes santé de l'iPhone (hors prototype, demandées par l'utilisateur, oct. 2026, comme StressWatch / OtterLife)** : **codées, build 12**
+- [ ] **Alertes santé de l'iPhone (hors prototype, demandées par l'utilisateur, oct. 2026, comme StressWatch / OtterLife)** : **build 1.0.0 (14)
+  envoyé à TestFlight** ; textes drôles avec emojis, plusieurs variantes tirées au hasard (validés par l'utilisateur) ; « Tester mes alertes »
+  (Profil, 4 exemples `nea.test.*`, JS, publié en EAS Update) ; `reprogrammer()` n'annule plus les notifications `nea.*` du module natif
   - natif `modules/nea-montre/ios/AlertesSante.swift` : `HKObserverQuery` + livraison en arrière-plan (horaire) sur VFC SDNN, pas et calories
     actives, relancés au lancement (`NeaMontreAppDelegate`) ; notifications locales posées par l'iPhone même app fermée :
     **VFC et fatigue** (« VFC 84 ms · Excellent · 19:06 », au plus 1/h de 8 h à 22 h ; écart à la moyenne 14 j : ≥ +10 % Excellent,
