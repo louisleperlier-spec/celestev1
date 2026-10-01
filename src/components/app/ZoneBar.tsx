@@ -63,9 +63,9 @@ function Cible({ left, width }: { left: number; width: number }) {
 const styles = StyleSheet.create({
   wrap: { marginTop: 4 },
   zbar: { height: 12, borderRadius: 8, flexDirection: 'row', overflow: 'hidden', marginTop: 12, backgroundColor: '#1E1E23' },
-  z1: { height: '100%', backgroundColor: '#3B2A40' },
-  z2: { height: '100%', backgroundColor: '#4A2C44' },
-  z3: { height: '100%', backgroundColor: '#3A3048' },
+  z1: { height: '100%', backgroundColor: '#3A2D26' },
+  z2: { height: '100%', backgroundColor: '#4A3123' },
+  z3: { height: '100%', backgroundColor: '#3B322C' },
   target: { position: 'absolute', top: 9, height: 18, borderRadius: 8 },
   mark: { position: 'absolute', top: 6, width: 3, height: 24, marginLeft: -1, borderRadius: 2, backgroundColor: colors.text },
   zlab: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
