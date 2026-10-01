@@ -122,7 +122,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (annuler / réactiver) depuis la ligne NÉA Plus du Profil, rappel « Ton essai se termine demain » au jour 2 (notifications)
   - `lib/premium.ts` : isPremium lit `premium` du profil (sauvegardé et synchronisé avec le compte) ; séances, programmes, coach illimité,
     Turbo et carte « Essaie NÉA Plus » suivent l'abonnement ; tous les boutons « NÉA Plus » passent par `ouvrirPlus()`
-  - **vrais achats codés (build 16)** : `store/achats.ts` (RevenueCat `react-native-purchases`, droit `plus`) actif si
+  - **vrais achats codés (build 1.0.0 (16) envoyé à TestFlight)** : `store/achats.ts` (RevenueCat `react-native-purchases`, droit `plus`) actif si
     `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (clé publique, variable EAS de l'environnement preview/production) et hors Expo Go, sinon achat simulé ;
     paywall → feuille de paiement d'Apple, Restaurer → `restorePurchases`, « Ton abonnement » → `showManageSubscriptions` ; compte NÉA =
     `appUserID` RevenueCat ; l'abonnement reçu remplace `premium` du profil (`recompenserAchat` : +50 XP, rappel de fin d'essai)
