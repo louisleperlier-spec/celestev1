@@ -21,7 +21,7 @@ const FOND = [
 export default function Bienvenue() {
   const { width } = useWindowDimensions();
   const videoW = Math.min(width, 440);
-  const videoH = (videoW * 680) / 720;
+  const videoH = (videoW * 760) / 720;
   const player = useVideoPlayer(VIDEO_ACCUEIL, (p) => {
     p.loop = true;
     p.muted = true;
