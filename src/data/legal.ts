@@ -1,6 +1,6 @@
 /**
  * Brouillons des Conditions d'utilisation et de la Politique de confidentialité (vLegal du prototype).
- * À faire valider par un juriste et à compléter (champs entre crochets), puis à publier en ligne (URL exigée par Apple).
+ * À faire valider par un juriste ; publiées en ligne par `npm run site` (site/, hébergement Expo), URL exigées par Apple.
  * Seul changement : l'hébergement est connu (Supabase, Canada Central à Montréal).
  */
 export type SectionLegale = readonly [titre: string, texte: string];
@@ -19,13 +19,13 @@ export const CONDITIONS: readonly SectionLegale[] = [
     "Les abonnements se renouvellent automatiquement sauf annulation au moins 24 h avant la fin de la période en cours. L'essai gratuit se convertit en abonnement payant à la fin de l'essai. La gestion et les remboursements passent par l'App Store ou Google Play.",
   ],
   ['Compte', 'Tu peux supprimer ton compte à tout moment depuis le Profil. La suppression efface tes données de façon définitive.'],
-  ['Contact', "[Nom de l'entreprise], [adresse], [courriel de contact]"],
+  ['Contact', 'NÉA, application éditée par Louis Leperlier, Québec, Canada. Courriel : nea.coach.app@gmail.com'],
 ];
 
 export const CONFIDENTIALITE: readonly SectionLegale[] = [
   [
     'Données collectées',
-    'Profil (prénom, âge, poids, objectifs, niveau), activité (séances, sorties vélo, XP), santé (fréquence cardiaque, VFC, sommeil, réponses au questionnaire santé), position GPS pendant une sortie vélo seulement, et email si tu crées un compte.',
+    'Profil (prénom, âge, poids, objectifs, niveau), activité (séances, sorties vélo et courses, XP), santé (fréquence cardiaque, VFC, sommeil, réponses au questionnaire santé), position GPS pendant une sortie vélo ou une course seulement, et email si tu crées un compte.',
   ],
   [
     'Pourquoi',
@@ -43,7 +43,7 @@ export const CONFIDENTIALITE: readonly SectionLegale[] = [
   ['Conservation', 'Tant que ton compte existe. À la suppression du compte, tout est effacé.'],
   [
     'Tes droits',
-    'Accès, rectification, suppression et retrait du consentement à tout moment, en écrivant au responsable de la protection des renseignements personnels : [nom], [courriel].',
+    'Accès, rectification, suppression et retrait du consentement à tout moment, en écrivant au responsable de la protection des renseignements personnels : Louis Leperlier, nea.coach.app@gmail.com.',
   ],
   ['Hébergement', 'Canada (Montréal), chez notre hébergeur Supabase.'],
 ];

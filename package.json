@@ -56,7 +56,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "verifier-donnees": "tsx scripts/verifier-donnees.ts",
-    "comparer-plan": "tsx scripts/comparer-plan.ts"
+    "comparer-plan": "tsx scripts/comparer-plan.ts",
+    "site": "tsx scripts/generer-site.ts && npx eas-cli@latest deploy --export-dir site --prod --non-interactive"
   },
   "private": true
 }

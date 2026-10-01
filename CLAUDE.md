@@ -195,6 +195,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (rappels quotidiens 10 h → 20 h toutes les 2 h, `UNCalendarNotificationTrigger`)
   - réglages `alertesSante` du profil (Profil → « Alertes santé (Apple Watch) »), envoyés par `store/alertes.ts` (`configurerAlertes`, groupe
     d'apps, clé `alertes`) avec objectif kcal, objectif de pas et poids ; toucher : VFC → /recuperation, vélo → /velo, pas → /accueil
+- [ ] **Fiche App Store (oct. 2026)** : 5 visuels iPhone 6,9" (`APP_IPHONE_67`) + 4 captures Apple Watch (`APP_WATCH_SERIES_4`, 368 × 448)
+  téléversés par l'API ; sous-titre, description (avec mentions d'abonnement), mots-clés, texte promotionnel (fr-CA) ; **site public**
+  `site/` sur l'hébergement Expo **https://nea-coach.expo.app** (`npm run site` : `scripts/generer-site.ts` génère confidentialite.html,
+  conditions.html, support.html depuis `src/data/legal.ts` ; `index.html` gardé s'il existe, à remplacer par la page ChatGPT) ; URL de
+  confidentialité, support et marketing renseignées ; contact : NÉA, édité par Louis Leperlier, Québec, nea.coach.app@gmail.com
+  - reste avant soumission : catégorie, classification d'âge, questionnaire « App Privacy », vrais achats (RevenueCat, contrat Paid Apps)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
