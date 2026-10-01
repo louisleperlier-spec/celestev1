@@ -8,6 +8,7 @@ import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
+import { demarrerAlertes } from '@/store/alertes';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
 // Territoires : envoie les cases gardées hors ligne dès la connexion au compte.
@@ -45,6 +46,8 @@ export default function RootLayout() {
     demarrerSante();
     // Apple Watch : séances de la semaine vers la montre, séances terminées vers l'iPhone.
     demarrerLiaisonMontre();
+    // Alertes santé de l'iPhone (VFC, eau, vélo, pas), posées même app fermée.
+    demarrerAlertes();
   }, [ready]);
 
   if (!ready) return null;

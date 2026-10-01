@@ -39,6 +39,11 @@ public final class NeaMontreModule: Module {
       UserDefaults(suiteName: "group.com.neacoach.app")?.set(json, forKey: "widget")
       WidgetCenter.shared.reloadAllTimelines()
     }
+
+    /// Réglages des alertes santé (VFC, eau, vélo, pas) : voir AlertesSante.
+    Function("configurerAlertes") { (json: String) in
+      AlertesSante.partagees.configurer(json)
+    }
   }
 }
 
@@ -47,6 +52,8 @@ public final class NeaMontreModule: Module {
 public final class NeaMontreAppDelegate: ExpoAppDelegateSubscriber {
   public func subscriberDidRegister() {
     Liaison.partagee.activer()
+    // Apple Santé réveille l'app en arrière-plan : les observateurs doivent repartir dès le lancement.
+    AlertesSante.partagees.activer()
   }
 }
 

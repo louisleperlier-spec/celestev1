@@ -33,7 +33,16 @@ export const DELAIS: readonly (readonly [number, string])[] = [
 
 /** Où mène la notification : mesure VFC, sommeil, saisie de la nuit, liste. */
 /** `activite` : récap d'une séance ou d'une sortie terminée sur l'Apple Watch (`lien` = date de fin du journal). */
-export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs' | 'activite';
+export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs' | 'activite' | 'sortie' | 'accueil';
+
+/**
+ * Alertes santé posées par l'iPhone même app fermée (hors prototype, demandées par l'utilisateur) :
+ * VFC et fatigue (au plus toutes les heures), rappels d'eau, vélo et dépense du jour, objectif de pas.
+ */
+export type AlertesSante = { vfc: boolean; eau: boolean; velo: boolean; pas: boolean };
+export const ALERTES_DEFAUT: AlertesSante = { vfc: true, eau: true, velo: true, pas: true };
+/** Objectif de pas des alertes et du widget Pas. */
+export const OBJECTIF_PAS = 10000;
 
 export type Notif = {
   id: string;

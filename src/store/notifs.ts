@@ -31,6 +31,8 @@ export function ouvrirNotif(act: ActionNotif, id?: string, lien?: string) {
   else if (act === 'hrv') router.push('/recuperation');
   else if (act === 'sleep') router.push('/sommeil');
   else if (act === 'sleepadd') router.push({ pathname: '/sommeil', params: { ajout: '1' } });
+  else if (act === 'sortie') router.push('/velo');
+  else if (act === 'accueil') router.push('/accueil');
   else router.push('/notifications');
 }
 

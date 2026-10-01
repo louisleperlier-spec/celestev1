@@ -19,7 +19,7 @@ import { QUESTS } from '@/data/ligue';
 import { actifsEquipe } from '@/lib/ligue';
 import type { MessageChat, QuotaChat } from '@/lib/coach';
 import { basculerRenouvellement, brancherPremium, nouvelAbonnement, type OffreId, type Premium } from '@/lib/premium';
-import { notifsDues, rappelPost, REGLAGES_DEFAUT, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
+import { ALERTES_DEFAUT, notifsDues, rappelPost, REGLAGES_DEFAUT, type AlertesSante, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
@@ -68,6 +68,8 @@ type Etat = Profil & {
   notifs: Notif[];
   /** Cartes de l'Accueil : ordre et visibilité (« Mon écran d'accueil »). */
   accueil: CarteAccueil[];
+  /** Alertes santé de l'iPhone (VFC, eau, vélo, pas), envoyées au module natif (store/alertes.ts). */
+  alertesSante: AlertesSante;
   /** Jour du dernier bilan de nuit et du dernier rappel du coucher. */
   lastWake: string | null;
   lastBed: string | null;
@@ -158,6 +160,7 @@ const defauts = (): Etat => ({
   lastWake: null,
   lastBed: null,
   accueil: [...ACCUEIL_DEFAUT],
+  alertesSante: { ...ALERTES_DEFAUT },
   chat: [],
   chatCoach: null,
   chatQ: null,
@@ -309,6 +312,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   lastWake: s.lastWake,
   lastBed: s.lastBed,
   accueil: s.accueil,
+  alertesSante: s.alertesSante,
   chat: s.chat,
   chatCoach: s.chatCoach,
   chatQ: s.chatQ,

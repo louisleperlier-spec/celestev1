@@ -8,6 +8,8 @@ type Module = {
   addListener(evt: 'messageMontre', f: (e: { type: string; json: string }) => void): { remove(): void };
   /** Données des widgets (JSON) dans le groupe d'apps partagé, puis rafraîchit les widgets. */
   ecrireWidget(json: string): void;
+  /** Réglages des alertes santé (VFC toutes les heures, eau, vélo, pas) : notifications posées par l'iPhone, même app fermée. */
+  configurerAlertes(json: string): void;
 };
 
 /** Module natif de liaison avec l'Apple Watch ; absent dans Expo Go, le navigateur et Android. */

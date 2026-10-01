@@ -16,7 +16,8 @@ import { Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
 import { dec } from '@/lib/charges';
 import { ordreAccueil } from '@/lib/accueil';
-import type { ReglagesNotifs } from '@/lib/notifs';
+import type { AlertesSante, ReglagesNotifs } from '@/lib/notifs';
+import { demanderAutorisation } from '@/store/notifs';
 import { coachById, LVLN, lvlN, prog, progWeek } from '@/lib/plan';
 import { estPremium, ligneAbonnement } from '@/lib/premium';
 import { santeDisponible } from '@/lib/sante';
@@ -42,6 +43,11 @@ export default function Profil() {
   const cartesOn = ordreAccueil(p.accueil).filter((x) => x.on).length;
   const montre = !!NeaMontre?.estDisponible();
   const alerte = (r: Partial<ReglagesNotifs>) => p.reglerNotifs({ ...p.nset, ...r });
+  /** Alertes santé de l'iPhone : en les activant, autorise aussi les notifications du téléphone. */
+  const alerteSante = (r: Partial<AlertesSante>) => {
+    useProfil.setState({ alertesSante: { ...p.alertesSante, ...r } });
+    if (Object.values(r).some(Boolean)) void demanderAutorisation();
+  };
 
   const supprimer = () =>
     confirmer(
@@ -148,6 +154,23 @@ export default function Profil() {
           <Bascule titre="Bilan de la nuit" sous={`Le matin à ${p.nset.wake}`} on={p.nset.sleep} onChange={(v) => alerte({ sleep: v })} />
           <Bascule titre="Rappel du coucher" sous={`À ${p.nset.bedT}, pour viser 8 h`} on={p.nset.bed} onChange={(v) => alerte({ bed: v })} />
           <Ligne icon="bell" titre="Heures et délai" sous="Réveil, coucher, délai après la séance" onPress={() => setReglages(true)} />
+        </Section>
+
+        <Section titre="Alertes santé (Apple Watch)">
+          <Bascule
+            titre="VFC et fatigue"
+            sous="Ta forme du jour, au plus toutes les heures"
+            on={p.alertesSante.vfc}
+            onChange={(v) => alerteSante({ vfc: v })}
+          />
+          <Bascule titre="Boire de l'eau" sous="Toutes les 2 h, de 10 h à 20 h" on={p.alertesSante.eau} onChange={(v) => alerteSante({ eau: v })} />
+          <Bascule
+            titre="Vélo et dépense du jour"
+            sous="En fin d'après-midi, selon ta forme et ce qu'il reste à dépenser"
+            on={p.alertesSante.velo}
+            onChange={(v) => alerteSante({ velo: v })}
+          />
+          <Bascule titre="Objectif de pas" sous="À 80 % puis à 10 000 pas" on={p.alertesSante.pas} onChange={(v) => alerteSante({ pas: v })} />
         </Section>
 
         <Section titre="Santé">

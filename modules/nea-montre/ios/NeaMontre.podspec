@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.swift_version  = '5.9'
   s.source         = { git: 'https://github.com/louisleperlier-spec/celestev1.git' }
   s.dependency 'ExpoModulesCore'
-  s.frameworks     = 'WatchConnectivity', 'WidgetKit', 'UserNotifications'
+  s.frameworks     = 'WatchConnectivity', 'WidgetKit', 'UserNotifications', 'HealthKit'
   s.static_framework = true
   s.source_files = "**/*.{h,m,swift}"
   s.pod_target_xcconfig = {
