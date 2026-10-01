@@ -91,10 +91,17 @@ final class AlertesSante {
         // Pas : 80 % puis objectif atteint, une fois chacun par jour.
         if r.pas, let n = pas, r.objectifPas > 0 {
           if n >= r.objectifPas, self.premiereFoisAujourdhui("nea.alerte.pas100") {
-            self.notifier(id: "pas", titre: "👏 Objectif de pas atteint", texte: "\(Self.nombre(n)) pas aujourd'hui, bravo ! Ton corps te dit merci 🏅")
+            self.notifier(id: "pas", titre: "👏 Objectif de pas atteint", texte: [
+              "\(Self.nombre(n)) pas ! Tes chaussures demandent une augmentation 👟🏅",
+              "\(Self.nombre(n)) pas aujourd'hui. Ton podomètre est fier, ta grand-mère aussi 🏅",
+              "\(Self.nombre(n)) pas : objectif pulvérisé. Le trottoir porte plainte 🚔😂",
+            ].randomElement()!)
           } else if n >= r.objectifPas * 0.8, n < r.objectifPas, self.premiereFoisAujourdhui("nea.alerte.pas80") {
             let reste = r.objectifPas - n
-            self.notifier(id: "pas", titre: "🚶 Déjà 80 % de tes pas", texte: "\(Self.nombre(n)) pas : encore \(Self.nombre(reste)) pour ton objectif, environ \(Int((reste / 110).rounded())) min de marche 💪")
+            self.notifier(id: "pas", titre: "🚶 Déjà 80 % de tes pas", texte: [
+              "\(Self.nombre(n)) pas ! Encore \(Self.nombre(reste)), soit ~\(Int((reste / 110).rounded())) min de marche. Le frigo ne compte pas comme destination 🍕",
+              "Plus que \(Self.nombre(reste)) pas (~\(Int((reste / 110).rounded())) min). Allez, une balade : tes jambes ont des choses à dire 🦵",
+            ].randomElement()!)
           }
         }
         // Vélo et dépense du jour : une fois, entre 16 h et 20 h, selon la forme.
@@ -105,16 +112,20 @@ final class AlertesSante {
           var texte = ""
           if reste <= 0 {
             titre = "✅ Dépense du jour bouclée"
-            texte = "\(Int(k)) kcal actives : objectif atteint. Profite de ta soirée, la récupération fait aussi partie du plan 🛋️"
+            texte = "\(Int(k)) kcal brûlées. Tu as officiellement le droit de glander ce soir. C'est scientifique (presque) 🛋️"
           } else if etat?.niveau == 3 {
-            titre = "🛑 Journée chargée pour ton corps"
-            texte = "Ta VFC est basse : pas d'effort intense ce soir. Une marche ou 15 min de vélo très doux suffisent, puis repos 🧘"
+            titre = "🛑 Ton corps dit non (poliment)"
+            texte = "VFC basse : ce soir, le seul sprint autorisé, c'est vers ton lit. Une petite marche maximum 🧘"
           } else if etat?.niveau == 2 {
             titre = "🚲 Il te reste \(Int(reste)) kcal"
-            texte = "Un peu de fatigue aujourd'hui : une sortie vélo tranquille de \(max(10, minVelo)) min boucle ta journée sans te surcharger 🌿"
+            texte = "Petit coup de mou ? \(max(10, minVelo)) min de vélo tranquille, façon balade du dimanche, et la journée est bouclée 🌿"
           } else {
             titre = "🚴 Il te reste \(Int(reste)) kcal à dépenser"
-            texte = "Ta forme est bonne : \(max(10, minVelo)) min de vélo et ta journée est bouclée. On y va ? 🔥"
+            texte = [
+              "Ta forme est au top : \(max(10, minVelo)) min de vélo et c'est plié. Ton vélo s'ennuie, il me l'a dit 🔥",
+              "\(max(10, minVelo)) min de vélo et la journée est bouclée. Tes cuisses t'attendent, ton canapé peut patienter 😏",
+              "Il reste de l'essence dans le moteur ! \(max(10, minVelo)) min de vélo et tu passes en mode légende 🚀",
+            ].randomElement()!
           }
           self.notifier(id: "velo", titre: titre, texte: texte)
         }
@@ -135,18 +146,35 @@ final class AlertesSante {
       let ecart = moyenne > 0 ? (ms - moyenne) / moyenne : 0
       let p = Int((ecart * 100).rounded())
       let signe = p >= 0 ? "+\(p)" : "\(p)"
+      let s = "\(signe) %"
       if ecart >= 0.1 {
         niveau = 0; nom = "Excellent"
-        texte = "Ta VFC est au-dessus de ta moyenne (\(signe) %) : tu récupères très bien et ton stress est bas. Bon moment pour t'entraîner ! 💪"
+        texte = [
+          "Ta VFC est à \(s) de ta moyenne. Ton système nerveux est en vacances à Cancún 🏖️ Profites-en pour t'entraîner 💪",
+          "\(s) vs ta moyenne : tu récupères comme un chat qui fait la sieste au soleil 😼 Go séance !",
+          "VFC au top (\(s)). Même ton coach est jaloux 😎 C'est le moment de tout casser (pas la vaisselle) 💪",
+        ].randomElement()!
       } else if ecart >= -0.1 {
         niveau = 1; nom = "Bon"
-        texte = "Ta VFC est dans ta moyenne (\(signe) %) : forme stable. Continue comme ça et pense à boire 💧"
+        texte = [
+          "Dans ta moyenne (\(s)). Ni Hulk, ni paresseux : juste toi, en forme 🙂 Un verre d'eau et ça roule 💧",
+          "\(s) : forme stable comme le Wi-Fi d'un hôtel 5 étoiles 📶 Continue comme ça !",
+          "Tout est sous contrôle (\(s)). Ton cœur fait son job, fais le tien : bouge un peu 🚶",
+        ].randomElement()!
       } else if ecart >= -0.25 {
         niveau = 2; nom = "Fatigue"
-        texte = "Ta VFC est sous ta moyenne (\(signe) %) : un peu de fatigue. Hydrate-toi, respire 2 min et garde une séance modérée 🧘"
+        texte = [
+          "Ta VFC fait la grasse matinée (\(s)) 😮‍💨 Bois de l'eau, respire 2 min, et séance tranquille, pas mode gladiateur 🧘",
+          "\(s) sous ta moyenne : ton corps a activé le mode économie d'énergie 🔋 Recharge-le doucement.",
+          "Petite fatigue détectée (\(s)). Ton canapé t'a envoyé une invitation… accepte-la à moitié 🛋️",
+        ].randomElement()!
       } else {
         niveau = 3; nom = "Surcharge"
-        texte = "Ta VFC est nettement sous ta moyenne (\(signe) %) : ton corps est en surcharge. Repos, sommeil et effort très léger aujourd'hui 🛌"
+        texte = [
+          "Alerte rouge (\(s)) 🚨 Ton corps a ouvert un ticket au service client. Repos, dodo, zéro héroïsme aujourd'hui 🛌",
+          "\(s) : ton système nerveux réclame des vacances. Accorde-lui au moins une soirée canapé-tisane 🍵",
+          "Surcharge (\(s)) ! Même les super-héros posent la cape. Aujourd'hui, c'est sieste olympique 🛌",
+        ].randomElement()!
       }
     }
   }
@@ -203,12 +231,12 @@ final class AlertesSante {
   }
 
   private static let messagesEau = [
-    "🥤 Un grand verre d'eau maintenant : ta VFC et ta récupération te diront merci !",
-    "💦 Pense à boire : même une petite déshydratation fait baisser ta forme.",
-    "🚰 Pause eau ! Garde ta bouteille près de toi.",
-    "💧 Hydrate-toi : c'est le geste le plus simple pour mieux récupérer.",
-    "🏃 Un verre d'eau avant ta prochaine activité ?",
-    "🌙 Dernier rappel de la journée : bois un verre d'eau.",
+    "🥤 Bonjour ! Ton corps est à 60 % d'eau, pas à 60 % de café ☕ Un grand verre !",
+    "💦 Avant de manger : un verre d'eau. Ton estomac te remerciera, ta VFC aussi.",
+    "🚰 Coup de barre de 14 h ? C'est peut-être juste la soif. Teste avant la sieste 😴",
+    "🌱 Ta plante verte boit plus que toi. Inacceptable.",
+    "🌵 Un verre d'eau avant le sport : tu n'es pas un cactus.",
+    "🌙 Dernier verre de la journée (d'eau, hein 😏).",
   ]
 
   /// Rappels d'eau quotidiens (10 h → 20 h, toutes les 2 h), ou retirés.
