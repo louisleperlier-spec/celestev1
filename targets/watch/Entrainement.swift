@@ -18,6 +18,8 @@ final class Entrainement: NSObject, ObservableObject {
 
   @Published var bpm: Double = 0
   @Published var kcal: Double = 0
+  /// Énergie au repos pendant l'entraînement (kcal totales = actives + repos).
+  @Published var kcalRepos: Double = 0
   @Published var fcMoy: Double = 0
   @Published var fcMax: Double = 0
 
@@ -29,11 +31,12 @@ final class Entrainement: NSObject, ObservableObject {
   static func autoriser() {
     guard HKHealthStore.isHealthDataAvailable() else { return }
     let partage: Set<HKSampleType> = [
-      HKObjectType.workoutType(), HKQuantityType(.activeEnergyBurned), HKQuantityType(.distanceCycling), HKQuantityType(.distanceWalkingRunning),
+      HKObjectType.workoutType(), HKQuantityType(.activeEnergyBurned), HKQuantityType(.basalEnergyBurned), HKQuantityType(.distanceCycling),
+      HKQuantityType(.distanceWalkingRunning),
       HKSeriesType.workoutRoute(), HKCategoryType(.mindfulSession),
     ]
     let lecture: Set<HKObjectType> = [
-      HKQuantityType(.heartRate), HKQuantityType(.activeEnergyBurned), HKObjectType.workoutType(),
+      HKQuantityType(.heartRate), HKQuantityType(.activeEnergyBurned), HKQuantityType(.basalEnergyBurned), HKObjectType.workoutType(),
       HKQuantityType(.heartRateVariabilitySDNN), HKQuantityType(.restingHeartRate), HKQuantityType(.stepCount),
     ]
     sante.requestAuthorization(toShare: partage, read: lecture) { _, _ in }
@@ -129,11 +132,13 @@ extension Entrainement: HKLiveWorkoutBuilderDelegate {
   func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
     let fc = HKQuantityType(.heartRate)
     let energie = HKQuantityType(.activeEnergyBurned)
+    let repos = HKQuantityType(.basalEnergyBurned)
     let parMin = HKUnit.count().unitDivided(by: HKUnit.minute())
     var bpm: Double?
     var moy: Double?
     var max: Double?
     var kcal: Double?
+    var kcalRepos: Double?
     if collectedTypes.contains(fc), let st = workoutBuilder.statistics(for: fc) {
       bpm = st.mostRecentQuantity()?.doubleValue(for: parMin)
       moy = st.averageQuantity()?.doubleValue(for: parMin)
@@ -142,11 +147,15 @@ extension Entrainement: HKLiveWorkoutBuilderDelegate {
     if collectedTypes.contains(energie), let st = workoutBuilder.statistics(for: energie) {
       kcal = st.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie())
     }
+    if collectedTypes.contains(repos), let st = workoutBuilder.statistics(for: repos) {
+      kcalRepos = st.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie())
+    }
     DispatchQueue.main.async {
       if let v = bpm { self.bpm = v }
       if let v = moy { self.fcMoy = v }
       if let v = max { self.fcMax = v }
       if let v = kcal { self.kcal = v }
+      if let v = kcalRepos { self.kcalRepos = v }
     }
   }
 }

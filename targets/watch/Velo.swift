@@ -21,6 +21,10 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   @Published var points: [CLLocationCoordinate2D] = []
   @Published var gpsActif = false
   @Published var enregistree = false
+  /// Segment en cours (commande « Segment ») : départ en secondes et en km.
+  @Published var segment = 1
+  private var debutSegment = 0
+  private var kmSegment = 0.0
 
   private let gps = CLLocationManager()
   private var derniere: CLLocation?
@@ -96,6 +100,22 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
     Vibre.jouer(.success)
   }
 
+  var secondesSegment: Int { secondes - debutSegment }
+  var kmDuSegment: Double { km - kmSegment }
+
+  func nouveauSegment() {
+    segment += 1
+    debutSegment = secondes
+    kmSegment = km
+    Vibre.jouer(.click)
+  }
+
+  /// Commande « Nouveau » : la sortie est enregistrée telle quelle, puis on revient au choix.
+  func terminerEtEnregistrer(fin: @escaping () -> Void) {
+    if etape != .bilan { terminer() }
+    enregistrer(fin: fin)
+  }
+
   func enregistrer(fin: @escaping () -> Void) {
     guard !enregistree else { return fin() }
     enregistree = true
@@ -150,67 +170,53 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 }
 
-/// Entrée du vélo (ou de la course) : titre, Démarrer.
-struct VeloView: View {
-  var course = false
-  @ObservedObject private var donnees = Donnees.partagees
-  @State private var lance = false
-
-  var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 8) {
-        Image(systemName: course ? "figure.run" : "bicycle").font(.system(size: 30)).foregroundColor(Nea.rose)
-        Text(course ? "Course" : "Vélo extérieur").font(.system(size: 22, weight: .bold))
-        Text("GPS de la montre, FC et zones cardio. Chaque case traversée conquiert un territoire.")
-          .font(.system(size: 14))
-          .foregroundColor(Nea.texte2)
-        Button("Démarrer") { lance = true }
-          .buttonStyle(BoutonRose())
-          .padding(.top, 4)
-      }
-    }
-    .fullScreenCover(isPresented: $lance) {
-      SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: course)
-    }
-  }
-}
-
-/// Sortie en cours : données (08), carte (09), bilan.
+/// Sortie en cours, comme l'app Exercice : Commandes ← Suivre → Parcours (glisser), puis le bilan.
 struct SortieView: View {
   @StateObject private var sortie: SortieVelo
-  @State private var carte = false
+  @State private var page = 1
+  @Environment(\.dismiss) private var fermer
 
   init(fcMax: Double, course: Bool = false) {
     _sortie = StateObject(wrappedValue: SortieVelo(fcMax: fcMax, course: course))
   }
 
+  private var titre: String {
+    if page == 0 { return "Commandes" }
+    if page == 2 { return "Parcours" }
+    if sortie.etape == .pause { return "En pause" }
+    return sortie.course ? "Course" : "Vélo"
+  }
+
   var body: some View {
     NavigationStack {
-      contenu
+      ZStack {
+        if sortie.etape == .bilan {
+          BilanVelo(sortie: sortie)
+        } else {
+          TabView(selection: $page) {
+            CommandesView(
+              enPause: sortie.etape == .pause,
+              segment: sortie.segment,
+              terminer: { sortie.terminer() },
+              pause: { sortie.etape == .pause ? sortie.reprendre() : sortie.pause() },
+              nouveau: { sortie.terminerEtEnregistrer { fermer() } },
+              nouveauSegment: { sortie.nouveauSegment() }
+            )
+            .tag(0)
+            SuivreSortie(sortie: sortie)
+              .tag(1)
+            CarteVelo(sortie: sortie)
+              .tag(2)
+          }
+          .tabViewStyle(.page)
+          .navigationTitle(titre)
+        }
+      }
     }
     .tint(Nea.rose)
     .onAppear { sortie.demarrer() }
     .onDisappear { sortie.abandonner() }
   }
-
-  @ViewBuilder private var contenu: some View {
-    ZStack {
-      switch sortie.etape {
-      case .route, .pause:
-        if carte {
-          CarteVelo(sortie: sortie, retour: { carte = false })
-        } else {
-          DonneesVelo(sortie: sortie, ouvrirCarte: { carte = true })
-        }
-      case .bilan:
-        BilanVelo(sortie: sortie)
-      }
-    }
-  }
-}
-
-private func duree(_ s: Int) -> String {
-  s >= 3600 ? String(format: "%d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60) : Nea.mmss(s)
 }
 
 private func km1(_ v: Double) -> String {
@@ -224,82 +230,47 @@ private func allure(_ kmh: Double) -> String {
   return String(format: "%d:%02d", s / 60, s % 60)
 }
 
-/// 10 · Vélo : vitesse en grand, distance et durée, FC et zone, Pause / Carte ; en pause : Reprendre / Terminer.
-struct DonneesVelo: View {
+/// Maquette 02 · Suivre : chrono, distance, vitesse (ou allure), FC et zone.
+struct SuivreSortie: View {
   @ObservedObject var sortie: SortieVelo
-  let ouvrirCarte: () -> Void
 
   var body: some View {
     ScrollView {
-      VStack(spacing: 2) {
-        if sortie.etape == .pause {
-          GrosChiffre(texte: duree(sortie.secondes), taille: 48)
-          Text("temps écoulé").font(.system(size: 14)).foregroundColor(Nea.texte2)
-          Button {
-            sortie.reprendre()
-          } label: {
-            Label("Reprendre", systemImage: "play.fill")
-          }
-          .buttonStyle(BoutonRose())
-          .padding(.top, 6)
-          Button {
-            sortie.terminer()
-          } label: {
-            Label("Terminer", systemImage: "stop.fill")
-          }
-          .buttonStyle(BoutonSombre())
+      VStack(alignment: .leading, spacing: 0) {
+        Chrono(secondes: sortie.secondes)
+        LigneMesure(valeur: km1(sortie.km), unite: "km")
+        if sortie.course {
+          LigneMesure(valeur: allure(sortie.vitesse), unite: "min\n/km")
         } else {
-          GrosChiffre(texte: sortie.course ? allure(sortie.vitesse) : km1(sortie.vitesse), taille: 54)
-          Text(sortie.course ? "min/km" : "km/h").font(.system(size: 15)).foregroundColor(Nea.texte2)
-          Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 3)
-          HStack {
-            VStack(spacing: 0) {
-              Text(km1(sortie.km)).font(.system(size: 24, weight: .heavy, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6)
-              Text("km").font(.system(size: 12)).foregroundColor(Nea.texte2)
-            }
-            .frame(maxWidth: .infinity)
-            Rectangle().fill(Nea.texte2.opacity(0.35)).frame(width: 0.5, height: 30)
-            Text(duree(sortie.secondes))
-              .font(.system(size: 24, weight: .heavy, design: .rounded))
-              .monospacedDigit()
-              .lineLimit(1)
-              .minimumScaleFactor(0.6)
-              .frame(maxWidth: .infinity)
-          }
-          Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 3)
-          HStack(spacing: 6) {
-            Image(systemName: "heart.fill").foregroundColor(Nea.rose)
-            Text(sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm)) bpm" : "-- bpm").font(.system(size: 15, weight: .semibold))
-            Text(sortie.zone > 0 ? "· Zone \(sortie.zone)" : "").font(.system(size: 15, weight: .semibold))
-          }
-          HStack(spacing: 6) {
-            Button {
-              sortie.pause()
-            } label: {
-              Image(systemName: "pause.fill")
-            }
-            .buttonStyle(BoutonRose())
-            .accessibilityLabel("Pause")
-            Button {
-              ouvrirCarte()
-            } label: {
-              Image(systemName: "map")
-            }
-            .buttonStyle(BoutonSombre())
-            .accessibilityLabel("Carte")
-          }
-          .padding(.top, 4)
+          LigneMesure(valeur: km1(sortie.vitesse), unite: "km/h")
+        }
+        LigneMesure(
+          valeur: sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm))" : "--",
+          unite: sortie.zone > 0 ? "bpm\nzone \(sortie.zone)" : "bpm",
+          coeur: true
+        )
+        Text("\(Int(sortie.entrainement.kcal)) kcal actives · \(sortie.gpsActif ? "GPS actif" : "Recherche GPS")")
+          .font(.system(size: 12))
+          .foregroundColor(Nea.texte2)
+          .lineLimit(1)
+          .minimumScaleFactor(0.7)
+          .padding(.top, 2)
+        if sortie.segment > 1 {
+          Text("Segment \(sortie.segment) · \(Nea.duree(sortie.secondesSegment)) · \(km1(sortie.kmDuSegment)) km")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(Nea.rose)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .padding(.top, 2)
         }
       }
     }
-    .navigationTitle(sortie.etape == .pause ? "En pause" : sortie.course ? "Course" : "Vélo")
   }
 }
 
-/// 11 · Parcours : tracé rose sur la carte, distance et GPS, retour aux données.
+/// Parcours : tracé orange sur la carte, distance et GPS.
 struct CarteVelo: View {
   @ObservedObject var sortie: SortieVelo
-  let retour: () -> Void
   @State private var camera: MapCameraPosition = .userLocation(fallback: .automatic)
 
   var body: some View {
@@ -315,6 +286,8 @@ struct CarteVelo: View {
         }
       }
       .mapStyle(.standard(emphasis: .muted))
+      // Carte fixe (elle suit la position) : le glissement reste pour changer d'écran.
+      .allowsHitTesting(false)
       VStack(spacing: 6) {
         HStack(spacing: 5) {
           Image(systemName: "location.fill").foregroundColor(Nea.rose)
@@ -323,16 +296,9 @@ struct CarteVelo: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .background(Capsule().fill(Color.black.opacity(0.75)))
-        Button {
-          retour()
-        } label: {
-          Label("Données", systemImage: "chart.bar.fill")
-        }
-        .buttonStyle(BoutonSombre())
       }
       .padding(.bottom, 4)
     }
-    .navigationTitle("Parcours")
   }
 }
 
@@ -349,7 +315,7 @@ struct BilanVelo: View {
           Text(sortie.course ? "Course terminée" : "Sortie terminée").font(.system(size: 17, weight: .bold))
         }
         HStack(spacing: 6) {
-          Tuile(titre: "Durée", valeur: duree(sortie.secondes))
+          Tuile(titre: "Durée", valeur: Nea.duree(sortie.secondes))
           Tuile(titre: "Distance", valeur: "\(km1(sortie.km)) km")
         }
         HStack(spacing: 6) {

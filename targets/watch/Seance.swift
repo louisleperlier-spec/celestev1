@@ -29,6 +29,9 @@ final class SeanceEnCours: ObservableObject {
   @Published var effortReste = 0
   @Published var secondes = 0
   @Published var enregistree = false
+  /// Segment en cours (commande « Segment ») et son départ.
+  @Published var segment = 1
+  private var debutSegment = 0
 
   private(set) var seriesFaites = 0
   private(set) var volume = 0.0
@@ -184,6 +187,44 @@ final class SeanceEnCours: ObservableObject {
     compteur.arreter()
     Vibre.jouer(.success)
     phase = .bilan
+  }
+
+  var secondesSegment: Int { secondes - debutSegment }
+
+  func nouveauSegment() {
+    segment += 1
+    debutSegment = secondes
+    Vibre.jouer(.click)
+  }
+
+  /// Étape en cours, en une ligne (écran « Suivre »).
+  var etape: String {
+    switch phase {
+    case .echauffement: return "Échauffement · \(Nea.mmss(echauffementReste))"
+    case .effort: return "\(exo.nom) · série \(serie + 1)/\(exo.series)"
+    case .validation: return "\(exo.nom) · à valider"
+    case .repos: return "Repos · \(Nea.mmss(reposReste))"
+    case .pause: return "En pause"
+    case .bilan: return "Terminé"
+    }
+  }
+
+  /// Titre de l'étape (écran de la séance guidée).
+  var titreEtape: String {
+    switch phase {
+    case .echauffement: return "Échauffement"
+    case .effort: return exo.nom
+    case .validation: return "Valider"
+    case .repos: return "Repos"
+    case .pause: return "En pause"
+    case .bilan: return "Bilan"
+    }
+  }
+
+  /// Commande « Nouveau » : la séance est enregistrée telle quelle, puis on revient au choix.
+  func terminerEtEnregistrer(fin: @escaping () -> Void) {
+    if phase != .bilan { terminerMaintenant() }
+    enregistrer(fin: fin)
   }
 
   /// Énergie : celle de la montre, sinon l'estimation du programme.

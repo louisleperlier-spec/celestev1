@@ -1,62 +1,82 @@
 import SwiftUI
 
-/// 02 · Accueil : prochaine séance (Démarrer), puis le menu de l'app.
+/// Accueil = maquette 01 · Choisir : « Entraînement » (Musculation, Course, Vélo) et Démarrer, puis le reste de l'app.
+/// Musculation lance la prochaine séance du programme ; Course et Vélo, une sortie GPS.
 struct AccueilView: View {
   @ObservedObject private var donnees = Donnees.partagees
+  @AppStorage("nea.activite") private var choix = TypeActivite.muscu.rawValue
   @State private var lancement: SeanceMontre?
+  @State private var sortie: TypeActivite?
+  @State private var voirSeances = false
+
+  private var type: TypeActivite { TypeActivite(rawValue: choix) ?? .muscu }
+
+  private func sousTitre(_ t: TypeActivite) -> String {
+    switch t {
+    case .muscu:
+      if let s = donnees.prochaine { return "\(s.titre) · \(Int(s.min)) min" }
+      return donnees.etat == nil ? "Ouvre NÉA sur l'iPhone" : "Choisis ta séance"
+    case .course, .velo:
+      return "GPS · conquiers des territoires"
+    }
+  }
+
+  private func demarrer() {
+    switch type {
+    case .muscu:
+      if let s = donnees.prochaine {
+        lancement = s
+      } else {
+        voirSeances = true
+      }
+    case .course, .velo:
+      sortie = type
+    }
+  }
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 8) {
-        if let e = donnees.etat {
-          if let s = donnees.prochaine {
-            VStack(alignment: .leading, spacing: 2) {
-              Text("Ta prochaine séance").font(.system(size: 14)).foregroundColor(Nea.texte2)
-              NavigationLink(value: s) {
-                VStack(alignment: .leading, spacing: 2) {
-                  Text(s.titre).font(.system(size: 22, weight: .bold)).lineLimit(2).minimumScaleFactor(0.7)
-                  Text("\(Int(s.min)) min · \(s.exos.count) exercices").font(.system(size: 15)).foregroundColor(Nea.texte2)
-                }
-              }
-              .buttonStyle(.plain)
-              HStack(spacing: 8) {
-                Image(e.coach).resizable().scaledToFit().frame(width: 40, height: 40).shadow(color: Nea.rose.opacity(0.5), radius: 6)
-                Text("Avec \(e.coachInfo?.nom ?? "ton coach")").font(.system(size: 14)).foregroundColor(Nea.texte2)
-              }
-              .padding(.top, 2)
-            }
-            Button {
-              lancement = s
-            } label: {
-              Label("Démarrer", systemImage: "play.fill")
-            }
-            .buttonStyle(BoutonRose())
-          }
-          NavigationLink { SeancesView() } label: { LigneMenu(icone: "calendar", titre: "Mes séances") }.buttonStyle(.plain)
-          NavigationLink { VeloView() } label: { LigneMenu(icone: "bicycle", titre: "Vélo") }.buttonStyle(.plain)
-          NavigationLink { VeloView(course: true) } label: { LigneMenu(icone: "figure.run", titre: "Course") }.buttonStyle(.plain)
-          NavigationLink { RecupView() } label: {
-            LigneMenu(icone: "heart.fill", titre: "Récupération", valeur: e.score.map { "\($0)" } ?? "")
+        Text("Entraînement").font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+        ForEach(TypeActivite.allCases) { t in
+          Button {
+            choix = t.rawValue
+            Vibre.jouer(.click)
+          } label: {
+            ChoixActivite(type: t, sousTitre: sousTitre(t), choisi: t == type)
           }
           .buttonStyle(.plain)
-          NavigationLink { RespirationView() } label: { LigneMenu(icone: "wind", titre: "Respiration") }.buttonStyle(.plain)
-          NavigationLink { CoachView() } label: { LigneMenu(icone: "person.crop.circle", titre: "Mon coach") }.buttonStyle(.plain)
-          NavigationLink { ProgresView() } label: { LigneMenu(icone: "chart.bar.fill", titre: "Progrès") }.buttonStyle(.plain)
-          NavigationLink { ReglagesView() } label: { LigneMenu(icone: "gearshape.fill", titre: "Réglages") }.buttonStyle(.plain)
-        } else {
-          Text("Ouvre NÉA sur ton iPhone pour recevoir tes séances.")
-            .font(.system(size: 15))
-            .foregroundColor(Nea.texte2)
-          NavigationLink { ReglagesView() } label: { LigneMenu(icone: "gearshape.fill", titre: "Réglages") }.buttonStyle(.plain)
         }
+        Button(action: demarrer) {
+          Text("Démarrer")
+        }
+        .buttonStyle(BoutonRose())
+        .padding(.top, 2)
+
+        Text("Plus").font(.system(size: 14)).foregroundColor(Nea.texte2).padding(.top, 8)
+        NavigationLink { SeancesView() } label: { LigneMenu(icone: "calendar", titre: "Mes séances") }.buttonStyle(.plain)
+        NavigationLink { RecupView() } label: {
+          LigneMenu(icone: "heart.fill", titre: "Récupération", valeur: donnees.etat?.score.map { "\($0)" } ?? "")
+        }
+        .buttonStyle(.plain)
+        NavigationLink { RespirationView() } label: { LigneMenu(icone: "wind", titre: "Respiration") }.buttonStyle(.plain)
+        NavigationLink { CoachView() } label: { LigneMenu(icone: "person.crop.circle", titre: "Mon coach") }.buttonStyle(.plain)
+        NavigationLink { ProgresView() } label: { LigneMenu(icone: "chart.bar.fill", titre: "Progrès") }.buttonStyle(.plain)
+        NavigationLink { ReglagesView() } label: { LigneMenu(icone: "gearshape.fill", titre: "Réglages") }.buttonStyle(.plain)
       }
     }
     .navigationTitle("NÉA")
     .navigationDestination(for: SeanceMontre.self) { s in
       DetailView(s: s)
     }
+    .navigationDestination(isPresented: $voirSeances) {
+      SeancesView()
+    }
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)
+    }
+    .fullScreenCover(item: $sortie) { t in
+      SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: t == .course)
     }
     // Complication « Ma séance » : ouvre directement la séance du jour.
     .onReceive(donnees.$demandeSeance) { d in

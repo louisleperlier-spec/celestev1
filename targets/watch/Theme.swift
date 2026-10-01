@@ -32,6 +32,11 @@ enum Nea {
   static func mmss(_ s: Int) -> String {
     String(format: "%02d:%02d", max(0, s) / 60, max(0, s) % 60)
   }
+
+  /// « 12:34 », ou « 1:02:03 » après une heure.
+  static func duree(_ s: Int) -> String {
+    s >= 3600 ? String(format: "%d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60) : mmss(s)
+  }
 }
 
 /// Bouton principal : rose plein avec lueur rose (maquettes).
@@ -65,6 +70,7 @@ struct BoutonSombre: ButtonStyle {
 struct GrosChiffre: View {
   let texte: String
   var taille: CGFloat = 56
+  var couleur: Color = .white
 
   var body: some View {
     Text(texte)
@@ -72,7 +78,7 @@ struct GrosChiffre: View {
       .monospacedDigit()
       .lineLimit(1)
       .minimumScaleFactor(0.5)
-      .foregroundColor(.white)
+      .foregroundColor(couleur)
       .shadow(color: Nea.rose.opacity(0.8), radius: 10)
       .frame(maxWidth: .infinity)
   }

@@ -1,43 +1,105 @@
 import SwiftUI
 
-/// Séance en plein écran : échauffement, répétitions (05), validation (06), repos (07), pause (08), bilan (09).
+/// Séance en plein écran, comme l'app Exercice : Commandes ← Suivre → Séance guidée (glisser), puis le bilan.
+/// La séance guidée (échauffement, répétitions, validation, repos, pause) revient au premier plan à chaque étape.
 struct SeanceView: View {
   @StateObject private var seance: SeanceEnCours
+  @State private var page = 1
+  @Environment(\.dismiss) private var fermer
 
   init(s: SeanceMontre) {
     _seance = StateObject(wrappedValue: SeanceEnCours(s))
+  }
+
+  private var titre: String {
+    page == 0 ? "Commandes" : page == 1 ? "Musculation" : seance.titreEtape
   }
 
   var body: some View {
     NavigationStack {
       // ZStack (pas Group) : onAppear / onDisappear portent sur l'écran de séance, pas sur chaque étape.
       ZStack {
-        switch seance.phase {
-        case .echauffement: EchauffementView(seance: seance)
-        case .effort: EffortView(seance: seance)
-        case .validation: ValidationView(seance: seance)
-        case .repos: ReposView(seance: seance)
-        case .pause: PauseView(seance: seance)
-        case .bilan: BilanView(seance: seance)
+        if seance.phase == .bilan {
+          BilanView(seance: seance)
+        } else {
+          TabView(selection: $page) {
+            CommandesView(
+              enPause: seance.phase == .pause,
+              segment: seance.segment,
+              terminer: { seance.terminerMaintenant() },
+              pause: { seance.phase == .pause ? seance.reprendre() : seance.pause() },
+              nouveau: { seance.terminerEtEnregistrer { fermer() } },
+              nouveauSegment: { seance.nouveauSegment() }
+            )
+            .tag(0)
+            SuivreSeance(seance: seance, voirSeance: { page = 2 })
+              .tag(1)
+            GuideSeance(seance: seance)
+              .tag(2)
+          }
+          .tabViewStyle(.page)
+          .navigationTitle(titre)
         }
       }
       .navigationBarBackButtonHidden(true)
-      .toolbar {
-        if seance.phase != .pause && seance.phase != .bilan {
-          ToolbarItem(placement: .topBarLeading) {
-            Button {
-              seance.pause()
-            } label: {
-              Image(systemName: "pause.fill").foregroundColor(Nea.rose)
-            }
-            .accessibilityLabel("Pause")
-          }
-        }
-      }
     }
     .tint(Nea.rose)
     .onAppear { seance.commencer() }
     .onDisappear { seance.abandonner() }
+    .onChange(of: seance.phase) { _, p in
+      // Nouvelle étape à faire (série, validation, repos) : la séance guidée revient devant.
+      if p != .pause && p != .bilan { page = 2 }
+    }
+  }
+}
+
+/// Maquette 02 · Suivre : chrono, kcal actives, kcal totales, FC ; étape en cours (touchable).
+struct SuivreSeance: View {
+  @ObservedObject var seance: SeanceEnCours
+  let voirSeance: () -> Void
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 0) {
+        Chrono(secondes: seance.secondes)
+        LigneMesure(valeur: "\(Int(seance.entrainement.kcal))", unite: "kcal\nactives")
+        LigneMesure(valeur: "\(Int(seance.entrainement.kcal + seance.entrainement.kcalRepos))", unite: "kcal\ntotales")
+        LigneMesure(valeur: seance.entrainement.bpm > 0 ? "\(Int(seance.entrainement.bpm))" : "--", unite: "bpm", coeur: true)
+        if seance.segment > 1 {
+          Text("Segment \(seance.segment) · \(Nea.duree(seance.secondesSegment))")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(Nea.rose)
+            .padding(.top, 2)
+        }
+        Button(action: voirSeance) {
+          HStack(spacing: 4) {
+            Text(seance.etape).font(.system(size: 13, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.7)
+            Spacer(minLength: 2)
+            Image(systemName: "chevron.right").font(.system(size: 11, weight: .semibold)).foregroundColor(Nea.texte2)
+          }
+          .padding(.vertical, 6)
+          .padding(.horizontal, 10)
+          .background(Capsule().fill(Nea.carte))
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 6)
+      }
+    }
+  }
+}
+
+/// Séance guidée : l'écran de l'étape en cours.
+struct GuideSeance: View {
+  @ObservedObject var seance: SeanceEnCours
+
+  var body: some View {
+    switch seance.phase {
+    case .echauffement: EchauffementView(seance: seance)
+    case .effort: EffortView(seance: seance)
+    case .validation: ValidationView(seance: seance)
+    case .repos: ReposView(seance: seance)
+    case .pause, .bilan: PauseView(seance: seance)
+    }
   }
 }
 
@@ -65,7 +127,6 @@ struct EchauffementView: View {
         .buttonStyle(BoutonRose())
       }
     }
-    .navigationTitle("Échauffement")
   }
 }
 
@@ -120,7 +181,6 @@ struct EffortView: View {
         .padding(.top, 4)
       }
     }
-    .navigationTitle(seance.exo.nom)
   }
 }
 
@@ -179,7 +239,6 @@ struct ValidationView: View {
         .padding(.top, 4)
       }
     }
-    .navigationTitle("Valider")
   }
 }
 
@@ -218,7 +277,6 @@ struct ReposView: View {
         .padding(.top, 4)
       }
     }
-    .navigationTitle("Repos")
   }
 }
 
@@ -247,7 +305,6 @@ struct PauseView: View {
         .buttonStyle(BoutonSombre())
       }
     }
-    .navigationTitle("En pause")
   }
 }
 

@@ -164,6 +164,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     données via le groupe `group.com.neacoach.app` (`Cadran.publier`) : groupe créé et coché sur les deux identifiants de la montre ;
     profils App Store avec le groupe : montre 972FATG5W5, complications Y98HZL5A52 (QR8XTVUJF3, jusqu'au 29/09/2027) ;
     **build 1.0.0 (6)** validé (cadran Modulaire rose) ; **build 7** : coach en grand ; **build 9** : + widgets iPhone ; **build 10** : widgets roses, mascotte `_teinte` (opacité = clarté) sur les cadrans teintés (`widgetRenderingMode`)
+  - **refonte « Entraînement au poignet » (maquette 01 Choisir · 02 Suivre · 03 Contrôler, build 17)** : Accueil = « Entraînement »
+    (Musculation = prochaine séance, Course, Vélo ; choix gardé, Démarrer) puis « Plus » (séances, récup., respiration, coach, progrès,
+    réglages) ; séance et sortie en pages à glisser comme l'app Exercice : Commandes (Terminer, Pause, Nouveau = enregistre et revient
+    au choix, Segment) ← Suivre (chrono orange, kcal actives / totales, BPM ; km, vitesse ou allure pour les sorties) → séance guidée
+    (revient devant à chaque étape) ou Parcours (carte fixe) ; `Activite.swift`, kcal au repos lues dans Santé
   - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
