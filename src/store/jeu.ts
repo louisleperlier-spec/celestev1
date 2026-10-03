@@ -9,8 +9,11 @@
 import { Vibration } from 'react-native';
 import { create } from 'zustand';
 
+import { toast } from '@/components/ui/Toast';
+
 import { defi, defisSemaine, meilleurs, nouveauPaquet, ouvrir, recordsBattus, type EtatJeu, type Paquet, type Rarete, type Tirage } from '@/lib/jeu';
 import { lundiISO } from '@/lib/ligue';
+import { nouvellesMissions, recompensee, SUCCES, type SuccesId } from '@/lib/succes';
 import { lvlInfo, streak, type Log } from '@/lib/xp';
 
 import { useProfil } from './profil';
@@ -23,6 +26,8 @@ export type Fete = {
   emoji: string;
   /** Ce qui a été gagné (« Booster de 3 cartes », « +1 Turbo x2 »). */
   gains: string[];
+  /** Carte succès débloquée : affichée à la place du coach. */
+  succes?: SuccesId;
 };
 
 export const useFetes = create<{ file: Fete[] }>(() => ({ file: [] }));
@@ -57,7 +62,9 @@ const libelle = (l: Log) => (l.type === 'velo' ? 'Sortie vélo' : l.type === 'co
 /** Une activité vient d'être ajoutée au journal. */
 function apresActivite(l: Log, avant: readonly Log[]) {
   donner(1, libelle(l));
-  for (const r of recordsBattus(avant, l)) {
+  const battus = recordsBattus(avant, l);
+  if (battus.length) majJeu((j) => ({ ...j, nbRecords: (j.nbRecords ?? 0) + battus.length }));
+  for (const r of battus) {
     donner(1, 'Record : ' + r.titre, 1);
     feter({ titre: 'Nouveau record !', sous: `${r.titre} : ${r.valeur}`, emoji: '🏆', gains: ['1 carte Rare ou mieux'] });
   }
@@ -69,7 +76,7 @@ function verifierSerie() {
   const n = streak(st.logs, st.days);
   if (n <= st.jeu.records.serie) return;
   const ancien = st.jeu.records.serie;
-  majJeu((j) => ({ ...j, records: { ...j.records, serie: n } }));
+  majJeu((j) => ({ ...j, records: { ...j.records, serie: n }, nbRecords: (j.nbRecords ?? 0) + (ancien >= 3 ? 1 : 0) }));
   if (ancien >= 3) {
     donner(1, 'Record : meilleure série', 1);
     feter({ titre: 'Série record !', sous: `${n} jours d'affilée, du jamais vu 🔥`, emoji: '🔥', gains: ['1 carte Rare ou mieux'] });
@@ -92,6 +99,24 @@ function verifierDefis() {
   }
 }
 
+/** Cartes succès : XP de chaque mission réussie, fête quand une carte est complète. */
+function verifierSucces() {
+  const st = useProfil.getState();
+  if (!st.onboarded) return;
+  const nouvelles = nouvellesMissions(st);
+  if (!nouvelles.length) return;
+  // Missions notées avant l'XP : addXp relance l'écoute du profil.
+  majJeu((j) => ({ ...j, missions: [...(j.missions ?? []), ...nouvelles.map((m) => m.id)] }));
+  for (const m of nouvelles) {
+    useProfil.getState().addXp(m.xp, 'Succès : ' + m.titre);
+    toast(`Mission réussie : ${m.titre} · +${m.xp} XP`);
+  }
+  // Cartes dont la dernière mission vient d'être récompensée.
+  for (const s of SUCCES.filter((x) => !recompensee(x, st.jeu) && recompensee(x, useProfil.getState().jeu))) {
+    feter({ titre: 'Succès débloqué !', sous: `Carte « ${s.nom} » ajoutée à tes succès`, emoji: '🏅', gains: s.missions.map((m) => `+${m.xp} XP`), succes: s.id });
+  }
+}
+
 let demarre = false;
 
 /** Au lancement : écoute le journal, l'XP, les nuits et les mesures pour récompenser. */
@@ -103,6 +128,9 @@ export function demarrerJeu() {
   if (!st0.jeu.records.serie && !st0.jeu.records.vol && st0.logs.length) {
     majJeu((j) => ({ ...j, records: { ...meilleurs(st0.logs), serie: streak(st0.logs, st0.days) } }));
   }
+  // Missions déjà réussies avant cette version (journal existant) : récompensées au lancement.
+  if (useProfil.persist.hasHydrated()) verifierSucces();
+  else useProfil.persist.onFinishHydration(() => verifierSucces());
   useProfil.subscribe((s, p) => {
     if (!s.onboarded) return;
     // Une seule activité ajoutée (pas un chargement de compte).
@@ -118,6 +146,7 @@ export function demarrerJeu() {
     if (s.logs !== p.logs || s.nights !== p.nights || s.hrvChecks !== p.hrvChecks || s.xpLog !== p.xpLog) {
       if (nouvelle) verifierSerie();
       verifierDefis();
+      verifierSucces();
     }
   });
 }

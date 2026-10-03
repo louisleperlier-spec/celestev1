@@ -183,7 +183,7 @@ export const useRando = create<Rando & Actions>()((set, get) => {
       const fin = new Date().toISOString();
       const premiere = !p.logs.some((l) => l.type === 'rando');
       const sommet = s ? v.dplus >= s.dplus * 0.6 : v.dplus >= 100;
-      p.addLog({ d: fin, debut: v.debut, type: 'rando', title: s?.nom ?? 'Randonnée', min: Math.max(1, Math.round(v.el / 60)), cal, vol: 0, dist: +v.dist.toFixed(1), dplus: v.dplus, rando: s?.id, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
+      p.addLog({ d: fin, debut: v.debut, type: 'rando', title: s?.nom ?? 'Randonnée', min: Math.max(1, Math.round(v.el / 60)), cal, vol: 0, dist: +v.dist.toFixed(1), dplus: v.dplus, rando: s?.id, sommet, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
       const xp = useProfil.getState().addXp(xpRando(v.dist, v.dplus), 'Randonnée');
       useProfil.getState().programmerPost('rando', st.hrv);
       enregistrerEntrainement({ type: 'rando', debut: new Date(v.debut), fin: new Date(), kcal: cal, km: v.dist });

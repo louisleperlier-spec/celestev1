@@ -9,6 +9,7 @@ import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, 
 import { TitreOnglet } from '@/components/app/EnTete';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
 import { BandeauCartes, DefisSemaine, EntreeCollection, MesRecords } from '@/components/app/Jeu';
+import { MesSucces } from '@/components/app/Succes';
 import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
@@ -89,6 +90,7 @@ export default function Progres() {
           <BandeauCartes />
           <DefisSemaine />
           <EntreeCollection />
+          <MesSucces />
         </View>
         <Segmente options={['Semaine', 'Mois', 'Année'] as const} value={p} onChange={setP} style={styles.seg} />
         <View style={styles.grid}>

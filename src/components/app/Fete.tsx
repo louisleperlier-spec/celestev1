@@ -6,6 +6,7 @@ import Animated, { Easing, Extrapolation, interpolate, useAnimatedStyle, useShar
 
 import { Button, Glow, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
+import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
 import { fermerFete, useFetes, vibrerFete, type Fete as FeteT } from '@/store/jeu';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
@@ -67,10 +68,17 @@ function Contenu({ f }: { f: FeteT }) {
     <View style={styles.voile}>
       <Confettis />
       <Animated.View style={[styles.boite, st]}>
-        <View style={styles.coach}>
-          <Glow width={220} height={200} intensity={0.55} />
-          <Image source={COACH_IMAGES[coach].corps} style={styles.coachImg} contentFit="contain" />
-        </View>
+        {f.succes ? (
+          <View style={styles.succes}>
+            <Glow width={260} height={300} intensity={0.6} />
+            <Image source={SUCCES_IMAGES[f.succes]} style={styles.succesImg} contentFit="contain" />
+          </View>
+        ) : (
+          <View style={styles.coach}>
+            <Glow width={220} height={200} intensity={0.55} />
+            <Image source={COACH_IMAGES[coach].corps} style={styles.coachImg} contentFit="contain" />
+          </View>
+        )}
         <Text style={styles.emoji}>{f.emoji}</Text>
         <Text style={styles.titre}>{f.titre}</Text>
         <Text style={styles.sous}>{f.sous}</Text>
@@ -120,6 +128,8 @@ const styles = StyleSheet.create({
   boite: { width: '100%', maxWidth: 380, backgroundColor: colors.surface, borderRadius: 28, padding: 22, alignItems: 'center' },
   coach: { width: 160, height: 160, alignItems: 'center', justifyContent: 'center', marginTop: -90 },
   coachImg: { width: 150, height: 170 },
+  succes: { width: 200, height: 240, alignItems: 'center', justifyContent: 'center', marginTop: -150 },
+  succesImg: { width: 140, height: 140 / SUCCES_RATIO },
   emoji: { fontSize: 34, lineHeight: 42, marginTop: 4 },
   titre: { ...fonts.bold, fontSize: 28, lineHeight: 34, textAlign: 'center', marginTop: 2 },
   sous: { fontSize: 15, lineHeight: 21, color: colors.textSecondary, textAlign: 'center', marginTop: 6 },

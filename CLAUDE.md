@@ -231,6 +231,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     commune, epique, legendaire, dos ; **rare dérivé de l'épique** (3e étoile effacée, orange éclairci) en attendant le sien), étoiles comprises,
     `CarteJeu` place l'illustration et le nom dans leurs zones (`ZONE_IMG`, `ZONE_NOM`) ; Progrès : bandeau, **Défis de la semaine**
     (séances = rythme choisi + 2 tirés : km, nuits, mesures, XP, minutes), Ma collection, Tes records ; bandeau aussi sur l'Accueil et le récap
+  - **cartes succès (cartes d'Axel dessinées par l'utilisateur, choix A : à côté des cartes d'exercices)** : `lib/succes.ts` (5 cartes,
+    2 missions chacune, XP par mission ; textes de l'app corrigés là où la carte se contredisait : 1er sommet pour Explorateur, 3 records
+    battus pour Inarrêtable, +10 % de volume par rapport à la 1re séance pour Force), images `assets/succes/` (`SUCCES_IMAGES`) ;
+    `jeu.missions` (missions récompensées) et `jeu.nbRecords` ; `Log.sommet` (rando) ; `verifierSucces` (store/jeu, aussi au lancement :
+    l'historique compte) → XP + toast par mission, fête avec la carte quand les 2 sont faites ; section « Tes succès » dans Progrès (`Succes.tsx`)
 - [ ] **Randonnée (hors cahier des charges, maquettes de l'utilisateur, oct. 2026)** : **codée, publiée en EAS Update, à valider sur iPhone**
   - **5e onglet « Randonnée »** (`(tabs)/rando.tsx`, icône `rando`) : Axel randonneur, filtres (Facile, Modéré, Difficile, < 2 h, Vue
     panoramique, Chutes d'eau ; « Avec chien » de la maquette retiré faute de données fiables), Rando de la semaine (`randoSemaine`, selon le lundi),

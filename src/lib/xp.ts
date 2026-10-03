@@ -23,6 +23,8 @@ export type Log = {
   /** Randonnée : dénivelé positif mesuré (m) et sentier suivi. */
   dplus?: number;
   rando?: string;
+  /** Randonnée : sommet atteint (carte succès « Explorateur »). */
+  sommet?: boolean;
 };
 
 /** Jours consécutifs avec une activité ; un jour de repos prévu ne casse pas la série. */
