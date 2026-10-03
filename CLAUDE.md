@@ -229,6 +229,19 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - écrans `/cartes` (collection, filtres de rareté, fiche) et `/cartes/ouvrir` (cartes face cachée à retourner, lueur des rares, doubles → XP) ;
     `FeteHost` (confettis Reanimated, coach, vibration `Vibration`, « Ouvrir mes cartes ») ; Progrès : bandeau, **Défis de la semaine**
     (séances = rythme choisi + 2 tirés : km, nuits, mesures, XP, minutes), Ma collection, Tes records ; bandeau aussi sur l'Accueil et le récap
+- [ ] **Randonnée (hors cahier des charges, maquettes de l'utilisateur, oct. 2026)** : **codée, publiée en EAS Update, à valider sur iPhone**
+  - **5e onglet « Randonnée »** (`(tabs)/rando.tsx`, icône `rando`) : Axel randonneur, filtres (Facile, Modéré, Difficile, < 2 h, Vue
+    panoramique, Chutes d'eau ; « Avec chien » de la maquette retiré faute de données fiables), Rando de la semaine (`randoSemaine`, selon le lundi),
+    « À explorer », Rando libre ; fiche `/randonnee/[id]` (photo, distance, D+, durée, difficulté, profil approximatif `profilSentier`, carte
+    satellite Apple Plans du secteur `CarteSentier` + « Itinéraire dans Plans », Ce que tu vas voir, Conseils d'Axel, météo au sommet
+    **Open-Meteo** `useMeteo`) ; `/randonnee/en-cours` (carte satellite qui suit, sommet à mi-parcours, temps, distance, D+ fait / restant,
+    altitude, FC, Pause, Terminer) ; `/randonnee/recap` (Sommet atteint si D+ ≥ 60 % du sentier, chiffres, profil mesuré, carte Explorateur,
+    badges 1re rando / 500 m de D+ / Lève-tôt / 10 km, Partager)
+  - `store/rando.ts` : GPS + altitude (dénivelé `denivele`, lissé, seuil 3 m), sinon marche simulée ; journal `type: 'rando'` (`dplus`, `rando`),
+    XP 40 + 6/km + D+/25, calories MET 6 + montée, Apple Santé (HKWorkoutActivityType 24, distance marche), rappel VFC, territoires (vrai GPS)
+  - 5 sentiers dans `data/randos.ts` (valeurs **indicatives des maquettes, à vérifier** avant la sortie), photos recadrées des maquettes
+    (`data/randosImages.ts`, `assets/randos/`) ; cartes **Explorateur** `rando:<id>` (Légendaires, jamais tirées, gagnées au sommet ; collection 59)
+  - reste : vraies photos des sentiers, liste validée (ou OpenStreetMap), rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
@@ -239,7 +252,7 @@ src/
   app/              routes Expo Router (un fichier = un écran, _layout = navigateur)
     bienvenue.tsx   accueil (vidéo d'Axel)
     onboarding/     prenom, objectifs, niveau, lieu, rythme, profil, sante, coach (8 écrans) + preparation + pret
-    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), velo, progres.tsx (+ Ligue dessous), coach.tsx, ligue.tsx (Ligue seule), profil + barre à 4 onglets
+    (tabs)/         accueil.tsx, programme.tsx (?vue=calendrier), velo, rando.tsx (Randonnée), progres.tsx (+ Ligue dessous), coach.tsx, ligue.tsx (Ligue seule), profil + barre à 4 onglets
     seance-en-cours séance guidée (séries, reps, minuteur, repos, FC simulée) puis récap
     seance/[jour]   détail d'une séance de la semaine · catalogue/[id] : séance prête · plan/[id] : programme
     (tabs)/velo     onglet Vélo (extérieur / stationnaire, carte, historique)
@@ -248,6 +261,7 @@ src/
     notifications   liste des notifications · sommeil.tsx : Sommeil (?ajout=1 ouvre la saisie de la nuit)
     sommeil.tsx     Sommeil (nuits, score, VFC nocturne) · recuperation.tsx : mesure de récupération d'1 min
     activite.tsx    récap d'une activité (montre) : FC d'Apple Santé, zones · personnaliser.tsx, widgets.tsx
+    randonnee/      [id] fiche d'un sentier, en-cours, recap · cartes/ : collection, ouvrir
     territoires.tsx carte des territoires conquis (hexagones), classements quartier / ville, règles
     reglages.tsx    « Modifier » du calendrier · design.tsx : écran de vérification du design system
     compte.tsx      création de compte / connexion (?onb=1 en fin d'onboarding, ?mode=login|signup)

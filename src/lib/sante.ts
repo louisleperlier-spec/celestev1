@@ -177,7 +177,7 @@ export async function fcRecente(maxSec = 20, now: Date = new Date()): Promise<nu
 }
 
 /** Enregistre une séance (renforcement), une sortie vélo ou une course dans Apple Santé : elle compte pour les cercles d'Apple. */
-export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo' | 'course'; debut: Date; fin: Date; kcal: number; km?: number }): Promise<void> {
+export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo' | 'course' | 'rando'; debut: Date; fin: Date; kcal: number; km?: number }): Promise<void> {
   const m = module();
   if (!m || +e.fin <= +e.debut) return;
   try {
@@ -188,12 +188,12 @@ export async function enregistrerEntrainement(e: { type: 'muscu' | 'velo' | 'cou
     if (e.km) mesures.push({
         startDate: e.debut,
         endDate: e.fin,
-        quantityType: e.type === 'course' ? 'HKQuantityTypeIdentifierDistanceWalkingRunning' : 'HKQuantityTypeIdentifierDistanceCycling',
+        quantityType: e.type === 'course' || e.type === 'rando' ? 'HKQuantityTypeIdentifierDistanceWalkingRunning' : 'HKQuantityTypeIdentifierDistanceCycling',
         quantity: e.km * 1000,
         unit: 'm',
       });
-    // 50 = renforcement musculaire traditionnel, 13 = vélo, 37 = course (HKWorkoutActivityType)
-    await m.saveWorkoutSample(e.type === 'velo' ? 13 : e.type === 'course' ? 37 : 50, mesures, e.debut, e.fin, { energyBurned: Math.max(0, e.kcal), distance: e.km ? e.km * 1000 : undefined });
+    // 50 = renforcement musculaire traditionnel, 13 = vélo, 37 = course, 24 = randonnée (HKWorkoutActivityType)
+    await m.saveWorkoutSample(e.type === 'velo' ? 13 : e.type === 'course' ? 37 : e.type === 'rando' ? 24 : 50, mesures, e.debut, e.fin, { energyBurned: Math.max(0, e.kcal), distance: e.km ? e.km * 1000 : undefined });
   } catch {
     // Refus de l'écriture ou erreur : la séance reste enregistrée dans NÉA.
   }

@@ -77,6 +77,9 @@ export const ui = {
   carteDos: '#1A1B1F',
   confettis: ['#FF6B1A', '#FFA266', '#FFD27A', '#FFFFFF', '#A0522D'],
   voileFete: 'rgba(10,10,14,0.82)',
+  /** Randonnée : couleur de la difficulté (facile, modéré, difficile), voile sur les photos. */
+  difficulte: { facile: '#4CD964', modere: '#FF6B1A', difficile: '#FF5C6C' },
+  voilePhoto: ['rgba(34,35,40,0)', 'rgba(34,35,40,0.55)', 'rgba(34,35,40,1)'],
   /** Contrôle segmenté : fond, texte, segment actif. */
   segBg: '#2D3038',
   segTxt: '#ADB0BA',

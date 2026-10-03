@@ -10,7 +10,7 @@ export type Log = {
   /** Début (ISO) et source : activités de l'Apple Watch (récap avec la FC d'Apple Santé). */
   debut?: string;
   src?: 'montre';
-  type: 'muscu' | 'velo' | 'course';
+  type: 'muscu' | 'velo' | 'course' | 'rando';
   title: string;
   min: number;
   cal: number;
@@ -20,6 +20,9 @@ export type Log = {
   hrv?: number;
   dist?: number;
   ex?: number;
+  /** Randonnée : dénivelé positif mesuré (m) et sentier suivi. */
+  dplus?: number;
+  rando?: string;
 };
 
 /** Jours consécutifs avec une activité ; un jour de repos prévu ne casse pas la série. */

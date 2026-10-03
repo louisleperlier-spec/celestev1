@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Icon, Text } from '@/components/ui';
 import { COACH_IMAGES, EXERCICE_IMAGES } from '@/data';
+import { RANDO_IMAGES } from '@/data/randosImages';
 import { carte, RARETES, type CarteId } from '@/lib/jeu';
 import { alpha, colors, fonts, ui } from '@/theme';
 
@@ -54,7 +55,7 @@ export function CarteJeu({ id, largeur, cachee = false, dos = false, nombre = 0 
       </View>
     );
   }
-  const img = c.coach ? COACH_IMAGES[c.coach].corps : EXERCICE_IMAGES[c.ex!];
+  const img = c.coach ? COACH_IMAGES[c.coach].corps : c.rando ? RANDO_IMAGES[c.rando] : EXERCICE_IMAGES[c.ex!];
   return (
     <View style={[styles.carte, { width: largeur, height: h, borderRadius: 14 * k, backgroundColor: ui.carteFond[c.rarete], borderColor: col }]}>
       <LinearGradient colors={[alpha(col, c.rarete >= 2 ? 0.35 : 0.18), alpha(col, 0)]} style={StyleSheet.absoluteFill} />
@@ -68,7 +69,7 @@ export function CarteJeu({ id, largeur, cachee = false, dos = false, nombre = 0 
           </View>
         )}
       </View>
-      <Image source={img} style={styles.img} contentFit="contain" />
+      <Image source={img} style={c.rando ? [styles.photo, { borderRadius: 8 * k }] : styles.img} contentFit={c.rando ? 'cover' : 'contain'} />
       <View style={[styles.pied, { padding: 7 * k, paddingTop: 4 * k }]}>
         <Text weight="bold" numberOfLines={2} style={{ fontSize: 10.5 * k, lineHeight: 13 * k }}>
           {c.nom}
@@ -88,5 +89,6 @@ const styles = StyleSheet.create({
   etoiles: { flexDirection: 'row', gap: 1 },
   badge: { paddingVertical: 1 },
   img: { flex: 1, marginHorizontal: '6%' },
+  photo: { flex: 1, marginHorizontal: '7%', marginVertical: 4 },
   pied: {},
 });

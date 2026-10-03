@@ -21,7 +21,14 @@ const ICONS = {
       <Path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M12 9.5V12l1.5 1.5" />
     </>
   ),
-  home: <Path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />,
+  rando: (
+    <>
+      <Circle cx="13" cy="4" r="2" />
+      <Path d="M10.5 21l2-6.5 2.5 2.5V21M8 12.5l2.5-5 3.5 1.5 2 3.5 2.5 1M10.5 7.5L9 13M18.5 11.5V21" />
+    </>
+  ),
+  montagne: <Path d="M3 19l6.5-10 4 6 2.5-3.5L21 19z M8 12.5l1.5 1.5 1.5-1.5" />,
+    home: <Path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />,
   dumb: <Path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11" />,
   cloud: <Path d="M17.5 19H7a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 11 4 4 0 0 1 17.5 19z" />,
   minus: <Path d="M5 12h14" />,
@@ -140,6 +147,7 @@ const ICONS = {
     </>
   ),
   x: <Path d="M18 6L6 18M6 6l12 12" />,
+  pause: <Path d="M9 5v14M15 5v14" />,
   clip: (
     <>
       <Rect x="8" y="2" width="8" height="4" rx="1" />

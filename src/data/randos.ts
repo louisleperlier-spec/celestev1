@@ -1,0 +1,92 @@
+/**
+ * Sentiers proposés dans « Randonnée » (maquettes de l'utilisateur, oct. 2026).
+ * Distances, dénivelés, durées et altitudes : valeurs indicatives des maquettes, à vérifier (Sépaq, parcs) avant la sortie publique.
+ * Coordonnées : secteur approximatif (météo et carte), l'itinéraire passe par une recherche Apple Plans.
+ */
+import type { Sentier } from '@/lib/rando';
+
+export const SENTIERS: readonly Sentier[] = [
+  {
+    id: 'lac-des-cygnes',
+    nom: 'Mont du Lac des Cygnes',
+    lieu: 'Parc national des Grands-Jardins',
+    region: 'Grands-Jardins · Charlevoix',
+    km: 8.6,
+    dplus: 480,
+    min: 210,
+    difficulte: 'modere',
+    altDepart: 480,
+    altSommet: 960,
+    lat: 47.68,
+    lng: -70.84,
+    voir: ['belvedere', 'lac'],
+    recherche: 'Mont du Lac des Cygnes, Parc national des Grands-Jardins',
+  },
+  {
+    id: 'les-loups',
+    nom: 'Les Loups',
+    lieu: 'Parc national de la Jacques-Cartier',
+    region: 'Jacques-Cartier',
+    km: 11,
+    dplus: 450,
+    min: 240,
+    difficulte: 'modere',
+    altDepart: 230,
+    altSommet: 680,
+    lat: 47.32,
+    lng: -71.37,
+    voir: ['belvedere', 'riviere'],
+    recherche: 'Sentier Les Loups, Parc national de la Jacques-Cartier',
+  },
+  {
+    id: 'acropole',
+    nom: "L'Acropole des Draveurs",
+    lieu: 'Parc national des Hautes-Gorges-de-la-Rivière-Malbaie',
+    region: 'Hautes-Gorges-de-la-Rivière-Malbaie',
+    km: 11.2,
+    dplus: 800,
+    min: 300,
+    difficulte: 'difficile',
+    altDepart: 250,
+    altSommet: 1050,
+    lat: 47.92,
+    lng: -70.5,
+    voir: ['belvedere', 'riviere'],
+    recherche: "L'Acropole des Draveurs, Hautes-Gorges-de-la-Rivière-Malbaie",
+  },
+  {
+    id: 'montmorency',
+    nom: 'Chute-Montmorency',
+    lieu: 'Parc de la Chute-Montmorency',
+    region: 'Québec',
+    km: 3,
+    dplus: 120,
+    min: 60,
+    difficulte: 'facile',
+    altDepart: 10,
+    altSommet: 130,
+    lat: 46.89,
+    lng: -71.15,
+    voir: ['chute', 'belvedere'],
+    recherche: 'Parc de la Chute-Montmorency',
+  },
+  {
+    id: 'mont-wright',
+    nom: 'Mont Wright',
+    lieu: 'Parc du Mont-Wright',
+    region: 'Stoneham',
+    km: 5,
+    dplus: 300,
+    min: 120,
+    difficulte: 'facile',
+    altDepart: 300,
+    altSommet: 600,
+    lat: 47.06,
+    lng: -71.37,
+    voir: ['belvedere'],
+    recherche: 'Parc du Mont-Wright, Stoneham',
+  },
+];
+
+export const sentier = (id: string | undefined) => SENTIERS.find((s) => s.id === id);
+

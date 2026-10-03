@@ -70,7 +70,8 @@ export default function Collection() {
             Comment gagner des cartes
           </Text>
           {[
-            '1 carte à chaque séance, sortie vélo ou course terminée.',
+            '1 carte à chaque séance, sortie vélo, course ou rando terminée.',
+            'Une carte Explorateur (Légendaire) pour chaque sentier de Randonnée réussi.',
             '1 carte Rare ou mieux à chaque record battu.',
             'Un booster de 3 cartes à chaque niveau et à chaque défi de la semaine.',
             `Les doubles se recyclent en XP (${XP_DOUBLE.map((x, k) => `${RARETES[k]} +${x}`).join(', ')}).`,

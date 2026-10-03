@@ -5,16 +5,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, Text, type IconName } from '@/components/ui';
 import { colors } from '@/theme';
 
-type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/progres' | '/profil' | '/coach';
+type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/progres' | '/profil' | '/coach';
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
 /**
- * 4 onglets (refonte) : Accueil (+ Profil, ouvert par l'avatar), Entraînement (Programme, Calendrier, Vélo),
- * Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
+ * 5 onglets : Accueil (+ Profil, ouvert par l'avatar), Entraînement (Programme, Calendrier, Sorties), Randonnée
+ * (maquette de l'utilisateur, oct. 2026), Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
  */
 const ONGLETS: Onglet[] = [
   { label: 'Accueil', icon: 'home', href: '/accueil', ecrans: ['/accueil', '/profil'] },
   { label: 'Entraînement', icon: 'dumb', href: '/programme', ecrans: ['/programme', '/velo'] },
+  { label: 'Randonnée', icon: 'rando', href: '/rando', ecrans: ['/rando'] },
   { label: 'Progrès', icon: 'chart', href: '/progres', ecrans: ['/progres', '/ligue'] },
   { label: 'Coach', icon: 'coach', href: '/coach', ecrans: ['/coach'] },
 ];

@@ -9,6 +9,7 @@
  */
 import { COACHES } from '@/data/coaches';
 import { EXERCICES } from '@/data/exercices';
+import { SENTIERS } from '@/data/randos';
 import { GROUPES } from '@/data/referentiels';
 import type { CoachId, Exercice, ExerciceId } from '@/data/types';
 
@@ -24,8 +25,9 @@ export const CHANCES = [62, 26, 10, 2] as const;
 /** XP d'une carte en double. */
 export const XP_DOUBLE = [5, 15, 40, 100] as const;
 
-export type CarteId = `ex:${ExerciceId}` | `coach:${CoachId}`;
-export type Carte = { id: CarteId; nom: string; sous: string; rarete: Rarete; ex?: ExerciceId; coach?: CoachId };
+export type CarteId = `ex:${ExerciceId}` | `coach:${CoachId}` | `rando:${string}`;
+/** `rando` : carte « Explorateur » d'un sentier, gagnée seulement en le faisant (jamais tirée au hasard). */
+export type Carte = { id: CarteId; nom: string; sous: string; rarete: Rarete; ex?: ExerciceId; coach?: CoachId; rando?: string };
 
 const rareteExercice = (e: Exercice): Rarete =>
   e.niveau >= 2 ? 2 : e.materiel === 'mac' || e.materiel === 'pou' || e.materiel === 'velo' ? 1 : 0;
@@ -33,6 +35,7 @@ const rareteExercice = (e: Exercice): Rarete =>
 export const CARTES: readonly Carte[] = [
   ...COACHES.map((c): Carte => ({ id: `coach:${c.id}`, nom: c.nom, sous: c.style, rarete: 3, coach: c.id })),
   ...EXERCICES.map((e): Carte => ({ id: `ex:${e.id}`, nom: e.nom, sous: GROUPES[e.groupe], rarete: rareteExercice(e), ex: e.id })),
+  ...SENTIERS.map((r): Carte => ({ id: `rando:${r.id}`, nom: r.nom, sous: 'Explorateur', rarete: 3, rando: r.id })),
 ];
 const PAR_ID = new Map(CARTES.map((c) => [c.id, c]));
 export const carte = (id: CarteId) => PAR_ID.get(id)!;
@@ -49,7 +52,7 @@ export function tirer(min: Rarete = 0, rnd: () => number = Math.random): CarteId
     }
     x -= poids[k];
   }
-  const liste = CARTES.filter((c) => c.rarete === r);
+  const liste = CARTES.filter((c) => c.rarete === r && !c.rando);
   return liste[Math.floor(rnd() * liste.length) % liste.length].id;
 }
 
