@@ -29,6 +29,13 @@ export type Sentier = {
   voir: Voir[];
   /** Recherche Apple Plans pour l'itinéraire. */
   recherche: string;
+  /** Vrai sentier d'OpenStreetMap (autour de soi) : tracé, profil mesuré sur le terrain, point de départ le plus proche. */
+  source?: 'osm';
+  trace?: (readonly [number, number])[][];
+  profil?: PointAlt[];
+  kmSommet?: number;
+  depart?: readonly [number, number];
+  boucle?: boolean;
 };
 
 export type PointAlt = { km: number; alt: number };
@@ -92,3 +99,15 @@ export function badgesRando(r: { dplus: number; km: number; debut: Date; premier
 
 /** « 3 h 30 », « 45 min ». */
 export const duree = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ' ' + String(min % 60).padStart(2, '0') : ''}` : `${min} min`);
+
+/**
+ * Suggestion du jour parmi des sentiers triés du plus proche au plus loin : le premier adapté au niveau
+ * (débutant : facile ou modéré) et à la forme (récupération basse : facile seulement), sinon le plus proche.
+ */
+export function suggestion(liste: readonly Sentier[], niveau: 1 | 2 | 3, recupBasse: boolean): { s: Sentier; pourquoi: string } | null {
+  if (!liste.length) return null;
+  const ok: Difficulte[] = recupBasse ? ['facile'] : niveau === 1 ? ['facile', 'modere'] : ['facile', 'modere', 'difficile'];
+  const s = liste.find((x) => ok.includes(x.difficulte));
+  if (s) return { s, pourquoi: recupBasse ? 'Ta récupération est basse : une rando tranquille, près de chez toi.' : niveau === 1 ? 'Près de chez toi et adaptée à ton niveau.' : 'Le sentier balisé le plus proche de chez toi.' };
+  return { s: liste[0], pourquoi: 'Le plus proche de chez toi (plus exigeant que d’habitude : vas-y à ton rythme).' };
+}

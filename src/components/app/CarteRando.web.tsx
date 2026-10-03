@@ -7,17 +7,22 @@ import { colors } from '@/theme';
 
 import { CARTE_H, CARTE_W, Quadrillage } from './CarteVide';
 
-/** Secteur d'un sentier dans le navigateur (pas d'Apple Plans) : quadrillage et point de départ. */
-export function CarteSentier({ hauteur = 220 }: { lat: number; lng: number; hauteur?: number }) {
+/** Secteur d'un sentier dans le navigateur (pas d'Apple Plans) : tracé sur quadrillage s'il est connu. */
+export function CarteSentier({ trace, hauteur = 220, arrondi = true }: { lat: number; lng: number; trace?: readonly (readonly Pt[])[]; depart?: Pt; hauteur?: number; arrondi?: boolean }) {
+  const pp = trace ? tracePlan(trace.flat(), CARTE_W, CARTE_H) : [];
   return (
-    <View style={[styles.map, { height: hauteur }]}>
+    <View style={[styles.map, { height: hauteur }, !arrondi && styles.carre]}>
       <Svg width="100%" height="100%" viewBox={`0 0 ${CARTE_W} ${CARTE_H}`} preserveAspectRatio="xMidYMid slice">
         <Quadrillage />
-        <Circle cx={CARTE_W / 2} cy={CARTE_H / 2} r={7} fill={colors.pink} stroke={colors.text} strokeWidth={2.5} />
+        {pp.length > 1 ? (
+          <Path d={pp.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ')} stroke={colors.pink} strokeWidth={3} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+          <Circle cx={CARTE_W / 2} cy={CARTE_H / 2} r={7} fill={colors.pink} stroke={colors.text} strokeWidth={2.5} />
+        )}
       </Svg>
       <View style={styles.tag}>
         <Icon name="pin" size={14} color={colors.textSecondary} />
-        <Text style={styles.tagTxt}>Carte disponible sur iPhone</Text>
+        <Text style={styles.tagTxt}>Carte satellite sur iPhone</Text>
       </View>
     </View>
   );
@@ -42,6 +47,7 @@ export function CarteRando({ pts }: { pts: readonly Pt[] }) {
 const styles = StyleSheet.create({
   map: { borderRadius: 20, overflow: 'hidden', backgroundColor: colors.surface },
   fond: { backgroundColor: colors.surface },
+  carre: { borderRadius: 0 },
   tag: { position: 'absolute', left: 12, bottom: 10, flexDirection: 'row', alignItems: 'center', gap: 6 },
   tagTxt: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
 });

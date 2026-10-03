@@ -7,10 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CarteSentier } from '@/components/app/CarteRando';
 import { PastilleDifficulte, ProfilAltitude, useMeteo } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
-import { sentier, SENTIERS } from '@/data/randos';
+import { SENTIERS } from '@/data/randos';
 import { AXEL_RANDO, photoGrande, VOIR_IMAGES } from '@/data/randosImages';
 import { duree, profilSentier, VOIR } from '@/lib/rando';
 import { useRando } from '@/store/rando';
+import { trouverSentier as sentier } from '@/store/randosPres';
 import { colors, fonts, ui } from '@/theme';
 
 /** Conseils d'Axel selon la difficulté (eau, couches, bâtons, météo). */
@@ -26,6 +27,7 @@ export default function FicheSentier() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const s = sentier(id) ?? SENTIERS[0];
   const insets = useSafeAreaInsets();
+  const osm = s.source === 'osm';
   const meteo = useMeteo(s.lat, s.lng, s.altSommet);
   const enCours = useRando((r) => r.run);
   const demarrer = () => {
@@ -37,8 +39,13 @@ export default function FicheSentier() {
     <View style={styles.root}>
       <ScrollView contentContainerStyle={{ paddingBottom: 30 + insets.bottom }} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
-          <Image source={photoGrande(s.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
-          <LinearGradient colors={ui.voilePhoto} locations={[0.35, 0.7, 1]} style={StyleSheet.absoluteFill} />
+          {/* Vrai sentier d'OpenStreetMap : sa carte avec le tracé ; sinon la photo. */}
+          {osm ? (
+            <CarteSentier lat={s.lat} lng={s.lng} trace={s.trace} depart={s.depart} hauteur={330} arrondi={false} />
+          ) : (
+            <Image source={photoGrande(s.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
+          )}
+          <LinearGradient colors={ui.voilePhoto} locations={[0.35, 0.7, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
           <Pressable onPress={() => (router.canGoBack() ? router.back() : router.navigate('/rando'))} style={[styles.rond, { top: insets.top + 6 }]} accessibilityRole="button" accessibilityLabel="Retour">
             <Icon name="left" size={22} />
           </Pressable>
@@ -65,18 +72,29 @@ export default function FicheSentier() {
             <Text weight="semibold" style={styles.h3}>
               Profil d’altitude
             </Text>
-            <Text style={styles.petit}>Profil approximatif (aller-retour)</Text>
+            <Text style={styles.petit}>{osm ? `Altitude du terrain le long du tracé${s.boucle ? ' (boucle)' : ' (aller-retour)'}` : 'Profil approximatif (aller-retour)'}</Text>
             <View style={styles.mt}>
-              <ProfilAltitude points={profilSentier(s)} marges={72} />
+              <ProfilAltitude points={s.profil ?? profilSentier(s)} marges={72} />
             </View>
           </Card>
 
-          <CarteSentier lat={s.lat} lng={s.lng} />
-          <Button label="Itinéraire dans Plans" icon="pin" variant="dark" small onPress={() => Linking.openURL('http://maps.apple.com/?q=' + encodeURIComponent(s.recherche))} style={styles.mt} />
+          {!osm && <CarteSentier lat={s.lat} lng={s.lng} />}
+          <Button
+            label={osm ? 'Itinéraire jusqu’au départ' : 'Itinéraire dans Plans'}
+            icon="pin"
+            variant="dark"
+            small
+            onPress={() =>
+              Linking.openURL(osm && s.depart ? `http://maps.apple.com/?daddr=${s.depart[0]},${s.depart[1]}&dirflg=d` : 'http://maps.apple.com/?q=' + encodeURIComponent(s.recherche))
+            }
+            style={styles.mt}
+          />
 
-          <Text weight="semibold" style={[styles.h3, styles.titre]}>
-            Ce que tu vas voir
-          </Text>
+          {s.voir.length > 0 && (
+            <Text weight="semibold" style={[styles.h3, styles.titre]}>
+              Ce que tu vas voir
+            </Text>
+          )}
           <View style={styles.voir}>
             {s.voir.map((v) => (
               <View key={v} style={styles.voirItem}>
@@ -125,7 +143,11 @@ export default function FicheSentier() {
           </Card>
 
           <Button label={enCours ? 'Reprendre ma rando' : 'Démarrer la rando'} iconAfter="right" onPress={demarrer} style={styles.mt} />
-          <Text style={styles.note}>Données indicatives : vérifie le sentier, l’accès et les conditions auprès du parc avant de partir.</Text>
+          <Text style={styles.note}>
+            {osm
+              ? 'Tracé © contributeurs OpenStreetMap · altitude Open-Meteo (Copernicus). Durée et difficulté estimées : vérifie l’accès, le balisage et les conditions avant de partir.'
+              : 'Données indicatives : vérifie le sentier, l’accès et les conditions auprès du parc avant de partir.'}
+          </Text>
         </View>
       </ScrollView>
     </View>

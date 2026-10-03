@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CarteRando } from '@/components/app/CarteRando';
 import { confirmer } from '@/components/app/confirmer';
 import { Button, Icon, Text, type IconName } from '@/components/ui';
-import { sentier } from '@/data/randos';
+import { trouverSentier as sentier } from '@/store/randosPres';
 import { useRando } from '@/store/rando';
 import { colors, fonts, ui } from '@/theme';
 
@@ -18,7 +18,7 @@ export default function RandoEnCours() {
   const r = useRando();
   const s = sentier(r.sentier);
   // Aller-retour : le sommet est à mi-parcours.
-  const sommetKm = s ? s.km / 2 : 0;
+  const sommetKm = s ? (s.kmSommet ?? s.km / 2) : 0;
   const reste = Math.max(0, sommetKm - r.dist);
   const part = s ? Math.min(1, r.dist / s.km) : 0;
   const dplusReste = s ? Math.max(0, s.dplus - r.dplus) : 0;

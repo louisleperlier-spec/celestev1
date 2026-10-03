@@ -6,10 +6,11 @@ import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarteJeu } from '@/components/app/CarteJeu';
+import { CarteRando } from '@/components/app/CarteRando';
 import { BandeauCartes } from '@/components/app/Jeu';
 import { ProfilAltitude } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
-import { sentier } from '@/data/randos';
+import { trouverSentier as sentier } from '@/store/randosPres';
 import { AXEL_RANDO, photoGrande } from '@/data/randosImages';
 import { vibrerFete } from '@/store/jeu';
 import { useRando } from '@/store/rando';
@@ -22,6 +23,7 @@ const hm = (s: number) => `${Math.floor(s / 3600)} h ${String(Math.floor((s % 36
 export default function RecapRando() {
   const insets = useSafeAreaInsets();
   const r = useRando((x) => x.res);
+  const pts = useRando((x) => x.pts);
   const s = sentier(r?.sentier);
   useEffect(() => {
     if (r?.sommet) vibrerFete();
@@ -38,7 +40,8 @@ export default function RecapRando() {
     <View style={styles.root}>
       <ScrollView contentContainerStyle={{ paddingBottom: 24 + insets.bottom }} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
-          <Image source={photoGrande(s?.id ?? 'lac-des-cygnes')} style={StyleSheet.absoluteFill} contentFit="cover" />
+          {/* Sentier de la collection : sa photo ; sentier d'OpenStreetMap ou rando libre : ton tracé. */}
+          {s && !s.source ? <Image source={photoGrande(s.id)} style={StyleSheet.absoluteFill} contentFit="cover" /> : <CarteRando pts={pts} />}
           <LinearGradient colors={ui.voilePhoto} locations={[0.3, 0.75, 1]} style={StyleSheet.absoluteFill} />
           <View style={[styles.haut, { top: insets.top + 6 }]}>
             <Pressable onPress={() => router.navigate('/rando')} style={styles.rond} accessibilityRole="button" accessibilityLabel="Fermer">
@@ -81,7 +84,7 @@ export default function RecapRando() {
             </Card>
           )}
 
-          {s && (
+          {s && !s.source && (
             <Card style={[styles.carte, styles.gagnee]}>
               <CarteJeu id={`rando:${s.id}`} largeur={130} cachee={!r.sommet} />
               <View style={styles.flex}>

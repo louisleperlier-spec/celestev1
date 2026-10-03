@@ -4,19 +4,27 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import type { Pt } from '@/lib/velo';
 import { alpha, colors } from '@/theme';
 
-/** Secteur d'un sentier : vue satellite d'Apple Plans autour du point de départ approximatif. */
-export function CarteSentier({ lat, lng, hauteur = 220 }: { lat: number; lng: number; hauteur?: number }) {
+/** Secteur d'un sentier (vue satellite d'Apple Plans) ; avec le tracé d'OpenStreetMap s'il est connu. */
+export function CarteSentier({ lat, lng, trace, depart, hauteur = 220, arrondi = true }: { lat: number; lng: number; trace?: readonly (readonly Pt[])[]; depart?: Pt; hauteur?: number; arrondi?: boolean }) {
+  const tous = trace?.flat() ?? [];
+  const la = tous.map((p) => p[0]);
+  const lo = tous.map((p) => p[1]);
+  const region = tous.length
+    ? {
+        latitude: (Math.min(...la) + Math.max(...la)) / 2,
+        longitude: (Math.min(...lo) + Math.max(...lo)) / 2,
+        latitudeDelta: Math.max(0.01, (Math.max(...la) - Math.min(...la)) * 1.5),
+        longitudeDelta: Math.max(0.01, (Math.max(...lo) - Math.min(...lo)) * 1.5),
+      }
+    : { latitude: lat, longitude: lng, latitudeDelta: 0.08, longitudeDelta: 0.08 };
+  const d = depart ?? [lat, lng];
   return (
-    <View style={[styles.map, { height: hauteur }]}>
-      <MapView
-        style={StyleSheet.absoluteFill}
-        initialRegion={{ latitude: lat, longitude: lng, latitudeDelta: 0.08, longitudeDelta: 0.08 }}
-        mapType="hybrid"
-        userInterfaceStyle="dark"
-        pitchEnabled={false}
-        showsPointsOfInterests={false}
-      >
-        <Marker coordinate={{ latitude: lat, longitude: lng }} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
+    <View style={[styles.map, { height: hauteur }, !arrondi && styles.carre]}>
+      <MapView style={StyleSheet.absoluteFill} initialRegion={region} mapType="hybrid" userInterfaceStyle="dark" pitchEnabled={false} showsPointsOfInterests={false}>
+        {trace?.map((m, k) => (
+          <Polyline key={k} coordinates={m.map((p) => ({ latitude: p[0], longitude: p[1] }))} strokeColor={colors.pink} strokeWidth={4} lineCap="round" lineJoin="round" />
+        ))}
+        <Marker coordinate={{ latitude: d[0], longitude: d[1] }} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
           <View style={styles.depart} />
         </Marker>
       </MapView>
@@ -61,6 +69,7 @@ export function CarteRando({ pts }: { pts: readonly Pt[] }) {
 
 const styles = StyleSheet.create({
   map: { borderRadius: 20, overflow: 'hidden', backgroundColor: colors.surface },
+  carre: { borderRadius: 0 },
   depart: { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.pink, borderWidth: 3, borderColor: colors.text },
   halo: { width: 44, height: 44, borderRadius: 22, backgroundColor: alpha(colors.pink, 0.3), alignItems: 'center', justifyContent: 'center' },
   ici: { width: 18, height: 18, borderRadius: 9, backgroundColor: colors.text, borderWidth: 4, borderColor: colors.pink },

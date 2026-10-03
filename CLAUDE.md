@@ -241,7 +241,13 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     XP 40 + 6/km + D+/25, calories MET 6 + montée, Apple Santé (HKWorkoutActivityType 24, distance marche), rappel VFC, territoires (vrai GPS)
   - 5 sentiers dans `data/randos.ts` (valeurs **indicatives des maquettes, à vérifier** avant la sortie), photos recadrées des maquettes
     (`data/randosImages.ts`, `assets/randos/`) ; cartes **Explorateur** `rando:<id>` (Légendaires, jamais tirées, gagnées au sommet ; collection 59)
-  - reste : vraies photos des sentiers, liste validée (ou OpenStreetMap), rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
+  - **vrais sentiers « Près de toi »** (`lib/osm.ts`, `store/randosPres.ts`, cache `nea-randos-pres` 24 h / 10 km) : position, relations
+    `route=hiking` nommées d'OpenStreetMap à 30 km (Overpass, 2 serveurs), 1,5 à 25 km, les 8 plus proches ; altitude du terrain sur 60 points
+    (Open-Meteo `/v1/elevation`) → D+, profil, sommet ; tracé linéaire = aller-retour (distance doublée, profil en miroir) ; durée 4 km/h + 1 h / 600 m ;
+    difficulté (facile < 6 km et < 250 m, difficile > 15 km ou > 700 m) ; **Suggestion du jour** (`suggestion` : niveau, récupération du jour) ;
+    fiche avec la carte du tracé, « Itinéraire jusqu'au départ », mention © OpenStreetMap ; pas de carte Explorateur pour ces sentiers
+    (Overpass bloqué dans l'environnement de dev : testé avec des réponses simulées, à valider sur iPhone)
+  - reste : vraies photos des sentiers incontournables, liste validée, rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

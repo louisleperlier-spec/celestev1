@@ -7,7 +7,6 @@ import * as Location from 'expo-location';
 import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
-import { sentier } from '@/data/randos';
 import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
 import { badgesRando, caloriesRando, denivele, profilMesure, xpRando, type Badge, type PointAlt } from '@/lib/rando';
 import { enregistrerEntrainement } from '@/lib/sante';
@@ -16,6 +15,7 @@ import { ajouterPoint, simDepart, type Pt, type Sim } from '@/lib/velo';
 
 import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
+import { trouverSentier as sentier } from './randosPres';
 import { conquerirTrace } from './territoires';
 
 export type ResultatRando = {
@@ -189,7 +189,8 @@ export const useRando = create<Rando & Actions>()((set, get) => {
       enregistrerEntrainement({ type: 'rando', debut: new Date(v.debut), fin: new Date(), kcal: cal, km: v.dist });
       // Carte Explorateur : premier sommet de ce sentier.
       let carte = false;
-      if (s && sommet) {
+      // Carte Explorateur : seulement pour les sentiers de la collection (pas ceux d'OpenStreetMap).
+      if (s && sommet && !s.source) {
         const id = `rando:${s.id}` as const;
         const jeu = useProfil.getState().jeu;
         carte = !(jeu.cartes[id] ?? 0);

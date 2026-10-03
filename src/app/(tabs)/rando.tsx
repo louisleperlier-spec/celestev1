@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,8 +10,12 @@ import { Button, Icon, Text } from '@/components/ui';
 import { SENTIERS } from '@/data/randos';
 import { AXEL_RANDO, photoGrande, RANDO_IMAGES } from '@/data/randosImages';
 import { lundiISO } from '@/lib/ligue';
-import { duree, randoSemaine, type Sentier } from '@/lib/rando';
+import { lvlN } from '@/lib/plan';
+import { duree, randoSemaine, suggestion, type Sentier } from '@/lib/rando';
+import { baseHrv } from '@/lib/sommeil';
+import { useProfil } from '@/store/profil';
 import { useRando } from '@/store/rando';
+import { chercherRandosPres, useRandosPres } from '@/store/randosPres';
 import { colors, fonts, ui } from '@/theme';
 
 type Filtre = 'facile' | 'modere' | 'difficile' | 'court' | 'vue' | 'chute';
@@ -53,6 +57,17 @@ export default function Randonnee() {
   const enCours = useRando((s) => s.run);
   const semaine = randoSemaine(SENTIERS, lundiISO());
   const liste = SENTIERS.filter((s) => garde(s, filtre));
+  const pres = useRandosPres();
+  const niveau = useProfil((p) => lvlN(p.level));
+  const recupBasse = useProfil((p) => {
+    const m = p.hrvChecks[p.hrvChecks.length - 1];
+    return !!m && new Date(m.d).toDateString() === new Date().toDateString() && m.hrv < baseHrv(p.nights, p.hrvChecks) * 0.9;
+  });
+  const proposee = suggestion(pres.liste, niveau, recupBasse);
+  const autour = pres.liste.filter((s) => s.id !== proposee?.s.id && garde(s, filtre));
+  useEffect(() => {
+    void chercherRandosPres();
+  }, []);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -90,7 +105,71 @@ export default function Randonnee() {
           })}
         </View>
 
+        {/* Vrais sentiers balisés autour de toi (OpenStreetMap). */}
+        <View style={styles.titreLigne}>
+          <Text style={styles.h2}>Près de toi</Text>
+          {pres.etat === 'ok' && (
+            <Pressable onPress={() => chercherRandosPres(true)} accessibilityRole="button" accessibilityLabel="Actualiser">
+              <Icon name="refresh" size={20} color={colors.textSecondary} />
+            </Pressable>
+          )}
+        </View>
+        {pres.etat === 'recherche' || (pres.etat === 'vide' && !pres.liste.length) ? (
+          <Text style={styles.vide}>Recherche des sentiers balisés autour de toi…</Text>
+        ) : pres.etat === 'refus' ? (
+          <Text style={styles.vide}>Autorise ta position pour voir les vrais sentiers près de chez toi.</Text>
+        ) : pres.etat === 'erreur' && !pres.liste.length ? (
+          <Text style={styles.vide}>Impossible de joindre OpenStreetMap pour l’instant. Vérifie ta connexion.</Text>
+        ) : !proposee ? (
+          <Text style={styles.vide}>Aucun sentier balisé trouvé à moins de 30 km. Essaie une rando libre !</Text>
+        ) : (
+          <Pressable onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.suggestion} accessibilityRole="button">
+            <View style={styles.badgeSemaine}>
+              <Text weight="bold" style={styles.badgeTxt}>
+                SUGGESTION DU JOUR
+              </Text>
+            </View>
+            <Text weight="bold" style={[styles.semaineNom, styles.mtSugg]} numberOfLines={2}>
+              {proposee.s.nom}
+            </Text>
+            <Text style={styles.semaineLieu}>
+              {proposee.s.region}
+              {proposee.s.lieu !== 'Sentier balisé' ? ` · ${proposee.s.lieu}` : ''}
+            </Text>
+            <View style={styles.ligne}>
+              <View style={styles.flex}>
+                <Chiffres s={proposee.s} clair />
+              </View>
+              <PastilleDifficulte d={proposee.s.difficulte} />
+            </View>
+            <Text style={styles.pourquoi}>🧭 {proposee.pourquoi}</Text>
+            <Button label="Voir le sentier" iconAfter="right" small onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.btn} />
+          </Pressable>
+        )}
+        {autour.map((s) => (
+          <Pressable key={s.id} onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
+            <View style={styles.vignetteOsm}>
+              <Icon name="montagne" size={28} color={colors.pink} />
+            </View>
+            <View style={styles.flex}>
+              <Text weight="bold" style={styles.itemNom} numberOfLines={1}>
+                {s.nom}
+              </Text>
+              <Text style={styles.itemLieu} numberOfLines={1}>
+                {s.region}
+              </Text>
+              <Chiffres s={s} />
+            </View>
+            <View style={styles.droite}>
+              <PastilleDifficulte d={s.difficulte} />
+              <Icon name="right" size={16} color={colors.textSecondary} />
+            </View>
+          </Pressable>
+        ))}
+        {pres.liste.length > 0 && <Text style={styles.note}>Sentiers et tracés © contributeurs OpenStreetMap · dénivelé calculé avec l’altitude du terrain.</Text>}
+
         {/* Rando de la semaine */}
+        <Text style={styles.h2}>Incontournables</Text>
         <Pressable onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.semaine} accessibilityRole="button">
           <Image source={photoGrande(semaine.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
           <LinearGradient colors={ui.voilePhoto} locations={[0.25, 0.6, 1]} style={StyleSheet.absoluteFill} />
@@ -172,7 +251,12 @@ const styles = StyleSheet.create({
   filtreOn: { backgroundColor: colors.pink, borderColor: colors.pink },
   filtreTxt: { fontSize: 14, lineHeight: 18 },
   filtreTxtOn: { color: colors.onPrimary },
-  semaine: { height: 300, borderRadius: 22, overflow: 'hidden', marginTop: 16, backgroundColor: colors.surface },
+  semaine: { height: 300, borderRadius: 22, overflow: 'hidden', marginTop: 10, backgroundColor: colors.surface },
+  titreLigne: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  suggestion: { borderRadius: 22, padding: 16, marginTop: 6, backgroundColor: ui.selFond, borderWidth: 1, borderColor: ui.pinkRing },
+  mtSugg: { marginTop: 34 },
+  pourquoi: { fontSize: 13.5, lineHeight: 19, color: colors.text, marginTop: 10 },
+  vignetteOsm: { width: 92, height: 62, borderRadius: 12, backgroundColor: ui.selFond, alignItems: 'center', justifyContent: 'center' },
   badgeSemaine: { position: 'absolute', top: 14, left: 14, backgroundColor: colors.pink, borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5 },
   badgeTxt: { fontSize: 11.5, lineHeight: 15, color: colors.onPrimary, letterSpacing: 0.5 },
   semaineBas: { position: 'absolute', left: 16, right: 16, bottom: 14 },
