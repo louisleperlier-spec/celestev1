@@ -82,6 +82,8 @@ struct EtatMontre: Codable {
   /// Séance choisie sur l'iPhone (« Ouvrir sur la montre ») et son programme (build 18).
   let choisie: SeanceMontre?
   let choisieProg: String?
+  /// Sentier choisi sur l'iPhone (build 19).
+  let rando: RandoMontre?
 
   /// Score santé (0–100) : moyenne des parts d'Effort, de Récupération et de Sommeil connues.
   var score: Int? {
@@ -127,10 +129,25 @@ struct VeloMontre: Codable {
   let kcal: Double
   let fcMoy: Double
   let fcMax: Double
-  /// « course » ou « velo » (absent avant le build 11 = vélo).
+  /// « course », « velo » ou « rando » (absent avant le build 11 = vélo).
   var sport: String? = nil
   /// Tracé GPS [latitude, longitude] (500 points au plus) : l'iPhone en déduit les territoires conquis.
   var pts: [[Double]]? = nil
+  /// Randonnée (build 19) : dénivelé positif (baromètre), altitude max et sentier lancé depuis l'iPhone.
+  var dplus: Double? = nil
+  var altMax: Double? = nil
+  var sentier: String? = nil
+}
+
+/// Sentier choisi sur l'iPhone (« Ouvrir sur la montre » d'une fiche de randonnée, build 19).
+struct RandoMontre: Codable, Hashable, Identifiable {
+  let id: String
+  let nom: String
+  let lieu: String
+  let km: Double
+  let dplus: Double
+  let altSommet: Double
+  let min: Double
 }
 
 /// Mesure de récupération d'1 minute.

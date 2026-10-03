@@ -8,7 +8,7 @@ import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
 import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
-import { badgesRando, caloriesRando, denivele, profilMesure, xpRando, type Badge, type PointAlt } from '@/lib/rando';
+import { badgesRando, caloriesRando, denivele, profilMesure, xpRando, type Badge, type PointAlt, type Sentier } from '@/lib/rando';
 import { enregistrerEntrainement } from '@/lib/sante';
 import { casesTrace } from '@/lib/territoires';
 import { ajouterPoint, simDepart, type Pt, type Sim } from '@/lib/velo';
@@ -64,6 +64,19 @@ type Actions = {
 };
 
 const age = () => useProfil.getState().age;
+
+/** Sommet atteint : au moins 60 % du dénivelé du sentier, ou 100 m sans sentier. */
+export const sommetAtteint = (s: Sentier | undefined, dplus: number) => (s ? dplus >= s.dplus * 0.6 : dplus >= 100);
+
+/** Carte « Explorateur » du sentier (sentiers de la collection seulement, pas ceux d'OpenStreetMap) ; vrai si elle est nouvelle. */
+export function gagnerExplorateur(s: Sentier): boolean {
+  if (s.source) return false;
+  const id = `rando:${s.id}` as const;
+  const jeu = useProfil.getState().jeu;
+  const nouvelle = !(jeu.cartes[id] ?? 0);
+  useProfil.setState({ jeu: { ...jeu, cartes: { ...jeu.cartes, [id]: (jeu.cartes[id] ?? 0) + 1 } } });
+  return nouvelle;
+}
 let horloge: ReturnType<typeof setInterval> | null = null;
 let suivi: Location.LocationSubscription | null = null;
 let attente: ReturnType<typeof setTimeout> | null = null;
@@ -182,20 +195,12 @@ export const useRando = create<Rando & Actions>()((set, get) => {
       const cal = caloriesRando(v.el, p.weight, v.dplus);
       const fin = new Date().toISOString();
       const premiere = !p.logs.some((l) => l.type === 'rando');
-      const sommet = s ? v.dplus >= s.dplus * 0.6 : v.dplus >= 100;
+      const sommet = sommetAtteint(s, v.dplus);
       p.addLog({ d: fin, debut: v.debut, type: 'rando', title: s?.nom ?? 'Randonnée', min: Math.max(1, Math.round(v.el / 60)), cal, vol: 0, dist: +v.dist.toFixed(1), dplus: v.dplus, rando: s?.id, sommet, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
       const xp = useProfil.getState().addXp(xpRando(v.dist, v.dplus), 'Randonnée');
       useProfil.getState().programmerPost('rando', st.hrv);
       enregistrerEntrainement({ type: 'rando', debut: new Date(v.debut), fin: new Date(), kcal: cal, km: v.dist });
-      // Carte Explorateur : premier sommet de ce sentier.
-      let carte = false;
-      // Carte Explorateur : seulement pour les sentiers de la collection (pas ceux d'OpenStreetMap).
-      if (s && sommet && !s.source) {
-        const id = `rando:${s.id}` as const;
-        const jeu = useProfil.getState().jeu;
-        carte = !(jeu.cartes[id] ?? 0);
-        useProfil.setState({ jeu: { ...jeu, cartes: { ...jeu.cartes, [id]: (jeu.cartes[id] ?? 0) + 1 } } });
-      }
+      const carte = s && sommet ? gagnerExplorateur(s) : false;
       let cases = 0;
       if (v.gps === 'gps' && v.pts.length > 1) {
         cases = casesTrace(v.pts).length;

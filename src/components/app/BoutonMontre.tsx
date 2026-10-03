@@ -3,8 +3,10 @@ import { StyleSheet, View } from "react-native";
 import { Button, Icon, Text } from "@/components/ui";
 import {
   montreDisponible,
+  ouvrirRandoSurMontre,
   ouvrirSurMontre,
   useEstSurMontre,
+  useRandoSurMontre,
   type ChoixMontre,
 } from "@/store/liaisonMontre";
 import { colors, ui } from "@/theme";
@@ -44,6 +46,32 @@ export function BoutonMontre({
         icon="montre"
         variant="dark"
         onPress={() => ouvrirSurMontre(choix)}
+      />
+    </View>
+  );
+}
+
+/** « Ouvrir sur la montre » d'un sentier : il devient « Ma rando » sur l'Apple Watch (build 19+). */
+export function BoutonRandoMontre({ id, style }: { id: string; style?: object }) {
+  const envoyee = useRandoSurMontre(id);
+  if (!montreDisponible()) return null;
+  return (
+    <View style={style}>
+      {envoyee && (
+        <View style={styles.choisie}>
+          <View style={styles.coche}>
+            <Icon name="check" size={14} strokeWidth={3} color={colors.onPrimary} />
+          </View>
+          <Text weight="semibold" style={styles.txt}>
+            Rando prête sur ta montre
+          </Text>
+        </View>
+      )}
+      <Button
+        label={envoyee ? "Rouvrir sur la montre" : "Ouvrir sur la montre"}
+        icon="montre"
+        variant="dark"
+        onPress={() => ouvrirRandoSurMontre(id)}
       />
     </View>
   );

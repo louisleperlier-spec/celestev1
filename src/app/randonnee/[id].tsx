@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { BoutonRandoMontre } from '@/components/app/BoutonMontre';
 import { CarteSentier } from '@/components/app/CarteRando';
 import { GalerieSentier } from '@/components/app/GalerieSentier';
 import { PastilleDifficulte, ProfilAltitude, useMeteo } from '@/components/app/Rando';
@@ -154,6 +155,7 @@ export default function FicheSentier() {
           </Card>
 
           <Button label={enCours ? 'Reprendre ma rando' : 'Démarrer la rando'} iconAfter="right" onPress={demarrer} style={styles.mt} />
+          <BoutonRandoMontre id={s.id} style={styles.mt} />
           <Text style={styles.note}>
             {osm
               ? 'Tracé © contributeurs OpenStreetMap · altitude Open-Meteo (Copernicus). Durée et difficulté estimées : vérifie l’accès, le balisage et les conditions avant de partir.'

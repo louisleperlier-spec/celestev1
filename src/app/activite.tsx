@@ -62,6 +62,7 @@ export default function Activite() {
   }
 
   const course = l.type === 'course';
+  const rando = l.type === 'rando';
   const velo = l.type === 'velo' || course;
   const bpm = mesures?.map((m) => m[1]) ?? [];
   const moy = l.hrAvg || (bpm.length ? Math.round(bpm.reduce((a, b) => a + b, 0) / bpm.length) : 0);
@@ -74,7 +75,7 @@ export default function Activite() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.tete}>
           <View style={styles.tuile}>
-            <Icon name={course ? 'run' : velo ? 'bike' : 'dumb'} size={26} color={colors.pink} />
+            <Icon name={rando ? 'rando' : course ? 'run' : velo ? 'bike' : 'dumb'} size={26} color={colors.pink} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.h1} numberOfLines={2}>
@@ -95,7 +96,12 @@ export default function Activite() {
         <View style={styles.grid}>
           <Kpi icon="clock" label="Durée" value={mmss(sec || l.min * 60)} />
           <Kpi icon="flame" label="Calories actives" value={`${l.cal} kcal`} />
-          {velo ? (
+          {rando ? (
+            <>
+              <Kpi icon="rando" label="Distance" value={`${dec((l.dist ?? 0).toFixed(1))} km`} />
+              <Kpi icon="trend" label={l.sommet ? 'Dénivelé + · sommet atteint' : 'Dénivelé +'} value={`${l.dplus ?? 0} m`} />
+            </>
+          ) : velo ? (
             <>
               <Kpi icon={course ? 'run' : 'bike'} label="Distance" value={`${dec((l.dist ?? 0).toFixed(1))} km`} />
               {course ? (

@@ -49,7 +49,7 @@ export type Notif = {
   d: string;
   read: boolean;
   type: 'post' | 'sleep' | 'bed' | 'trial' | 'activite';
-  icon: 'wave' | 'moon' | 'star' | 'bike' | 'run' | 'dumb';
+  icon: 'wave' | 'moon' | 'star' | 'bike' | 'run' | 'dumb' | 'rando';
   col: string;
   act: ActionNotif;
   title: string;

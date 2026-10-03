@@ -262,7 +262,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     Le Centenaire (distances / D+ / durées des fiches des parcs, altitudes approximatives) ; **galerie** « Photos du sentier » (`GalerieSentier`,
     visionneuse plein écran) et « Ce que tu vas voir » avec les vraies photos du sentier (`galerie`, `imageVoir` dans `randosImages.ts`) :
     photos libres de **Wikimedia Commons** teintées au style NÉA, crédit auteur + licence affiché (photo, visionneuse, héros `creditPrincipal`)
-  - reste : liste validée, rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
+  - **rando sur la montre (build 19)** : 4e activité « Randonnée » (`TypeActivite.rando`, `SortieVelo(rando:)`, HKWorkoutActivityType
+    `.hiking`) : GPS, D+ au baromètre (`CMAltimeter`, seuil 3 m ; altitude GPS sans baromètre), altitude, sommet (60 % du D+ du sentier),
+    bilan ; « Ouvrir sur la montre » sur la fiche (`BoutonRandoMontre`, `ouvrirRandoSurMontre`, `rando` dans l'état) → « Ma rando · Liée à
+    l'iPhone » (`BlocMaRando`, `MaRandoView`) ; la montre renvoie `sport: 'rando'` + `dplus`, `altMax`, `sentier` → `recevoirRando`
+    (journal, XP, sommet, carte Explorateur `gagnerExplorateur`, territoires) ; récap `/activite` avec D+
+  - reste : liste validée, photo au sommet
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

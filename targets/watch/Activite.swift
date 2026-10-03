@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Les trois activités de l'écran « Entraînement » (maquette 01 · Choisir).
+/// Les activités de l'écran « Entraînement » (maquette 01 · Choisir, + randonnée au build 19).
 enum TypeActivite: String, CaseIterable, Identifiable {
-  case muscu, course, velo
+  case muscu, course, velo, rando
 
   var id: String { rawValue }
 
@@ -11,6 +11,7 @@ enum TypeActivite: String, CaseIterable, Identifiable {
     case .muscu: return "Musculation"
     case .course: return "Course"
     case .velo: return "Vélo"
+    case .rando: return "Randonnée"
     }
   }
 
@@ -19,6 +20,7 @@ enum TypeActivite: String, CaseIterable, Identifiable {
     case .muscu: return "dumbbell.fill"
     case .course: return "figure.run"
     case .velo: return "figure.outdoor.cycle"
+    case .rando: return "figure.hiking"
     }
   }
 }

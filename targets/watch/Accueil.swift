@@ -9,6 +9,7 @@ struct AccueilView: View {
   @State private var sortie: TypeActivite?
   @State private var voirSeances = false
   @State private var voirChoisie = false
+  @State private var voirRando = false
 
   private var type: TypeActivite { TypeActivite(rawValue: choix) ?? .muscu }
 
@@ -19,6 +20,9 @@ struct AccueilView: View {
       return donnees.etat == nil ? "Ouvre NÉA sur l'iPhone" : "Choisis ta séance"
     case .course, .velo:
       return "GPS · conquiers des territoires"
+    case .rando:
+      if let r = donnees.etat?.rando { return r.nom }
+      return "GPS · dénivelé · altitude"
     }
   }
 
@@ -30,7 +34,7 @@ struct AccueilView: View {
       } else {
         voirSeances = true
       }
-    case .course, .velo:
+    case .course, .velo, .rando:
       sortie = type
     }
   }
@@ -38,6 +42,10 @@ struct AccueilView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 8) {
+        if let r = donnees.etat?.rando {
+          BlocMaRando(r: r, demarrer: { choix = TypeActivite.rando.rawValue; sortie = .rando })
+            .padding(.bottom, 8)
+        }
         if let c = donnees.etat?.choisie {
           BlocMaSeance(s: c, programme: donnees.etat?.choisieProg ?? "", demarrer: { lancement = c })
             .padding(.bottom, 8)
@@ -80,17 +88,21 @@ struct AccueilView: View {
     .navigationDestination(isPresented: $voirChoisie) {
       MaSeanceView()
     }
+    .navigationDestination(isPresented: $voirRando) {
+      MaRandoView()
+    }
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)
     }
     .fullScreenCover(item: $sortie) { t in
-      SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: t == .course)
+      SortieView(fcMax: donnees.etat?.fcMax ?? 190, course: t == .course, rando: t == .rando, sentier: t == .rando ? donnees.etat?.rando : nil)
     }
-    // « Ouvrir sur la montre » sur l'iPhone : « Ma séance ».
+    // « Ouvrir sur la montre » sur l'iPhone : « Ma rando » s'il y en a une, sinon « Ma séance ».
     .onReceive(donnees.$ouvrirChoisie) { o in
       guard o else { return }
       donnees.ouvrirChoisie = false
-      if lancement == nil && sortie == nil { voirChoisie = true }
+      guard lancement == nil && sortie == nil else { return }
+      if donnees.etat?.rando != nil { voirRando = true } else { voirChoisie = true }
     }
     // Complication « Ma séance » : ouvre directement la séance du jour.
     .onReceive(donnees.$demandeSeance) { d in
@@ -134,6 +146,63 @@ struct BlocMaSeance: View {
         Text("Voir les exercices")
       }
       .buttonStyle(BoutonSombre())
+    }
+  }
+}
+
+/// « Ma rando » : le sentier choisi sur l'iPhone (distance, D+, sommet), Démarrer.
+struct BlocMaRando: View {
+  let r: RandoMontre
+  let demarrer: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Ma rando").font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+        HStack(spacing: 6) {
+          Image(systemName: "link.circle.fill").font(.system(size: 16)).foregroundColor(Nea.rose)
+          Text("Liée à l'iPhone").font(.system(size: 14)).foregroundColor(Nea.texte2)
+        }
+      }
+      VStack(alignment: .leading, spacing: 2) {
+        Text(r.lieu).font(.system(size: 13, weight: .semibold)).foregroundColor(Nea.rose).lineLimit(1).minimumScaleFactor(0.7)
+        Text(r.nom).font(.system(size: 19, weight: .bold)).lineLimit(3).minimumScaleFactor(0.7)
+        Text("\(String(format: "%.1f", r.km).replacingOccurrences(of: ".", with: ",")) km · D+ \(Int(r.dplus)) m · \(Int(r.min) / 60) h \(String(format: "%02d", Int(r.min) % 60))")
+          .font(.system(size: 14))
+          .foregroundColor(Nea.texte2)
+          .lineLimit(2)
+          .minimumScaleFactor(0.7)
+        Text("Sommet \(Int(r.altSommet)) m").font(.system(size: 13)).foregroundColor(Nea.texte2)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(12)
+      .background(RoundedRectangle(cornerRadius: 18).fill(Nea.carte))
+      Button(action: demarrer) {
+        Text("Démarrer")
+      }
+      .buttonStyle(BoutonRose())
+    }
+  }
+}
+
+/// « Ma rando » seule (ouverte par l'iPhone).
+struct MaRandoView: View {
+  @ObservedObject private var donnees = Donnees.partagees
+  @State private var partie = false
+
+  var body: some View {
+    ScrollView {
+      if let r = donnees.etat?.rando {
+        BlocMaRando(r: r, demarrer: { partie = true })
+      } else {
+        Text("Choisis un sentier sur ton iPhone, puis « Ouvrir sur la montre ».")
+          .font(.system(size: 15))
+          .foregroundColor(Nea.texte2)
+      }
+    }
+    .navigationTitle("NÉA")
+    .fullScreenCover(isPresented: $partie) {
+      SortieView(fcMax: donnees.etat?.fcMax ?? 190, rando: true, sentier: donnees.etat?.rando)
     }
   }
 }

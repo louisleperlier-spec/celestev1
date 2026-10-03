@@ -1,5 +1,6 @@
 import Combine
 import CoreLocation
+import CoreMotion
 import MapKit
 import SwiftUI
 
@@ -7,12 +8,22 @@ enum EtapeVelo {
   case route, pause, bilan
 }
 
-/// Sortie vélo ou course en extérieur : GPS de la montre (distance, vitesse, tracé), FC et calories, enregistrée dans Santé.
-/// Le tracé part à l'iPhone, qui en déduit les territoires conquis.
+/// Sortie vélo, course ou randonnée en extérieur : GPS de la montre (distance, vitesse, tracé), FC et calories, enregistrée dans Santé.
+/// Randonnée : dénivelé positif mesuré par le baromètre (sinon l'altitude GPS) et altitude. Le tracé part à l'iPhone (territoires).
 final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   let entrainement: Entrainement
   let fcMax: Double
   let course: Bool
+  let rando: Bool
+  /// Sentier lancé depuis l'iPhone (« Ma rando »).
+  let sentier: RandoMontre?
+  @Published var dplus = 0.0
+  @Published var altitude: Double?
+  @Published var altMax: Double?
+  private let altimetre = CMAltimeter()
+  private var baroActif = false
+  /// Altitude de référence du calcul du D+ (la montée ne compte qu'au-delà de 3 m, contre le bruit).
+  private var base: Double?
 
   @Published var etape: EtapeVelo = .route
   @Published var secondes = 0
@@ -33,10 +44,12 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   private var liens = Set<AnyCancellable>()
   private(set) var debut = Date()
 
-  init(fcMax: Double, course: Bool = false) {
+  init(fcMax: Double, course: Bool = false, rando: Bool = false, sentier: RandoMontre? = nil) {
     self.fcMax = fcMax > 0 ? fcMax : 190
     self.course = course
-    entrainement = Entrainement(activite: course ? .running : .cycling, lieu: .outdoor)
+    self.rando = rando
+    self.sentier = rando ? sentier : nil
+    entrainement = Entrainement(activite: rando ? .hiking : course ? .running : .cycling, lieu: .outdoor)
     super.init()
     gps.delegate = self
     gps.desiredAccuracy = kCLLocationAccuracyBest
@@ -52,6 +65,30 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   }
 
   var vitesseMoy: Double { secondes > 0 ? km / (Double(secondes) / 3600) : 0 }
+
+  /// Sommet : au moins 60 % du dénivelé du sentier, ou 100 m sans sentier (même règle que l'iPhone).
+  var sommet: Bool { sentier.map { dplus >= $0.dplus * 0.6 } ?? (dplus >= 100) }
+
+  /// Nouvelle altitude (baromètre ou GPS) : D+ si on est monté de plus de 3 m depuis le point bas.
+  private func monter(_ a: Double) {
+    guard etape == .route else { return }
+    guard let b = base else { base = a; return }
+    if a > b + 3 {
+      dplus += a - b
+      base = a
+    } else if a < b {
+      base = a
+    }
+  }
+
+  private func demarrerAltimetre() {
+    guard rando, CMAltimeter.isRelativeAltitudeAvailable() else { return }
+    baroActif = true
+    altimetre.startRelativeAltitudeUpdates(to: .main) { [weak self] d, _ in
+      guard let self = self, let d = d else { return }
+      self.monter(d.relativeAltitude.doubleValue)
+    }
+  }
 
   /// Tracé allégé pour l'iPhone : au plus 500 points, arrondis à 5 décimales (~1 m).
   var traceEnvoi: [[Double]] {
@@ -69,6 +106,7 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
     gps.requestWhenInUseAuthorization()
     gps.startUpdatingLocation()
     entrainement.demarrer()
+    demarrerAltimetre()
     Vibre.jouer(.start)
     minuterie = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
       guard let self = self, self.etape == .route else { return }
@@ -87,6 +125,8 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
 
   func reprendre() {
     etape = .route
+    // Après une pause, la montée repart du point où l'on reprend.
+    base = nil
     entrainement.reprendre()
     gps.startUpdatingLocation()
     Vibre.jouer(.start)
@@ -95,6 +135,7 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
   func terminer() {
     etape = .bilan
     gps.stopUpdatingLocation()
+    altimetre.stopRelativeAltitudeUpdates()
     minuterie?.invalidate()
     minuterie = nil
     Vibre.jouer(.success)
@@ -128,8 +169,11 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
       kcal: entrainement.kcal,
       fcMoy: entrainement.fcMoy,
       fcMax: entrainement.fcMax,
-      sport: course ? "course" : "velo",
-      pts: traceEnvoi
+      sport: rando ? "rando" : course ? "course" : "velo",
+      pts: traceEnvoi,
+      dplus: rando ? dplus.rounded() : nil,
+      altMax: rando ? altMax : nil,
+      sentier: sentier?.id
     )
     entrainement.terminer(sauver: true) {
       LiaisonMontre.partagee.envoyer("velo", v)
@@ -141,6 +185,7 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
     guard !enregistree else { return }
     enregistree = true
     gps.stopUpdatingLocation()
+    altimetre.stopRelativeAltitudeUpdates()
     minuterie?.invalidate()
     minuterie = nil
     entrainement.terminer(sauver: false) {}
@@ -160,6 +205,12 @@ final class SortieVelo: NSObject, ObservableObject, CLLocationManagerDelegate {
       }
       derniere = l
       points.append(l.coordinate)
+      if rando, l.verticalAccuracy > 0, l.verticalAccuracy <= 30 {
+        altitude = l.altitude
+        altMax = max(altMax ?? l.altitude, l.altitude)
+        // Sans baromètre : D+ d'après l'altitude GPS.
+        if !baroActif { monter(l.altitude) }
+      }
       if l.speed >= 0 { vitesse = l.speed * 3.6 }
     }
     entrainement.ajouter(bonnes)
@@ -176,15 +227,15 @@ struct SortieView: View {
   @State private var page = 1
   @Environment(\.dismiss) private var fermer
 
-  init(fcMax: Double, course: Bool = false) {
-    _sortie = StateObject(wrappedValue: SortieVelo(fcMax: fcMax, course: course))
+  init(fcMax: Double, course: Bool = false, rando: Bool = false, sentier: RandoMontre? = nil) {
+    _sortie = StateObject(wrappedValue: SortieVelo(fcMax: fcMax, course: course, rando: rando, sentier: sentier))
   }
 
   private var titre: String {
     if page == 0 { return "Commandes" }
     if page == 2 { return "Parcours" }
     if sortie.etape == .pause { return "En pause" }
-    return sortie.course ? "Course" : "Vélo"
+    return sortie.rando ? "Rando" : sortie.course ? "Course" : "Vélo"
   }
 
   var body: some View {
@@ -239,7 +290,10 @@ struct SuivreSortie: View {
       VStack(alignment: .leading, spacing: 0) {
         Chrono(secondes: sortie.secondes)
         LigneMesure(valeur: km1(sortie.km), unite: "km")
-        if sortie.course {
+        if sortie.rando {
+          LigneMesure(valeur: "\(Int(sortie.dplus))", unite: sortie.sentier.map { "m D+\n/ \(Int($0.dplus))" } ?? "m\nD+")
+          LigneMesure(valeur: sortie.altitude.map { "\(Int($0))" } ?? "--", unite: "m\nalt.")
+        } else if sortie.course {
           LigneMesure(valeur: allure(sortie.vitesse), unite: "min\n/km")
         } else {
           LigneMesure(valeur: km1(sortie.vitesse), unite: "km/h")
@@ -249,6 +303,13 @@ struct SuivreSortie: View {
           unite: sortie.zone > 0 ? "bpm\nzone \(sortie.zone)" : "bpm",
           coeur: true
         )
+        if let s = sortie.sentier {
+          Text(sortie.sommet ? "Sommet atteint ! 🏔️" : s.nom)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(Nea.rose)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+        }
         Text("\(Int(sortie.entrainement.kcal)) kcal actives · \(sortie.gpsActif ? "GPS actif" : "Recherche GPS")")
           .font(.system(size: 12))
           .foregroundColor(Nea.texte2)
@@ -312,11 +373,20 @@ struct BilanVelo: View {
       VStack(alignment: .leading, spacing: 6) {
         HStack(spacing: 6) {
           Image(systemName: "checkmark.circle.fill").font(.system(size: 26)).foregroundColor(Nea.rose)
-          Text(sortie.course ? "Course terminée" : "Sortie terminée").font(.system(size: 17, weight: .bold))
+          Text(sortie.rando ? (sortie.sommet ? "Sommet atteint !" : "Rando terminée") : sortie.course ? "Course terminée" : "Sortie terminée")
+            .font(.system(size: 17, weight: .bold))
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
         }
         HStack(spacing: 6) {
           Tuile(titre: "Durée", valeur: Nea.duree(sortie.secondes))
           Tuile(titre: "Distance", valeur: "\(km1(sortie.km)) km")
+        }
+        if sortie.rando {
+          HStack(spacing: 6) {
+            Tuile(titre: "Dénivelé +", valeur: "\(Int(sortie.dplus)) m")
+            Tuile(titre: "Alt. max", valeur: sortie.altMax.map { "\(Int($0)) m" } ?? "--")
+          }
         }
         HStack(spacing: 6) {
           Tuile(

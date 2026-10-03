@@ -21,12 +21,15 @@ import { casesTrace } from '@/lib/territoires';
 import { caloriesCourse, caloriesVelo, xpCourse, xpVelo } from '@/lib/velo';
 import { colors } from '@/theme';
 import { catSession, sessionForDay, type SeanceJour, type Semaine } from '@/lib/semaine';
+import { caloriesRando, xpRando } from '@/lib/rando';
 import { lvlInfo, rankOf, streak } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { envoyer as envoyerAuCoach } from './coach';
 import { annoncer } from './notifs';
 import { selectProfil, useProfil } from './profil';
+import { gagnerExplorateur, sommetAtteint } from './rando';
+import { trouverSentier } from './randosPres';
 import { conquerirTrace } from './territoires';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -71,6 +74,8 @@ type EtatMontre = {
   /** Séance choisie sur l'iPhone (« Ouvrir sur la montre ») et son programme, pour aujourd'hui (build 18). */
   choisie: SeanceMontre | null;
   choisieProg: string;
+  /** Sentier choisi aujourd'hui sur l'iPhone (build 19). */
+  rando: RandoMontre | null;
 };
 
 /** Séance terminée sur la montre. */
@@ -86,12 +91,18 @@ type VeloMontre = {
   fcMoy: number;
   fcMax: number;
   /** Build 11 : sport et tracé (territoires). */
-  sport?: 'velo' | 'course';
+  sport?: 'velo' | 'course' | 'rando';
   pts?: [number, number][];
+  /** Build 19 : randonnée (dénivelé positif du baromètre, altitude max, sentier lancé depuis l'iPhone). */
+  dplus?: number;
+  altMax?: number;
+  sentier?: string;
 };
+/** Sentier envoyé à la montre (« Ouvrir sur la montre » d'une fiche de randonnée, build 19). */
+type RandoMontre = { id: string; nom: string; lieu: string; km: number; dplus: number; altSommet: number; min: number };
 /** Séance choisie sur l'iPhone pour la montre : un jour de la semaine ou une séance prête, valable le jour même. */
 export type ChoixMontre = { jour: number } | { cat: SeanceId };
-export const useChoixMontre = create<{ choix: ChoixMontre | null; d: string }>()(
+export const useChoixMontre = create<{ choix: ChoixMontre | null; d: string; rando?: string | null; dRando?: string }>()(
   persist(() => ({ choix: null as ChoixMontre | null, d: '' }), {
     name: 'nea-montre-choix',
     storage: createJSONStorage(() => AsyncStorage),
@@ -164,6 +175,9 @@ function etat(): EtatMontre {
       }
     }
   }
+  // Sentier choisi aujourd'hui sur l'iPhone.
+  const sr = ch.rando && ch.dRando === new Date().toDateString() ? trouverSentier(ch.rando) : undefined;
+  const rando: RandoMontre | null = sr ? { id: sr.id, nom: sr.nom, lieu: sr.lieu, km: sr.km, dplus: sr.dplus, altSommet: sr.altSommet, min: sr.min } : null;
   const lieu = st.gear === 'maison' ? 'maison' : 'salle';
   const niveau = lvlN(st.level);
   const explorer = SEANCES.filter((w) => w.lieu === lieu && !w.ride && !wkLocked(w.id))
@@ -216,6 +230,7 @@ function etat(): EtatMontre {
     coachs: COACHES.map((x) => ({ id: x.id, nom: x.nom, spec: x.spec.charAt(0) + x.spec.slice(1).toLowerCase() })),
     choisie,
     choisieProg,
+    rando,
   };
 }
 
@@ -243,6 +258,21 @@ export function ouvrirSurMontre(choix: ChoixMontre) {
   envoyer();
   if (typeof NeaMontre.ouvrirSurMontre === 'function') NeaMontre.ouvrirSurMontre();
   toast('Séance envoyée sur ta montre ⌚');
+}
+
+/** « Ouvrir sur la montre » d'un sentier : il devient « Ma rando » sur la montre, qui s'ouvre (build 19+). */
+export function ouvrirRandoSurMontre(id: string) {
+  useChoixMontre.setState({ rando: id, dRando: new Date().toDateString() });
+  if (!NeaMontre) return;
+  if (minuterie) clearTimeout(minuterie);
+  envoyer();
+  if (typeof NeaMontre.ouvrirSurMontre === 'function') NeaMontre.ouvrirSurMontre();
+  toast('Rando envoyée sur ta montre ⌚');
+}
+
+/** Ce sentier est celui envoyé aujourd'hui sur la montre. */
+export function useRandoSurMontre(id: string) {
+  return useChoixMontre((s) => s.rando === id && s.dRando === new Date().toDateString());
 }
 
 /** Cette séance est celle envoyée aujourd'hui sur la montre. */
@@ -298,6 +328,7 @@ function recevoir(json: string) {
 function recevoirVelo(json: string) {
   const r = lire<VeloMontre>(json);
   if (!r) return;
+  if (r.sport === 'rando') return recevoirRando(r);
   const course = r.sport === 'course';
   const type = course ? 'course' : 'velo';
   const st = useProfil.getState();
@@ -320,6 +351,35 @@ function recevoirVelo(json: string) {
     lien: r.fin,
     title: `${course ? 'Course' : 'Vélo'} · ${mmss(r.sec)}`,
     body: `${dec(r.km.toFixed(1))} km${r.fcMoy ? ` • FC moy. ${Math.round(r.fcMoy)} bpm` : ''}${nb ? ` • ${nb} cases traversées` : ''} • Touche pour voir ton récap`,
+  });
+  if (nb) void conquerirTrace(pts, r.fin);
+}
+
+/** Randonnée de la montre → journal (D+, sentier, sommet), XP, carte Explorateur, rappel VFC, territoires (comme sur l'iPhone). */
+function recevoirRando(r: VeloMontre) {
+  const st = useProfil.getState();
+  if (st.logs.some((l) => l.d === r.fin && l.type === 'rando')) return;
+  const s = trouverSentier(r.sentier);
+  const dplus = Math.round(r.dplus ?? 0);
+  const sommet = sommetAtteint(s, dplus);
+  const min = Math.max(1, Math.round(r.sec / 60));
+  const cal = r.kcal > 0 ? Math.round(r.kcal) : caloriesRando(r.sec, st.weight, dplus);
+  st.addLog({ d: r.fin, debut: r.debut, src: 'montre', type: 'rando', title: s?.nom ?? 'Randonnée', min, cal, vol: 0, dist: +r.km.toFixed(1), dplus, rando: s?.id, sommet, hrAvg: Math.round(r.fcMoy), hrMax: Math.round(r.fcMax), hrv: 0 });
+  useChoixMontre.setState({ rando: null });
+  const apres = useProfil.getState();
+  apres.addXp(xpRando(r.km, dplus), 'Randonnée');
+  apres.programmerPost('rando', null);
+  const carte = s && sommet ? gagnerExplorateur(s) : false;
+  const pts = (r.pts ?? []).filter((p): p is [number, number] => Array.isArray(p) && p.length === 2);
+  const nb = pts.length > 1 ? casesTrace(pts).length : 0;
+  annoncer({
+    type: 'activite',
+    icon: 'rando',
+    col: colors.pink,
+    act: 'activite',
+    lien: r.fin,
+    title: `${sommet ? 'Sommet atteint ! ' : ''}${s?.nom ?? 'Randonnée'} · ${mmss(r.sec)}`,
+    body: `${dec(r.km.toFixed(1))} km • D+ ${dplus} m${carte ? ' • Carte Explorateur gagnée' : ''} • Touche pour voir ton récap`,
   });
   if (nb) void conquerirTrace(pts, r.fin);
 }
