@@ -71,10 +71,8 @@ export const ui = {
   podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
   /** Éclair du Turbo x2. */
   turbo: '#FFD21F',
-  /** Cartes récompense : couleur de chaque rareté (Commune, Rare, Épique, Légendaire), fond de carte, confettis. */
+  /** Cartes récompense : couleur de chaque rareté (Commune, Rare, Épique, Légendaire), confettis. */
   rarete: ['#9AA0AB', '#FFA266', '#FF6B1A', '#FFD27A'],
-  carteFond: ['#2D3038', '#3A2E28', '#3F2A1E', '#3F341C'],
-  carteDos: '#1A1B1F',
   confettis: ['#FF6B1A', '#FFA266', '#FFD27A', '#FFFFFF', '#A0522D'],
   voileFete: 'rgba(10,10,14,0.82)',
   /** Randonnée : couleur de la difficulté (facile, modéré, difficile), voile sur les photos. */

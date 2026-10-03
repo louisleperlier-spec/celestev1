@@ -227,7 +227,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - état `jeu` dans le profil (sauvegardé avec le compte) : cartes, paquets à ouvrir, records, défis réussis ; `store/jeu.ts` écoute le profil
     (activité ajoutée une à une, niveau via addXp, défis) et pose les fêtes (`useFetes`) ; la montée de niveau n'affiche plus de toast
   - écrans `/cartes` (collection, filtres de rareté, fiche) et `/cartes/ouvrir` (cartes face cachée à retourner, lueur des rares, doubles → XP) ;
-    `FeteHost` (confettis Reanimated, coach, vibration `Vibration`, « Ouvrir mes cartes ») ; Progrès : bandeau, **Défis de la semaine**
+    `FeteHost` (confettis Reanimated, coach, vibration `Vibration`, « Ouvrir mes cartes ») ; **cadres dessinés par l'utilisateur** (`assets/cartes/` :
+    commune, epique, legendaire, dos ; **rare dérivé de l'épique** (3e étoile effacée, orange éclairci) en attendant le sien), étoiles comprises,
+    `CarteJeu` place l'illustration et le nom dans leurs zones (`ZONE_IMG`, `ZONE_NOM`) ; Progrès : bandeau, **Défis de la semaine**
     (séances = rythme choisi + 2 tirés : km, nuits, mesures, XP, minutes), Ma collection, Tes records ; bandeau aussi sur l'Accueil et le récap
 - [ ] **Randonnée (hors cahier des charges, maquettes de l'utilisateur, oct. 2026)** : **codée, publiée en EAS Update, à valider sur iPhone**
   - **5e onglet « Randonnée »** (`(tabs)/rando.tsx`, icône `rando`) : Axel randonneur, filtres (Facile, Modéré, Difficile, < 2 h, Vue
