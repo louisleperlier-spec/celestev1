@@ -215,16 +215,16 @@ export type IconName = keyof typeof ICONS;
 
 export const isIconName = (n: string): n is IconName => n in ICONS;
 
-type Props = { name: IconName; size?: number; color?: string; strokeWidth?: number };
+type Props = { name: IconName; size?: number; color?: string; strokeWidth?: number; /** Remplissage (étoiles des cartes). */ fill?: string };
 
 /** Icône du prototype (`svg.i` : 20 px, trait 1,7). */
-export function Icon({ name, size = 20, color = colors.text, strokeWidth = 1.7 }: Props) {
+export function Icon({ name, size = 20, color = colors.text, strokeWidth = 1.7, fill = 'none' }: Props) {
   return (
     <Svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill}
       stroke={color}
       strokeWidth={strokeWidth}
       strokeLinecap="round"

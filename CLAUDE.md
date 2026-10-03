@@ -219,6 +219,16 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   confidentialité, support et marketing renseignées ; contact : NÉA, édité par Louis Leperlier, Québec, nea.coach.app@gmail.com
   - catégories Santé et forme + Sports, classification d'âge remplie (13+, l'app impose 14 ans) ; reste : questionnaire « App Privacy »
     (pas d'API, à remplir dans App Store Connect), vrais achats (RevenueCat, contrat Paid Apps)
+- [ ] **Jeu : cartes récompense, records, défis, fêtes (hors prototype, demandés par l'utilisateur, oct. 2026)** : **codés, publiés en EAS Update, à valider sur iPhone**
+  - choix validés : 1 carte par activité terminée (iPhone ou montre) ; booster de 3 (1 Rare garantie) par niveau et par défi de la semaine ;
+    1 carte Rare+ par record ; collection + bonus (doubles → XP : Commune 5, Rare 15, Épique 40, Légendaire 100 ; Légendaire nouvelle → +1 Turbo x2) ;
+    cartes = 50 exercices + 4 coachs (`lib/jeu.ts` : Légendaire = coach, Épique = exercice niveau ≥ 2, Rare = niveau 1 machine / poulie / vélo,
+    Commune = le reste ; chances 62 / 26 / 10 / 2 %)
+  - état `jeu` dans le profil (sauvegardé avec le compte) : cartes, paquets à ouvrir, records, défis réussis ; `store/jeu.ts` écoute le profil
+    (activité ajoutée une à une, niveau via addXp, défis) et pose les fêtes (`useFetes`) ; la montée de niveau n'affiche plus de toast
+  - écrans `/cartes` (collection, filtres de rareté, fiche) et `/cartes/ouvrir` (cartes face cachée à retourner, lueur des rares, doubles → XP) ;
+    `FeteHost` (confettis Reanimated, coach, vibration `Vibration`, « Ouvrir mes cartes ») ; Progrès : bandeau, **Défis de la semaine**
+    (séances = rythme choisi + 2 tirés : km, nuits, mesures, XP, minutes), Ma collection, Tes records ; bandeau aussi sur l'Accueil et le récap
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

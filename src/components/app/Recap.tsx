@@ -14,6 +14,7 @@ import type { Resultat } from '@/store/seance';
 import { colors, fonts } from '@/theme';
 
 import { CourbeFC, ListeZones } from './Coeur';
+import { BandeauCartes } from './Jeu';
 
 /** Fond .recap : halo rose en haut. */
 const FOND = [{ rx: 70, ry: 45, cx: 50, cy: 30, color: 'rgba(255,107,26,0.28)' }] as const;
@@ -36,6 +37,7 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
           <Text style={styles.sub}>
             « {c.prog} » — {c.nom}
           </Text>
+          <BandeauCartes style={styles.cartes} />
           <View style={styles.grid}>
             <Kpi icon="clock" label="Durée" value={mmss(r.sec)} />
             <Kpi icon="trend" label="Volume" value={`${fmt(r.vol)} kg`} />
@@ -87,6 +89,7 @@ export function Kpi({ icon, label, value, em, emGris }: { icon: IconName; label:
 }
 
 const styles = StyleSheet.create({
+  cartes: { marginTop: 14, alignSelf: 'stretch' },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
   scroll: { paddingHorizontal: 20, paddingBottom: 12 },

@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BilanDuJour, SemaineCercles } from '@/components/app/Cercles';
+import { BandeauCartes } from '@/components/app/Jeu';
 import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
@@ -187,6 +188,8 @@ export default function Accueil() {
             </Text>
           </Pressable>
         </View>
+        {/* Cartes gagnées pas encore ouvertes. */}
+        <BandeauCartes style={styles.bandeau} />
 
         {ordreAccueil(p.accueil)
           .filter((x) => x.on)
@@ -199,6 +202,7 @@ export default function Accueil() {
 }
 
 const styles = StyleSheet.create({
+  bandeau: { marginHorizontal: 20, marginTop: 12 },
   root: { flex: 1, backgroundColor: colors.bg },
   scroll: { paddingBottom: 28 },
   flex: { flex: 1 },

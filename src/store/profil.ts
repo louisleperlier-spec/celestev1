@@ -12,6 +12,7 @@ import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, coachValide, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
 import { ACCUEIL_DEFAUT, type CarteAccueil } from '@/lib/accueil';
+import { JEU_DEFAUT, type EtatJeu } from '@/lib/jeu';
 import { toast } from '@/components/ui/Toast';
 import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
@@ -79,6 +80,8 @@ type Etat = Profil & {
   chatQ: QuotaChat | null;
   /** Abonnement NÉA Plus (S.premium). */
   premium: Premium | null;
+  /** Cartes récompense, records et défis de la semaine (`lib/jeu.ts`, hors prototype). */
+  jeu: EtatJeu;
   /** Offre de sortie : fin du compte à rebours de 10 min, et refusée (proposée une seule fois). */
   exitUntil: number;
   exitDeclined: boolean;
@@ -167,6 +170,7 @@ const defauts = (): Etat => ({
   chatCoach: null,
   chatQ: null,
   premium: null,
+  jeu: JEU_DEFAUT,
   exitUntil: 0,
   exitDeclined: false,
   obCoachSet: false,
@@ -217,7 +221,6 @@ export const useProfil = create<Etat & Actions>()(
         const xpLog = [...st.xpLog, { d: new Date().toISOString(), xp: g, l: label }].slice(-400);
         const after = lvlInfo(st.xp + g).n;
         set({ xp: st.xp + g, xpLog, tokens: st.tokens + Math.max(0, after - before) });
-        if (after > before) setTimeout(() => toast('Niveau ' + after + ' ! +1 Turbo x2 gagné'), 400);
         return g;
       },
       quest: (id) => {
@@ -324,6 +327,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   chatCoach: s.chatCoach,
   chatQ: s.chatQ,
   premium: s.premium,
+  jeu: s.jeu,
   exitUntil: s.exitUntil,
   exitDeclined: s.exitDeclined,
 });

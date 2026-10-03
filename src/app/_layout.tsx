@@ -4,12 +4,14 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useSyncExternalStore } from 'react';
 
 import { ToastHost } from '@/components/ui';
+import { FeteHost } from '@/components/app/Fete';
 import { NotifBanniere } from '@/components/app/NotifBanniere';
 import { demarrerCompte } from '@/store/compte';
 import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { demarrerAchats } from '@/store/achats';
 import { demarrerAlertes } from '@/store/alertes';
+import { demarrerJeu } from '@/store/jeu';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
 // Territoires : envoie les cases gardées hors ligne dès la connexion au compte.
@@ -51,6 +53,8 @@ export default function RootLayout() {
     demarrerAlertes();
     // NÉA Plus : vrais achats App Store (RevenueCat) quand la clé est fournie.
     demarrerAchats();
+    // Cartes récompense, records, défis de la semaine, niveaux : récompenses et fêtes.
+    demarrerJeu();
   }, [ready]);
 
   if (!ready) return null;
@@ -60,6 +64,7 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'fade' }} />
       <NotifBanniere />
+      <FeteHost />
       <ToastHost />
     </ThemeProvider>
   );

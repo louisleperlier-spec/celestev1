@@ -8,6 +8,7 @@ import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, 
 
 import { TitreOnglet } from '@/components/app/EnTete';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
+import { BandeauCartes, DefisSemaine, EntreeCollection, MesRecords } from '@/components/app/Jeu';
 import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
@@ -83,6 +84,12 @@ export default function Progres() {
         <View style={styles.cercles}>
           <SemaineCercles />
         </View>
+        {/* Jeu : cartes à ouvrir, défis de la semaine, collection. */}
+        <View style={styles.jeu}>
+          <BandeauCartes />
+          <DefisSemaine />
+          <EntreeCollection />
+        </View>
         <Segmente options={['Semaine', 'Mois', 'Année'] as const} value={p} onChange={setP} style={styles.seg} />
         <View style={styles.grid}>
           <Kpi icon="calcheck" label="Séances" value={String(cur.length)} em={pc(cur.length, prev.length)} emGris />
@@ -150,6 +157,9 @@ export default function Progres() {
           <Text style={styles.qEm}>— {c.nom}</Text>
           <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
         </LinearGradient>
+        <View style={styles.jeu}>
+          <MesRecords />
+        </View>
         {/* Territoires (vélo et course), puis la Ligue (niveau, quêtes, classements). */}
         <EntreeTerritoires />
         <Ligue integree />
@@ -255,6 +265,7 @@ const styles = StyleSheet.create({
   seg: { marginTop: 14, marginHorizontal: 20 },
   basPage: { height: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, paddingTop: 14, paddingHorizontal: 20 },
+  jeu: { marginTop: 12, marginHorizontal: 20, gap: 10 },
   chart: { marginTop: 10, marginHorizontal: 20, paddingTop: 14, paddingHorizontal: 14, paddingBottom: 8 },
   h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   h4Txt: { fontSize: 14, lineHeight: 18 },
