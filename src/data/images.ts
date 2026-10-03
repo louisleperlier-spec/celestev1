@@ -79,12 +79,16 @@ export const COACH_IMAGES: Readonly<Record<CoachId, { corps: ImageSourcePropType
   },
 };
 
-/** Décors de l'accueil : podium et poses d'Axel. */
+/** Décors : podium, poses d'Axel et scènes illustrées (salle, étirements, course, sommet ; recadrées en bandeau 16:9). */
 export const DECO_IMAGES = {
   podium: require('@/assets/deco/deco_podium.webp'),
   pAxel: require('@/assets/deco/p_axel.webp'),
   posePoint: require('@/assets/deco/pose_point.webp'),
   poseSaut: require('@/assets/deco/pose_saut.webp'),
+  salle: require('@/assets/deco/axel_salle.webp'),
+  etirement: require('@/assets/deco/axel_etirement.webp'),
+  course: require('@/assets/deco/axel_course.webp'),
+  sommet: require('@/assets/deco/axel_sommet_scene.webp'),
 } satisfies Record<string, ImageSourcePropType>;
 
 /** Vidéo d'accueil en boucle. */

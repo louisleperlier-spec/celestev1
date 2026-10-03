@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -13,6 +14,7 @@ import { Button, Card, Icon, SelectableCard, Text, type IconName } from '@/compo
 import { dec } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
 import { allure, lienPlans } from '@/lib/velo';
+import { DECO_IMAGES } from '@/data';
 import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { useVelo, type ModeVelo } from '@/store/velo';
@@ -61,7 +63,10 @@ export default function Velo() {
           <Mode id="int" icon="sliders" label="Stationnaire" on={v.mode === 'int'} bloque={v.run} onPress={v.setMode} />
         </View>
 
-        {v.mode !== 'int' ? (
+        {course && !v.run && !v.pts.length ? (
+          // Avant la course : Axel en trail (illustration de l'utilisateur) à la place de la carte vide.
+          <Image source={DECO_IMAGES.course} style={styles.scene} contentFit="cover" accessibilityIgnoresInvertColors />
+        ) : v.mode !== 'int' ? (
           <Carte pts={v.pts} gps={v.gps === 'gps'} />
         ) : (
           <>
@@ -241,6 +246,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   ptitle: { fontSize: 24, lineHeight: 30, paddingTop: 14, paddingHorizontal: 20 },
+  scene: { marginTop: 12, marginHorizontal: 20, height: 230, borderRadius: 16 },
   modes: { flexDirection: 'row', gap: 8, paddingTop: 12, paddingHorizontal: 20 },
   mode: { height: 54, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   modeTxt: { fontSize: 13, lineHeight: 17 },

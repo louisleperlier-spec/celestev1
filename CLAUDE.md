@@ -249,7 +249,10 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     difficulté (facile < 6 km et < 250 m, difficile > 15 km ou > 700 m) ; **Suggestion du jour** (`suggestion` : niveau, récupération du jour) ;
     fiche avec la carte du tracé, « Itinéraire jusqu'au départ », mention © OpenStreetMap ; pas de carte Explorateur pour ces sentiers
     (Overpass bloqué dans l'environnement de dev : testé avec des réponses simulées, à valider sur iPhone)
-  - reste : vraies photos des sentiers incontournables, liste validée, rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
+  - **illustrations de l'utilisateur (oct. 2026)** : vraies photos d'Acropole, Montmorency (+ point « Chute ») et Mont Wright (`<id>_grand.jpg`) ;
+    scènes d'Axel en bandeau 16:9 (`DECO_IMAGES`) : salle (carte « Ta prochaine séance » le jour J), étirements (jours de repos),
+    trail (Course avant le départ, à la place de la carte vide), sommet (carte « Rando libre »)
+  - reste : vraies photos du Lac des Cygnes et des Loups, liste validée, rando sur la montre et « Ouvrir sur la montre » (build), photo au sommet
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PastilleDifficulte } from '@/components/app/Rando';
 import { Button, Icon, Text } from '@/components/ui';
+import { DECO_IMAGES } from '@/data';
 import { SENTIERS } from '@/data/randos';
 import { AXEL_RANDO, photoGrande, RANDO_IMAGES } from '@/data/randosImages';
 import { lundiISO } from '@/lib/ligue';
@@ -215,6 +216,7 @@ export default function Randonnee() {
         ))}
 
         <View style={styles.libre}>
+          <Image source={DECO_IMAGES.sommet} style={styles.libreScene} contentFit="cover" accessibilityIgnoresInvertColors />
           <Text weight="semibold" style={styles.libreTitre}>
             Ton propre sentier ?
           </Text>
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
   itemLieu: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   droite: { alignItems: 'flex-end', gap: 8 },
   libre: { marginTop: 20, padding: 16, borderRadius: 20, backgroundColor: colors.surface },
+  libreScene: { marginTop: -16, marginHorizontal: -16, marginBottom: 14, aspectRatio: 16 / 9, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   libreTitre: { fontSize: 17, lineHeight: 22 },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, textAlign: 'center', marginTop: 18 },
 });

@@ -12,7 +12,7 @@ import { Reperes } from '@/components/app/Reperes';
 import { SectionHead } from '@/components/app/Section';
 import { Thumb } from '@/components/app/Thumb';
 import { Button, Card, Icon, Text } from '@/components/ui';
-import { COACH_IMAGES } from '@/data';
+import { COACH_IMAGES, DECO_IMAGES } from '@/data';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
 import { coachById } from '@/lib/plan';
 import { estPremium } from '@/lib/premium';
@@ -88,6 +88,10 @@ export default function Accueil() {
       <>
         <SectionHead title="Ta prochaine séance" action="Programme" onAction={() => router.navigate('/programme')} />
         <Card style={[styles.pad, styles.seance]}>
+          {/* Axel à la salle le jour de la séance, qui s'étire les jours de repos (illustrations de l'utilisateur). */}
+          {!s.ride && (
+            <Image source={ns.offset === 0 ? DECO_IMAGES.salle : DECO_IMAGES.etirement} style={styles.scene} contentFit="cover" accessibilityIgnoresInvertColors />
+          )}
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Voir la séance ${s.titre}`}
@@ -267,6 +271,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   seance: { padding: 18 },
+  scene: { marginTop: -18, marginHorizontal: -18, marginBottom: 14, aspectRatio: 16 / 9, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   seanceHaut: { gap: 4 },
   quand: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   seanceTitre: { fontSize: 21, lineHeight: 26 },

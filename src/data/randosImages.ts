@@ -1,4 +1,4 @@
-/** Photos des sentiers, points d'intérêt et Axel randonneur (recadrées des maquettes de l'utilisateur). */
+/** Photos des sentiers (vraies photos de l'utilisateur, sinon recadrées des maquettes), points d'intérêt et Axel randonneur. */
 import type { ImageSourcePropType } from 'react-native';
 
 import type { Voir } from '@/lib/rando';
@@ -14,6 +14,9 @@ export const RANDO_IMAGES: Readonly<Record<string, ImageSourcePropType>> = {
 /** Grandes photos (rando de la semaine, fiche, récap) ; sinon la vignette. */
 export const RANDO_GRANDES: Readonly<Record<string, ImageSourcePropType>> = {
   'lac-des-cygnes': require('@/assets/randos/lac-des-cygnes_grand.jpg'),
+  acropole: require('@/assets/randos/acropole_grand.jpg'),
+  montmorency: require('@/assets/randos/montmorency_grand.jpg'),
+  'mont-wright': require('@/assets/randos/mont-wright_grand.jpg'),
 };
 export const photoGrande = (id: string) => RANDO_GRANDES[id] ?? RANDO_IMAGES[id];
 
