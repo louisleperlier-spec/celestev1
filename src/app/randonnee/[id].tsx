@@ -5,10 +5,11 @@ import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarteSentier } from '@/components/app/CarteRando';
+import { GalerieSentier } from '@/components/app/GalerieSentier';
 import { PastilleDifficulte, ProfilAltitude, useMeteo } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
 import { SENTIERS } from '@/data/randos';
-import { AXEL_CONSEIL, photoGrande, VOIR_IMAGES } from '@/data/randosImages';
+import { AXEL_CONSEIL, creditPrincipal, galerie, imageVoir, photoGrande } from '@/data/randosImages';
 import { duree, profilSentier, VOIR } from '@/lib/rando';
 import { useRando } from '@/store/rando';
 import { trouverSentier as sentier } from '@/store/randosPres';
@@ -54,6 +55,7 @@ export default function FicheSentier() {
               {s.nom}
             </Text>
             <Text style={styles.region}>{s.region}</Text>
+            {!osm && creditPrincipal(s.id) && <Text style={styles.creditHero}>Photo © {creditPrincipal(s.id)}</Text>}
           </View>
         </View>
 
@@ -90,6 +92,15 @@ export default function FicheSentier() {
             style={styles.mt}
           />
 
+          {!osm && galerie(s.id).length > 1 && (
+            <>
+              <Text weight="semibold" style={[styles.h3, styles.titre]}>
+                Photos du sentier
+              </Text>
+              <GalerieSentier photos={galerie(s.id)} />
+            </>
+          )}
+
           {s.voir.length > 0 && (
             <Text weight="semibold" style={[styles.h3, styles.titre]}>
               Ce que tu vas voir
@@ -98,7 +109,7 @@ export default function FicheSentier() {
           <View style={styles.voir}>
             {s.voir.map((v) => (
               <View key={v} style={styles.voirItem}>
-                <Image source={VOIR_IMAGES[v]} style={StyleSheet.absoluteFill} contentFit="cover" />
+                <Image source={imageVoir(s.id, v)} style={StyleSheet.absoluteFill} contentFit="cover" />
                 <LinearGradient colors={ui.voilePhoto} locations={[0.3, 0.7, 1]} style={StyleSheet.absoluteFill} />
                 <Text weight="semibold" style={styles.voirTxt}>
                   {VOIR[v]}
@@ -173,6 +184,7 @@ const styles = StyleSheet.create({
   rond: { position: 'absolute', left: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   heroBas: { paddingHorizontal: 20, paddingBottom: 6 },
   nom: { fontSize: 32, lineHeight: 38, letterSpacing: -0.5 },
+  creditHero: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary, marginTop: 4 },
   region: { fontSize: 16, lineHeight: 21, color: colors.textSecondary, marginTop: 2 },
   pad: { paddingHorizontal: 20 },
   tuiles: { flexDirection: 'row', gap: 6, marginTop: 14 },
@@ -186,7 +198,7 @@ const styles = StyleSheet.create({
   petitClair: { fontSize: 14, lineHeight: 19 },
   mt: { marginTop: 12 },
   voir: { flexDirection: 'row', gap: 8, marginTop: 10 },
-  voirItem: { flex: 1, height: 88, borderRadius: 14, overflow: 'hidden', justifyContent: 'flex-end', padding: 8 },
+  voirItem: { flex: 1, height: 120, borderRadius: 14, overflow: 'hidden', justifyContent: 'flex-end', padding: 8 },
   voirTxt: { fontSize: 14, lineHeight: 18 },
   conseils: { flexDirection: 'row', gap: 12, alignItems: 'center' },
   axel: { width: 88, height: 132 },

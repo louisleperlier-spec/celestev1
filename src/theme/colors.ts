@@ -78,6 +78,9 @@ export const ui = {
   /** Randonnée : couleur de la difficulté (facile, modéré, difficile), voile sur les photos. */
   difficulte: { facile: '#4CD964', modere: '#FF6B1A', difficile: '#FF5C6C' },
   voilePhoto: ['rgba(34,35,40,0)', 'rgba(34,35,40,0.55)', 'rgba(34,35,40,1)'],
+  /** Crédit posé sur une photo et fond de la visionneuse plein écran. */
+  voileCredit: 'rgba(0,0,0,0.5)',
+  voileVisionneuse: 'rgba(12,12,14,0.97)',
   /** Contrôle segmenté : fond, texte, segment actif. */
   segBg: '#2D3038',
   segTxt: '#ADB0BA',
