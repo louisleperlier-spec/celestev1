@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   tete: { flexDirection: 'row', alignItems: 'flex-end', marginTop: 6 },
   h1: { ...fonts.bold, fontSize: 38, lineHeight: 44, letterSpacing: -0.8 },
   sous: { fontSize: 16, lineHeight: 21, color: colors.textSecondary, marginTop: 2, marginBottom: 8 },
-  axel: { width: 104, height: 118, marginRight: -6 },
+  axel: { width: 92, height: 138, marginRight: -4 },
   enCours: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, backgroundColor: ui.selFond, marginTop: 6 },
   enCoursTxt: { fontSize: 15, lineHeight: 20 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },

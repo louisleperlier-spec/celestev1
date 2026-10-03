@@ -8,7 +8,7 @@ import { CarteSentier } from '@/components/app/CarteRando';
 import { PastilleDifficulte, ProfilAltitude, useMeteo } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
 import { SENTIERS } from '@/data/randos';
-import { AXEL_RANDO, photoGrande, VOIR_IMAGES } from '@/data/randosImages';
+import { AXEL_CONSEIL, photoGrande, VOIR_IMAGES } from '@/data/randosImages';
 import { duree, profilSentier, VOIR } from '@/lib/rando';
 import { useRando } from '@/store/rando';
 import { trouverSentier as sentier } from '@/store/randosPres';
@@ -108,7 +108,7 @@ export default function FicheSentier() {
           </View>
 
           <Card style={[styles.carte, styles.conseils]}>
-            <Image source={AXEL_RANDO} style={styles.axel} contentFit="contain" />
+            <Image source={AXEL_CONSEIL} style={styles.axel} contentFit="contain" />
             <View style={styles.flex}>
               <Text weight="semibold" style={styles.h3}>
                 Conseils d’Axel
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   voirItem: { flex: 1, height: 88, borderRadius: 14, overflow: 'hidden', justifyContent: 'flex-end', padding: 8 },
   voirTxt: { fontSize: 14, lineHeight: 18 },
   conseils: { flexDirection: 'row', gap: 12, alignItems: 'center' },
-  axel: { width: 96, height: 120 },
+  axel: { width: 88, height: 132 },
   conseil: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
   conseilTxt: { fontSize: 14, lineHeight: 19 },
   meteo: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8 },

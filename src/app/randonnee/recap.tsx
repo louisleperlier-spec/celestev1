@@ -11,7 +11,7 @@ import { BandeauCartes } from '@/components/app/Jeu';
 import { ProfilAltitude } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
 import { trouverSentier as sentier } from '@/store/randosPres';
-import { AXEL_RANDO, photoGrande } from '@/data/randosImages';
+import { AXEL_SOMMET, photoGrande } from '@/data/randosImages';
 import { vibrerFete } from '@/store/jeu';
 import { useRando } from '@/store/rando';
 import { colors, fonts, ui } from '@/theme';
@@ -51,7 +51,7 @@ export default function RecapRando() {
               <Icon name="arrow" size={20} />
             </Pressable>
           </View>
-          <Image source={AXEL_RANDO} style={styles.axel} contentFit="contain" />
+          <Image source={AXEL_SOMMET} style={styles.axel} contentFit="contain" />
           <View style={styles.heroBas}>
             <Text weight="bold" style={styles.h1}>
               {r.sommet ? 'Sommet atteint !' : 'Rando terminée !'}
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   hero: { height: 360, justifyContent: 'flex-end' },
   haut: { position: 'absolute', left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' },
   rond: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' },
-  axel: { position: 'absolute', right: 6, bottom: 40, width: 150, height: 170 },
+  axel: { position: 'absolute', right: 8, bottom: 30, width: 140, height: 210 },
   heroBas: { paddingHorizontal: 20, paddingBottom: 8, paddingRight: 150 },
   h1: { fontSize: 34, lineHeight: 40, letterSpacing: -0.5 },
   nom: { fontSize: 19, lineHeight: 24, marginTop: 2 },

@@ -24,4 +24,7 @@ export const VOIR_IMAGES: Readonly<Record<Voir, ImageSourcePropType>> = {
   riviere: require('@/assets/randos/voir_lac.jpg'),
 };
 
-export const AXEL_RANDO: ImageSourcePropType = require('@/assets/randos/axel_rando.png');
+/** Axel randonneur (onglet), qui donne ses conseils (fiche) et qui fête le sommet (récap). */
+export const AXEL_RANDO: ImageSourcePropType = require('@/assets/randos/axel_rando.webp');
+export const AXEL_CONSEIL: ImageSourcePropType = require('@/assets/randos/axel_conseil.webp');
+export const AXEL_SOMMET: ImageSourcePropType = require('@/assets/randos/axel_sommet.webp');
