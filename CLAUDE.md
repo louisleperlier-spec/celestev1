@@ -229,6 +229,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     montre : `Notifications.swift` (`ControleurNotif` + `WKNotificationScene` par catégorie : Axel selon l'état (`ax_*` recadrés des maquettes),
     « Stable · 62 ms », barre gris → orange, « Dernière mesure », ressenti Énergique / Détendu / Fatigué / Stressé et son bouton : Lancer ma
     séance, Moment calme, Mode récupération, Respirer 1 min ; `ReponsesNotif` ouvre Respiration, Récupération ou la séance)
+- [ ] **Transitions + « Ta journée » (hors prototype, demandés par l'utilisateur, oct. 2026)** : **publiés en EAS Update, à valider sur iPhone**
+  - transitions natives (`_layout.tsx`) : détails `ios_from_right` + retour par glissement plein écran, activités en cours / récaps /
+    ouverture des cartes `fade_from_bottom`, paywall et chat `slide_from_bottom`, accueil / onboarding / onglets en fondu ; onglets `shift`
+    avec ressort ; **`Appui`** (`components/ui/Appui.tsx`) : carte qui s'enfonce et rebondit au toucher (Reanimated, `s.set`), placement
+    gardé dehors (flex, largeur, marges) ; cartes de l'Accueil, liste « À explorer » et fiche d'un sentier qui apparaissent en cascade (`FadeInDown`)
+  - **« Ta journée »** (`lib/journee.ts`, `components/app/Journee.tsx`, carte `journee` de l'Accueil sous le bilan, ajoutée aussi aux ordres
+    déjà personnalisés) : séance du jour (ou « Bouge 20 minutes » les jours de repos), objectif Bouger, mesure de récupération, nuit,
+    8 verres d'eau (bouton +), 2 min pour souffler ; cochées d'après le journal, l'eau et la respiration à la main (`journee` du profil,
+    remis à zéro chaque jour) ; anneau n/6 animé, toucher → l'écran qui va avec ; tout coché → fête « Journée parfaite ! » + 30 XP (1 fois/jour)
 - [ ] **Fiche App Store (oct. 2026)** : 5 visuels iPhone 6,9" (`APP_IPHONE_67`) + 4 captures Apple Watch (`APP_WATCH_SERIES_4`, 368 × 448)
   téléversés par l'API ; sous-titre, description (avec mentions d'abonnement), mots-clés, texte promotionnel (fr-CA) ; **site public**
   `site/` sur l'hébergement Expo **https://nea-coach.expo.app** (`npm run site` : `scripts/generer-site.ts` génère confidentialite.html,

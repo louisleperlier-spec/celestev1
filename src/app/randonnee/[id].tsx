@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BoutonRandoMontre } from '@/components/app/BoutonMontre';
@@ -60,7 +61,7 @@ export default function FicheSentier() {
           </View>
         </View>
 
-        <View style={styles.pad}>
+        <Animated.View entering={FadeInDown.delay(120).duration(480).springify().damping(18)} style={styles.pad}>
           <View style={styles.tuiles}>
             <Tuile icone="rando" valeur={`${String(s.km).replace('.', ',')} km`} label="Distance" />
             <Tuile icone="trend" valeur={`${s.dplus} m`} label="Dénivelé +" />
@@ -161,7 +162,7 @@ export default function FicheSentier() {
               ? 'Tracé © contributeurs OpenStreetMap · altitude Open-Meteo (Copernicus). Durée et difficulté estimées : vérifie l’accès, le balisage et les conditions avant de partir.'
               : 'Données indicatives : vérifie le sentier, l’accès et les conditions auprès du parc avant de partir.'}
           </Text>
-        </View>
+        </Animated.View>
       </ScrollView>
     </View>
   );

@@ -20,6 +20,7 @@ import { QUESTS } from '@/data/ligue';
 import { actifsEquipe } from '@/lib/ligue';
 import type { MessageChat, QuotaChat } from '@/lib/coach';
 import { basculerRenouvellement, brancherPremium, nouvelAbonnement, type OffreId, type Premium } from '@/lib/premium';
+import { journeeDu, VERRES_EAU, type Journee } from '@/lib/journee';
 import { ALERTES_DEFAUT, notifsDues, rappelPost, REGLAGES_DEFAUT, type AlertesSante, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
@@ -82,6 +83,8 @@ type Etat = Profil & {
   premium: Premium | null;
   /** Cartes récompense, records et défis de la semaine (`lib/jeu.ts`, hors prototype). */
   jeu: EtatJeu;
+  /** « Ta journée » : verres d'eau et pause respiration du jour (cochés à la main). */
+  journee: Journee | null;
   /** Offre de sortie : fin du compte à rebours de 10 min, et refusée (proposée une seule fois). */
   exitUntil: number;
   exitDeclined: boolean;
@@ -111,6 +114,10 @@ type Actions = {
   quest: (id: QuestId) => void;
   /** Enregistre une séance ou une sortie terminée (la plus récente en premier). */
   addLog: (l: Log) => void;
+  /** « Ta journée » : un verre d'eau de plus, pause respiration faite / défaite, fête de la journée parfaite. */
+  ajouterVerre: () => void;
+  basculerCalme: () => void;
+  marquerJourneeFetee: () => void;
   /** Enregistre une nuit (+10 XP « Sommeil »). */
   noterNuit: (n: Nuit) => void;
   /** Enregistre une mesure de récupération (+10 XP « Mesure VFC »). */
@@ -171,6 +178,7 @@ const defauts = (): Etat => ({
   chatQ: null,
   premium: null,
   jeu: JEU_DEFAUT,
+  journee: null,
   exitUntil: 0,
   exitDeclined: false,
   obCoachSet: false,
@@ -234,6 +242,15 @@ export const useProfil = create<Etat & Actions>()(
         setTimeout(() => toast('Quête réussie : +' + g + ' XP'), 900);
       },
       addLog: (l) => set({ logs: [l, ...get().logs] }),
+      ajouterVerre: () => {
+        const j = journeeDu(get().journee);
+        set({ journee: { ...j, eau: Math.min(VERRES_EAU, j.eau + 1) } });
+      },
+      basculerCalme: () => {
+        const j = journeeDu(get().journee);
+        set({ journee: { ...j, calme: !j.calme } });
+      },
+      marquerJourneeFetee: () => set({ journee: { ...journeeDu(get().journee), fete: true } }),
       noterNuit: (n) => {
         set({ nights: ajouterNuit(get().nights, n) });
         get().addXp(10, 'Sommeil');
@@ -328,6 +345,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   chatQ: s.chatQ,
   premium: s.premium,
   jeu: s.jeu,
+  journee: s.journee,
   exitUntil: s.exitUntil,
   exitDeclined: s.exitDeclined,
 });

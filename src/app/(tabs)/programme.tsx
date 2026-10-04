@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { catalogueStyles as cs, lieuDuProfil, OngletsLieux, SeanceLigne } from '@/components/app/Catalogue';
@@ -12,7 +12,7 @@ import { Kcal } from '@/components/app/Kcal';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
 import { DayNum, Row, RowText, rowStyles } from '@/components/app/Rows';
 import { SectionHead } from '@/components/app/Section';
-import { Card, Icon, Text, toast } from '@/components/ui';
+import { Appui, Card, Icon, Text, toast } from '@/components/ui';
 import { COACH_IMAGES, EXERCICE_IMAGES, EXERCICES, LIEUX, PROGRAMMES, SEANCES } from '@/data';
 import type { LieuId, Seance, SeanceId } from '@/data/types';
 import { fmt } from '@/lib/charges';
@@ -75,7 +75,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
         {PROGRAMMES[c.id].map((x) => {
           const on = x.id === pr.id;
           return (
-            <Pressable key={x.id} accessibilityRole="button" onPress={() => router.push(`/plan/${x.id}`)}>
+            <Appui key={x.id} accessibilityRole="button" onPress={() => router.push(`/plan/${x.id}`)}>
               <LinearGradient
                 colors={[colors.surface, colors.surface, mix(c.c, 22, colors.surface)]}
                 locations={[0, 0.5, 1]}
@@ -102,7 +102,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
                 </View>
                 <Image source={COACH_IMAGES[c.id].corps} style={styles.pimg} contentFit="contain" />
               </LinearGradient>
-            </Pressable>
+            </Appui>
           );
         })}
       </ScrollView>
@@ -121,17 +121,17 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
           </View>
         ))}
         {duLieu.length > choix.length && (
-          <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/seances', params: { lieu } })} style={styles.plus}>
+          <Appui accessibilityRole="button" onPress={() => router.push({ pathname: '/seances', params: { lieu } })} style={styles.plus}>
             <Text weight="semibold" style={styles.plusTxt}>
               {duLieu.length - choix.length} autres séances {LIEUX[lieu].toLowerCase()}
             </Text>
             <Icon name="right" size={16} color={colors.pinkLight} />
-          </Pressable>
+          </Appui>
         )}
       </Card>
 
       <SectionHead title="Bibliothèque" />
-      <Pressable accessibilityRole="button" onPress={() => router.push('/exercices')} style={styles.biblioWrap}>
+      <Appui accessibilityRole="button" onPress={() => router.push('/exercices')} style={styles.biblioWrap}>
         <Card style={styles.biblio}>
           <View style={styles.biblioImgs}>
             {EXERCICES.slice(0, 3).map((e, i) => (
@@ -146,7 +146,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
           </View>
           <Icon name="right" color={colors.textSecondary} />
         </Card>
-      </Pressable>
+      </Appui>
       <View style={{ height: 10 }} />
     </ScrollView>
   );
@@ -167,7 +167,7 @@ function Calendrier() {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Calendrier" />
-      <Pressable accessibilityRole="button" onPress={() => router.push(`/plan/${pr.id}`)} style={styles.pheadWrap}>
+      <Appui accessibilityRole="button" onPress={() => router.push(`/plan/${pr.id}`)} style={styles.pheadWrap}>
         <Card style={styles.phead}>
           <CoachFace id={c.id} size={52} borderColor={c.c} />
           <View style={styles.flex}>
@@ -180,7 +180,7 @@ function Calendrier() {
           </View>
           <Icon name="right" />
         </Card>
-      </Pressable>
+      </Appui>
       <View style={styles.wsum}>
         <View style={styles.wsumBox}>
           <Text style={styles.wsumSmall}>Cette semaine</Text>

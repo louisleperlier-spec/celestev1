@@ -8,7 +8,7 @@ export default function TabsLayout() {
   return (
     <Tabs
       tabBar={() => <TabBar />}
-      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg }, animation: 'fade' }}
+      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg }, animation: 'shift', transitionSpec: { animation: 'spring', config: { damping: 22, stiffness: 240, mass: 0.8 } } }}
     >
       <Tabs.Screen name="accueil" />
       <Tabs.Screen name="programme" />

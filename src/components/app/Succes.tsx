@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Sheet } from '@/components/app/Sheet';
-import { Card, Icon, Text } from '@/components/ui';
+import { Appui, Card, Icon, Text } from '@/components/ui';
 import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
 import { RARETES } from '@/lib/jeu';
 import { avancement, debloque, missionFaite, SUCCES, succes, type Mission, type SuccesId } from '@/lib/succes';
@@ -38,7 +38,7 @@ export function MesSucces() {
           const ok = debloque(x, st);
           const n = x.missions.filter((m) => missionFaite(m, st)).length;
           return (
-            <Pressable key={x.id} onPress={() => setChoisi(x.id)} accessibilityRole="button" accessibilityLabel={`${x.nom}, ${ok ? 'débloqué' : `${n} mission sur 2`}`}>
+            <Appui key={x.id} onPress={() => setChoisi(x.id)} accessibilityRole="button" accessibilityLabel={`${x.nom}, ${ok ? 'débloqué' : `${n} mission sur 2`}`}>
               <View style={styles.mini}>
                 <Image source={SUCCES_IMAGES[x.id]} style={[styles.img, !ok && styles.terne]} contentFit="contain" />
                 {!ok && (
@@ -50,7 +50,7 @@ export function MesSucces() {
                   </View>
                 )}
               </View>
-            </Pressable>
+            </Appui>
           );
         })}
       </ScrollView>

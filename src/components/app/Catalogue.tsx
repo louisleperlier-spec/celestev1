@@ -1,7 +1,7 @@
 import { router, type Href } from 'expo-router';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
-import { Icon, Text } from '@/components/ui';
+import { Appui, Icon, Text } from '@/components/ui';
 import { EXERCICES, GROUPES, LIEUX, SEANCES_GRATUITES } from '@/data';
 import type { ExerciceId, GroupeId, LieuId, Seance, SeanceId } from '@/data/types';
 import { LVLN } from '@/lib/plan';
@@ -48,7 +48,7 @@ export function SeanceLigne({ w, onPlanifier }: { w: Seance; onPlanifier: (id: S
   const lk = wkLocked(w.id);
   return (
     <View style={styles.wrow}>
-      <Pressable accessibilityRole="button" style={styles.wmain} onPress={() => router.push(`/catalogue/${w.id}`)}>
+      <Appui accessibilityRole="button" style={styles.wmain} onPress={() => router.push(`/catalogue/${w.id}`)}>
         <Thumb id={premierExo(w)} big locked={lk} />
         <View style={styles.flex}>
           <Text weight="bold" style={styles.wh5} numberOfLines={1}>
@@ -59,10 +59,10 @@ export function SeanceLigne({ w, onPlanifier }: { w: Seance; onPlanifier: (id: S
             {lk ? ' • Plus' : SEANCES_GRATUITES.includes(w.id) && !isPremium() ? ' • Gratuit' : ''}
           </Text>
         </View>
-      </Pressable>
-      <Pressable accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.wadd} onPress={() => onPlanifier(w.id)}>
+      </Appui>
+      <Appui accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.wadd} onPress={() => onPlanifier(w.id)}>
         <Icon name="plus" color={colors.pinkLight} />
-      </Pressable>
+      </Appui>
     </View>
   );
 }
@@ -85,12 +85,12 @@ export function OngletsLieux({ lieu, onChange }: { lieu: LieuId; onChange: (l: L
   return (
     <View style={styles.ltabs} accessibilityRole="tablist">
       {(Object.entries(LIEUX) as [LieuId, string][]).map(([key, l]) => (
-        <Pressable key={key} accessibilityRole="tab" accessibilityState={{ selected: key === lieu }} onPress={() => onChange(key)} style={styles.ltab}>
+        <Appui key={key} accessibilityRole="tab" accessibilityState={{ selected: key === lieu }} onPress={() => onChange(key)} style={styles.ltab}>
           <Text weight="semibold" style={[styles.ltabTxt, key === lieu && styles.ltabOn]}>
             {l}
           </Text>
           {key === lieu && <View style={[styles.ltabBar, glow(colors.pink, 8)]} />}
-        </Pressable>
+        </Appui>
       ))}
     </View>
   );
@@ -99,9 +99,9 @@ export function OngletsLieux({ lieu, onChange }: { lieu: LieuId; onChange: (l: L
 /** Filtre pilule (.filters button / .gchips button). */
 export function Chip({ label, on, onPress, petit }: { label: string; on: boolean; onPress: () => void; petit?: boolean }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected: on }} onPress={onPress} style={[petit ? styles.gchip : styles.filter, on && styles.chipOn]}>
+    <Appui accessibilityRole="button" accessibilityState={{ selected: on }} onPress={onPress} style={[petit ? styles.gchip : styles.filter, on && styles.chipOn]}>
       <Text style={[petit ? styles.gchipTxt : styles.filterTxt, on && styles.chipTxtOn]}>{label}</Text>
-    </Pressable>
+    </Appui>
   );
 }
 
@@ -121,9 +121,9 @@ export function Recherche({ value, onChange, placeholder }: { value: string; onC
         autoCorrect={false}
       />
       {value ? (
-        <Pressable accessibilityRole="button" accessibilityLabel="Effacer" onPress={() => onChange('')} hitSlop={8}>
+        <Appui accessibilityRole="button" accessibilityLabel="Effacer" onPress={() => onChange('')} hitSlop={8}>
           <Icon name="x" size={16} color={colors.textSecondary} />
-        </Pressable>
+        </Appui>
       ) : null}
     </View>
   );
@@ -133,9 +133,9 @@ export function Recherche({ value, onChange, placeholder }: { value: string; onC
 export function EnTetePage({ titre, sous, retour }: { titre: string; sous?: string; retour?: Href }) {
   return (
     <View style={styles.head}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (retour ? router.navigate(retour) : router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
+      <Appui accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (retour ? router.navigate(retour) : router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
         <Icon name="left" />
-      </Pressable>
+      </Appui>
       <View style={styles.flex}>
         <Text style={styles.h1} accessibilityRole="header">
           {titre}

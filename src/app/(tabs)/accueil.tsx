@@ -1,17 +1,19 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BilanDuJour, SemaineCercles } from '@/components/app/Cercles';
 import { BandeauCartes } from '@/components/app/Jeu';
+import { Journee } from '@/components/app/Journee';
 import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { Reperes } from '@/components/app/Reperes';
 import { SectionHead } from '@/components/app/Section';
 import { Thumb } from '@/components/app/Thumb';
-import { Button, Card, Icon, Text } from '@/components/ui';
+import { Appui, Button, Card, Icon, Text } from '@/components/ui';
 import { COACH_IMAGES, DECO_IMAGES } from '@/data';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
 import { coachById } from '@/lib/plan';
@@ -51,6 +53,11 @@ export default function Accueil() {
 
   /** Cartes de l'Accueil, affichées dans l'ordre choisi (« Mon écran d'accueil » du Profil). */
   const cartes: Record<IdCarte, React.ReactNode> = {
+    journee: (
+      <View style={styles.journee}>
+        <Journee />
+      </View>
+    ),
     bilan: (
       <>
         <SectionHead title="Ton bilan du jour" />
@@ -62,7 +69,7 @@ export default function Accueil() {
     coach: (
       <>
         {/* Mot du coach : ouvre l'onglet Coach */}
-        <Pressable
+        <Appui
           accessibilityRole="button"
           accessibilityLabel={`Parler à ${c.nom}`}
           onPress={() => router.navigate('/coach')}
@@ -83,7 +90,7 @@ export default function Accueil() {
               </Text>
             </View>
           </Card>
-        </Pressable>
+        </Appui>
       </>
     ),
     seance: (
@@ -94,7 +101,7 @@ export default function Accueil() {
           {!s.ride && (
             <Image source={ns.offset === 0 ? DECO_IMAGES.salle : DECO_IMAGES.etirement} style={styles.scene} contentFit="cover" accessibilityIgnoresInvertColors />
           )}
-          <Pressable
+          <Appui
             accessibilityRole="button"
             accessibilityLabel={`Voir la séance ${s.titre}`}
             onPress={() => (s.day != null ? router.push(`/seance/${s.day}`) : router.navigate('/programme'))}
@@ -123,7 +130,7 @@ export default function Accueil() {
                 )}
               </View>
             )}
-          </Pressable>
+          </Appui>
           <Button label={s.ride ? 'Lancer la sortie' : 'Commencer la séance'} onPress={commencer} style={styles.btn} />
         </Card>
       </>
@@ -132,7 +139,7 @@ export default function Accueil() {
       <>
         {/* NÉA Plus, seulement en version gratuite */}
         {!estPremium(p.premium) && (
-          <Pressable accessibilityRole="button" onPress={() => ouvrirPlus()} style={styles.pad}>
+          <Appui accessibilityRole="button" onPress={() => ouvrirPlus()} style={styles.pad}>
             <Card style={styles.upsell}>
               <View style={styles.upsellIcon}>
                 <Icon name="star" size={18} color={gradients.gold[1]} />
@@ -145,7 +152,7 @@ export default function Accueil() {
               </View>
               <Icon name="right" size={16} color={colors.textTertiary} />
             </Card>
-          </Pressable>
+          </Appui>
         )}
       </>
     ),
@@ -179,11 +186,11 @@ export default function Accueil() {
             </Text>
             <Text style={styles.date}>{DATE.format(new Date())}</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Notifications" style={styles.rond} onPress={() => router.push('/notifications')}>
+          <Appui accessibilityRole="button" accessibilityLabel="Notifications" style={styles.rond} onPress={() => router.push('/notifications')}>
             <Icon name="bell" size={20} />
             {nonLues && <View style={styles.bellDot} />}
-          </Pressable>
-          <Pressable
+          </Appui>
+          <Appui
             accessibilityRole="button"
             accessibilityLabel="Mon profil"
             style={[styles.rond, styles.avatar]}
@@ -192,15 +199,18 @@ export default function Accueil() {
             <Text weight="semibold" style={styles.initiale}>
               {(p.name || '?').slice(0, 1).toUpperCase()}
             </Text>
-          </Pressable>
+          </Appui>
         </View>
         {/* Cartes gagnées pas encore ouvertes. */}
         <BandeauCartes style={styles.bandeau} />
 
         {ordreAccueil(p.accueil)
           .filter((x) => x.on)
-          .map((x) => (
-            <View key={x.id}>{cartes[x.id]}</View>
+          .map((x, i) => (
+            // Les cartes arrivent l'une après l'autre (glissé du bas + ressort).
+            <Animated.View key={x.id} entering={FadeInDown.delay(60 + i * 70).duration(450).springify().damping(18)}>
+              {cartes[x.id]}
+            </Animated.View>
           ))}
       </ScrollView>
     </SafeAreaView>
@@ -209,6 +219,7 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   bandeau: { marginHorizontal: 20, marginTop: 12 },
+  journee: { marginHorizontal: 20, marginTop: 16 },
   root: { flex: 1, backgroundColor: colors.bg },
   scroll: { paddingBottom: 28 },
   flex: { flex: 1 },

@@ -2,11 +2,12 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PastilleDifficulte } from '@/components/app/Rando';
-import { Button, Icon, Text } from '@/components/ui';
+import { Appui, Button, Icon, Text } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
 import { SENTIERS } from '@/data/randos';
 import { AXEL_RANDO, photoGrande, RANDO_IMAGES } from '@/data/randosImages';
@@ -84,24 +85,24 @@ export default function Randonnee() {
         </View>
 
         {enCours && (
-          <Pressable onPress={() => router.push('/randonnee/en-cours')} style={styles.enCours} accessibilityRole="button">
+          <Appui onPress={() => router.push('/randonnee/en-cours')} style={styles.enCours} accessibilityRole="button">
             <Icon name="rando" color={colors.pink} />
             <Text weight="semibold" style={[styles.flex, styles.enCoursTxt]}>
               Rando en cours : reprendre
             </Text>
             <Icon name="right" size={18} color={colors.pink} />
-          </Pressable>
+          </Appui>
         )}
 
         <View style={styles.filtres}>
           {FILTRES.map(([k, l]) => {
             const on = filtre === k;
             return (
-              <Pressable key={k} onPress={() => setFiltre(on ? null : k)} style={[styles.filtre, on && styles.filtreOn]} accessibilityRole="button" accessibilityState={{ selected: on }}>
+              <Appui key={k} onPress={() => setFiltre(on ? null : k)} style={[styles.filtre, on && styles.filtreOn]} accessibilityRole="button" accessibilityState={{ selected: on }}>
                 <Text weight={on ? 'semibold' : 'regular'} style={[styles.filtreTxt, on && styles.filtreTxtOn]}>
                   {l}
                 </Text>
-              </Pressable>
+              </Appui>
             );
           })}
         </View>
@@ -110,9 +111,9 @@ export default function Randonnee() {
         <View style={styles.titreLigne}>
           <Text style={styles.h2}>Près de toi</Text>
           {pres.etat === 'ok' && (
-            <Pressable onPress={() => chercherRandosPres(true)} accessibilityRole="button" accessibilityLabel="Actualiser">
+            <Appui onPress={() => chercherRandosPres(true)} accessibilityRole="button" accessibilityLabel="Actualiser">
               <Icon name="refresh" size={20} color={colors.textSecondary} />
-            </Pressable>
+            </Appui>
           )}
         </View>
         {pres.etat === 'recherche' || (pres.etat === 'vide' && !pres.liste.length) ? (
@@ -124,7 +125,7 @@ export default function Randonnee() {
         ) : !proposee ? (
           <Text style={styles.vide}>Aucun sentier balisé trouvé à moins de 30 km. Essaie une rando libre !</Text>
         ) : (
-          <Pressable onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.suggestion} accessibilityRole="button">
+          <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.suggestion} accessibilityRole="button">
             <View style={styles.badgeSemaine}>
               <Text weight="bold" style={styles.badgeTxt}>
                 SUGGESTION DU JOUR
@@ -145,10 +146,10 @@ export default function Randonnee() {
             </View>
             <Text style={styles.pourquoi}>🧭 {proposee.pourquoi}</Text>
             <Button label="Voir le sentier" iconAfter="right" small onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.btn} />
-          </Pressable>
+          </Appui>
         )}
         {autour.map((s) => (
-          <Pressable key={s.id} onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
+          <Appui key={s.id} onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
             <View style={styles.vignetteOsm}>
               <Icon name="montagne" size={28} color={colors.pink} />
             </View>
@@ -165,13 +166,13 @@ export default function Randonnee() {
               <PastilleDifficulte d={s.difficulte} />
               <Icon name="right" size={16} color={colors.textSecondary} />
             </View>
-          </Pressable>
+          </Appui>
         ))}
         {pres.liste.length > 0 && <Text style={styles.note}>Sentiers et tracés © contributeurs OpenStreetMap · dénivelé calculé avec l’altitude du terrain.</Text>}
 
         {/* Rando de la semaine */}
         <Text style={styles.h2}>Incontournables</Text>
-        <Pressable onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.semaine} accessibilityRole="button">
+        <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.semaine} accessibilityRole="button">
           <Image source={photoGrande(semaine.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
           <LinearGradient colors={ui.voilePhoto} locations={[0.25, 0.6, 1]} style={StyleSheet.absoluteFill} />
           <View style={styles.badgeSemaine}>
@@ -192,27 +193,29 @@ export default function Randonnee() {
             </View>
             <Button label="Voir le sentier" iconAfter="right" small onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.btn} />
           </View>
-        </Pressable>
+        </Appui>
 
         <Text style={styles.h2}>À explorer</Text>
         {liste.length === 0 && <Text style={styles.vide}>Aucun sentier pour ce filtre pour l’instant.</Text>}
-        {liste.map((s) => (
-          <Pressable key={s.id} onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
-            <Image source={RANDO_IMAGES[s.id]} style={styles.vignette} contentFit="cover" />
-            <View style={styles.flex}>
-              <Text weight="bold" style={styles.itemNom} numberOfLines={1}>
-                {s.nom}
-              </Text>
-              <Text style={styles.itemLieu} numberOfLines={1}>
-                {s.region}
-              </Text>
-              <Chiffres s={s} />
-            </View>
-            <View style={styles.droite}>
-              <PastilleDifficulte d={s.difficulte} />
-              <Icon name="right" size={16} color={colors.textSecondary} />
-            </View>
-          </Pressable>
+        {liste.map((s, i) => (
+          <Animated.View key={s.id} entering={FadeInDown.delay(Math.min(i, 8) * 55).duration(380).springify().damping(18)}>
+            <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
+              <Image source={RANDO_IMAGES[s.id]} style={styles.vignette} contentFit="cover" />
+              <View style={styles.flex}>
+                <Text weight="bold" style={styles.itemNom} numberOfLines={1}>
+                  {s.nom}
+                </Text>
+                <Text style={styles.itemLieu} numberOfLines={1}>
+                  {s.region}
+                </Text>
+                <Chiffres s={s} />
+              </View>
+              <View style={styles.droite}>
+                <PastilleDifficulte d={s.difficulte} />
+                <Icon name="right" size={16} color={colors.textSecondary} />
+              </View>
+            </Appui>
+          </Animated.View>
         ))}
 
         <View style={styles.libre}>

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Card, Icon, Text, type IconName } from '@/components/ui';
+import { Appui, Card, Icon, Text, type IconName } from '@/components/ui';
 import { CARTES, defi, defisSemaine, possedees, TEXTES_RECORDS } from '@/lib/jeu';
 import { lundiISO } from '@/lib/ligue';
 import { useProfil } from '@/store/profil';
@@ -13,7 +13,7 @@ export function BandeauCartes({ style }: { style?: object }) {
   if (!paquets.length) return null;
   const n = paquets.reduce((a, p) => a + p.cartes.length, 0);
   return (
-    <Pressable onPress={() => router.push('/cartes/ouvrir')} accessibilityRole="button" style={[styles.bandeau, style]}>
+    <Appui onPress={() => router.push('/cartes/ouvrir')} accessibilityRole="button" style={[styles.bandeau, style]}>
       <Text style={styles.cadeau}>🎁</Text>
       <View style={styles.flex}>
         <Text weight="semibold" style={styles.h4}>
@@ -22,7 +22,7 @@ export function BandeauCartes({ style }: { style?: object }) {
         <Text style={styles.p}>Touche pour la découvrir</Text>
       </View>
       <Icon name="right" size={18} color={colors.pink} />
-    </Pressable>
+    </Appui>
   );
 }
 
@@ -71,7 +71,7 @@ export function EntreeCollection() {
   const n = possedees(jeu);
   const aOuvrir = jeu.paquets.reduce((a, p) => a + p.cartes.length, 0);
   return (
-    <Pressable onPress={() => router.push('/cartes')} accessibilityRole="button">
+    <Appui onPress={() => router.push('/cartes')} accessibilityRole="button">
       <Card style={styles.entree}>
         <Text style={styles.cartesIc}>🃏</Text>
         <View style={styles.flex}>
@@ -88,7 +88,7 @@ export function EntreeCollection() {
         {aOuvrir > 0 && <View style={styles.point} />}
         <Icon name="right" size={18} color={colors.textSecondary} />
       </Card>
-    </Pressable>
+    </Appui>
   );
 }
 

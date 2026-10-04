@@ -62,7 +62,23 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={navTheme}>
       <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'fade' }} />
+      {/*
+        Transitions natives d'iOS (fil d'interface, 120 Hz) : les pages de détail glissent depuis la droite avec l'effet de
+        profondeur et se ferment d'un glissement depuis n'importe où ; les activités et l'achat montent depuis le bas ;
+        l'accueil, l'onboarding et les onglets se fondent.
+      */}
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'ios_from_right', fullScreenGestureEnabled: true }}>
+        <Stack.Screen name="index" options={{ animation: 'fade' }} />
+        <Stack.Screen name="bienvenue" options={{ animation: 'fade' }} />
+        <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+        <Stack.Screen name="seance-en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
+        <Stack.Screen name="randonnee/en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
+        <Stack.Screen name="randonnee/recap" options={{ animation: 'fade_from_bottom' }} />
+        <Stack.Screen name="activite" options={{ animation: 'fade_from_bottom' }} />
+        <Stack.Screen name="cartes/ouvrir" options={{ animation: 'fade_from_bottom' }} />
+        <Stack.Screen name="plus" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
+      </Stack>
       <NotifBanniere />
       <FeteHost />
       <ToastHost />

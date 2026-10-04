@@ -1,3 +1,4 @@
+export { Appui } from './Appui';
 export { BigNumber } from './BigNumber';
 export { Button } from './Button';
 export { Card } from './Card';
