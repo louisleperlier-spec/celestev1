@@ -1,0 +1,82 @@
+{
+  "expo": {
+    "name": "NÉA",
+    "slug": "nea",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "nea",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "com.neacoach.app",
+      "icon": "./assets/images/icon.png",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "usesAppleSignIn": true,
+      "appleTeamId": "K55493374H",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.neacoach.app"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/images/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#070708",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ],
+      "expo-video",
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours, calculer ta distance et conquérir des territoires, et pour centrer la carte des territoires."
+        }
+      ],
+      "expo-notifications",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "NÉA lit ton sommeil, ta VFC, ta fréquence cardiaque, ton poids, tes calories actives, tes minutes d'exercice et tes pas dans Apple Santé pour calculer ta récupération, remplir tes cercles et tes widgets et adapter tes séances.",
+          "NSHealthUpdateUsageDescription": "NÉA enregistre tes séances, tes sorties vélo et tes courses dans Apple Santé (durée, calories, distance) pour qu'elles comptent dans tes cercles d'activité.",
+          "background": false
+        }
+      ],
+      "expo-apple-authentication",
+      "@bacons/apple-targets"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "backgroundColor": "#070708",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8236e0bd-7d60-4537-9cbb-6df1ea24586a"
+      }
+    },
+    "owner": "leaderprinces-team",
+    "runtimeVersion": "exposdk:57.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/8236e0bd-7d60-4537-9cbb-6df1ea24586a"
+    }
+  }
+}
