@@ -72,7 +72,7 @@ final class ControleurNotif: WKUserNotificationHostingController<VueNotif> {
       let a = EtatNea.actions[info.niveau]
       notificationActions = [UNNotificationAction(identifier: a.0, title: a.1, options: fg)]
     }
-    setNeedsBodyUpdate()
+    // La vue (`body`) est lue après didReceive : elle affiche ces données.
   }
 }
 
