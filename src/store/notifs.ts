@@ -7,7 +7,9 @@ import { router } from 'expo-router';
 import { AppState, Platform } from 'react-native';
 import { create } from 'zustand';
 
-import { notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif, type NouvelleNotif } from '@/lib/notifs';
+import { bilanCoeur, conseilRythme, texteBilanCoeur } from '@/lib/bilanCoeur';
+import { motivationDuJour } from '@/lib/motivation';
+import { COULEURS_NOTIF, notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif, type NouvelleNotif } from '@/lib/notifs';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
@@ -102,6 +104,24 @@ export async function reprogrammer(now: Date = new Date()) {
     const n = lastNight(st.nights, reveil);
     await Notifications.scheduleNotificationAsync({ content: contenu(notifNuit(n, sleepScore(n, base))), trigger: { type: DATE, date: reveil } });
   }
+  // Motivation du jour : les 7 prochains matins, un message différent chaque jour (jamais le même avant d'avoir vu les 123).
+  if (st.nset.motiv !== false) {
+    const h = st.nset.motivT ?? '08:00';
+    let jour = prochaine(h, now);
+    for (let k = 0; k < 7; k++, jour = new Date(+jour + 864e5)) {
+      await Notifications.scheduleNotificationAsync({
+        content: { title: 'Ta dose de motivation 🔥', body: motivationDuJour(st.progStart, st.name, jour), data: { act: 'accueil' } },
+        trigger: { type: DATE, date: jour },
+      });
+    }
+  }
+  // Conseil cœur : un jour sur deux à 17 h 30, pour améliorer ton rythme (le bilan du matin arrive quand ta nuit est connue).
+  if (st.nset.coeur !== false) {
+    let jour = prochaine('17:30', now);
+    for (let k = 0; k < 4; k++, jour = new Date(+jour + 2 * 864e5)) {
+      await Notifications.scheduleNotificationAsync({ content: { ...conseilRythme(jour), data: { act: 'sleep' } }, trigger: { type: DATE, date: jour } });
+    }
+  }
   if (st.nset.bed) {
     await Notifications.scheduleNotificationAsync({
       content: contenu(notifCoucher(st.nset)),
@@ -110,12 +130,30 @@ export async function reprogrammer(now: Date = new Date()) {
   }
 }
 
+/**
+ * Bilan du cœur de la dernière nuit (FC au repos, VFC) : une fois par nuit, pour une nuit des dernières 24 h,
+ * dans la liste des notifications et en bannière.
+ */
+export function verifierCoeur(now: Date = new Date()) {
+  const st = useProfil.getState();
+  if (!st.onboarded || st.nset.coeur === false) return;
+  const b = bilanCoeur(st.nights);
+  if (!b || +now - +new Date(b.d) > 864e5) return;
+  if (st.notifs.some((n) => n.type === 'coeur' && n.lien === b.d)) return;
+  annoncer({ type: 'coeur', icon: 'heart', col: COULEURS_NOTIF.coeur, act: 'sleep', lien: b.d, ...texteBilanCoeur(b, now) });
+}
+
 let demarre = false;
 /** À appeler une fois au démarrage : horloge, reprogrammation quand l'état change, touche sur une notification. */
 export function demarrerNotifs() {
   if (demarre) return;
   demarre = true;
   setInterval(verifierNotifs, 2000);
+  // Bilan du cœur : au lancement et à chaque nouvelle nuit.
+  setTimeout(() => verifierCoeur(), 3000);
+  useProfil.subscribe((s, avant) => {
+    if (s.nights !== avant.nights) verifierCoeur();
+  });
   if (!natif) return;
   // App ouverte : la bannière de NÉA remplace celle du téléphone.
   Notifications.setNotificationHandler({

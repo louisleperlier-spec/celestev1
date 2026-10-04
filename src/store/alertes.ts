@@ -5,6 +5,8 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
+import { texteBilanCoeur } from '@/lib/bilanCoeur';
+import { motivationDuJour } from '@/lib/motivation';
 import { OBJECTIF_PAS } from '@/lib/notifs';
 import { buildPlan, sesKcal } from '@/lib/plan';
 
@@ -50,14 +52,24 @@ const EXEMPLES = [
 ] as const;
 
 /**
- * « Tester mes alertes » : 4 exemples à 5, 10, 15 et 20 s. App ouverte, NÉA cache les bannières du téléphone :
+ * « Tester mes alertes » : 6 exemples toutes les 5 s. App ouverte, NÉA cache les bannières du téléphone :
  * il faut quitter l'app (ou verrouiller l'iPhone) pour les voir arriver.
  */
 export async function testerAlertes(): Promise<boolean> {
   if (Platform.OS === 'web') return false;
   if ((await demanderAutorisation()) !== 'granted') return false;
+  // + la motivation du jour et un bilan du cœur d'exemple (6 alertes en tout).
+  const st = useProfil.getState();
+  const exemples = [
+    ...EXEMPLES,
+    { title: 'Ta dose de motivation 🔥', body: motivationDuJour(st.progStart, st.name), act: 'accueil' },
+    {
+      ...texteBilanCoeur({ etat: 'top', rhr: 54, rhrMoy: 57, hrv: 66, hrvMoy: 60, d: new Date().toISOString() }),
+      act: 'sleep',
+    },
+  ];
   await Promise.all(
-    EXEMPLES.map((e, i) =>
+    exemples.map((e, i) =>
       Notifications.scheduleNotificationAsync({
         identifier: `nea.test.${i}`,
         content: { title: e.title, body: e.body, data: { act: e.act } },

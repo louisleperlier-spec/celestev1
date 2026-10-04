@@ -18,9 +18,14 @@ export type ReglagesNotifs = {
   /** Rappel du coucher. */
   bed: boolean;
   bedT: string;
+  /** Message de motivation du jour (absent des anciens réglages = activé) et son heure. */
+  motiv?: boolean;
+  motivT?: string;
+  /** Bilan du cœur le matin + conseil pour améliorer ton rythme (absent = activé). */
+  coeur?: boolean;
 };
 
-export const REGLAGES_DEFAUT: ReglagesNotifs = { post: true, delay: 10, sleep: true, wake: '07:30', bed: true, bedT: '22:30' };
+export const REGLAGES_DEFAUT: ReglagesNotifs = { post: true, delay: 10, sleep: true, wake: '07:30', bed: true, bedT: '22:30', motiv: true, motivT: '08:00', coeur: true };
 
 /** Délais proposés (select du prototype). */
 export const DELAIS: readonly (readonly [number, string])[] = [
@@ -48,8 +53,8 @@ export type Notif = {
   id: string;
   d: string;
   read: boolean;
-  type: 'post' | 'sleep' | 'bed' | 'trial' | 'activite';
-  icon: 'wave' | 'moon' | 'star' | 'bike' | 'run' | 'dumb' | 'rando';
+  type: 'post' | 'sleep' | 'bed' | 'trial' | 'activite' | 'motivation' | 'coeur';
+  icon: 'wave' | 'moon' | 'star' | 'bike' | 'run' | 'dumb' | 'rando' | 'heart' | 'flame';
   col: string;
   act: ActionNotif;
   title: string;
@@ -64,7 +69,7 @@ export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;
 export type EnAttente = { at: number; type: 'post'; kind: 'muscu' | 'velo' | 'course' | 'rando'; endHrv: number | null } | { at: number; type: 'trial' };
 
 /** Couleurs des pastilles (.nic) reprises du prototype. */
-export const COULEURS_NOTIF = { post: '#FF6B1A', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000' } as const;
+export const COULEURS_NOTIF = { post: '#FF6B1A', sleep: '#6b7cff', bed: '#8a5cff', trial: '#ffb000', coeur: '#FF5C6C' } as const;
 
 /** « Ton essai se termine demain » (obligatoire), envoyé seulement si le renouvellement est actif. */
 export function notifEssai(p: Premium | null): NouvelleNotif | null {

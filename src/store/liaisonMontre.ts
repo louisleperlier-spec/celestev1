@@ -21,6 +21,7 @@ import { casesTrace } from '@/lib/territoires';
 import { caloriesCourse, caloriesVelo, xpCourse, xpVelo } from '@/lib/velo';
 import { colors } from '@/theme';
 import { catSession, sessionForDay, type SeanceJour, type Semaine } from '@/lib/semaine';
+import { motivationDuJour } from '@/lib/motivation';
 import { caloriesRando, xpRando } from '@/lib/rando';
 import { lvlInfo, rankOf, streak } from '@/lib/xp';
 
@@ -213,7 +214,7 @@ function etat(): EtatMontre {
     semaine,
     bilan,
     nuit: ln ? { h: ln.h, rhr: ln.rhr ?? 0, hrv: ln.hrv ?? 0, src: ln.src === 'sante' ? 'Apple Santé' : 'NÉA' } : null,
-    coachInfo: { nom: c.nom, style: c.style, daily: c.daily, dernier: dernier?.t ?? '' },
+    coachInfo: { nom: c.nom, style: c.style, daily: motivationDuJour(st.progStart, st.name), dernier: dernier?.t ?? '' },
     progres: {
       seances: st.logs.filter((l) => new Date(l.d) >= lundi).length,
       objectif: st.days,

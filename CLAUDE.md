@@ -212,6 +212,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (rappels quotidiens 10 h → 20 h toutes les 2 h, `UNCalendarNotificationTrigger`)
   - réglages `alertesSante` du profil (Profil → « Alertes santé (Apple Watch) »), envoyés par `store/alertes.ts` (`configurerAlertes`, groupe
     d'apps, clé `alertes`) avec objectif kcal, objectif de pas et poids ; toucher : VFC → /recuperation, vélo → /velo, pas → /accueil
+- [ ] **Motivation + cœur (hors prototype, demandés par l'utilisateur, oct. 2026)** : **publiés en EAS Update, à valider sur iPhone**
+  - `lib/motivation.ts` : **123 messages** (tutoiement, emojis, `{p}` = prénom), `motivationDuJour(progStart, prénom, date)` : ordre mélangé
+    par personne et par cycle (compté depuis son 1er jour), aucun message revu avant d'avoir vu les 123 ; sur l'Accueil (carte du coach, à la
+    place de `c.daily`), sur la montre (`coachInfo.daily`) et en notification chaque matin (7 jours programmés d'avance, `nset.motiv` / `motivT`)
+  - `lib/bilanCoeur.ts` : **bilan du cœur** de la dernière nuit (FC au repos, VFC) vs les 14 nuits d'avant (≥ 3) : top, stable, FC haute
+    (≥ +5 bpm), VFC basse (≤ −15 %), surcharge (les deux) ; verdict + conseil du jour (banque par état, pas un avis médical) ;
+    `verifierCoeur` (store/notifs) une fois par nuit des dernières 24 h → notification `coeur` (liste + bannière, toucher → Sommeil) ;
+    **conseil cœur** programmé un jour sur deux à 17 h 30 (`conseilRythme`, jamais le même deux jours de suite) ; réglage `nset.coeur`
+  - bascules « Motivation du jour » et « Mon cœur » dans `NotifSheet` et Profil → Alertes ; « Tester mes alertes » : 6 exemples
 - [ ] **Fiche App Store (oct. 2026)** : 5 visuels iPhone 6,9" (`APP_IPHONE_67`) + 4 captures Apple Watch (`APP_WATCH_SERIES_4`, 368 × 448)
   téléversés par l'API ; sous-titre, description (avec mentions d'abonnement), mots-clés, texte promotionnel (fr-CA) ; **site public**
   `site/` sur l'hébergement Expo **https://nea-coach.expo.app** (`npm run site` : `scripts/generer-site.ts` génère confidentialite.html,

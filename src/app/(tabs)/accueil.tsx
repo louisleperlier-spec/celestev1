@@ -15,6 +15,7 @@ import { Button, Card, Icon, Text } from '@/components/ui';
 import { COACH_IMAGES, DECO_IMAGES } from '@/data';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
 import { coachById } from '@/lib/plan';
+import { motivationDuJour } from '@/lib/motivation';
 import { estPremium } from '@/lib/premium';
 import { nextSession } from '@/lib/semaine';
 import { useProfil, useSemaine } from '@/store/profil';
@@ -73,8 +74,9 @@ export default function Accueil() {
               <Text weight="semibold" style={styles.coachTitre}>
                 {message}
               </Text>
+              {/* Motivation du jour : un message différent chaque jour (123 en rotation). */}
               <Text style={styles.coachTxt} numberOfLines={3}>
-                {c.daily}
+                {motivationDuJour(p.progStart, p.name)}
               </Text>
               <Text weight="semibold" style={styles.coachLien}>
                 Parler à {c.nom}
