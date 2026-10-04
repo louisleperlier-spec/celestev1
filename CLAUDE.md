@@ -58,7 +58,7 @@ hexagone du rang), XP vers le niveau suivant, XP au total / meilleure série, pr
 Statistiques = Semaine / Mois / Année, séances en barres orange, temps actif / calories / volume, sommeil moyen, VFC nocturne, FC moyenne,
 poids (+ Ajouter), puis cercles, cœur, courbe du poids, territoires ; Collection = n / 67 cartes, filtres Toutes / Débloquées / À gagner,
 succès mis en avant (objectifs), les 5 succès, grille de cartes ; Ligue = `Ligue integree` ; contrôle segmenté `Segmente` à pilule orange
-partout ; **fiche d'un sentier** : tuile Difficulté, « Ton parcours en relief » (`DECO_IMAGES.relief`, aperçu illustratif, altitude du
+partout ; **fiche d'un sentier** : tuile Difficulté, « Ton parcours en relief » (relief 3D propre au sentier `RELIEFS` de `randosImages.ts`, 6 sentiers, pastille « Sommet » au drapeau ; sinon `DECO_IMAGES.relief` « Aperçu illustratif » ; altitude du
 sommet, Départ → Sommet → Retour, km · aller-retour / boucle), « Démarrer la rando » + « Ouvrir sur la montre » juste dessous ;
 mises à jour à distance appliquées tout de suite (`store/majs.ts` : vérifie à l'ouverture et au retour, télécharge, relance).
 

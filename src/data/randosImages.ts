@@ -128,3 +128,17 @@ export const imageVoir = (id: string, v: Voir) => (COMMONS[id] ?? []).find((p) =
 
 /** Crédit de la photo principale (sentiers dont elle vient de Wikimedia Commons). */
 export const creditPrincipal = (id: string) => (RANDOS_COMMONS.includes(id) ? COMMONS[id]?.[0]?.credit : undefined);
+
+/**
+ * Reliefs 3D propres à un sentier (générés par l'utilisateur, 16:9, fond graphite) et position de leur drapeau
+ * (fraction de la largeur et de la hauteur) pour placer l'étiquette « Sommet ». Sinon : relief illustratif commun.
+ */
+export const RELIEFS: Readonly<Record<string, { image: ImageSourcePropType; x: number; y: number }>> = {
+  'mont-albert': { image: require('@/assets/randos/relief/mont-albert.webp'), x: 0.688, y: 0.053 },
+  'mont-wright': { image: require('@/assets/randos/relief/mont-wright.webp'), x: 0.577, y: 0.089 },
+  montmorency: { image: require('@/assets/randos/relief/montmorency.webp'), x: 0.627, y: 0.138 },
+  acropole: { image: require('@/assets/randos/relief/acropole.webp'), x: 0.571, y: 0.032 },
+  'les-loups': { image: require('@/assets/randos/relief/les-loups.webp'), x: 0.568, y: 0.064 },
+  'lac-des-cygnes': { image: require('@/assets/randos/relief/lac-des-cygnes.webp'), x: 0.623, y: 0.074 },
+};
+export const RELIEF_RATIO = 619 / 1100;

@@ -12,11 +12,11 @@ import { ProfilAltitude, useMeteo } from '@/components/app/Rando';
 import { Button, Card, Icon, Text, toast, type IconName } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
 import { SENTIERS } from '@/data/randos';
-import { AXEL_CONSEIL, creditPrincipal, galerie, imageVoir, photoGrande } from '@/data/randosImages';
+import { AXEL_CONSEIL, creditPrincipal, galerie, imageVoir, photoGrande, RELIEF_RATIO, RELIEFS } from '@/data/randosImages';
 import { DIFFICULTES, duree, profilSentier, VOIR } from '@/lib/rando';
 import { useRando } from '@/store/rando';
 import { trouverSentier as sentier } from '@/store/randosPres';
-import { colors, fonts, ui } from '@/theme';
+import { alpha, colors, fonts, ui } from '@/theme';
 
 /** Conseils d'Axel selon la difficulté (eau, couches, bâtons, météo). */
 const conseils = (dplus: number, min: number): [IconName, string][] => [
@@ -35,6 +35,8 @@ export default function FicheSentier() {
   const meteo = useMeteo(s.lat, s.lng, s.altSommet);
   const enCours = useRando((r) => r.run);
   const largeurRelief = useWindowDimensions().width - 40 - 2;
+  const relief = RELIEFS[s.id];
+  const hauteurRelief = largeurRelief * (relief ? RELIEF_RATIO : 400 / 760);
   const demarrer = () => {
     if (!enCours) useRando.getState().demarrer(s.id);
     router.push('/randonnee/en-cours');
@@ -77,20 +79,32 @@ export default function FicheSentier() {
               <Text weight="bold" style={styles.reliefTitre}>
                 Ton parcours en relief
               </Text>
-              <Pressable accessibilityRole="button" onPress={() => toast('Illustration : le relief exact du sentier n’est pas représenté')} style={styles.apercu}>
-                <Text style={styles.apercuTxt}>Aperçu illustratif</Text>
-                <Icon name="info" size={14} color={colors.textSecondary} />
-              </Pressable>
+              {!relief && (
+                <Pressable accessibilityRole="button" onPress={() => toast('Illustration : le relief exact du sentier n’est pas représenté')} style={styles.apercu}>
+                  <Text style={styles.apercuTxt}>Aperçu illustratif</Text>
+                  <Icon name="info" size={14} color={colors.textSecondary} />
+                </Pressable>
+              )}
             </View>
-            <View style={{ width: largeurRelief, height: (largeurRelief * 400) / 760, marginHorizontal: -16 }}>
-              <Image source={DECO_IMAGES.relief} style={StyleSheet.absoluteFill} contentFit="cover" />
+            {relief && (
+              <View style={styles.altitudeLigne}>
+                <Text weight="bold" style={styles.altitudeVal}>
+                  {s.altSommet} m
+                </Text>
+                <Text style={styles.petit}>Altitude du sommet</Text>
+              </View>
+            )}
+            <View style={{ width: largeurRelief, height: hauteurRelief, marginHorizontal: -16 }}>
+              <Image source={relief?.image ?? DECO_IMAGES.relief} style={StyleSheet.absoluteFill} contentFit="cover" />
+              {!relief && (
               <View style={styles.altitude}>
                 <Text weight="bold" style={styles.altitudeVal}>
                   {s.altSommet} m
                 </Text>
                 <Text style={styles.petit}>Altitude du sommet</Text>
               </View>
-              <View style={[styles.drapeau, { left: largeurRelief * 0.582 - 2 }]}>
+              )}
+              <View style={relief ? [styles.pastilleSommet, { left: largeurRelief * relief.x + 14, top: Math.max(0, hauteurRelief * relief.y - 2) }] : [styles.drapeau, { left: largeurRelief * 0.582 - 2 }]}>
                 <Text weight="semibold" style={styles.drapeauTxt}>
                   Sommet
                 </Text>
@@ -242,6 +256,8 @@ const styles = StyleSheet.create({
   altitude: { position: 'absolute', left: 18, top: 0 },
   altitudeVal: { fontSize: 38, lineHeight: 44, letterSpacing: -1 },
   drapeau: { position: 'absolute', top: 2, paddingLeft: 18 },
+  altitudeLigne: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
+  pastilleSommet: { position: 'absolute', paddingHorizontal: 9, paddingVertical: 3, borderRadius: 11, backgroundColor: alpha(colors.bg, 0.72) },
   drapeauTxt: { fontSize: 13, lineHeight: 17 },
   etapes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 },
   etape: { alignItems: 'center', gap: 4, minWidth: 60 },
