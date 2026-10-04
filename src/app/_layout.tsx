@@ -11,6 +11,7 @@ import { demarrerNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { demarrerAchats } from '@/store/achats';
 import { demarrerAlertes } from '@/store/alertes';
+import { demarrerMajs } from '@/store/majs';
 import { demarrerJeu } from '@/store/jeu';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
@@ -55,6 +56,8 @@ export default function RootLayout() {
     demarrerAchats();
     // Cartes récompense, records, défis de la semaine, niveaux : récompenses et fêtes.
     demarrerJeu();
+    // Mises à jour à distance appliquées tout de suite (relance de l'app).
+    demarrerMajs();
   }, [ready]);
 
   if (!ready) return null;
