@@ -10,6 +10,7 @@ import { CoachFace } from '@/components/app/CoachFace';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Kcal } from '@/components/app/Kcal';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
+import { Aujourdhui, CarteProgramme, SemaineJours } from '@/components/app/ProgrammeHaut';
 import { DayNum, Row, RowText, rowStyles } from '@/components/app/Rows';
 import { SectionHead } from '@/components/app/Section';
 import { Appui, Card, Icon, Text, toast } from '@/components/ui';
@@ -60,8 +61,14 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Programme" />
-      <SectionHead title="Mon plan" action={`Parler à ${c.nom}`} onAction={() => router.push('/chat')} />
+      <EnTete titre="Ton programme" sous="Un peu mieux, chaque semaine." rubriques={ENTRAINEMENT} actif="Programme" />
+      {/* Direction « nuit » : semaine, programme suivi, séance du jour. */}
+      <View style={styles.haut}>
+        <SemaineJours />
+        <CarteProgramme />
+        <Aujourdhui />
+      </View>
+      <SectionHead title="Tes programmes" action={`Parler à ${c.nom}`} onAction={() => router.push('/coach')} />
       {/* .plans : carrousel des 3 programmes du coach */}
       <ScrollView
         horizontal
@@ -166,7 +173,7 @@ function Calendrier() {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <EnTete titre="Entraînement" rubriques={ENTRAINEMENT} actif="Calendrier" />
+      <EnTete titre="Ton programme" sous="Ta semaine, jour par jour." rubriques={ENTRAINEMENT} actif="Calendrier" />
       <Appui accessibilityRole="button" onPress={() => router.push(`/plan/${pr.id}`)} style={styles.pheadWrap}>
         <Card style={styles.phead}>
           <CoachFace id={c.id} size={52} borderColor={c.c} />
@@ -228,6 +235,7 @@ function Calendrier() {
 }
 
 const styles = StyleSheet.create({
+  haut: { paddingHorizontal: 20, paddingTop: 8, gap: 14 },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary },

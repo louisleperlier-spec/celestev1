@@ -1,64 +1,73 @@
 import { router, usePathname } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Icon, Text, type IconName } from '@/components/ui';
-import { colors } from '@/theme';
+import { Appui, Icon, Text, type IconName } from '@/components/ui';
+import { alpha, colors, ui } from '@/theme';
 
 type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/progres' | '/profil' | '/coach';
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
 /**
- * 5 onglets : Accueil (+ Profil, ouvert par l'avatar), Entraînement (Programme, Calendrier, Sorties), Randonnée
- * (maquette de l'utilisateur, oct. 2026), Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
+ * 4 onglets (direction « nuit », maquettes de l'utilisateur) : Accueil (+ Profil), Programme (Programme, Calendrier,
+ * Sorties, Randonnée), Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
  */
 const ONGLETS: Onglet[] = [
   { label: 'Accueil', icon: 'home', href: '/accueil', ecrans: ['/accueil', '/profil'] },
-  { label: 'Entraînement', icon: 'dumb', href: '/programme', ecrans: ['/programme', '/velo'] },
-  { label: 'Randonnée', icon: 'rando', href: '/rando', ecrans: ['/rando'] },
+  { label: 'Programme', icon: 'cal', href: '/programme', ecrans: ['/programme', '/velo', '/rando'] },
   { label: 'Progrès', icon: 'chart', href: '/progres', ecrans: ['/progres', '/ligue'] },
-  { label: 'Coach', icon: 'coach', href: '/coach', ecrans: ['/coach'] },
+  { label: 'Coach', icon: 'bulle', href: '/coach', ecrans: ['/coach'] },
 ];
 
-/** Barre d'onglets en bas de l'écran : icône et libellé, rose pour l'onglet ouvert. */
+/** Barre d'onglets flottante en pilule : icône et libellé, orange (avec halo) pour l'onglet ouvert. */
 export function TabBar() {
   const path = usePathname();
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.tabs, { paddingBottom: Math.max(8, insets.bottom - 6) }]} accessibilityRole="tablist">
-      {ONGLETS.map((o) => {
-        const on = o.ecrans.some((e) => path.startsWith(e));
-        const color = on ? colors.pink : colors.textSecondary;
-        return (
-          <Pressable
-            key={o.label}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: on }}
-            accessibilityLabel={o.label}
-            style={styles.tab}
-            onPress={() => router.navigate(o.href)}
-          >
-            <Icon name={o.icon} size={22} color={color} />
-            <Text weight={on ? 'semibold' : 'medium'} style={[styles.label, { color }]}>
-              {o.label}
-            </Text>
-          </Pressable>
-        );
-      })}
+    <View style={[styles.zone, { paddingBottom: Math.max(10, insets.bottom - 8) }]}>
+      <View style={styles.pilule} accessibilityRole="tablist">
+        {ONGLETS.map((o) => {
+          const on = o.ecrans.some((e) => path.startsWith(e));
+          const color = on ? colors.pink : colors.textSecondary;
+          return (
+            <Appui
+              key={o.label}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={o.label}
+              style={styles.tab}
+              echelle={0.9}
+              onPress={() => router.navigate(o.href)}
+            >
+              <View style={[styles.ic, on && styles.icOn]}>
+                <Icon name={o.icon} size={22} color={color} strokeWidth={on ? 2.3 : 1.9} />
+              </View>
+              <Text weight={on ? 'semibold' : 'medium'} style={[styles.label, { color }]}>
+                {o.label}
+              </Text>
+            </Appui>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  tabs: {
+  zone: { paddingHorizontal: 14, paddingTop: 6, backgroundColor: colors.bg },
+  pilule: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingTop: 8,
-    paddingHorizontal: 4,
-    backgroundColor: colors.bgAlt,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderRadius: 30,
+    backgroundColor: ui.barre,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border2,
+    boxShadow: `0 -6px 30px ${alpha(colors.pink, 0.08)}`,
   },
-  tab: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 2 },
+  tab: { flex: 1, alignItems: 'center', gap: 2 },
+  ic: { width: 40, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  icOn: { boxShadow: `0 0 18px ${alpha(colors.pink, 0.35)}` },
   label: { fontSize: 11, lineHeight: 14 },
 });

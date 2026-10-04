@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ENTRAINEMENT, Rubriques } from '@/components/app/EnTete';
 import { PastilleDifficulte } from '@/components/app/Rando';
 import { Appui, Button, Icon, Text } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
@@ -74,6 +75,7 @@ export default function Randonnee() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Rubriques rubriques={ENTRAINEMENT} actif="Rando" sansMarge />
         <View style={styles.tete}>
           <View style={styles.flex}>
             <Text style={styles.h1} accessibilityRole="header">

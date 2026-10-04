@@ -1,46 +1,31 @@
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BilanDuJour, SemaineCercles } from '@/components/app/Cercles';
+import { SemaineCercles } from '@/components/app/Cercles';
 import { BandeauCartes } from '@/components/app/Jeu';
 import { Journee } from '@/components/app/Journee';
 import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
-import { Reperes } from '@/components/app/Reperes';
 import { SectionHead } from '@/components/app/Section';
-import { Thumb } from '@/components/app/Thumb';
-import { Appui, Button, Card, Icon, Text } from '@/components/ui';
-import { COACH_IMAGES, DECO_IMAGES } from '@/data';
+import { AnneauxDuJour, CarteCoach, CarteSeance, TuilesSante } from '@/components/app/Tableau';
+import { Appui, Card, Icon, Text } from '@/components/ui';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
-import { coachById } from '@/lib/plan';
-import { motivationDuJour } from '@/lib/motivation';
 import { estPremium } from '@/lib/premium';
 import { nextSession } from '@/lib/semaine';
 import { useProfil, useSemaine } from '@/store/profil';
-import { colors, fonts, gradients, ui } from '@/theme';
+import { colors, gradients, ui } from '@/theme';
 
-const DATE = new Intl.DateTimeFormat('fr-CA', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-});
-const JOURS_LONGS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
-/** Onglet Accueil : bilan du jour (anneaux), mot du coach, prochaine séance et repères de récupération. */
+/** Onglet Accueil (direction « nuit ») : anneaux Récupération / Effort, coach, prochaine séance, Sommeil / VFC, Ta journée. */
 export default function Accueil() {
   const p = useProfil();
   const sem = useSemaine();
-  const c = coachById(p.coach);
   const ns = nextSession(sem);
   const s = ns.s;
   const nonLues = p.notifs.some((n) => !n.read);
-  const quand = ns.offset === 0 ? "Aujourd'hui" : ns.offset === 1 ? 'Demain' : s.day != null ? JOURS_LONGS[s.day] : 'Bientôt';
-  const message =
-    ns.offset === 0 ? 'Ta séance du jour est prête' : ns.offset === 1 ? "Repos aujourd'hui, séance demain" : 'Jour de repos : récupère bien';
 
   const commencer = () => {
     if (s.ride) return lancerSortie(s.min, s.cat);
@@ -59,81 +44,19 @@ export default function Accueil() {
       </View>
     ),
     bilan: (
-      <>
-        <SectionHead title="Ton bilan du jour" />
-        <View style={styles.pad}>
-          <BilanDuJour />
-        </View>
-      </>
+      <View style={styles.pad}>
+        <AnneauxDuJour />
+      </View>
     ),
     coach: (
-      <>
-        {/* Mot du coach : ouvre l'onglet Coach */}
-        <Appui
-          accessibilityRole="button"
-          accessibilityLabel={`Parler à ${c.nom}`}
-          onPress={() => router.navigate('/coach')}
-          style={styles.coachWrap}
-        >
-          <Card style={styles.coach}>
-            <Image source={COACH_IMAGES[c.id].corps} style={styles.coachImg} contentFit="contain" />
-            <View style={styles.flex}>
-              <Text weight="semibold" style={styles.coachTitre}>
-                {message}
-              </Text>
-              {/* Motivation du jour : un message différent chaque jour (123 en rotation). */}
-              <Text style={styles.coachTxt} numberOfLines={3}>
-                {motivationDuJour(p.progStart, p.name)}
-              </Text>
-              <Text weight="semibold" style={styles.coachLien}>
-                Parler à {c.nom}
-              </Text>
-            </View>
-          </Card>
-        </Appui>
-      </>
+      <View style={[styles.pad, styles.mt]}>
+        <CarteCoach />
+      </View>
     ),
     seance: (
-      <>
-        <SectionHead title="Ta prochaine séance" action="Programme" onAction={() => router.navigate('/programme')} />
-        <Card style={[styles.pad, styles.seance]}>
-          {/* Axel à la salle le jour de la séance, qui s'étire les jours de repos (illustrations de l'utilisateur). */}
-          {!s.ride && (
-            <Image source={ns.offset === 0 ? DECO_IMAGES.salle : DECO_IMAGES.etirement} style={styles.scene} contentFit="cover" accessibilityIgnoresInvertColors />
-          )}
-          <Appui
-            accessibilityRole="button"
-            accessibilityLabel={`Voir la séance ${s.titre}`}
-            onPress={() => (s.day != null ? router.push(`/seance/${s.day}`) : router.navigate('/programme'))}
-            style={styles.seanceHaut}
-          >
-            <Text style={styles.quand}>
-              {quand} • {s.min} min
-            </Text>
-            <Text weight="semibold" style={styles.seanceTitre}>
-              {s.titre}
-            </Text>
-            <Text style={styles.meta}>
-              {s.items.length} exercices • ≈ {s.kcal} kcal
-            </Text>
-            {!s.ride && s.items.length > 0 && (
-              <View style={styles.vignettes}>
-                {s.items.slice(0, 4).map((it, i) => (
-                  <Thumb key={i} id={it.id} />
-                ))}
-                {s.items.length > 4 && (
-                  <View style={styles.plus}>
-                    <Text weight="semibold" style={styles.plusTxt}>
-                      +{s.items.length - 4}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            )}
-          </Appui>
-          <Button label={s.ride ? 'Lancer la sortie' : 'Commencer la séance'} onPress={commencer} style={styles.btn} />
-        </Card>
-      </>
+      <View style={[styles.pad, styles.mt]}>
+        <CarteSeance s={s} offset={ns.offset} onCommencer={commencer} />
+      </View>
     ),
     plus: (
       <>
@@ -157,12 +80,9 @@ export default function Accueil() {
       </>
     ),
     reperes: (
-      <>
-        <SectionHead title="Tes repères" action="Sommeil" onAction={() => router.push('/sommeil')} />
-        <View style={styles.pad}>
-          <Reperes nights={p.nights} />
-        </View>
-      </>
+      <View style={[styles.pad, styles.mt]}>
+        <TuilesSante />
+      </View>
     ),
     cercles: (
       <>
@@ -178,28 +98,25 @@ export default function Accueil() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        {/* En-tête : bonjour, cloche, avatar (Profil) */}
+        {/* En-tête (direction « nuit ») : NÉA, cloche, profil ; puis bonjour. */}
         <View style={styles.top}>
-          <View style={styles.flex}>
-            <Text style={styles.h1} accessibilityRole="header" numberOfLines={1}>
-              Bonjour {p.name}
-            </Text>
-            <Text style={styles.date}>{DATE.format(new Date())}</Text>
-          </View>
+          <Text weight="bold" style={styles.marque} accessibilityRole="header">
+            NÉA
+          </Text>
+          <View style={styles.flex} />
           <Appui accessibilityRole="button" accessibilityLabel="Notifications" style={styles.rond} onPress={() => router.push('/notifications')}>
             <Icon name="bell" size={20} />
             {nonLues && <View style={styles.bellDot} />}
           </Appui>
-          <Appui
-            accessibilityRole="button"
-            accessibilityLabel="Mon profil"
-            style={[styles.rond, styles.avatar]}
-            onPress={() => router.navigate('/profil')}
-          >
-            <Text weight="semibold" style={styles.initiale}>
-              {(p.name || '?').slice(0, 1).toUpperCase()}
-            </Text>
+          <Appui accessibilityRole="button" accessibilityLabel="Mon profil" style={styles.rond} onPress={() => router.navigate('/profil')}>
+            <Icon name="user" size={21} />
           </Appui>
+        </View>
+        <View style={styles.bonjour}>
+          <Text weight="bold" style={styles.h1} numberOfLines={1}>
+            Bonjour {p.name}
+          </Text>
+          <Text style={styles.date}>Ton rythme, aujourd’hui.</Text>
         </View>
         {/* Cartes gagnées pas encore ouvertes. */}
         <BandeauCartes style={styles.bandeau} />
@@ -224,6 +141,9 @@ const styles = StyleSheet.create({
   scroll: { paddingBottom: 28 },
   flex: { flex: 1 },
   pad: { marginHorizontal: 20 },
+  mt: { marginTop: 14 },
+  marque: { fontSize: 30, lineHeight: 36, letterSpacing: 1.5 },
+  bonjour: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 14 },
   top: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -231,7 +151,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 20,
   },
-  h1: { ...fonts.semibold, fontSize: 30, lineHeight: 36, letterSpacing: -0.3 },
+  h1: { fontSize: 28, lineHeight: 34, letterSpacing: -0.4 },
   date: {
     fontSize: 15,
     lineHeight: 20,

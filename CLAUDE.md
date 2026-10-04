@@ -43,6 +43,18 @@ badge kcal → `#FFB547` ; images recolorées (teinte +51°, script de décalage
 mascottes de la montre et des widgets, vidéo d'accueil (ffmpeg `hue=h=51:s=1.2`) ; `comparer-plan` traduit le rose du prototype en orange.
 Partout ci-dessous, « rose » = cet orange. **Build 1.0.0 (15) envoyé à TestFlight** (thème orange).
 
+**Direction artistique « nuit » (oct. 2026, maquettes de l'utilisateur, remplace la refonte graphite)** : fonds presque noirs
+(`bg` #0E0E11, cartes `surface` #17171B à fin liseré `border`), orange #FF6B1A pour les actions, sélections, anneaux à lueur ;
+**barre d'onglets flottante en pilule** (`TabBar`, 4 onglets : **Accueil**, **Programme** (rubriques Programme · Calendrier · Sorties ·
+Rando ; `EnTete` avec sous-titre, `Rubriques`), **Progrès**, **Coach**) ; la Randonnée n'a plus d'onglet à elle (route `/rando` gardée) ;
+**Accueil** (`Tableau.tsx`) : « NÉA » + cloche + profil, « Bonjour … · Ton rythme, aujourd'hui. », 2 grands anneaux Récupération / Effort,
+carte du coach (tête, état de récupération, motivation du jour), prochaine séance avec image + Commencer, tuiles Sommeil / VFC, Ta journée ;
+**Programme** (`ProgrammeHaut.tsx`) : semaine (coches / séances prévues), carte du programme avec progression, « Aujourd'hui » (image,
+durée, 3 exercices, Lancer la séance), puis tes programmes, séances prêtes, bibliothèque ; **Coach** = conversation (`Conversation.tsx`,
+aussi `/chat`) : en-tête centré « … , ton coach · À ton écoute », bulles, 2 séances adaptées, « Ta séance s'adapte à toi », ressentis
+rapides, « Écris à … » ; **Progrès** (`ProgresHaut.tsx`) : jours de régularité en grand avec halo de points, semaine cochée, tuiles
+séances / cartes gagnées, dernière récompense (dernière carte succès), Voir ma collection, puis le reste.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

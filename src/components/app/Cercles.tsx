@@ -56,7 +56,7 @@ export function Anneaux({ cercles, size, trait }: { cercles: readonly Cercle[]; 
 
 
 /** Recharge l'activité Apple Santé quand l'écran s'affiche. */
-function useRafraichir() {
+export function useRafraichir() {
   useFocusEffect(
     useCallback(() => {
       rafraichirActivite();

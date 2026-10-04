@@ -6,25 +6,45 @@ import { colors, fonts, ui } from '@/theme';
 
 export type Rubrique = { label: string; href: Href };
 
-/** Rubriques de l'onglet « Entraînement ». */
+/** Rubriques de l'onglet « Programme » (la Randonnée y vit depuis la direction « nuit », 4 onglets). */
 export const ENTRAINEMENT: Rubrique[] = [
   { label: 'Programme', href: '/programme' },
   { label: 'Calendrier', href: { pathname: '/programme', params: { vue: 'calendrier' } } },
   { label: 'Sorties', href: '/velo' },
+  { label: 'Rando', href: '/rando' },
 ];
 
-/** En-tête d'onglet : grand titre, bouton « + » (séances prêtes), puis le contrôle segmenté des rubriques. */
-export function EnTete({ titre, rubriques, actif }: { titre: string; rubriques: readonly Rubrique[]; actif: string }) {
+/** En-tête d'onglet : grand titre (et sous-titre), bouton « + » (séances prêtes), puis le contrôle segmenté des rubriques. */
+export function EnTete({ titre, sous, rubriques, actif }: { titre: string; sous?: string; rubriques: readonly Rubrique[]; actif: string }) {
   return (
     <View style={styles.wrap}>
       <View style={styles.ligne}>
-        <Text style={styles.h1} accessibilityRole="header">
-          {titre}
-        </Text>
+        <View style={styles.flex}>
+          <Text style={styles.h1} accessibilityRole="header">
+            {titre}
+          </Text>
+          {!!sous && <Text style={styles.sous}>{sous}</Text>}
+        </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Ajouter une séance" onPress={() => router.push('/seances')} style={styles.plus}>
           <Icon name="plus" size={20} color={colors.text} />
         </Pressable>
       </View>
+      <Segmente
+        options={rubriques.map((r) => r.label)}
+        value={actif}
+        onChange={(l) => {
+          const r = rubriques.find((x) => x.label === l);
+          if (r && l !== actif) router.navigate(r.href);
+        }}
+      />
+    </View>
+  );
+}
+
+/** Rubriques seules (écran avec son propre en-tête, comme la Randonnée). */
+export function Rubriques({ rubriques, actif, sansMarge = false }: { rubriques: readonly Rubrique[]; actif: string; sansMarge?: boolean }) {
+  return (
+    <View style={[styles.rubriques, sansMarge && styles.sansMarge]}>
       <Segmente
         options={rubriques.map((r) => r.label)}
         value={actif}
@@ -53,6 +73,10 @@ const styles = StyleSheet.create({
   wrap: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 6, gap: 14 },
   ligne: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   titreSeul: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 4 },
-  h1: { ...fonts.semibold, fontSize: 30, lineHeight: 36, letterSpacing: -0.3 },
+  flex: { flex: 1, minWidth: 0 },
+  rubriques: { paddingTop: 10, paddingHorizontal: 20 },
+  sansMarge: { paddingHorizontal: 0 },
+  h1: { ...fonts.bold, fontSize: 30, lineHeight: 36, letterSpacing: -0.4 },
+  sous: { fontSize: 15, lineHeight: 20, color: colors.textSecondary, marginTop: 2 },
   plus: { width: 38, height: 38, borderRadius: 19, backgroundColor: ui.dark, alignItems: 'center', justifyContent: 'center' },
 });

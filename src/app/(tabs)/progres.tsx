@@ -6,7 +6,6 @@ import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
-import { TitreOnglet } from '@/components/app/EnTete';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
 import { BandeauCartes, DefisSemaine, EntreeCollection, MesRecords } from '@/components/app/Jeu';
 import { MesSucces } from '@/components/app/Succes';
@@ -16,6 +15,7 @@ import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { BarresVFC } from '@/components/app/BarresVFC';
 import { Kpi } from '@/components/app/Recap';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
+import { ProgresHaut } from '@/components/app/ProgresHaut';
 import { Card, Segmente, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { dec, fmt } from '@/lib/charges';
@@ -81,7 +81,7 @@ export default function Progres() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TitreOnglet titre="Progrès" />
+        <ProgresHaut />
         <View style={styles.cercles}>
           <SemaineCercles />
         </View>

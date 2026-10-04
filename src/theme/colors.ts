@@ -1,17 +1,17 @@
 /**
- * Palette NÉA (refonte graphite) : fonds graphite, cartes ardoise, rose néon réservé aux actions,
- * sélections, courbes, anneaux et icônes actives. Jamais de noir pur.
+ * Palette NÉA (direction artistique « nuit », oct. 2026, maquettes de l'utilisateur) : fonds presque noirs, cartes sombres
+ * à fin liseré, orange réservé aux actions, sélections, courbes, anneaux (à lueur) et icônes actives.
  */
 export const colors = {
   // Fonds
-  bg: '#222328',
-  bgAlt: '#1D1E23',
+  bg: '#0E0E11',
+  bgAlt: '#0A0A0C',
 
   // Surfaces
-  surface: '#2D3038',
-  surface2: '#343740',
-  border: '#41444E',
-  border2: '#4C4F5A',
+  surface: '#17171B',
+  surface2: '#1E1F24',
+  border: '#2A2B31',
+  border2: '#383940',
 
   // Rose néon (accent) et mauve (séries secondaires)
   pink: '#FF6B1A',
@@ -21,14 +21,14 @@ export const colors = {
 
   // Texte
   text: '#F5F5F7',
-  textSecondary: '#ADB0BA',
-  textTertiary: '#80838D',
+  textSecondary: '#A3A5AD',
+  textTertiary: '#74767E',
   green: '#3EE07A',
   /** Erreur (sémantique). */
   error: '#FF5C6C',
 
   /** Texte posé sur le bouton principal (rose plein), graphite comme dans les maquettes. */
-  onPrimary: '#1D1E23',
+  onPrimary: '#140A04',
 
   // Calories (badge)
   kcal: '#FFB547',
@@ -37,15 +37,15 @@ export const colors = {
 /** Teintes ponctuelles (surfaces secondaires, graphiques, sommeil…), accordées à la palette graphite. */
 export const ui = {
   /** Bouton secondaire, cases du récap, steppers. */
-  dark: '#343740',
+  dark: '#222328',
   /** Fond de pastille d'icône. */
-  iconBg: '#3A3D47',
+  iconBg: '#2A1A10',
   /** Pastilles et filtres. */
-  chipBg: '#343740',
+  chipBg: '#222328',
   /** Fond des avatars. */
-  avatarBg: '#343740',
+  avatarBg: '#222328',
   /** Flèches du carrousel de coachs. */
-  arrowBg: 'rgba(52,55,64,0.9)',
+  arrowBg: 'rgba(34,35,40,0.9)',
   /** Texte clair secondaire. */
   text2: '#E4E5EA',
   text3: '#CFD1D8',
@@ -60,13 +60,13 @@ export const ui = {
   /** Texte du badge « Recommandé ». */
   onGold: '#1A1300',
   /** Toast et bannières. */
-  toast: '#3A3D47',
+  toast: '#25262C',
   /** Sélection : fond rose très léger. */
   selTop: 'rgba(255,107,26,0.12)',
   selBottom: 'rgba(255,107,26,0.05)',
   pinkRing: 'rgba(255,107,26,0.35)',
   /** Fond d'une carte choisie (rose 12 % sur l'ardoise). */
-  selFond: '#463734',
+  selFond: '#2A1B12',
   /** Podium du classement. */
   podium: ['#FFCC3D', '#C9CED8', '#CD7F4F'],
   /** Éclair du Turbo x2. */
@@ -77,21 +77,21 @@ export const ui = {
   voileFete: 'rgba(10,10,14,0.82)',
   /** Randonnée : couleur de la difficulté (facile, modéré, difficile), voile sur les photos. */
   difficulte: { facile: '#4CD964', modere: '#FF6B1A', difficile: '#FF5C6C' },
-  voilePhoto: ['rgba(34,35,40,0)', 'rgba(34,35,40,0.55)', 'rgba(34,35,40,1)'],
+  voilePhoto: ['rgba(14,14,17,0)', 'rgba(14,14,17,0.55)', 'rgba(14,14,17,1)'],
   /** Crédit posé sur une photo et fond de la visionneuse plein écran. */
   voileCredit: 'rgba(0,0,0,0.5)',
   voileVisionneuse: 'rgba(12,12,14,0.97)',
   /** Contrôle segmenté : fond, texte, segment actif. */
-  segBg: '#2D3038',
-  segTxt: '#ADB0BA',
-  segOn: '#41444E',
+  segBg: '#17171B',
+  segTxt: '#A3A5AD',
+  segOn: '#2E2F35',
   /** Sommeil : barres et anneau (mauve → rose clair), libellés des graphiques. */
   sommeil: '#FFA266',
   sommeilFonce: '#A0522D',
   axe: '#80838D',
   /** Carte du vélo : fond et quadrillage. */
-  carte: '#26282E',
-  grille: '#30333B',
+  carte: '#16161A',
+  grille: '#24252B',
   /** Texte de la bannière de notification. */
   bannerTxt: '#CFD1D8',
   /** Chat : bulle de l'utilisateur, bouton Envoyer, lien NÉA Plus. */
@@ -99,8 +99,14 @@ export const ui = {
   envoyer: ['#FF6B1A', '#FF6B1A'],
   plusLien: '#FFC23D',
   /** Fond des feuilles (bottom sheets) et voile derrière. */
-  sheet: '#2D3038',
-  voile: 'rgba(22,23,27,0.7)',
+  sheet: '#17171B',
+  voile: 'rgba(5,5,7,0.72)',
+  /** Barre d'onglets flottante (pilule) et lueur orange des anneaux. */
+  barre: '#141418',
+  /** Tuiles Sommeil (violet) et VFC (vert) de l'Accueil. */
+  tuileSommeil: '#8E7CFF',
+  tuileVfc: '#3EE07A',
+  lueur: 'rgba(255,107,26,0.45)',
 } as const;
 
 /** Dégradés (du premier au dernier stop). */
