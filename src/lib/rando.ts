@@ -7,8 +7,8 @@ import { hash } from './xp';
 
 export type Difficulte = 'facile' | 'modere' | 'difficile';
 export const DIFFICULTES: Record<Difficulte, string> = { facile: 'Facile', modere: 'Modéré', difficile: 'Difficile' };
-export type Voir = 'belvedere' | 'chute' | 'lac' | 'riviere';
-export const VOIR: Record<Voir, string> = { belvedere: 'Belvédère', chute: 'Chute', lac: 'Lac', riviere: 'Rivière' };
+export type Voir = 'belvedere' | 'chute' | 'lac' | 'riviere' | 'carriere';
+export const VOIR: Record<Voir, string> = { belvedere: 'Belvédère', chute: 'Chute', lac: 'Lac', riviere: 'Rivière', carriere: 'Ancienne carrière' };
 
 /** Sentier proposé (données indicatives, à vérifier auprès du parc avant de partir). */
 export type Sentier = {

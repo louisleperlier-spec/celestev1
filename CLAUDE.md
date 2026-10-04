@@ -303,8 +303,8 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     au style NÉA (voile chaud orange, ombres graphite, vignette : `python3 scripts/photo-sentier.py <photo> <id>`) ;
     scènes d'Axel en bandeau 16:9 (`DECO_IMAGES`) : salle (carte « Ta prochaine séance » le jour J), étirements (jours de repos),
     trail (Course avant le départ, à la place de la carte vide), sommet (carte « Rando libre »)
-  - **13 sentiers** : + Mont Albert, Mont Jacques-Cartier, Ernest-Laforce, Pic Champlain, Sentier de la Statue, Pain de Sucre, Mont-Chauve,
-    Le Centenaire (distances / D+ / durées des fiches des parcs, altitudes approximatives) ; **galerie** « Photos du sentier » (`GalerieSentier`,
+  - **14 sentiers** : + Mont Albert, Mont Jacques-Cartier, Ernest-Laforce, Pic Champlain, Sentier de la Statue, Pain de Sucre, Mont-Chauve,
+    Le Centenaire, Mont Saint-Grégoire (CIME Haut-Richelieu, boucle Panorama + Carrière 2,4 km, 180 m, point « Ancienne carrière » `carriere`) (distances / D+ / durées des fiches des parcs, altitudes approximatives) ; **galerie** « Photos du sentier » (`GalerieSentier`,
     visionneuse plein écran) et « Ce que tu vas voir » avec les vraies photos du sentier (`galerie`, `imageVoir` dans `randosImages.ts`) :
     photos libres de **Wikimedia Commons** teintées au style NÉA, crédit auteur + licence affiché (photo, visionneuse, héros `creditPrincipal`)
   - **rando sur la montre (build 19)** : 4e activité « Randonnée » (`TypeActivite.rando`, `SortieVelo(rando:)`, HKWorkoutActivityType

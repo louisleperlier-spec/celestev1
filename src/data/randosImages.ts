@@ -17,6 +17,7 @@ export const RANDO_IMAGES: Readonly<Record<string, ImageSourcePropType>> = {
   'pain-de-sucre': require('@/assets/randos/pain-de-sucre.jpg'),
   'mont-chauve': require('@/assets/randos/mont-chauve.jpg'),
   'centenaire': require('@/assets/randos/centenaire.jpg'),
+  'mont-saint-gregoire': require('@/assets/randos/mont-saint-gregoire.jpg'),
 };
 
 /** Grandes photos (rando de la semaine, fiche, récap) ; sinon la vignette. */
@@ -34,6 +35,7 @@ export const RANDO_GRANDES: Readonly<Record<string, ImageSourcePropType>> = {
   'pain-de-sucre': require('@/assets/randos/pain-de-sucre_grand.jpg'),
   'mont-chauve': require('@/assets/randos/mont-chauve_grand.jpg'),
   'centenaire': require('@/assets/randos/centenaire_grand.jpg'),
+  'mont-saint-gregoire': require('@/assets/randos/mont-saint-gregoire_grand.jpg'),
 };
 export const photoGrande = (id: string) => RANDO_GRANDES[id] ?? RANDO_IMAGES[id];
 
@@ -42,6 +44,7 @@ export const VOIR_IMAGES: Readonly<Record<Voir, ImageSourcePropType>> = {
   chute: require('@/assets/randos/voir_chute.jpg'),
   lac: require('@/assets/randos/voir_lac.jpg'),
   riviere: require('@/assets/randos/voir_lac.jpg'),
+  carriere: require('@/assets/randos/galerie/mont-saint-gregoire_4.webp'),
 };
 
 /** Axel randonneur (onglet), qui donne ses conseils (fiche) et qui fête le sommet (récap). */
@@ -88,6 +91,16 @@ const COMMONS: Readonly<Record<string, readonly PhotoSentier[]>> = {
     { img: require('@/assets/randos/galerie/centenaire_1.webp'), credit: 'Mhsheikholeslami · CC BY-SA 4.0' },
     { img: require('@/assets/randos/galerie/centenaire_3.webp'), credit: 'Mhsheikholeslami · CC BY-SA 4.0' },
   ],
+  'mont-saint-gregoire': [
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_1.webp'), credit: 'Hayden Soloviev · CC BY 4.0' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_2.webp'), voir: 'belvedere', credit: 'Yannick Lemelin · domaine public' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_3.webp'), credit: 'Maxime Laterreur · CC BY 4.0' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_4.webp'), voir: 'carriere', credit: 'Maxime Laterreur · CC BY 4.0' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_5.webp'), credit: 'Maxime Laterreur · CC BY 4.0' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_6.webp'), credit: 'Jessica.zootherapie · CC BY-SA 4.0' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_7.webp'), credit: 'Ghislain Fortin · domaine public' },
+    { img: require('@/assets/randos/galerie/mont-saint-gregoire_8.webp'), credit: 'Yannick Lemelin · domaine public' },
+  ],
   'lac-des-cygnes': [
     { img: require('@/assets/randos/galerie/lac-des-cygnes_1.webp'), voir: 'belvedere', credit: 'Mathématicien joyeux · CC BY-SA 3.0' },
     { img: require('@/assets/randos/galerie/lac-des-cygnes_2.webp'), credit: 'Mathématicien joyeux · CC BY-SA 3.0' },
@@ -113,7 +126,7 @@ const COMMONS: Readonly<Record<string, readonly PhotoSentier[]>> = {
 };
 
 /** Sentiers dont la photo principale vient elle aussi de Wikimedia Commons (1re photo de la galerie). */
-const RANDOS_COMMONS: readonly string[] = ['mont-albert', 'mont-jacques-cartier', 'ernest-laforce', 'pic-champlain', 'statue', 'pain-de-sucre', 'mont-chauve', 'centenaire'];
+const RANDOS_COMMONS: readonly string[] = ['mont-albert', 'mont-jacques-cartier', 'ernest-laforce', 'pic-champlain', 'statue', 'pain-de-sucre', 'mont-chauve', 'centenaire', 'mont-saint-gregoire'];
 
 /** Galerie d'un sentier : sa photo principale (fournie par l'utilisateur pour les 5 premiers) puis les photos libres. */
 export function galerie(id: string): PhotoSentier[] {

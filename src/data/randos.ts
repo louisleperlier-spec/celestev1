@@ -218,6 +218,23 @@ export const SENTIERS: readonly Sentier[] = [
     recherche: 'Sentier Le Centenaire, Parc national du Mont-Tremblant',
     boucle: true,
   },
+  {
+    id: 'mont-saint-gregoire',
+    nom: 'Mont Saint-Grégoire',
+    lieu: 'CIME Haut-Richelieu',
+    region: 'Montérégie · Haut-Richelieu',
+    km: 2.4,
+    dplus: 180,
+    min: 75,
+    difficulte: 'modere',
+    altDepart: 70,
+    altSommet: 251,
+    lat: 45.354,
+    lng: -73.161,
+    voir: ['belvedere', 'carriere'],
+    recherche: 'CIME Haut-Richelieu, 16 chemin du Sous-Bois, Mont-Saint-Grégoire',
+    boucle: true,
+  },
 ];
 
 export const sentier = (id: string | undefined) => SENTIERS.find((s) => s.id === id);
