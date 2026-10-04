@@ -52,8 +52,15 @@ carte du coach (tête, état de récupération, motivation du jour), prochaine s
 **Programme** (`ProgrammeHaut.tsx`) : semaine (coches / séances prévues), carte du programme avec progression, « Aujourd'hui » (image,
 durée, 3 exercices, Lancer la séance), puis tes programmes, séances prêtes, bibliothèque ; **Coach** = conversation (`Conversation.tsx`,
 aussi `/chat`) : en-tête centré « … , ton coach · À ton écoute », bulles, 2 séances adaptées, « Ta séance s'adapte à toi », ressentis
-rapides, « Écris à … » ; **Progrès** (`ProgresHaut.tsx`) : jours de régularité en grand avec halo de points, semaine cochée, tuiles
-séances / cartes gagnées, dernière récompense (dernière carte succès), Voir ma collection, puis le reste.
+rapides, « Écris à … » ; **Progrès** (2e maquette) : « Tes progrès » + rubriques **Parcours · Statistiques · Collection · Ligue** (`ProgresVues.tsx`) :
+Parcours = « Ton ascension » (montagne `DECO_IMAGES.ascension` recadrée de la maquette, repères des 3 derniers niveaux, cadenas au sommet,
+hexagone du rang), XP vers le niveau suivant, XP au total / meilleure série, prochaine étape (1re quête du jour), défis, records ;
+Statistiques = Semaine / Mois / Année, séances en barres orange, temps actif / calories / volume, sommeil moyen, VFC nocturne, FC moyenne,
+poids (+ Ajouter), puis cercles, cœur, courbe du poids, territoires ; Collection = n / 67 cartes, filtres Toutes / Débloquées / À gagner,
+succès mis en avant (objectifs), les 5 succès, grille de cartes ; Ligue = `Ligue integree` ; contrôle segmenté `Segmente` à pilule orange
+partout ; **fiche d'un sentier** : tuile Difficulté, « Ton parcours en relief » (`DECO_IMAGES.relief`, aperçu illustratif, altitude du
+sommet, Départ → Sommet → Retour, km · aller-retour / boucle), « Démarrer la rando » + « Ouvrir sur la montre » juste dessous ;
+mises à jour à distance appliquées tout de suite (`store/majs.ts` : vérifie à l'ouverture et au retour, télécharge, relance).
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.

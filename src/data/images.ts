@@ -89,6 +89,9 @@ export const DECO_IMAGES = {
   etirement: require('@/assets/deco/axel_etirement.webp'),
   course: require('@/assets/deco/axel_course.webp'),
   sommet: require('@/assets/deco/axel_sommet_scene.webp'),
+  /** Montagne d'ascension (Progrès · Parcours) et relief illustratif d'un sentier (fiche), recadrés des maquettes de l'utilisateur. */
+  ascension: require('@/assets/deco/ascension.webp'),
+  relief: require('@/assets/deco/relief.webp'),
 } satisfies Record<string, ImageSourcePropType>;
 
 /** Vidéo d'accueil en boucle. */

@@ -7,64 +7,43 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
-import { BandeauCartes, DefisSemaine, EntreeCollection, MesRecords } from '@/components/app/Jeu';
-import { MesSucces } from '@/components/app/Succes';
+import { BandeauCartes, DefisSemaine, MesRecords } from '@/components/app/Jeu';
 import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { ouvrirSante } from '@/components/app/ouvrirSante';
 import { BarresVFC } from '@/components/app/BarresVFC';
-import { Kpi } from '@/components/app/Recap';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
-import { ProgresHaut } from '@/components/app/ProgresHaut';
-import { Card, Segmente, Text } from '@/components/ui';
+import { Collection, Parcours, StatsHaut } from '@/components/app/ProgresVues';
+import { Appui, Card, Icon, Segmente, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
-import { dec, fmt } from '@/lib/charges';
+import { dec } from '@/lib/charges';
 import { coachById, hrMax } from '@/lib/plan';
 import { santeDisponible } from '@/lib/sante';
-import { baseHrv, lastNight, sleepScore } from '@/lib/sommeil';
 import type { Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, mix, ui } from '@/theme';
 
 type Periode = 'Semaine' | 'Mois' | 'Année';
+const RUBRIQUES = ['Parcours', 'Statistiques', 'Collection', 'Ligue'] as const;
+type Rubrique = (typeof RUBRIQUES)[number];
 const JOURS_PERIODE: Record<Periode, number> = { Semaine: 7, Mois: 30, Année: 365 };
 
-/** Activités des `days` derniers jours, décalées de `offset` jours (logsIn du prototype). */
-function logsIn(logs: readonly Log[], now: number, days: number, offset = 0) {
-  const a = now - (days + offset) * 864e5;
-  const b = now - offset * 864e5;
-  return logs.filter((l) => {
-    const t = +new Date(l.d);
-    return t > a && t <= b;
-  });
-}
 const avgOf = (logs: readonly Log[], k: 'hrAvg' | 'hrv') => {
   const v = logs.map((l) => l[k] ?? 0).filter((x) => x > 0);
   return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : 0;
 };
-const sum = (a: readonly Log[], k: 'min' | 'vol' | 'cal') => a.reduce((s, l) => s + (l[k] || 0), 0);
-/** Évolution par rapport à la période précédente (« +12% », « nouveau »). */
-const pc = (a: number, b: number) => {
-  if (!b) return 'nouveau';
-  const v = ((a - b) / b) * 100;
-  return (v >= 0 ? '+' : '') + Math.round(v) + '%';
-};
 
-/** Onglet Progrès (vStats du prototype). */
+/** Onglet Progrès (direction « nuit ») : rubriques Parcours, Statistiques, Collection et Ligue. */
 export default function Progres() {
   const profil = useProfil();
   const c = coachById(profil.coach);
   const [p, setP] = useState<Periode>('Semaine');
+  const [rub, setRub] = useState<Rubrique>('Parcours');
   const [pesee, setPesee] = useState(false);
   // Instant de référence des périodes, remis à jour à chaque affichage de l'onglet.
   const [now, setNow] = useState(Date.now);
   useFocusEffect(useCallback(() => setNow(Date.now()), []));
   const days = JOURS_PERIODE[p];
-  const base = baseHrv(profil.nights, profil.hrvChecks);
-  const n7 = profil.nights.slice(-7);
-  const cur = logsIn(profil.logs, now, days);
-  const prev = logsIn(profil.logs, now, days, days);
-  const t = sum(cur, 'min');
   const hl = profil.logs.filter((l) => (l.hrAvg ?? 0) > 0).slice(0, 12).reverse();
   const lim = now - days * 864e5;
   const wl = profil.wlog.filter((x) => +new Date(x.d + 'T12:00') >= lim);
@@ -81,25 +60,36 @@ export default function Progres() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <ProgresHaut />
-        <View style={styles.cercles}>
-          <SemaineCercles />
+        {/* En-tête et rubriques (maquettes « nuit ») */}
+        <View style={styles.tete}>
+          <Text weight="bold" style={styles.h1} accessibilityRole="header">
+            Tes progrès
+          </Text>
+          <Appui accessibilityRole="button" accessibilityLabel="Mon profil" onPress={() => router.navigate('/profil')} style={styles.rondProfil}>
+            <Icon name="user" size={21} />
+          </Appui>
         </View>
-        {/* Jeu : cartes à ouvrir, défis de la semaine, collection. */}
+        <Segmente options={RUBRIQUES} value={rub} onChange={setRub} style={styles.rubriques} />
         <View style={styles.jeu}>
           <BandeauCartes />
-          <DefisSemaine />
-          <EntreeCollection />
-          <MesSucces />
-        </View>
-        <Segmente options={['Semaine', 'Mois', 'Année'] as const} value={p} onChange={setP} style={styles.seg} />
-        <View style={styles.grid}>
-          <Kpi icon="calcheck" label="Séances" value={String(cur.length)} em={pc(cur.length, prev.length)} emGris />
-          <Kpi icon="trend" label="Volume" value={`${fmt(sum(cur, 'vol'))} kg`} em={pc(sum(cur, 'vol'), sum(prev, 'vol'))} />
-          <Kpi icon="clock" label="Temps" value={`${Math.floor(t / 60)} h ${String(t % 60).padStart(2, '0')}`} em={pc(t, sum(prev, 'min'))} />
-          <Kpi icon="flame" label="Calories" value={fmt(sum(cur, 'cal'))} em={pc(sum(cur, 'cal'), sum(prev, 'cal'))} />
         </View>
 
+        {rub === 'Parcours' && (
+          <View style={styles.vue}>
+            <Parcours />
+            <DefisSemaine />
+            <MesRecords />
+          </View>
+        )}
+
+        {rub === 'Statistiques' && (
+          <>
+            <View style={styles.vue}>
+              <StatsHaut periode={p} setPeriode={setP} onPesee={() => setPesee(true)} />
+            </View>
+            <View style={styles.cercles}>
+              <SemaineCercles />
+            </View>
         {/* Cœur : moyenne générale */}
         <Card style={styles.chart}>
           <View style={styles.h4}>
@@ -122,25 +112,6 @@ export default function Progres() {
           <Text style={styles.note}>VFC (RMSSD) des {hl.length} dernières séances. Plus elle est haute au repos, mieux tu récupères.</Text>
         </Card>
 
-        {/* Sommeil et récupération */}
-        <Pressable accessibilityRole="button" onPress={() => router.push('/sommeil')}>
-          <Card style={styles.chart}>
-            <View style={styles.h4}>
-              <Text weight="semibold" style={styles.h4Txt}>
-                Sommeil et récupération
-              </Text>
-              <Text style={styles.voir}>Voir</Text>
-            </View>
-            <Trio
-              items={[
-                ['Score nuit', String(sleepScore(lastNight(profil.nights, new Date(now)), base) ?? '--')],
-                ['Sommeil moy.', `${dec((n7.reduce((a, n) => a + n.h, 0) / Math.max(1, n7.length)).toFixed(1))} h`],
-                ['VFC nuit', `${base} ms`],
-              ]}
-            />
-          </Card>
-        </Pressable>
-
         <Card style={styles.chart}>
           <View style={styles.h4}>
             <Text weight="semibold" style={styles.h4Txt}>
@@ -153,18 +124,23 @@ export default function Progres() {
           <CourbePoids ws={ws} labels={labels} />
         </Card>
 
+            <EntreeTerritoires />
         {/* .qcard */}
         <LinearGradient colors={[colors.surface, colors.surface, mix(colors.mauve, 30, colors.surface)]} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
           <Text style={styles.qText}>« {c.prog} »</Text>
           <Text style={styles.qEm}>— {c.nom}</Text>
           <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
         </LinearGradient>
-        <View style={styles.jeu}>
-          <MesRecords />
-        </View>
-        {/* Territoires (vélo et course), puis la Ligue (niveau, quêtes, classements). */}
-        <EntreeTerritoires />
-        <Ligue integree />
+          </>
+        )}
+
+        {rub === 'Collection' && (
+          <View style={styles.vue}>
+            <Collection />
+          </View>
+        )}
+
+        {rub === 'Ligue' && <Ligue integree />}
         <View style={styles.basPage} />
       </ScrollView>
       <Pesee visible={pesee} onClose={() => setPesee(false)} />
@@ -260,6 +236,11 @@ function CourbePoids({ ws, labels }: { ws: readonly number[]; labels: string[] }
 }
 
 const styles = StyleSheet.create({
+  tete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, paddingHorizontal: 20 },
+  h1: { fontSize: 30, lineHeight: 36, letterSpacing: -0.4 },
+  rondProfil: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+  rubriques: { marginTop: 14, marginHorizontal: 20 },
+  vue: { paddingHorizontal: 20, paddingTop: 14, gap: 14 },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
   cercles: { paddingTop: 14, paddingHorizontal: 20 },

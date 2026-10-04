@@ -1,18 +1,19 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BoutonRandoMontre } from '@/components/app/BoutonMontre';
 import { CarteSentier } from '@/components/app/CarteRando';
 import { GalerieSentier } from '@/components/app/GalerieSentier';
-import { PastilleDifficulte, ProfilAltitude, useMeteo } from '@/components/app/Rando';
-import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
+import { ProfilAltitude, useMeteo } from '@/components/app/Rando';
+import { Button, Card, Icon, Text, toast, type IconName } from '@/components/ui';
+import { DECO_IMAGES } from '@/data';
 import { SENTIERS } from '@/data/randos';
 import { AXEL_CONSEIL, creditPrincipal, galerie, imageVoir, photoGrande } from '@/data/randosImages';
-import { duree, profilSentier, VOIR } from '@/lib/rando';
+import { DIFFICULTES, duree, profilSentier, VOIR } from '@/lib/rando';
 import { useRando } from '@/store/rando';
 import { trouverSentier as sentier } from '@/store/randosPres';
 import { colors, fonts, ui } from '@/theme';
@@ -33,6 +34,7 @@ export default function FicheSentier() {
   const osm = s.source === 'osm';
   const meteo = useMeteo(s.lat, s.lng, s.altSommet);
   const enCours = useRando((r) => r.run);
+  const largeurRelief = useWindowDimensions().width - 40 - 2;
   const demarrer = () => {
     if (!enCours) useRando.getState().demarrer(s.id);
     router.push('/randonnee/en-cours');
@@ -66,21 +68,74 @@ export default function FicheSentier() {
             <Tuile icone="rando" valeur={`${String(s.km).replace('.', ',')} km`} label="Distance" />
             <Tuile icone="trend" valeur={`${s.dplus} m`} label="Dénivelé +" />
             <Tuile icone="clock" valeur={duree(s.min)} label="Durée estimée" />
-            <View style={styles.tuile}>
-              <PastilleDifficulte d={s.difficulte} />
-              <Text style={styles.tuileLbl}>Difficulté</Text>
-            </View>
+            <Tuile icone="chart" valeur={DIFFICULTES[s.difficulte]} label="Difficulté" />
           </View>
 
-          <Card style={styles.carte}>
-            <Text weight="semibold" style={styles.h3}>
-              Profil d’altitude
-            </Text>
-            <Text style={styles.petit}>{osm ? `Altitude du terrain le long du tracé${s.boucle ? ' (boucle)' : ' (aller-retour)'}` : 'Profil approximatif (aller-retour)'}</Text>
-            <View style={styles.mt}>
-              <ProfilAltitude points={s.profil ?? profilSentier(s)} marges={72} />
+          {/* Ton parcours en relief (maquette « nuit ») : relief illustratif, altitude du sommet, départ → sommet → retour. */}
+          <Card style={styles.relief}>
+            <View style={styles.reliefTete}>
+              <Text weight="bold" style={styles.reliefTitre}>
+                Ton parcours en relief
+              </Text>
+              <Pressable accessibilityRole="button" onPress={() => toast('Illustration : le relief exact du sentier n’est pas représenté')} style={styles.apercu}>
+                <Text style={styles.apercuTxt}>Aperçu illustratif</Text>
+                <Icon name="info" size={14} color={colors.textSecondary} />
+              </Pressable>
             </View>
+            <View style={{ width: largeurRelief, height: (largeurRelief * 400) / 760, marginHorizontal: -16 }}>
+              <Image source={DECO_IMAGES.relief} style={StyleSheet.absoluteFill} contentFit="cover" />
+              <View style={styles.altitude}>
+                <Text weight="bold" style={styles.altitudeVal}>
+                  {s.altSommet} m
+                </Text>
+                <Text style={styles.petit}>Altitude du sommet</Text>
+              </View>
+              <View style={[styles.drapeau, { left: largeurRelief * 0.582 - 2 }]}>
+                <Text weight="semibold" style={styles.drapeauTxt}>
+                  Sommet
+                </Text>
+              </View>
+            </View>
+            <View style={styles.etapes}>
+              <View style={styles.etape}>
+                <View style={styles.pointEtape} />
+                <Text style={styles.etapeTxt}>Départ</Text>
+              </View>
+              <Text style={styles.fleche} numberOfLines={1}>
+                ‐ ‐ ‐ ‐ ›
+              </Text>
+              <View style={styles.etape}>
+                <Icon name="montagne" size={22} color={colors.pink} strokeWidth={2.2} />
+                <Text style={styles.etapeTxt}>Sommet</Text>
+              </View>
+              <Text style={styles.fleche} numberOfLines={1}>
+                ‐ ‐ ‐ ‐ ›
+              </Text>
+              <View style={styles.etape}>
+                <View style={styles.pointEtape} />
+                <Text style={styles.etapeTxt}>{s.boucle ? 'Arrivée' : 'Retour'}</Text>
+              </View>
+            </View>
+            <Text style={styles.distance}>
+              {String(s.km).replace('.', ',')} km · {s.boucle ? 'boucle' : 'aller-retour'}
+            </Text>
           </Card>
+
+          <Button label={enCours ? 'Reprendre ma rando' : 'Démarrer la rando'} icon="rando" iconAfter="right" onPress={demarrer} style={styles.mt} />
+          <BoutonRandoMontre id={s.id} style={styles.mt} />
+
+          {/* Vrai sentier d'OpenStreetMap : profil mesuré sur le terrain. */}
+          {osm && (
+            <Card style={styles.carte}>
+              <Text weight="semibold" style={styles.h3}>
+                Profil d’altitude
+              </Text>
+              <Text style={styles.petit}>{`Altitude du terrain le long du tracé${s.boucle ? ' (boucle)' : ' (aller-retour)'}`}</Text>
+              <View style={styles.mt}>
+                <ProfilAltitude points={s.profil ?? profilSentier(s)} marges={72} />
+              </View>
+            </Card>
+          )}
 
           {!osm && <CarteSentier lat={s.lat} lng={s.lng} />}
           <Button
@@ -155,8 +210,6 @@ export default function FicheSentier() {
             )}
           </Card>
 
-          <Button label={enCours ? 'Reprendre ma rando' : 'Démarrer la rando'} iconAfter="right" onPress={demarrer} style={styles.mt} />
-          <BoutonRandoMontre id={s.id} style={styles.mt} />
           <Text style={styles.note}>
             {osm
               ? 'Tracé © contributeurs OpenStreetMap · altitude Open-Meteo (Copernicus). Durée et difficulté estimées : vérifie l’accès, le balisage et les conditions avant de partir.'
@@ -181,6 +234,21 @@ function Tuile({ icone, valeur, label }: { icone: IconName; valeur: string; labe
 }
 
 const styles = StyleSheet.create({
+  relief: { marginTop: 14, padding: 16, gap: 10, overflow: 'hidden' },
+  reliefTete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  reliefTitre: { flex: 1, fontSize: 20, lineHeight: 25 },
+  apercu: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, height: 30, borderRadius: 15, borderWidth: 1, borderColor: colors.border2 },
+  apercuTxt: { fontSize: 12.5, lineHeight: 16, color: colors.textSecondary },
+  altitude: { position: 'absolute', left: 18, top: 0 },
+  altitudeVal: { fontSize: 38, lineHeight: 44, letterSpacing: -1 },
+  drapeau: { position: 'absolute', top: 2, paddingLeft: 18 },
+  drapeauTxt: { fontSize: 13, lineHeight: 17 },
+  etapes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 },
+  etape: { alignItems: 'center', gap: 4, minWidth: 60 },
+  pointEtape: { width: 20, height: 20, borderRadius: 10, backgroundColor: colors.pink, borderWidth: 4, borderColor: colors.text },
+  etapeTxt: { fontSize: 14, lineHeight: 18 },
+  fleche: { flex: 1, textAlign: 'center', fontSize: 15, lineHeight: 19, color: colors.pink, marginBottom: 18 },
+  distance: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, textAlign: 'center' },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   hero: { height: 330, justifyContent: 'flex-end' },
