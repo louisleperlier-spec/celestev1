@@ -134,6 +134,7 @@ export const SENTIERS: readonly Sentier[] = [
     lng: -66.08,
     voir: ['belvedere'],
     recherche: 'Mont Ernest-Laforce, Parc national de la Gaspésie',
+    boucle: true,
   },
   {
     id: 'pic-champlain',
@@ -198,6 +199,7 @@ export const SENTIERS: readonly Sentier[] = [
     lng: -72.21,
     voir: ['belvedere'],
     recherche: 'Centre de découverte Le Bonnallie, Parc national du Mont-Orford',
+    boucle: true,
   },
   {
     id: 'centenaire',
@@ -214,6 +216,7 @@ export const SENTIERS: readonly Sentier[] = [
     lng: -74.51,
     voir: ['belvedere', 'riviere'],
     recherche: 'Sentier Le Centenaire, Parc national du Mont-Tremblant',
+    boucle: true,
   },
 ];
 
