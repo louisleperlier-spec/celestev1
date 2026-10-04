@@ -10,10 +10,12 @@ import { create } from 'zustand';
 import { bilanCoeur, conseilRythme, texteBilanCoeur } from '@/lib/bilanCoeur';
 import { motivationDuJour } from '@/lib/motivation';
 import { COULEURS_NOTIF, notifCoucher, notifEssai, notifNuit, notifPost, type ActionNotif, type Notif, type NouvelleNotif } from '@/lib/notifs';
+import { buildPlan, todayIdx } from '@/lib/plan';
+import { sessionForDay } from '@/lib/semaine';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
-import { useProfil } from './profil';
+import { selectProfil, useProfil } from './profil';
 
 /** Bannière affichée en haut de l'écran pendant 7 s (.nbanner). */
 export const useBanniere = create<{ n: Notif | null }>(() => ({ n: null }));
@@ -35,6 +37,7 @@ export function ouvrirNotif(act: ActionNotif, id?: string, lien?: string) {
   else if (act === 'sleepadd') router.push({ pathname: '/sommeil', params: { ajout: '1' } });
   else if (act === 'sortie') router.push('/velo');
   else if (act === 'accueil') router.push('/accueil');
+  else if (act === 'seance') router.push(lien && /^\d$/.test(lien) ? { pathname: '/seance/[jour]', params: { jour: lien } } : '/programme');
   else router.push('/notifications');
 }
 
@@ -122,6 +125,31 @@ export async function reprogrammer(now: Date = new Date()) {
       await Notifications.scheduleNotificationAsync({ content: { ...conseilRythme(jour), data: { act: 'sleep' } }, trigger: { type: DATE, date: jour } });
     }
   }
+  // « On bouge ensemble ? » à 18 h les jours de séance (pas aujourd'hui si une séance est déjà faite) ; sur la montre :
+  // écran d'Axel avec haltère, Commencer / Dans 30 min (catégorie NEA_SEANCE, enregistrée par le module natif).
+  if (st.nset.seance !== false) {
+    const sem = { plan: buildPlan(selectProfil(st)), weight: st.weight, added: st.added, wkMod: st.wkMod };
+    const auj = todayIdx();
+    const faiteAuj = st.logs.some((l) => l.type === 'muscu' && new Date(l.d).toDateString() === now.toDateString());
+    for (let k = 0; k < 7; k++) {
+      const quand = new Date(now);
+      quand.setDate(now.getDate() + k);
+      quand.setHours(18, 0, 0, 0);
+      if (+quand <= +now || (k === 0 && faiteAuj)) continue;
+      const jour = (auj + k) % 7;
+      const s = sessionForDay(sem, jour);
+      if (!s || s.ride || !s.items.length) continue;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'On bouge ensemble ? 💪',
+          body: `${s.titre} · ${Math.round(s.min)} min`,
+          categoryIdentifier: 'NEA_SEANCE',
+          data: { act: 'seance', d: String(jour), nea: { genre: 'seance', titre: s.titre, min: Math.round(s.min) } },
+        },
+        trigger: { type: DATE, date: quand },
+      });
+    }
+  }
   if (st.nset.bed) {
     await Notifications.scheduleNotificationAsync({
       content: contenu(notifCoucher(st.nset)),
@@ -160,8 +188,21 @@ export function demarrerNotifs() {
     handleNotification: async () => ({ shouldPlaySound: false, shouldSetBadge: false, shouldShowBanner: false, shouldShowList: true }),
   });
   Notifications.addNotificationResponseReceivedListener((r) => {
-    const data = r.notification.request.content.data as { act?: ActionNotif; d?: string } | undefined;
+    const c = r.notification.request.content;
+    const data = c.data as { act?: ActionNotif; d?: string } | undefined;
+    // Boutons des notifications (aussi sur la montre) : plus tard, séance, respiration / mesure, récupération.
+    if (r.actionIdentifier === 'nea.plustard') {
+      void Notifications.scheduleNotificationAsync({
+        identifier: `nea.plustard.${Date.now()}`,
+        content: { title: c.title ?? '', body: c.body ?? '', data: c.data, categoryIdentifier: c.categoryIdentifier ?? undefined },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 30 * 60 },
+      });
+      return;
+    }
     verifierNotifs();
+    if (r.actionIdentifier === 'nea.seance') return ouvrirNotif('seance', undefined, data?.act === 'seance' ? data.d : String(todayIdx()));
+    if (r.actionIdentifier === 'nea.respirer' || r.actionIdentifier === 'nea.calme') return ouvrirNotif('hrv');
+    if (r.actionIdentifier === 'nea.recup') return ouvrirNotif('sleep');
     ouvrirNotif(data?.act ?? 'notifs', undefined, data?.d);
   });
   let t: ReturnType<typeof setTimeout> | null = null;
@@ -170,7 +211,7 @@ export function demarrerNotifs() {
     t = setTimeout(() => reprogrammer().catch(() => {}), 1000);
   };
   useProfil.subscribe((s, avant) => {
-    if (s.nset !== avant.nset || s.pending !== avant.pending || s.premium !== avant.premium || s.nights !== avant.nights || s.lastWake !== avant.lastWake || s.onboarded !== avant.onboarded) plus_tard();
+    if (s.nset !== avant.nset || s.pending !== avant.pending || s.premium !== avant.premium || s.nights !== avant.nights || s.lastWake !== avant.lastWake || s.onboarded !== avant.onboarded || s.logs !== avant.logs || s.added !== avant.added) plus_tard();
   });
   AppState.addEventListener('change', (a) => {
     if (a === 'active') {

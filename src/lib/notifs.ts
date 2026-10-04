@@ -23,9 +23,11 @@ export type ReglagesNotifs = {
   motivT?: string;
   /** Bilan du cœur le matin + conseil pour améliorer ton rythme (absent = activé). */
   coeur?: boolean;
+  /** « On bouge ensemble ? » à 18 h les jours de séance (absent = activé). */
+  seance?: boolean;
 };
 
-export const REGLAGES_DEFAUT: ReglagesNotifs = { post: true, delay: 10, sleep: true, wake: '07:30', bed: true, bedT: '22:30', motiv: true, motivT: '08:00', coeur: true };
+export const REGLAGES_DEFAUT: ReglagesNotifs = { post: true, delay: 10, sleep: true, wake: '07:30', bed: true, bedT: '22:30', motiv: true, motivT: '08:00', coeur: true, seance: true };
 
 /** Délais proposés (select du prototype). */
 export const DELAIS: readonly (readonly [number, string])[] = [
@@ -38,7 +40,7 @@ export const DELAIS: readonly (readonly [number, string])[] = [
 
 /** Où mène la notification : mesure VFC, sommeil, saisie de la nuit, liste. */
 /** `activite` : récap d'une séance ou d'une sortie terminée sur l'Apple Watch (`lien` = date de fin du journal). */
-export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs' | 'activite' | 'sortie' | 'accueil';
+export type ActionNotif = 'hrv' | 'sleep' | 'sleepadd' | 'notifs' | 'activite' | 'sortie' | 'accueil' | 'seance';
 
 /**
  * Alertes santé posées par l'iPhone même app fermée (hors prototype, demandées par l'utilisateur) :

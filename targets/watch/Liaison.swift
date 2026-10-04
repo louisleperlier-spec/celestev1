@@ -11,6 +11,8 @@ final class Donnees: ObservableObject {
   @Published var demandeSeance = false
   /// Ouverture par « Ouvrir sur la montre » sur l'iPhone : affiche « Ma séance ».
   @Published var ouvrirChoisie = false
+  /// Bouton d'une notification : « respiration » ou « recup ».
+  @Published var ouvrirEcran: String?
   private let cle = "nea.etat"
   private let cleSynchro = "nea.synchro"
 

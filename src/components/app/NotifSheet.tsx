@@ -22,6 +22,7 @@ export function NotifSheet({ visible, onClose }: { visible: boolean; onClose: ()
   const [motiv, setMotiv] = useState(n.motiv !== false);
   const [motivT, setMotivT] = useState(n.motivT ?? '08:00');
   const [coeur, setCoeur] = useState(n.coeur !== false);
+  const [seance, setSeance] = useState(n.seance !== false);
   const [perm, setPerm] = useState<Autorisation>('undetermined');
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export function NotifSheet({ visible, onClose }: { visible: boolean; onClose: ()
   }, [visible]);
 
   const enregistrer = () => {
-    useProfil.getState().reglerNotifs({ post, delay, sleep, wake: heure(wake) || '07:30', bed, bedT: heure(bedT) || '22:30', motiv, motivT: heure(motivT) || '08:00', coeur });
+    useProfil.getState().reglerNotifs({ post, delay, sleep, wake: heure(wake) || '07:30', bed, bedT: heure(bedT) || '22:30', motiv, motivT: heure(motivT) || '08:00', coeur, seance });
     onClose();
     toast('Réglages enregistrés');
   };
@@ -66,6 +67,7 @@ export function NotifSheet({ visible, onClose }: { visible: boolean; onClose: ()
       <Heure label="Heure du coucher" value={bedT} onChange={setBedT} />
       <Bascule titre="Motivation du jour" sous="Un message différent chaque matin (plus de 120, jamais deux fois le même d’affilée)" on={motiv} onChange={setMotiv} />
       <Heure label="Heure du message" value={motivT} onChange={setMotivT} />
+      <Bascule titre="Rappel de séance" sous="« On bouge ensemble ? » à 18 h les jours de séance (Commencer ou Dans 30 min)" on={seance} onChange={setSeance} />
       <Bascule titre="Mon cœur" sous="Bilan du matin (FC au repos, VFC) et conseils pour améliorer ton rythme" on={coeur} onChange={setCoeur} />
       <Button
         label={

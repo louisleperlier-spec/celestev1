@@ -16,6 +16,7 @@ struct NeaWatchApp: App {
   init() {
     LiaisonMontre.partagee.activer()
     Entrainement.autoriser()
+    ReponsesNotif.partagees.activer()
   }
 
   var body: some Scene {
@@ -28,5 +29,12 @@ struct NeaWatchApp: App {
         if url.host == "seance" { Donnees.partagees.demandeSeance = true }
       }
     }
+    // Écrans des notifications NÉA (VFC de l'heure, récupération, séance), comme OtterLife.
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_VFC_0")
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_VFC_1")
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_VFC_2")
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_VFC_3")
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_RECUP")
+    WKNotificationScene(controller: ControleurNotif.self, category: "NEA_SEANCE")
   }
 }

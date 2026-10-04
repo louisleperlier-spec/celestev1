@@ -155,6 +155,7 @@ export default function Profil() {
           <Bascule titre="Bilan de la nuit" sous={`Le matin à ${p.nset.wake}`} on={p.nset.sleep} onChange={(v) => alerte({ sleep: v })} />
           <Bascule titre="Rappel du coucher" sous={`À ${p.nset.bedT}, pour viser 8 h`} on={p.nset.bed} onChange={(v) => alerte({ bed: v })} />
           <Bascule titre="Motivation du jour" sous={`Un message différent chaque matin à ${p.nset.motivT ?? '08:00'}`} on={p.nset.motiv !== false} onChange={(v) => alerte({ motiv: v })} />
+          <Bascule titre="Rappel de séance" sous="« On bouge ensemble ? » à 18 h les jours de séance" on={p.nset.seance !== false} onChange={(v) => alerte({ seance: v })} />
           <Bascule titre="Mon cœur" sous="Bilan du matin (FC au repos, VFC) et conseils pour ton rythme" on={p.nset.coeur !== false} onChange={(v) => alerte({ coeur: v })} />
           <Ligne icon="bell" titre="Heures et délai" sous="Réveil, coucher, délai après la séance" onPress={() => setReglages(true)} />
         </Section>
@@ -177,7 +178,7 @@ export default function Profil() {
           <Ligne
             icon="bell"
             titre="Tester mes alertes"
-            sous="6 exemples dans les 30 s : quitte l'app pour les voir"
+            sous="8 exemples en 40 s : quitte l'app pour les voir"
             onPress={() =>
               testerAlertes().then((ok) =>
                 toast(ok ? 'Quitte NÉA ou verrouille ton iPhone : 4 alertes arrivent 😉' : 'Autorise les notifications de NÉA dans Réglages'),

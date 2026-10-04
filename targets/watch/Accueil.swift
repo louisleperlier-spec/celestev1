@@ -10,6 +10,8 @@ struct AccueilView: View {
   @State private var voirSeances = false
   @State private var voirChoisie = false
   @State private var voirRando = false
+  @State private var voirRespiration = false
+  @State private var voirRecup = false
 
   private var type: TypeActivite { TypeActivite(rawValue: choix) ?? .muscu }
 
@@ -90,6 +92,19 @@ struct AccueilView: View {
     }
     .navigationDestination(isPresented: $voirRando) {
       MaRandoView()
+    }
+    .navigationDestination(isPresented: $voirRespiration) {
+      RespirationView()
+    }
+    .navigationDestination(isPresented: $voirRecup) {
+      RecupView()
+    }
+    // Bouton d'une notification (Respirer 1 min, Moment calme, Mode récupération).
+    .onReceive(donnees.$ouvrirEcran) { e in
+      guard let e = e else { return }
+      donnees.ouvrirEcran = nil
+      guard lancement == nil && sortie == nil else { return }
+      if e == "respiration" { voirRespiration = true } else if e == "recup" { voirRecup = true }
     }
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)

@@ -220,7 +220,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     (≥ +5 bpm), VFC basse (≤ −15 %), surcharge (les deux) ; verdict + conseil du jour (banque par état, pas un avis médical) ;
     `verifierCoeur` (store/notifs) une fois par nuit des dernières 24 h → notification `coeur` (liste + bannière, toucher → Sommeil) ;
     **conseil cœur** programmé un jour sur deux à 17 h 30 (`conseilRythme`, jamais le même deux jours de suite) ; réglage `nset.coeur`
-  - bascules « Motivation du jour » et « Mon cœur » dans `NotifSheet` et Profil → Alertes ; « Tester mes alertes » : 6 exemples
+  - bascules « Motivation du jour », « Rappel de séance » et « Mon cœur » dans `NotifSheet` et Profil → Alertes ; « Tester mes alertes » : 8 exemples
+  - **notifications dessinées sur la montre (maquettes de l'utilisateur, comme OtterLife, build 21)** : `AlertesSante.swift` pose la VFC de l'heure
+    (au plus 1/h, 8 h–22 h, dernière mesure) avec la catégorie `NEA_VFC_<niveau>` (0 Excellent, 1 Stable, 2 Fatigue, 3 Surcharge) et `nea`
+    (ms, écart %, heure) dans `body`, la **récupération du matin** (6 h–12 h, VFC du jour / moyenne, `NEA_RECUP`) ; catégories et boutons
+    enregistrés au lancement (`enregistrerCategories`) ; JS : **« On bouge ensemble ? »** à 18 h les jours de séance (`NEA_SEANCE`, `nset.seance`),
+    boutons gérés dans `demarrerNotifs` (`nea.plustard` = même notification dans 30 min, `nea.seance`, `nea.respirer` / `nea.calme`, `nea.recup`) ;
+    montre : `Notifications.swift` (`ControleurNotif` + `WKNotificationScene` par catégorie : Axel selon l'état (`ax_*` recadrés des maquettes),
+    « Stable · 62 ms », barre gris → orange, « Dernière mesure », ressenti Énergique / Détendu / Fatigué / Stressé et son bouton : Lancer ma
+    séance, Moment calme, Mode récupération, Respirer 1 min ; `ReponsesNotif` ouvre Respiration, Récupération ou la séance)
 - [ ] **Fiche App Store (oct. 2026)** : 5 visuels iPhone 6,9" (`APP_IPHONE_67`) + 4 captures Apple Watch (`APP_WATCH_SERIES_4`, 368 × 448)
   téléversés par l'API ; sous-titre, description (avec mentions d'abonnement), mots-clés, texte promotionnel (fr-CA) ; **site public**
   `site/` sur l'hébergement Expo **https://nea-coach.expo.app** (`npm run site` : `scripts/generer-site.ts` génère confidentialite.html,

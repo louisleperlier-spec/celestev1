@@ -41,8 +41,28 @@ final class AlertesSante {
     activer()
   }
 
+  /// Catégories des notifications NÉA : la montre leur donne un écran (Axel selon l'état, barre VFC) et un bouton d'action.
+  /// Ajoutées à celles déjà enregistrées (expo-notifications peut en avoir).
+  static func enregistrerCategories() {
+    let action = { (id: String, titre: String, avant: Bool) in UNNotificationAction(identifier: id, title: titre, options: avant ? [.foreground] : []) }
+    let cats: Set<UNNotificationCategory> = [
+      UNNotificationCategory(identifier: "NEA_VFC_0", actions: [action("nea.seance", "Lancer ma séance", true)], intentIdentifiers: []),
+      UNNotificationCategory(identifier: "NEA_VFC_1", actions: [action("nea.calme", "Moment calme", true)], intentIdentifiers: []),
+      UNNotificationCategory(identifier: "NEA_VFC_2", actions: [action("nea.recup", "Mode récupération", true)], intentIdentifiers: []),
+      UNNotificationCategory(identifier: "NEA_VFC_3", actions: [action("nea.respirer", "Respirer 1 min", true)], intentIdentifiers: []),
+      UNNotificationCategory(identifier: "NEA_RECUP", actions: [action("nea.seance", "Commencer", true)], intentIdentifiers: []),
+      UNNotificationCategory(identifier: "NEA_SEANCE", actions: [action("nea.seance", "Commencer", true), action("nea.plustard", "Dans 30 min", false)], intentIdentifiers: []),
+    ]
+    let centre = UNUserNotificationCenter.current()
+    centre.getNotificationCategories { existantes in
+      let ids = Set(cats.map(\.identifier))
+      centre.setNotificationCategories(existantes.filter { !ids.contains($0.identifier) }.union(cats))
+    }
+  }
+
   /// Au lancement (même en arrière-plan) : observe la VFC, les pas et les calories actives.
   func activer() {
+    Self.enregistrerCategories()
     guard HKHealthStore.isHealthDataAvailable(), !observe else { return }
     let r = reglages
     guard r.vfc || r.velo || r.pas else { return }
@@ -86,7 +106,26 @@ final class AlertesSante {
         if r.vfc, (8..<22).contains(h), let v = vfc, let e = etat, self.depuis("nea.alerte.vfc") >= 55 * 60 {
           self.marquer("nea.alerte.vfc")
           let heure = DateFormatter.localizedString(from: v.date, dateStyle: .none, timeStyle: .short)
-          self.notifier(id: "vfc", titre: "\(e.emoji) VFC \(Int(v.ms.rounded())) ms · \(e.nom) · \(heure)", texte: e.texte)
+          self.notifier(
+            id: "vfc",
+            titre: "\(e.emoji) VFC \(Int(v.ms.rounded())) ms · \(e.nom) · \(heure)",
+            texte: e.texte,
+            categorie: "NEA_VFC_\(e.niveau)",
+            info: ["genre": "vfc", "niveau": e.niveau, "ms": Int(v.ms.rounded()), "ecart": e.ecart, "heure": heure]
+          )
+        }
+        // Récupération du matin (une fois, de 6 h à 12 h) : VFC du jour / moyenne, comme l'anneau Récupération de l'app.
+        if r.vfc, (6..<12).contains(h), let v = vfc, let m = moyenne, m > 0, let e = etat, self.premiereFoisAujourdhui("nea.alerte.recup") {
+          let score = min(100, Int((v.ms / m * 100).rounded()))
+          let (nom, phrase) = [("En forme", "Prêt pour ta prochaine séance"), ("En forme", "Prêt pour ta prochaine séance"),
+                               ("À ménager", "Séance légère conseillée aujourd'hui"), ("Récupère", "Repos aujourd'hui, ton corps te remerciera")][e.niveau]
+          self.notifier(
+            id: "recup",
+            titre: "Récupération · \(nom) · \(score)/100",
+            texte: phrase,
+            categorie: "NEA_RECUP",
+            info: ["genre": "recup", "niveau": e.niveau, "score": score, "nom": nom, "phrase": phrase]
+          )
         }
         // Pas : 80 % puis objectif atteint, une fois chacun par jour.
         if r.pas, let n = pas, r.objectifPas > 0 {
@@ -139,12 +178,15 @@ final class AlertesSante {
     let niveau: Int
     let nom: String
     let texte: String
+    /// Écart à la moyenne en % (barre de l'écran de la montre).
+    let ecart: Int
     /// Pastille du titre : 💚 excellente, 🙂 bonne, 😮‍💨 fatigue, 🚨 surcharge.
     var emoji: String { ["💚", "🙂", "😮‍💨", "🚨"][niveau] }
 
     init(ms: Double, moyenne: Double) {
       let ecart = moyenne > 0 ? (ms - moyenne) / moyenne : 0
       let p = Int((ecart * 100).rounded())
+      self.ecart = p
       let signe = p >= 0 ? "+\(p)" : "\(p)"
       let s = "\(signe) %"
       if ecart >= 0.1 {
@@ -155,7 +197,7 @@ final class AlertesSante {
           "VFC au top (\(s)). Même ton coach est jaloux 😎 C'est le moment de tout casser (pas la vaisselle) 💪",
         ].randomElement()!
       } else if ecart >= -0.1 {
-        niveau = 1; nom = "Bon"
+        niveau = 1; nom = "Stable"
         texte = [
           "Dans ta moyenne (\(s)). Ni Hulk, ni paresseux : juste toi, en forme 🙂 Un verre d'eau et ça roule 💧",
           "\(s) : forme stable comme le Wi-Fi d'un hôtel 5 étoiles 📶 Continue comme ça !",
@@ -218,14 +260,18 @@ final class AlertesSante {
 
   // MARK: Notifications
 
-  private func notifier(id: String, titre: String, texte: String) {
+  private func notifier(id: String, titre: String, texte: String, categorie: String? = nil, info: [String: Any]? = nil) {
     let c = UNMutableNotificationContent()
     c.title = titre
     c.body = texte
     c.sound = .default
     c.threadIdentifier = "nea.sante"
-    // Toucher : VFC → mesure de récupération, vélo → onglet Sorties, pas → Accueil (ouvrirNotif côté JS).
-    c.userInfo = ["body": ["act": id == "vfc" ? "hrv" : id == "velo" ? "sortie" : "accueil"]]
+    if let categorie = categorie { c.categoryIdentifier = categorie }
+    // Toucher : VFC → mesure de récupération, récupération → Sommeil, vélo → onglet Sorties, pas → Accueil (ouvrirNotif côté JS).
+    // `nea` : données de l'écran de la notification sur la montre.
+    var corps: [String: Any] = ["act": id == "vfc" ? "hrv" : id == "recup" ? "sleep" : id == "velo" ? "sortie" : "accueil"]
+    if let info = info { corps["nea"] = info }
+    c.userInfo = ["body": corps]
     let r = UNNotificationRequest(identifier: "nea.\(id).\(Int(Date().timeIntervalSince1970))", content: c, trigger: nil)
     UNUserNotificationCenter.current().add(r)
   }
