@@ -4,7 +4,7 @@
 Usage :
     python3 render.py carousels/001-exemple.json [autres.json ...]
 
-Sortie : out/<id>/01.jpg, 02.jpg, ...
+Sortie : out/<id>/01.jpg, 02.jpg, ... et out/<id>/legende.txt (légende + hashtags à copier-coller)
 """
 import json
 import sys
@@ -130,7 +130,12 @@ def render(carousel_path):
         dest = out / f"{n:02d}.jpg"
         img.save(dest, "JPEG", quality=92, optimize=True)
         files.append(dest)
-    print(f"[{cid}] {len(files)} slides -> {out.relative_to(ROOT)}")
+
+    caption = data.get("caption", "")
+    if data.get("hashtags"):
+        caption += "\n\n" + " ".join(data["hashtags"])
+    (out / "legende.txt").write_text(caption + "\n", encoding="utf-8")
+    print(f"[{cid}] {len(files)} slides + legende.txt -> {out.relative_to(ROOT)}")
     return files
 
 

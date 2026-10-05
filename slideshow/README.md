@@ -1,6 +1,17 @@
 # Carrousels TikTok
 
-Tes images + mes textes → slides 9:16 avec texte style TikTok → carrousel publié sur TikTok via Postiz.
+Tes images + mes textes → slides 9:16 avec texte style TikTok + légende prête à copier-coller.
+
+## Le mode d'emploi (gratuit, sans Postiz)
+
+1. Tu m'envoies tes images (faites avec GPT Astra) et ce que tu veux raconter.
+2. J'écris le carrousel (`carousels/<id>.json`) et je génère les slides.
+3. Je t'envoie les slides et la légende directement dans la conversation. Tu les enregistres sur ton téléphone.
+4. Dans TikTok : **+** → **Photo** → tu sélectionnes les slides dans l'ordre → tu ajoutes un son tendance → tu colles la légende → tu actives le label « contenu généré par IA » → tu publies.
+
+Tu peux aussi récupérer les slides depuis GitHub : chaque carrousel poussé sur `main` est rendu par la GitHub Action, et le zip est disponible dans l'onglet **Actions** → le run → **Artifacts**.
+
+La publication automatique via Postiz (payant, 29 $/mois, 7 jours d'essai) est prête mais optionnelle : voir plus bas.
 
 ```
 slideshow/
@@ -39,7 +50,7 @@ slideshow/
 - Utilise `\n` dans un texte pour forcer un retour à la ligne. Mets les emojis dans la légende plutôt que sur les slides : la police n'en contient pas.
 - Les fichiers qui commencent par `_` (comme `_exemple.json`) ne sont jamais publiés automatiquement.
 
-## En local
+## En local (optionnel)
 
 ```bash
 pip install -r requirements.txt
@@ -61,10 +72,10 @@ Un carrousel déjà publié n'est pas renvoyé (`--force` pour le republier).
 
 ## Automatique avec GitHub
 
-Le workflow `.github/workflows/carrousels-tiktok.yml` rend et publie chaque nouveau carrousel poussé sur `main` dans `slideshow/carousels/`.
+Le workflow `.github/workflows/carrousels-tiktok.yml` rend chaque nouveau carrousel poussé sur `main` dans `slideshow/carousels/` et met les slides à télécharger.
 On peut aussi le lancer à la main depuis l'onglet **Actions**.
 
-À configurer une fois dans **Settings → Secrets and variables → Actions** du repo :
+Pour activer en plus la publication automatique via Postiz, ajoute dans **Settings → Secrets and variables → Actions** du repo :
 
 - `POSTIZ_API_KEY` (obligatoire)
 - `POSTIZ_TIKTOK_ID` (si tu as plusieurs comptes TikTok dans Postiz)

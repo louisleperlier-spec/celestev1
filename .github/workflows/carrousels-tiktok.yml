@@ -1,6 +1,7 @@
-# Publie sur TikTok (via Postiz) chaque carrousel ajouté ou modifié dans slideshow/carousels/.
-# Les fichiers qui commencent par « _ » (exemples, brouillons) sont ignorés.
-# Secrets à définir dans le repo : POSTIZ_API_KEY (obligatoire), POSTIZ_TIKTOK_ID et POSTIZ_URL (optionnels).
+# Rend chaque carrousel ajouté ou modifié dans slideshow/carousels/ et met les slides à télécharger
+# (onglet Actions → le run → « Artifacts »). Les fichiers qui commencent par « _ » sont ignorés.
+# Publication automatique via Postiz : seulement si le secret POSTIZ_API_KEY est défini
+# (POSTIZ_TIKTOK_ID et POSTIZ_URL optionnels).
 name: Carrousels TikTok
 
 on:
@@ -10,12 +11,14 @@ on:
   workflow_dispatch:
     inputs:
       carousels:
-        description: "Fichiers à publier (séparés par des espaces, chemins depuis slideshow/)"
+        description: "Fichiers à rendre (séparés par des espaces, chemins depuis slideshow/)"
         required: true
 
 jobs:
-  publish:
+  render:
     runs-on: ubuntu-latest
+    env:
+      POSTIZ_API_KEY: ${{ secrets.POSTIZ_API_KEY }}
     defaults:
       run:
         working-directory: slideshow
@@ -30,7 +33,7 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Carrousels à publier
+      - name: Carrousels à rendre
         id: files
         env:
           INPUT_CAROUSELS: ${{ inputs.carousels }}
@@ -46,15 +49,25 @@ jobs:
               | sed 's|^slideshow/||' | grep -E '^carousels/[^_][^/]*\.json$' || true)
           fi
           echo "files=$(echo $files)" >> "$GITHUB_OUTPUT"
-          echo "À publier : ${files:-aucun}"
+          echo "À rendre : ${files:-aucun}"
 
-      - name: Rendu et publication
+      - name: Rendu des slides
         if: steps.files.outputs.files != ''
         env:
-          POSTIZ_API_KEY: ${{ secrets.POSTIZ_API_KEY }}
+          FILES: ${{ steps.files.outputs.files }}
+        run: python3 render.py $FILES
+
+      - name: Slides à télécharger
+        if: steps.files.outputs.files != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: carrousels
+          path: slideshow/out/
+
+      - name: Publication Postiz (si configurée)
+        if: steps.files.outputs.files != '' && env.POSTIZ_API_KEY != ''
+        env:
           POSTIZ_TIKTOK_ID: ${{ secrets.POSTIZ_TIKTOK_ID }}
           POSTIZ_URL: ${{ secrets.POSTIZ_URL || 'https://api.postiz.com/public/v1' }}
           FILES: ${{ steps.files.outputs.files }}
-        run: |
-          python3 render.py $FILES
-          python3 publish.py $FILES
+        run: python3 publish.py $FILES
