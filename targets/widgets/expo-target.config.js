@@ -16,6 +16,7 @@ module.exports = {
     nova_corps: './images/nova_corps.png',
     kai_corps: './images/kai_corps.png',
     luna_corps: './images/luna_corps.png',
+    axel_dodo: './images/axel_dodo.png',
   },
   frameworks: ['SwiftUI', 'WidgetKit', 'HealthKit', 'ActivityKit'],
   entitlements: {

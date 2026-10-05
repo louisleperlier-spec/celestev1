@@ -64,3 +64,40 @@ final class ActiviteSport {
     }
   }
 }
+
+/// « L'heure de ralentir » : compte à rebours jusqu'à l'heure du coucher (même structure que targets/widgets/CoucherActivite.swift).
+struct NeaCoucherAttributes: ActivityAttributes {
+  public struct ContentState: Codable, Hashable {
+    var coucher: Date
+  }
+
+  var titre: String
+}
+
+final class ActiviteCoucher {
+  static let partagee = ActiviteCoucher()
+
+  /// Une seule à la fois ; ne relance pas si celle de ce soir tourne déjà.
+  func demarrer(coucher: Date) -> Bool {
+    guard ActivityAuthorizationInfo().areActivitiesEnabled else { return false }
+    let deja = Activity<NeaCoucherAttributes>.activities
+    if deja.contains(where: { abs($0.content.state.coucher.timeIntervalSince(coucher)) < 60 && $0.activityState == .active }) { return true }
+    for a in deja { Task { await a.end(nil, dismissalPolicy: .immediate) } }
+    do {
+      _ = try Activity.request(
+        attributes: NeaCoucherAttributes(titre: "L'heure de ralentir"),
+        content: ActivityContent(state: .init(coucher: coucher), staleDate: coucher.addingTimeInterval(15 * 60)),
+        pushType: nil
+      )
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  func terminer() {
+    for a in Activity<NeaCoucherAttributes>.activities {
+      Task { await a.end(nil, dismissalPolicy: .immediate) }
+    }
+  }
+}

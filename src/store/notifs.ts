@@ -15,6 +15,8 @@ import { sessionForDay } from '@/lib/semaine';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
+import { NeaMontre } from '../../modules/nea-montre/src';
+
 import { selectProfil, useProfil } from './profil';
 
 /** Bannière affichée en haut de l'écran pendant 7 s (.nbanner). */
@@ -40,6 +42,30 @@ export function ouvrirNotif(act: ActionNotif, id?: string, lien?: string) {
   else if (act === 'sport') router.push('/sport-en-cours');
   else if (act === 'seance') router.push(lien && /^\d$/.test(lien) ? { pathname: '/seance/[jour]', params: { jour: lien } } : '/programme');
   else router.push('/notifications');
+}
+
+const MIN_RALENTIR = 30;
+
+/**
+ * « L'heure de ralentir » (maquette de l'utilisateur) : dans l'heure qui précède le coucher choisi, NÉA ouvert pose un compte à rebours
+ * sur l'écran verrouillé (Activité en direct, build 25+) ; retiré 30 min après l'heure du coucher ou si le rappel est coupé.
+ */
+export function verifierCoucher(now: Date = new Date()) {
+  if (!NeaMontre?.demarrerCoucher) return;
+  const st = useProfil.getState();
+  const cible = new Date(now);
+  cible.setHours(Math.floor(hm(st.nset.bedT) / 60), hm(st.nset.bedT) % 60, 0, 0);
+  // Écart ramené entre −12 h et +12 h (coucher après minuit).
+  let ecart = (+cible - +now) / 60000;
+  if (ecart > 720) ecart -= 1440;
+  if (ecart <= -720) ecart += 1440;
+  const coucher = +now + ecart * 60000;
+  try {
+    if (st.onboarded && st.nset.bed && ecart > 0 && ecart <= 60) NeaMontre.demarrerCoucher(coucher);
+    else if (!st.nset.bed || ecart <= -30 || ecart > 60) NeaMontre.finCoucher?.();
+  } catch {
+    // build sans Activité en direct
+  }
 }
 
 /** Nouvelle notification (activité de la montre…) : ajoutée à la liste et montrée en bannière. */
@@ -156,6 +182,12 @@ export async function reprogrammer(now: Date = new Date()) {
       content: contenu(notifCoucher(st.nset)),
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: Math.floor(hm(st.nset.bedT) / 60), minute: hm(st.nset.bedT) % 60 },
     });
+    // « L'heure de ralentir » 30 min avant : la toucher ouvre NÉA, qui pose le compte à rebours sur l'écran verrouillé.
+    const avant = (hm(st.nset.bedT) - MIN_RALENTIR + 1440) % 1440;
+    await Notifications.scheduleNotificationAsync({
+      content: { title: "L'heure de ralentir 🌙", body: `Ton coucher dans ${MIN_RALENTIR} min. Pose l'écran, baisse la lumière, respire.`, data: { act: 'sleep' } },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: Math.floor(avant / 60), minute: avant % 60 },
+    });
   }
 }
 
@@ -178,6 +210,7 @@ export function demarrerNotifs() {
   if (demarre) return;
   demarre = true;
   setInterval(verifierNotifs, 2000);
+  setInterval(() => verifierCoucher(), 60_000);
   // Bilan du cœur : au lancement et à chaque nouvelle nuit.
   setTimeout(() => verifierCoeur(), 3000);
   useProfil.subscribe((s, avant) => {
@@ -216,8 +249,10 @@ export function demarrerNotifs() {
   });
   AppState.addEventListener('change', (a) => {
     if (a === 'active') {
+      verifierCoucher();
       verifierNotifs();
       plus_tard();
+  verifierCoucher();
     }
   });
   plus_tard();

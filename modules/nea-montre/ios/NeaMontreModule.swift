@@ -66,6 +66,15 @@ public final class NeaMontreModule: Module {
       ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false))
     }
 
+    /// « L'heure de ralentir » (écran verrouillé) : compte à rebours jusqu'au coucher ; voir ActiviteCoucher.
+    Function("demarrerCoucher") { (coucherMs: Double) -> Bool in
+      ActiviteCoucher.partagee.demarrer(coucher: Date(timeIntervalSince1970: coucherMs / 1000))
+    }
+
+    Function("finCoucher") {
+      ActiviteCoucher.partagee.terminer()
+    }
+
     /// `garder` : affiche l'état « terminé » quelques minutes ; sinon (abandon) retire tout de suite.
     Function("finActivite") { (bpm: Int, ecoule: Int, kcal: Int, garder: Bool) in
       ActiviteSport.partagee.terminer(garder ? .init(bpm: bpm, debut: Date(), pause: true, ecoule: ecoule, kcal: kcal, fini: true) : nil)

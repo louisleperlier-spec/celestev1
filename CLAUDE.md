@@ -329,6 +329,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     pastille orange au symbole SF du sport `symboleSport`, chrono qui défile seul `Text(timerInterval:)`, ♥ BPM, kcal ; toucher → `nea://sport-en-cours`) ;
     module `ActiviteSport.swift` (`demarrerActivite`, `majActivite` toutes les 5 s au premier plan, `finActivite` : état « Terminé » 4 min, ou retiré
     à l'abandon) ; `NeaSportAttributes` défini à l'identique des deux côtés ; `NSSupportsLiveActivities` dans `app.json`
+  - **« L'heure de ralentir » (maquette de l'utilisateur, build 25)** : Activité en direct `CoucherActiviteWidget` (`targets/widgets/CoucherActivite.swift` :
+    lune + NÉA, titre, compte à rebours jusqu'au coucher `Text(timerInterval:countsDown:)`, « Avant ton coucher. », Axel qui dort `axel_dodo`
+    recadré de la maquette ; Dynamic Island) ; `ActiviteCoucher` (`demarrerCoucher` / `finCoucher`) ; `verifierCoucher` (store/notifs, à l'ouverture,
+    au retour et chaque minute) la pose dans l'heure avant `nset.bedT`, la retire 30 min après ; notification quotidienne « L'heure de ralentir 🌙 »
+    30 min avant le coucher (la toucher ouvre NÉA, qui pose le compte à rebours)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

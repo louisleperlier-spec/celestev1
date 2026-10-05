@@ -16,6 +16,9 @@ type Module = {
   demarrerActivite?(sport: string, symbole: string, debutMs: number): boolean;
   majActivite?(bpm: number, debutMs: number, pause: boolean, ecoule: number, kcal: number): void;
   finActivite?(bpm: number, ecoule: number, kcal: number, garder: boolean): void;
+  /** « L'heure de ralentir » (build 25+) : compte à rebours jusqu'au coucher sur l'écran verrouillé. */
+  demarrerCoucher?(coucherMs: number): boolean;
+  finCoucher?(): void;
 };
 
 /** Module natif de liaison avec l'Apple Watch ; absent dans Expo Go, le navigateur et Android. */
