@@ -37,6 +37,7 @@ export function ouvrirNotif(act: ActionNotif, id?: string, lien?: string) {
   else if (act === 'sleepadd') router.push({ pathname: '/sommeil', params: { ajout: '1' } });
   else if (act === 'sortie') router.push('/velo');
   else if (act === 'accueil') router.push('/accueil');
+  else if (act === 'sport') router.push('/sport-en-cours');
   else if (act === 'seance') router.push(lien && /^\d$/.test(lien) ? { pathname: '/seance/[jour]', params: { jour: lien } } : '/programme');
   else router.push('/notifications');
 }

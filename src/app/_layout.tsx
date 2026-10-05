@@ -82,6 +82,7 @@ export default function RootLayout() {
         <Stack.Screen name="plus" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="ajouter" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="sport-en-cours" options={{ animation: 'fade_from_bottom' }} />
       </Stack>
       <NotifBanniere />
       <FeteHost />

@@ -14,6 +14,7 @@ import { exercice } from '@/lib/plan';
 import { FAMILLES, INTENSITES, kcalSport, MET_MUSCU_LIBRE, sansAccents, sportParId, SPORTS, xpMuscuLibre, xpSport, type FamilleSport, type Intensite } from '@/lib/sports';
 import { enregistrerMuscuLibre, enregistrerSport, type ExoLibre } from '@/store/activites';
 import { useProfil } from '@/store/profil';
+import { useSportLive } from '@/store/sportLive';
 import { alpha, colors, fonts, ui } from '@/theme';
 
 type Mode = { kind: 'choix' } | { kind: 'sport'; id: string } | { kind: 'muscu' };
@@ -148,6 +149,10 @@ function FormSport({ id, onRetour }: { id: string; onRetour: () => void }) {
   const [int, setInt] = useState<Intensite>('moderee');
   const [quand, setQuand] = useState<Quand>('auj');
   const cal = kcalSport(s.met, poids, min, int);
+  const lancer = () => {
+    useSportLive.getState().demarrer(s.id, int);
+    router.replace('/sport-en-cours');
+  };
   const enregistrer = () => {
     const r = enregistrerSport(s.id, min, int, quand === 'hier');
     if (!r) return;
@@ -163,17 +168,24 @@ function FormSport({ id, onRetour }: { id: string; onRetour: () => void }) {
             <IconeSport glyphe={s.icone} size={46} strokeWidth={1.6} />
           </View>
         </View>
-        <Duree min={min} setMin={setMin} />
         <Card style={styles.bloc}>
           <Text style={styles.petit}>Intensité</Text>
           <Segmente options={(Object.keys(INTENSITES) as Intensite[]).map((k) => [k, INTENSITES[k].nom] as [Intensite, string])} value={int} onChange={setInt} />
+        </Card>
+        <Button label="Lancer en direct" icon="play" onPress={lancer} />
+        <Text style={styles.estimation}>Chrono, BPM capté par ta montre et notification « {s.nom} en cours »</Text>
+        <Text weight="semibold" style={[styles.h3, styles.ou]}>
+          Ou note une activité déjà faite
+        </Text>
+        <Duree min={min} setMin={setMin} />
+        <Card style={styles.bloc}>
           <Text style={styles.petit}>Quand</Text>
           <Segmente options={[['auj', "Aujourd'hui"], ['hier', 'Hier']] as [Quand, string][]} value={quand} onChange={setQuand} />
         </Card>
         <Text style={styles.estimation}>
           ≈ {cal} kcal · +{xpSport(min) + (int === 'intense' ? 5 : 0)} XP · compte pour ta série et tes cercles
         </Text>
-        <Button label={`Enregistrer ${s.nom.toLowerCase()}`} icon="check" onPress={enregistrer} />
+        <Button label={`Enregistrer ${min} min`} variant="dark" icon="check" onPress={enregistrer} />
       </ScrollView>
     </>
   );
@@ -329,6 +341,7 @@ const styles = StyleSheet.create({
   grandeTitre: { fontSize: 17, lineHeight: 22 },
   famille: { gap: 10, marginTop: 6 },
   h3: { fontSize: 17, lineHeight: 22 },
+  ou: { marginTop: 14 },
   grille: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   case: {
     width: '31%',

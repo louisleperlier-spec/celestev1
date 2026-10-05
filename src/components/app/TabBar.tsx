@@ -3,6 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Appui, Icon, Text, type IconName } from '@/components/ui';
+import { sportParId } from '@/lib/sports';
+import { useSportLive } from '@/store/sportLive';
+
+import { IconeSport } from './IconeSport';
 import { alpha, colors, ui } from '@/theme';
 
 type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/progres' | '/profil' | '/coach';
@@ -19,12 +23,32 @@ const ONGLETS: Onglet[] = [
   { label: 'Coach', icon: 'bulle', href: '/coach', ecrans: ['/coach'] },
 ];
 
+/** Sport en direct : bandeau au-dessus des onglets (sport, chrono, BPM), toucher → écran en direct. */
+function SportEnCours() {
+  const { run, sport, el, bpm, paused } = useSportLive();
+  const sp = sportParId(sport ?? undefined);
+  if (!run || !sp) return null;
+  return (
+    <Appui accessibilityRole="button" accessibilityLabel={`${sp.nom} en cours`} onPress={() => router.push('/sport-en-cours')} style={styles.direct}>
+      <IconeSport glyphe={sp.icone} size={20} />
+      <Text weight="semibold" style={styles.directTxt} numberOfLines={1}>
+        {sp.nom} {paused ? 'en pause' : 'en cours'} · {Math.floor(el / 60)}:{String(el % 60).padStart(2, '0')}
+      </Text>
+      <Icon name="heart" size={16} color={colors.pink} strokeWidth={2.2} />
+      <Text weight="semibold" style={styles.directTxt}>
+        {Math.round(bpm)}
+      </Text>
+    </Appui>
+  );
+}
+
 /** Barre d'onglets flottante en pilule : icône et libellé, orange (avec halo) pour l'onglet ouvert. */
 export function TabBar() {
   const path = usePathname();
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.zone, { paddingBottom: Math.max(10, insets.bottom - 8) }]}>
+      <SportEnCours />
       <View style={styles.pilule} accessibilityRole="tablist">
         {ONGLETS.map((o) => {
           const on = o.ecrans.some((e) => path.startsWith(e));
@@ -70,4 +94,17 @@ const styles = StyleSheet.create({
   ic: { width: 40, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   icOn: { boxShadow: `0 0 18px ${alpha(colors.pink, 0.35)}` },
   label: { fontSize: 11, lineHeight: 14 },
+  direct: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+    paddingHorizontal: 14,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: alpha(colors.pink, 0.14),
+    borderWidth: 1,
+    borderColor: alpha(colors.pink, 0.4),
+  },
+  directTxt: { fontSize: 14, lineHeight: 18, color: colors.text, flexShrink: 1 },
 });

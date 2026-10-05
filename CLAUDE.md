@@ -320,6 +320,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     HKWorkoutActivityType), lien vers les séances guidées ; durée, aujourd'hui / hier
   - `store/activites.ts` : journal (`type: 'sport'` + `sport`, ou `muscu` + `libre`), XP (sport 20 + min/3, libre 30 + 2/série, 70 max),
     quête « séance » (aujourd'hui), carte récompense (store/jeu), Apple Santé (`enregistrerEntrainement` + `hk`), cercles et série
+  - **sport en direct** (« Lancer en direct » sur la fiche d'un sport) : `store/sportLive.ts` (chrono, FC de l'Apple Watch via `suivreMontre`
+    sinon cœur simulé selon le MET × intensité, pause, intensité modifiable) ; écran `/sport-en-cours` (durée, BPM, zone, kcal, BPM moyen / max,
+    Pause, Terminer, Abandonner) ; bandeau « Tennis en cours · 12:34 · ♥ 138 » au-dessus des onglets (`TabBar`) ; notifications : « Tennis en
+    cours » au départ (`nea.sport`), rappels posés d'avance quand NÉA passe en arrière-plan (10 → 120 min, annulés au retour), bilan à la fin ;
+    toucher → `/sport-en-cours` (action `sport`) ; enregistré dès 1 min avec FC moyenne / max (`enregistrerSport(…, fc)`)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
