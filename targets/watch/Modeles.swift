@@ -84,6 +84,8 @@ struct EtatMontre: Codable {
   let choisieProg: String?
   /// Sentier choisi sur l'iPhone (build 19).
   let rando: RandoMontre?
+  /// Partie Sommeil (build 27) : réveil, coucher conseillé, nuit en cours, pluie de l'iPhone.
+  let sommeil: SommeilMontre?
 
   /// Score santé (0–100) : moyenne des parts d'Effort, de Récupération et de Sommeil connues.
   var score: Int? {
@@ -93,6 +95,35 @@ struct EtatMontre: Codable {
     if b.sommeil > 0 { parts.append(min(1, b.sommeil / 8)) }
     return Int((parts.reduce(0, +) / Double(parts.count) * 100).rounded())
   }
+}
+
+struct SommeilMontre: Codable {
+  let reveil: String
+  let actif: Bool
+  let coucher: String
+  let vibration: Bool
+  let objectif: Double
+  let nuit: Bool
+  let pluie: Bool
+}
+
+/// Messages Sommeil vers l'iPhone : réveil réglé à la couronne, nuit commencée / terminée, pluie, ressenti du matin.
+struct ReveilEnvoi: Encodable {
+  let h: String
+  let vibration: Bool
+}
+
+struct ActionEnvoi: Encodable {
+  let action: String
+  var volume: Double? = nil
+}
+
+struct RessentiEnvoi: Encodable {
+  let q: Int
+  let coucher: String?
+  let reveil: String?
+  let hrv: Double?
+  let rhr: Double?
 }
 
 struct CoachResume: Codable, Hashable {

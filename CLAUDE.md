@@ -353,6 +353,13 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     `assets/sons/pluie.wav` générée, arrière-plan + mode silencieux, `enableBackgroundPlayback`)
   - **`/notes-soir`** « Notes du soir » (Habitudes, Bien-être, Routine : 12 étiquettes `TAGS_SOIR` avec icônes `IconeNote`, note libre) →
     `notesSoir` du profil ; **`/journal-sommeil`** (notes + score de la nuit suivante) ; `lib/reveil.ts` (fonctions pures)
+  - **Sommeil sur la montre (maquettes de l'utilisateur, build 27)** : `targets/watch/Sommeil.swift`, menu « Sommeil » de l'accueil : **Sommeil**
+    (Axel qui dort `ax_dodo`, « Dans 30 min · Coucher à 23:15 », Réveil →, Préparer ma nuit, Cette nuit →), **Réveil** (heures / minutes à la
+    couronne, vibration, Enregistrer → iPhone `reveil` → `reglerReveil` + `programmerReveil`), **Nuit** (l'heure, « Réveil à », Pluie douce de
+    l'iPhone : lecture / pause et volume à la couronne → `pluie`, Terminer → `nuit`), **Cette nuit** (durée endormi, barre des phases profond / cœur /
+    paradoxal, VFC nocturne, FC au repos lus dans Apple Santé par la montre `SommeilSante`, sinon la nuit de l'iPhone ; « Mon ressenti » →
+    `ressenti-nuit` : qualité 2 à 5 de la nuit, créée si absente) ; `etat.sommeil` (réveil, coucher, vibration, nuit en cours, pluie) ;
+    messages directs `envoyerDirect` (sendMessage si l'iPhone est joignable, sinon file d'attente, sauf la pluie)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

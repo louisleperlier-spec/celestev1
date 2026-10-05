@@ -23,6 +23,7 @@ module.exports = {
     ax_fatigue: './images/ax_fatigue.png',
     ax_detendu: './images/ax_detendu.png',
     ax_energique: './images/ax_energique.png',
+    ax_dodo: './images/ax_dodo.png',
   },
   frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion', 'CoreLocation', 'MapKit', 'WidgetKit'],
   entitlements: {

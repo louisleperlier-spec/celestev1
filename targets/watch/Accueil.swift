@@ -74,6 +74,10 @@ struct AccueilView: View {
           LigneMenu(icone: "heart.fill", titre: "Récupération", valeur: donnees.etat?.score.map { "\($0)" } ?? "")
         }
         .buttonStyle(.plain)
+        NavigationLink { SommeilView() } label: {
+          LigneMenu(icone: "moon.fill", titre: "Sommeil", valeur: donnees.etat?.sommeil.map { $0.actif ? $0.reveil : "" } ?? "")
+        }
+        .buttonStyle(.plain)
         NavigationLink { RespirationView() } label: { LigneMenu(icone: "wind", titre: "Respiration") }.buttonStyle(.plain)
         NavigationLink { CoachView() } label: { LigneMenu(icone: "person.crop.circle", titre: "Mon coach") }.buttonStyle(.plain)
         NavigationLink { ProgresView() } label: { LigneMenu(icone: "chart.bar.fill", titre: "Progrès") }.buttonStyle(.plain)

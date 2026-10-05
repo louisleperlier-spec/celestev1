@@ -16,7 +16,8 @@ import { COACHES, SEANCES } from '@/data';
 import type { SeanceId } from '@/data/types';
 import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, prog, progWeek, sesKcal, todayIdx } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
-import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
+import { coucherPour } from '@/lib/reveil';
+import { ajouterNuit, baseHrv, heure, lastNight, nouvelleNuit, recovStatus, sleepScore } from '@/lib/sommeil';
 import { casesTrace } from '@/lib/territoires';
 import { caloriesCourse, caloriesVelo, xpCourse, xpVelo } from '@/lib/velo';
 import { colors } from '@/theme';
@@ -31,6 +32,8 @@ import { annoncer } from './notifs';
 import { selectProfil, useProfil } from './profil';
 import { gagnerExplorateur, sommetAtteint } from './rando';
 import { trouverSentier } from './randosPres';
+import { programmerReveil } from './reveil';
+import { useSons } from './sons';
 import { conquerirTrace } from './territoires';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -77,6 +80,8 @@ type EtatMontre = {
   choisieProg: string;
   /** Sentier choisi aujourd'hui sur l'iPhone (build 19). */
   rando: RandoMontre | null;
+  /** Partie Sommeil (build 27) : réveil, coucher conseillé, nuit en cours, pluie qui joue sur l'iPhone. */
+  sommeil: { reveil: string; actif: boolean; coucher: string; vibration: boolean; objectif: number; nuit: boolean; pluie: boolean };
 };
 
 /** Séance terminée sur la montre. */
@@ -232,6 +237,15 @@ function etat(): EtatMontre {
     choisie,
     choisieProg,
     rando,
+    sommeil: {
+      reveil: st.reveil.h,
+      actif: st.reveil.actif,
+      coucher: coucherPour(st.reveil.h, st.objectifSommeil),
+      vibration: st.reveil.vibration,
+      objectif: st.objectifSommeil,
+      nuit: !!st.nuitDebut,
+      pluie: useSons.getState().joue,
+    },
   };
 }
 
@@ -418,7 +432,54 @@ function traiter(m: { type: string; json: string }) {
   } else if (m.type === 'coach') {
     const c = lire<CoachEnvoi>(m.json);
     if (c?.texte) envoyerAuCoach(c.texte);
+  } else if (m.type === 'reveil') recevoirReveil(m.json);
+  else if (m.type === 'nuit') recevoirNuit(m.json);
+  else if (m.type === 'pluie') recevoirPluie(m.json);
+  else if (m.type === 'ressenti-nuit') recevoirRessenti(m.json);
+}
+
+/** Partie Sommeil de la montre (build 27) : réveil réglé à la couronne, nuit commencée / terminée, pluie de l'iPhone, ressenti du matin. */
+function recevoirReveil(json: string) {
+  const r = lire<{ h: string; vibration: boolean }>(json);
+  if (!r || !/^\d{2}:\d{2}$/.test(r.h)) return;
+  const st = useProfil.getState();
+  const reveil = { ...st.reveil, h: r.h, vibration: r.vibration, actif: true };
+  st.reglerReveil(reveil);
+  void programmerReveil(reveil);
+  toast(`Réveil réglé à ${r.h} depuis ta montre ⏰`);
+}
+
+function recevoirNuit(json: string) {
+  const n = lire<{ action: 'commencer' | 'terminer' }>(json);
+  const st = useProfil.getState();
+  if (n?.action === 'commencer') {
+    if (!st.nuitDebut) st.commencerNuit();
+    if (!useSons.getState().joue) useSons.getState().jouer(30);
+  } else if (n?.action === 'terminer') {
+    useSons.getState().pause();
+    st.terminerNuit();
   }
+}
+
+function recevoirPluie(json: string) {
+  const p = lire<{ action: 'jouer' | 'pause' | 'volume'; volume?: number }>(json);
+  const s = useSons.getState();
+  if (p?.action === 'jouer') s.jouer();
+  else if (p?.action === 'pause') s.pause();
+  else if (p?.action === 'volume' && typeof p.volume === 'number') s.regler(p.volume);
+}
+
+/** « Mon ressenti » du matin : qualité de la nuit (1 à 5) ; crée la nuit avec les données de la montre si elle n'est pas encore notée. */
+function recevoirRessenti(json: string) {
+  const r = lire<{ q: number; coucher?: string; reveil?: string; hrv?: number; rhr?: number }>(json);
+  if (!r || r.q < 1 || r.q > 5) return;
+  const st = useProfil.getState();
+  // Même date que la feuille « Ta nuit » : le soir du coucher (avant 15 h, c'est la veille).
+  const jour = nouvelleNuit('', '', r.q, 0, 0).d;
+  const auj = st.nights.find((n) => n.d === jour);
+  if (auj) st.set({ nights: ajouterNuit(st.nights, { ...auj, q: r.q }) });
+  else if (r.coucher && r.reveil) st.noterNuit({ ...nouvelleNuit(heure(r.coucher), heure(r.reveil), r.q, r.hrv ?? 0, r.rhr ?? 0), src: 'sante' });
+  toast('Ressenti de ta nuit noté depuis ta montre 🌙');
 }
 
 /** À l'ouverture (état chargé) : envoie l'état, puis le renvoie à chaque changement ; écoute les séances de la montre. */
@@ -441,4 +502,5 @@ export function demarrerLiaisonMontre() {
   };
   useProfil.subscribe(plusTard);
   useChoixMontre.subscribe(plusTard);
+  useSons.subscribe(plusTard);
 }

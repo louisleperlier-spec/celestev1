@@ -74,6 +74,20 @@ final class LiaisonMontre: NSObject, WCSessionDelegate {
     }
   }
 
+  /// Commande immédiate (réveil, nuit, pluie, ressenti) : message direct si l'iPhone est joignable, sinon file d'attente
+  /// (`fiable: false` : abandonnée, ex. la pluie, qui n'a plus de sens plus tard).
+  func envoyerDirect<T: Encodable>(_ type: String, _ valeur: T, fiable: Bool = true) {
+    guard let d = try? JSONEncoder().encode(valeur), let json = String(data: d, encoding: .utf8) else { return }
+    let s = WCSession.default
+    if joignable {
+      s.sendMessage(["type": type, "json": json], replyHandler: nil) { _ in
+        if fiable { s.transferUserInfo(["type": type, "json": json]) }
+      }
+    } else if fiable {
+      s.transferUserInfo(["type": type, "json": json])
+    }
+  }
+
   func envoyer(_ r: ResultatMontre) {
     envoyer("seance", r)
   }
