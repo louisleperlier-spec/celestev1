@@ -12,6 +12,10 @@ type Module = {
   configurerAlertes(json: string): void;
   /** Lance l'app NÉA de la montre (build 18+), qui ouvre la séance choisie sur l'iPhone. */
   ouvrirSurMontre?(): void;
+  /** Activité en direct d'un sport (build 24+) : écran verrouillé et Dynamic Island. */
+  demarrerActivite?(sport: string, symbole: string, debutMs: number): boolean;
+  majActivite?(bpm: number, debutMs: number, pause: boolean, ecoule: number, kcal: number): void;
+  finActivite?(bpm: number, ecoule: number, kcal: number, garder: boolean): void;
 };
 
 /** Module natif de liaison avec l'Apple Watch ; absent dans Expo Go, le navigateur et Android. */

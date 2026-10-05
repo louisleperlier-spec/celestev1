@@ -136,3 +136,18 @@ export const volumeLibre = (series: readonly SerieLibre[]) => Math.round(series.
 
 /** Recherche sans accents ni majuscules. */
 export const sansAccents = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+/** Symbole SF de chaque sport pour l'Activité en direct (écran verrouillé, Dynamic Island) ; iOS 17. */
+const SF: Record<string, string> = {
+  tennis: 'figure.tennis', padel: 'figure.racquetball', badminton: 'figure.badminton', squash: 'figure.squash', 'ping-pong': 'figure.table.tennis',
+  pickleball: 'figure.pickleball', football: 'soccerball', basketball: 'basketball.fill', volleyball: 'volleyball.fill', handball: 'figure.handball',
+  hockey: 'figure.hockey', rugby: 'figure.rugby', baseball: 'figure.baseball', 'football-americain': 'football.fill', ultimate: 'figure.disc.sports',
+  boxe: 'figure.boxing', kickboxing: 'figure.kickboxing', 'arts-martiaux': 'figure.martial.arts', lutte: 'figure.wrestling', natation: 'figure.pool.swim',
+  aquaforme: 'figure.water.fitness', kayak: 'oar.2.crossed', paddle: 'oar.2.crossed', surf: 'figure.surfing', aviron: 'figure.rower',
+  'ski-alpin': 'figure.skiing.downhill', 'ski-fond': 'figure.skiing.crosscountry', snowboard: 'figure.snowboarding', patin: 'figure.skating',
+  skate: 'skateboard.fill', 'raquette-neige': 'snowflake', yoga: 'figure.yoga', pilates: 'figure.pilates', etirements: 'figure.flexibility',
+  danse: 'figure.dance', zumba: 'figure.socialdance', hiit: 'flame.fill', crossfit: 'figure.cross.training', corde: 'figure.jumprope',
+  elliptique: 'figure.elliptical', rameur: 'figure.rower', escaliers: 'figure.stair.stepper', marche: 'figure.walk', escalade: 'figure.climbing',
+  golf: 'figure.golf', equitation: 'figure.equestrian.sports', athletisme: 'medal.fill',
+};
+export const symboleSport = (id: string) => SF[id] ?? 'figure.mixed.cardio';

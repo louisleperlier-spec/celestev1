@@ -11,7 +11,8 @@
       "bundleIdentifier": "com.neacoach.app",
       "icon": "./assets/images/icon.png",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSSupportsLiveActivities": true
       },
       "usesAppleSignIn": true,
       "appleTeamId": "K55493374H",

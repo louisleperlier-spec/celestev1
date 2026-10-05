@@ -17,7 +17,7 @@ module.exports = {
     kai_corps: './images/kai_corps.png',
     luna_corps: './images/luna_corps.png',
   },
-  frameworks: ['SwiftUI', 'WidgetKit', 'HealthKit'],
+  frameworks: ['SwiftUI', 'WidgetKit', 'HealthKit', 'ActivityKit'],
   entitlements: {
     'com.apple.security.application-groups': ['group.com.neacoach.app'],
     'com.apple.developer.healthkit': true,

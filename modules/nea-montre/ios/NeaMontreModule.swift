@@ -56,6 +56,20 @@ public final class NeaMontreModule: Module {
     Function("configurerAlertes") { (json: String) in
       AlertesSante.partagees.configurer(json)
     }
+
+    /// Activité en direct d'un sport (écran verrouillé, Dynamic Island) : voir ActiviteSport.
+    Function("demarrerActivite") { (sport: String, symbole: String, debutMs: Double) -> Bool in
+      ActiviteSport.partagee.demarrer(sport: sport, symbole: symbole, debut: Date(timeIntervalSince1970: debutMs / 1000))
+    }
+
+    Function("majActivite") { (bpm: Int, debutMs: Double, pause: Bool, ecoule: Int, kcal: Int) in
+      ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false))
+    }
+
+    /// `garder` : affiche l'état « terminé » quelques minutes ; sinon (abandon) retire tout de suite.
+    Function("finActivite") { (bpm: Int, ecoule: Int, kcal: Int, garder: Bool) in
+      ActiviteSport.partagee.terminer(garder ? .init(bpm: bpm, debut: Date(), pause: true, ecoule: ecoule, kcal: kcal, fini: true) : nil)
+    }
   }
 }
 

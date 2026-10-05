@@ -325,6 +325,10 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     Pause, Terminer, Abandonner) ; bandeau « Tennis en cours · 12:34 · ♥ 138 » au-dessus des onglets (`TabBar`) ; notifications : « Tennis en
     cours » au départ (`nea.sport`), rappels posés d'avance quand NÉA passe en arrière-plan (10 → 120 min, annulés au retour), bilan à la fin ;
     toucher → `/sport-en-cours` (action `sport`) ; enregistré dès 1 min avec FC moyenne / max (`enregistrerSport(…, fc)`)
+  - **Activité en direct (build 24)** : écran verrouillé + Dynamic Island (`targets/widgets/SportActivite.swift`, `SportActiviteWidget` :
+    pastille orange au symbole SF du sport `symboleSport`, chrono qui défile seul `Text(timerInterval:)`, ♥ BPM, kcal ; toucher → `nea://sport-en-cours`) ;
+    module `ActiviteSport.swift` (`demarrerActivite`, `majActivite` toutes les 5 s au premier plan, `finActivite` : état « Terminé » 4 min, ou retiré
+    à l'abandon) ; `NeaSportAttributes` défini à l'identique des deux côtés ; `NSSupportsLiveActivities` dans `app.json`
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

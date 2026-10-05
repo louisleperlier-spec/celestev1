@@ -8,7 +8,8 @@ import { AppState, type NativeEventSubscription } from 'react-native';
 import { create } from 'zustand';
 
 import { coeur, hrStats, type SourceFC } from '@/lib/coeur';
-import { INTENSITES, kcalSport, sportParId, type Intensite } from '@/lib/sports';
+import { NeaMontre } from '../../modules/nea-montre/src';
+import { INTENSITES, kcalSport, sportParId, symboleSport, type Intensite } from '@/lib/sports';
 
 import { enregistrerSport, type ResultatActivite } from './activites';
 import { arreterMontre, suivreMontre } from './montre';
@@ -87,11 +88,31 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
       hr.intensity = Math.min(0.92, Math.max(0.25, (sp.met / 11) * INTENSITES[v.intensite].facteur));
       hr.tick();
       const rrs = [...v.rrs, ...hr.rr.slice(-Math.max(1, Math.round(hr.bpm / 60)))].slice(-3600);
-      set({ el: Math.round((Date.now() - v.debut) / 1000), hr: [...v.hr, hr.bpm], rrs, bpm: hr.bpm, zone: hr.zone(), src: hr.src });
+      const el = Math.round((Date.now() - v.debut) / 1000);
+      set({ el, hr: [...v.hr, hr.bpm], rrs, bpm: hr.bpm, zone: hr.zone(), src: hr.src });
+      if (el % 5 === 0) majDirect();
     } else {
       hr.intensity = 0.05;
       hr.tick();
       set({ bpm: hr.bpm, zone: hr.zone(), src: hr.src });
+    }
+  };
+  /** Activité en direct (écran verrouillé) : BPM, chrono, calories. */
+  const majDirect = () => {
+    const v = get();
+    if (!v.run) return;
+    try {
+      NeaMontre?.majActivite?.(Math.round(v.bpm), v.debut, v.paused, v.el, kcalEnDirect(v.sport, v.el, v.intensite));
+    } catch {
+      // build sans Activité en direct
+    }
+  };
+  const finDirect = (garder: boolean) => {
+    const v = get();
+    try {
+      NeaMontre?.finActivite?.(Math.round(v.bpm), v.el, kcalEnDirect(v.sport, v.el, v.intensite), garder);
+    } catch {
+      // build sans Activité en direct
     }
   };
   const arreter = () => {
@@ -122,6 +143,11 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
       set({ run: true, sport: id, intensite, paused: false, el: 0, debut: Date.now(), hr: [], rrs: [] });
       horloge = setInterval(tick, 1000);
       suivreMontre();
+      try {
+        NeaMontre?.demarrerActivite?.(sp.nom, symboleSport(id), get().debut);
+      } catch {
+        // build sans Activité en direct : la notification suffit
+      }
       void notifier(`${sp.nom} en cours`, 'NÉA capte ton BPM. Touche pour suivre ta séance.');
       ecoute = AppState.addEventListener('change', (etat) => {
         if (etat === 'background') programmerRappels();
@@ -133,14 +159,16 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
       const v = get();
       if (!v.paused) set({ paused: true });
       else set({ paused: false, debut: Date.now() - v.el * 1000 });
+      majDirect();
     },
     changerIntensite: (i) => set({ intensite: i }),
     terminer: () => {
       const v = get();
       const sp = sportParId(v.sport ?? undefined);
+      const min = Math.round(v.el / 60);
+      finDirect(min >= 1);
       arreter();
       set({ run: false });
-      const min = Math.round(v.el / 60);
       if (!sp || min < 1) return null;
       const st = hrStats(v.hr, v.rrs, age());
       const r = enregistrerSport(sp.id, min, v.intensite, false, { hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
@@ -149,6 +177,7 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
       return { ...r, min, avg: st.avg, max: st.max };
     },
     abandonner: () => {
+      finDirect(false);
       arreter();
       set({ run: false, sport: null });
     },
