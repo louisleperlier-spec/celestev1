@@ -2,7 +2,7 @@
  * Sons apaisants de la partie Sommeil : « Pluie douce » en boucle (expo-audio), volume, arrêt programmé (fondu sur 20 s).
  * Joue écran verrouillé et en mode silencieux (mode audio d'arrière-plan, `enableBackgroundPlayback` dans app.json).
  */
-import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import type { AudioPlayer } from 'expo-audio';
 import { create } from 'zustand';
 
 type Sons = {
@@ -22,8 +22,11 @@ let minuteur: ReturnType<typeof setInterval> | null = null;
 function obtenir(): AudioPlayer | null {
   if (lecteur) return lecteur;
   try {
-    void setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: true }).catch(() => {});
-    lecteur = createAudioPlayer(require('@/assets/sons/pluie.wav'));
+    // Chargé à la demande : les builds sans expo-audio (avant le 26) ne plantent pas en recevant une mise à jour.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const audio = require('expo-audio') as typeof import('expo-audio');
+    void audio.setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: true }).catch(() => {});
+    lecteur = audio.createAudioPlayer(require('@/assets/sons/pluie.wav'));
     lecteur.loop = true;
   } catch {
     lecteur = null;
