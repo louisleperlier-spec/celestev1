@@ -7,14 +7,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { OBJECTIF_PAS } from '@/lib/notifs';
-import { buildPlan, todayIdx } from '@/lib/plan';
+import { todayIdx } from '@/lib/plan';
 import { pasDuJour } from '@/lib/sante';
 import { sessionForDay } from '@/lib/semaine';
 import { hm } from '@/lib/sommeil';
 import { dayKey } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
-import { selectProfil, useProfil } from './profil';
+import { semaineDe, useProfil } from './profil';
 
 export const MIN_RALENTIR = 30;
 const HEURE_SEANCE = 18 * 60;
@@ -79,7 +79,7 @@ function verifierSeance(now: Date) {
   const e = ecartMin(HEURE_SEANCE, now);
   const faite = st.logs.some((l) => (l.type === 'muscu' || l.type === 'sport') && new Date(l.d).toDateString() === now.toDateString());
   if (st.nset.seance !== false && !faite && e > 0 && e <= 15) {
-    const s = sessionForDay({ plan: buildPlan(selectProfil(st)), weight: st.weight, added: st.added, wkMod: st.wkMod }, todayIdx());
+    const s = sessionForDay(semaineDe(st), todayIdx());
     if (s && !s.ride && s.items.length) {
       poser({
         type: 'seance',

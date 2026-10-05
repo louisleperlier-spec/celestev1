@@ -19,6 +19,8 @@ export type SeanceJour = Omit<PlanSession, 'key' | 'day'> & {
   day: number | null;
   cat?: SeanceId;
   ride?: number;
+  /** Version « à la maison » (poids du corps et haltères) d'une séance du plan. */
+  maison?: boolean;
 };
 
 /** Contexte de la semaine (sous-ensemble de l'état `S`). */
@@ -28,6 +30,10 @@ export type Semaine = {
   /** Séances du catalogue ajoutées, par `addedKey`. */
   added: Partial<Record<string, SeanceId>>;
   wkMod: Partial<Record<SeanceId, Intensite>>;
+  /** Séances du plan faites à la maison cette semaine, par `addedKey` (hors cahier des charges, demandé par l'utilisateur). */
+  maison?: Partial<Record<string, boolean>>;
+  /** Le même plan généré avec le matériel de la maison (null si le lieu choisi est déjà la maison). */
+  planMaison?: Plan | null;
   now?: Date;
 };
 
@@ -87,6 +93,10 @@ export function sessionForDay(sem: Semaine, i: number): SeanceJour | null {
   if (a) {
     const w = SEANCES.find((x) => x.id === a);
     if (w) return catSession(w, i, sem.weight, sem.wkMod[w.id] ?? 0);
+  }
+  if (sem.planMaison && sem.maison?.[addedKey(i, sem.now)]) {
+    const m = sem.planMaison.sessions.find((s) => s.day === i);
+    if (m) return { ...m, maison: true };
   }
   return sem.plan.sessions.find((s) => s.day === i) ?? null;
 }

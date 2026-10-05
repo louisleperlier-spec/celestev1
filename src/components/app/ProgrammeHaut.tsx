@@ -110,11 +110,25 @@ export function Aujourdhui() {
                 {Math.round(s.min)} min
               </Text>
             </View>
+            {!!sem.planMaison && !s.cat && !s.ride && s.day != null && (
+              <Appui
+                accessibilityRole="switch"
+                accessibilityState={{ checked: !!s.maison }}
+                accessibilityLabel="Faire la séance à la maison"
+                onPress={() => useProfil.getState().aLaMaison(s.day!, !s.maison)}
+                style={[styles.maison, s.maison && styles.maisonOn]}
+              >
+                <Icon name="home" size={14} color={s.maison ? colors.onPrimary : colors.text} />
+                <Text weight="semibold" style={[styles.maisonTxt, s.maison && styles.maisonTxtOn]}>
+                  {s.maison ? 'À la maison' : 'Faire à la maison'}
+                </Text>
+              </Appui>
+            )}
             <View style={styles.photoBas}>
               <Text weight="bold" style={styles.aujTitre} numberOfLines={1}>
                 {s.titre}
               </Text>
-              <Text style={styles.meta}>{s.ride ? 'Sortie vélo' : `${s.items.length} exercices · ${LVLN[lvlN(level) - 1]}`}</Text>
+              <Text style={styles.meta}>{s.ride ? 'Sortie vélo' : `${s.items.length} exercices · ${s.maison ? 'à la maison' : LVLN[lvlN(level) - 1]}`}</Text>
             </View>
           </View>
         </Appui>
@@ -163,6 +177,10 @@ const styles = StyleSheet.create({
   auj: { padding: 0, overflow: 'hidden', gap: 0 },
   photo: { height: 170, justifyContent: 'flex-end' },
   badge: { position: 'absolute', top: 12, right: 12, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 14, backgroundColor: alpha(colors.bg, 0.7), borderWidth: 1, borderColor: colors.pink },
+  maison: { position: 'absolute', top: 12, left: 12, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 14, backgroundColor: alpha(colors.bg, 0.7), borderWidth: 1, borderColor: colors.border2 },
+  maisonOn: { backgroundColor: colors.pink, borderColor: colors.pink },
+  maisonTxt: { fontSize: 13, lineHeight: 17, color: colors.text },
+  maisonTxtOn: { color: colors.onPrimary },
   badgeTxt: { fontSize: 14, lineHeight: 18, color: colors.pink },
   photoBas: { padding: 16, paddingBottom: 10 },
   aujTitre: { fontSize: 22, lineHeight: 27 },

@@ -7,6 +7,8 @@ import type { Premium } from './premium';
 import { dayKey } from './xp';
 import { baseHrv, conseilNuit, hm, lastNight, sleepScore, type MesureVFC, type Nuit } from './sommeil';
 
+import type { NiveauEnrage } from './enrage';
+
 export type ReglagesNotifs = {
   /** VFC post-entraînement */
   post: boolean;
@@ -25,6 +27,9 @@ export type ReglagesNotifs = {
   coeur?: boolean;
   /** « On bouge ensemble ? » à 18 h les jours de séance (absent = activé). */
   seance?: boolean;
+  /** Mode « Axel Enragé » (absent = désactivé) et son niveau (lib/enrage.ts). */
+  enrage?: boolean;
+  enrageNiv?: NiveauEnrage;
 };
 
 export const REGLAGES_DEFAUT: ReglagesNotifs = { post: true, delay: 10, sleep: true, wake: '07:30', bed: true, bedT: '22:30', motiv: true, motivT: '08:00', coeur: true, seance: true };

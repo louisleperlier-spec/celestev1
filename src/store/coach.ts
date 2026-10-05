@@ -12,7 +12,7 @@ import { nextSession } from '@/lib/semaine';
 import { supabase } from '@/lib/supabase';
 
 import { useCompte } from './compte';
-import { selectProfil, useProfil } from './profil';
+import { selectProfil, semaineDe, useProfil } from './profil';
 
 /** Le coach écrit (… animé), non sauvegardé. */
 export const useCoachEcrit = create<{ ecrit: boolean }>(() => ({ ecrit: false }));
@@ -61,7 +61,7 @@ export async function envoyer(texte: string) {
   }
   if (!reponse) {
     const apres = useProfil.getState();
-    reponse = reponseSecours(t, apres.name, nextSession({ plan: buildPlan(selectProfil(apres)), weight: apres.weight, added: apres.added, wkMod: apres.wkMod }).s.titre);
+    reponse = reponseSecours(t, apres.name, nextSession(semaineDe(apres)).s.titre);
   }
   const fin = useProfil.getState();
   fin.set({ chat: [...fin.chat, { r: 'bot', t: reponse }] });

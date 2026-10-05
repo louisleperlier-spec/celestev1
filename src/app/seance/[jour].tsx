@@ -11,7 +11,7 @@ import { ExerciceSheet } from '@/components/app/ExerciceSheet';
 import { Kcal } from '@/components/app/Kcal';
 import { Row, RowText, rowStyles } from '@/components/app/Rows';
 import { Thumb } from '@/components/app/Thumb';
-import { Button, Card, Text, toast } from '@/components/ui';
+import { Button, Card, Segmente, Text, toast } from '@/components/ui';
 import { dec, itemLine } from '@/lib/charges';
 import { coachById, exercice, exKcal, type PlanItem } from '@/lib/plan';
 import { JOURS, sessionForDay, weekDates, type SeanceJour } from '@/lib/semaine';
@@ -38,6 +38,25 @@ export default function SeanceDuJour() {
           <Text style={styles.sub}>
             {s.min} min • {s.items.length} exercices • ≈ {s.kcal} kcal
           </Text>
+          {!!sem.planMaison && !s.cat && !s.ride && (
+            <>
+              <Segmente
+                options={[
+                  ['lieu', 'Salle de sport'],
+                  ['maison', 'À la maison'],
+                ]}
+                value={s.maison ? 'maison' : 'lieu'}
+                onChange={(v) => {
+                  profil.aLaMaison(day, v === 'maison');
+                  toast(v === 'maison' ? 'Séance adaptée pour la maison 🏠' : 'Retour à la version salle 🏋️');
+                }}
+                style={styles.mt12}
+              />
+              <Text style={styles.lieu}>
+                {s.maison ? 'Poids du corps et haltères, même muscles travaillés. Valable pour cette semaine.' : 'Pas de salle aujourd’hui ? Passe la séance en version maison.'}
+              </Text>
+            </>
+          )}
         </View>
         <Card style={styles.phead}>
           <CoachFace id={c.id} size={52} borderColor={c.c} />
@@ -95,6 +114,7 @@ const styles = StyleSheet.create({
   mt6: { marginTop: 6 },
   mb8: { marginBottom: 8 },
   h1: { ...fonts.black, fontSize: 27, lineHeight: 30, letterSpacing: -0.27 },
+  lieu: { color: colors.textSecondary, fontSize: 12.5, lineHeight: 17, marginTop: 8 },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   phead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, padding: 14, marginTop: 12, marginHorizontal: 20 },
   pheadH3: { fontSize: 15, lineHeight: 19 },

@@ -373,6 +373,15 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     mon ressenti) ; **Sommeil** (coucher prévu en grand, Réveil, Commencer ma nuit) ; **Tes progrès** (hexagone `Medaille`, niveau et XP, meilleure
     série, cartes, `DefisView`) ; **Coach** (tête `ax_coach`, En forme / Fatigué / Stressé, micro → dictée envoyée au coach, Changer de coach) ;
     `progres` reçoit `meilleureSerie`, `cartes`, `defis`, `programme`
+- [ ] **Séance à la maison + Axel Enragé (hors cahier des charges, demandés par l'utilisateur, oct. 2026)** : **publiés en EAS Update, à valider sur iPhone**
+  - **séance de la semaine à la maison** : segmenté « Salle de sport · À la maison » sur le détail d'une séance du plan (`seance/[jour]`) et pastille
+    « Faire à la maison » sur la carte « Aujourd'hui » du Programme ; `maison` du profil (par `addedKey`, valable la semaine) ; `planMaison` =
+    `buildPlan` avec `gear: 'maison'` (même découpage, mêmes jours, poids du corps + haltères ; `buildPlan` inchangé) ; `sessionForDay` rend
+    la version maison (`maison: true`) ; `semaineDe(st)` remplace les semaines construites à la main (notifs, coach, montre, moments)
+  - **Axel Enragé** (`lib/enrage.ts`, opt-in, Profil → « Axel Enragé 😤 » → Mode Sans excuses, `nset.enrage` / `enrageNiv`) : 3 niveaux Taquin /
+    Vénère / Sans pitié, 69 messages (séance 19 h 30, relance 21 h, série en danger 20 h 30, absence 3 et 5 jours à midi, retour en bannière) ;
+    jamais sur le corps ni le poids, pas de gros mots ; rien si une activité est faite le jour même ; nuit en surcharge (`bilanCoeur`) → message
+    calme ; `programmerEnrage` dans `reprogrammer()` ; « Me faire secouer maintenant » = exemple en bannière
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

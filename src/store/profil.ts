@@ -59,6 +59,8 @@ type Etat = Profil & {
   added: Partial<Record<string, SeanceId>>;
   /** Intensité choisie par séance du catalogue. */
   wkMod: Partial<Record<SeanceId, Intensite>>;
+  /** Séances du plan faites à la maison, par `addedKey` (valable pour la semaine). */
+  maison: Partial<Record<string, boolean>>;
   /** Nuits notées (60 dernières), de la plus ancienne à la plus récente. */
   nights: Nuit[];
   /** Mesures de récupération d'1 minute. */
@@ -110,6 +112,8 @@ type Actions = {
   logWeight: (kg: number) => void;
   /** Planifie une séance du catalogue le jour i de la semaine en cours. */
   planifier: (i: number, id: SeanceId) => void;
+  /** Séance du jour i à la maison (true) ou au lieu habituel (false), pour cette semaine. */
+  aLaMaison: (i: number, oui: boolean) => void;
   retirer: (i: number) => void;
   setIntensite: (id: SeanceId, v: Intensite) => void;
   /** Suit un autre programme du coach : il repart de la semaine 1. */
@@ -175,6 +179,7 @@ const defauts = (): Etat => ({
   boostUntil: 0,
   added: {},
   wkMod: {},
+  maison: {},
   nights: [],
   hrvChecks: [],
   nset: REGLAGES_DEFAUT,
@@ -234,6 +239,12 @@ export const useProfil = create<Etat & Actions>()(
         const added = { ...get().added };
         delete added[addedKey(i)];
         set({ added });
+      },
+      aLaMaison: (i, oui) => {
+        const maison = { ...get().maison };
+        if (oui) maison[addedKey(i)] = true;
+        else delete maison[addedKey(i)];
+        set({ maison });
       },
       setIntensite: (id, v) => set({ wkMod: { ...get().wkMod, [id]: v } }),
       suivre: (id) => set({ progs: { ...get().progs, [get().coach]: id }, progStart: new Date().toISOString() }),
@@ -351,6 +362,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   boostUntil: s.boostUntil,
   added: s.added,
   wkMod: s.wkMod,
+  maison: s.maison,
   nights: s.nights,
   hrvChecks: s.hrvChecks,
   nset: s.nset,
@@ -407,9 +419,20 @@ export function usePlan(): Plan {
   return useMemo(() => buildPlan(p), [p]);
 }
 
-/** Semaine courante : plan + séances ajoutées + intensités. */
+/** Le plan refait avec le matériel de la maison (pour les séances faites à la maison) ; null si le lieu est déjà la maison. */
+export const planMaisonDe = (p: Profil): Plan | null => (p.gear === 'maison' ? null : buildPlan({ ...p, gear: 'maison' }));
+
+/** Semaine courante hors React (notifications, montre, coach…). */
+export function semaineDe(st: Etat): Semaine {
+  const p = selectProfil(st);
+  return { plan: buildPlan(p), planMaison: planMaisonDe(p), weight: st.weight, added: st.added, wkMod: st.wkMod, maison: st.maison };
+}
+
+/** Semaine courante : plan + séances ajoutées + intensités + séances à la maison. */
 export function useSemaine(): Semaine {
   const plan = usePlan();
-  const { weight, added, wkMod } = useProfil(useShallow((s) => ({ weight: s.weight, added: s.added, wkMod: s.wkMod })));
-  return useMemo(() => ({ plan, weight, added, wkMod }), [plan, weight, added, wkMod]);
+  const p = useProfil(useShallow(selectProfil));
+  const planMaison = useMemo(() => planMaisonDe(p), [p]);
+  const { weight, added, wkMod, maison } = useProfil(useShallow((s) => ({ weight: s.weight, added: s.added, wkMod: s.wkMod, maison: s.maison })));
+  return useMemo(() => ({ plan, planMaison, weight, added, wkMod, maison }), [plan, planMaison, weight, added, wkMod, maison]);
 }

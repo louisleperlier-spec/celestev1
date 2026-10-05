@@ -14,7 +14,7 @@ import { dec, loadFor, rj } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
 import { COACHES, SEANCES } from '@/data';
 import type { SeanceId } from '@/data/types';
-import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, prog, progWeek, sesKcal, todayIdx } from '@/lib/plan';
+import { coachById, coachValide, exercice, exKcal, hrMax, lvlN, prog, progWeek, sesKcal, todayIdx } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
 import { defi, defisSemaine, possedees } from '@/lib/jeu';
 import { lundiISO } from '@/lib/ligue';
@@ -31,7 +31,7 @@ import { lvlInfo, rankOf, streak } from '@/lib/xp';
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { envoyer as envoyerAuCoach } from './coach';
 import { annoncer } from './notifs';
-import { selectProfil, useProfil } from './profil';
+import { selectProfil, semaineDe, useProfil } from './profil';
 import { gagnerExplorateur, sommetAtteint } from './rando';
 import { trouverSentier } from './randosPres';
 import { programmerReveil } from './reveil';
@@ -139,7 +139,7 @@ type CoachEnvoi = { texte: string };
 function etat(): EtatMontre {
   const st = useProfil.getState();
   const p = selectProfil(st);
-  const sem: Semaine = { plan: buildPlan(p), weight: st.weight, added: st.added, wkMod: st.wkMod };
+  const sem: Semaine = semaineDe(st);
   const auj = todayIdx();
   /** Séance au format de la montre (charges calculées pour ce profil). */
   const versMontre = (s: SeanceJour, jour: number, quand: string): SeanceMontre => ({
