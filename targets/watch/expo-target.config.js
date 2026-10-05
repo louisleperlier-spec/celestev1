@@ -24,6 +24,8 @@ module.exports = {
     ax_detendu: './images/ax_detendu.png',
     ax_energique: './images/ax_energique.png',
     ax_dodo: './images/ax_dodo.png',
+    ax_rando_terrain: './images/ax_rando_terrain.png',
+    ax_coach: './images/ax_coach.png',
   },
   frameworks: ['SwiftUI', 'HealthKit', 'WatchConnectivity', 'CoreMotion', 'CoreLocation', 'MapKit', 'WidgetKit'],
   entitlements: {

@@ -1,48 +1,88 @@
 import HealthKit
 import SwiftUI
 
-/// 12 · Récupération : sommeil en grand, FC au repos, VFC nocturne, Respirer ; Mesurer en dessous.
+/// Ton état (maquette 9) : récupération /100 en anneau, VFC et FC au repos de la nuit, « Ajouter mon ressenti » ; Respirer et Mesurer dessous.
 struct RecupView: View {
   @ObservedObject private var donnees = Donnees.partagees
+  @State private var ressenti = false
+  @State private var envoye: String?
+
+  private var valeur: Int? {
+    if let r = donnees.etat?.bilan?.recup, r > 0 { return Int(min(100, r).rounded()) }
+    return donnees.etat?.score
+  }
 
   var body: some View {
     ScrollView {
-      VStack(spacing: 2) {
-        if let n = donnees.etat?.nuit {
-          GrosChiffre(texte: heures(n.h), taille: 46)
-          Text("de sommeil").font(.system(size: 15)).foregroundColor(Nea.texte2)
-          VStack(spacing: 0) {
-            if n.rhr > 0 { LigneValeur(titre: "FC au repos", valeur: "\(Int(n.rhr)) bpm") }
-            if n.hrv > 0 { LigneValeur(titre: "VFC nocturne", valeur: "\(Int(n.hrv)) ms") }
-            if let s = donnees.etat?.score { LigneValeur(titre: "Score santé", valeur: "\(s)") }
+      VStack(spacing: 6) {
+        ZStack {
+          Anneau(part: Double(valeur ?? 0) / 100, trait: 9).shadow(color: Nea.rose.opacity(0.6), radius: 6)
+          VStack(spacing: -4) {
+            Text(valeur.map { "\($0)" } ?? "—").font(.system(size: 34, weight: .heavy, design: .rounded))
+            Text("/100").font(.system(size: 13)).foregroundColor(Nea.texte2)
           }
-          .padding(.top, 4)
-          Text("Dernière nuit · \(n.src)").font(.system(size: 12)).foregroundColor(Nea.texte2).padding(.vertical, 4)
+        }
+        .frame(width: 98, height: 98)
+        Text("Récupération").font(.system(size: 15, weight: .semibold))
+        HStack(spacing: 6) {
+          CaseEtat(icone: "waveform.path.ecg", titre: "VFC", valeur: (donnees.etat?.nuit?.hrv ?? 0) > 0 ? "\(Int(donnees.etat!.nuit!.hrv)) ms" : "—")
+          CaseEtat(icone: "heart", titre: "Repos", valeur: (donnees.etat?.nuit?.rhr ?? 0) > 0 ? "\(Int(donnees.etat!.nuit!.rhr)) bpm" : "—")
+        }
+        if let e = envoye {
+          Label(e, systemImage: "checkmark.circle.fill").font(.system(size: 13, weight: .semibold)).foregroundColor(Nea.rose)
         } else {
-          Text("Pas encore de nuit : note-la dans NÉA sur l'iPhone ou porte ta montre la nuit.")
-            .font(.system(size: 14))
-            .foregroundColor(Nea.texte2)
+          Button { ressenti = true } label: { LigneMenu(icone: "face.smiling", titre: "Ajouter mon ressenti") }.buttonStyle(.plain)
         }
-        NavigationLink {
-          RespirationView()
-        } label: {
-          Label("Respirer · 2 min", systemImage: "wind")
-        }
-        .buttonStyle(BoutonRose())
-        NavigationLink {
-          MesureView()
-        } label: {
-          Label("Mesurer · 1 min", systemImage: "waveform.path.ecg")
-        }
-        .buttonStyle(BoutonSombre())
+        NavigationLink { RespirationView() } label: { Label("Respirer · 2 min", systemImage: "wind") }.buttonStyle(BoutonSombre())
+        NavigationLink { MesureView() } label: { Label("Mesurer · 1 min", systemImage: "waveform.path.ecg") }.buttonStyle(BoutonSombre())
       }
     }
-    .navigationTitle("Récupération")
+    .navigationTitle("Ton état")
+    .sheet(isPresented: $ressenti) {
+      ScrollView {
+        VStack(spacing: 6) {
+          Text("Comment tu te sens ?").font(.system(size: 16, weight: .bold))
+          ForEach(RESSENTIS, id: \.0) { r in
+            Button {
+              LiaisonMontre.partagee.envoyer("coach", CoachEnvoi(texte: r.2))
+              Vibre.jouer(.success)
+              envoye = r.0
+              ressenti = false
+            } label: { Label(r.0, systemImage: r.1) }
+            .buttonStyle(BoutonSombre())
+          }
+        }
+      }
+    }
   }
+}
 
-  private func heures(_ h: Double) -> String {
-    let m = Int((h * 60).rounded())
-    return "\(m / 60) h \(String(format: "%02d", m % 60))"
+/// Ressentis envoyés au coach (Ton état, Coach) : libellé, icône, message.
+let RESSENTIS: [(String, String, String)] = [
+  ("En forme", "face.smiling", "Je me sens en forme aujourd'hui"),
+  ("Fatigué", "moon.zzz.fill", "Je suis fatigué"),
+  ("Stressé", "bolt.heart", "Je suis stressé"),
+  ("Courbatures", "bandage.fill", "J'ai des courbatures"),
+]
+
+/// Case de Ton état : icône orange, petit titre, valeur.
+struct CaseEtat: View {
+  let icone: String
+  let titre: String
+  let valeur: String
+
+  var body: some View {
+    HStack(spacing: 6) {
+      Image(systemName: icone).font(.system(size: 16)).foregroundColor(.white)
+      VStack(alignment: .leading, spacing: 0) {
+        Text(titre).font(.system(size: 11)).foregroundColor(Nea.texte2)
+        Text(valeur).font(.system(size: 15, weight: .bold)).lineLimit(1).minimumScaleFactor(0.6)
+      }
+      Spacer(minLength: 0)
+    }
+    .padding(8)
+    .frame(maxWidth: .infinity)
+    .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
   }
 }
 

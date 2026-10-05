@@ -360,6 +360,16 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     paradoxal, VFC nocturne, FC au repos lus dans Apple Santé par la montre `SommeilSante`, sinon la nuit de l'iPhone ; « Mon ressenti » →
     `ressenti-nuit` : qualité 2 à 5 de la nuit, créée si absente) ; `etat.sommeil` (réveil, coucher, vibration, nuit en cours, pluie) ;
     messages directs `envoyerDirect` (sendMessage si l'iPhone est joignable, sinon file d'attente, sauf la pluie)
+  - **refonte complète de la montre (maquette en 12 écrans, build 29)** : **Accueil** (« Bonjour … », anneaux Récup. / Effort `AnneauChiffre`,
+    prochaine séance avec bouton lecture `CarteProchaine`, raccourcis Programme · Dehors · Sommeil, puis Ma séance / Ma rando et Plus) ;
+    **Programme** (`ProgrammeView` : semaine n / N en traits d'après `progres.programme`, séances, Voir la séance) ; **Séance** (`DetailView` :
+    exercices « 3 × 10 », « + N exercices », Démarrer) ; **Répétitions** (« Série 2 / 3 », « 8 / 10 », charge et FC en `Puce`, Comptage auto,
+    **Valider la série** = `validerSerie`, « Corriger ») ; **Récupération** (anneau qui se vide, prochaine série, Passer le repos) ; **Dehors**
+    (`DehorsView` : Course, Vélo, Randonnée) ; **Course / Vélo** (petite carte du tracé, chrono, km, allure 5′47″ ou km/h, Pause) ; **Randonnée**
+    (relief `ax_rando_terrain`, « Sommet dans 1,2 km », D+, durée, Pause) ; **Ton état** (`RecupView` : récupération /100, VFC, repos, Ajouter
+    mon ressenti) ; **Sommeil** (coucher prévu en grand, Réveil, Commencer ma nuit) ; **Tes progrès** (hexagone `Medaille`, niveau et XP, meilleure
+    série, cartes, `DefisView`) ; **Coach** (tête `ax_coach`, En forme / Fatigué / Stressé, micro → dictée envoyée au coach, Changer de coach) ;
+    `progres` reçoit `meilleureSerie`, `cartes`, `defis`, `programme`
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

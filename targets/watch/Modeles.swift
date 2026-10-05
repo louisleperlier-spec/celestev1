@@ -63,6 +63,23 @@ struct ProgresMontre: Codable {
   let xpNiveau: Double
   let rang: String
   let derniere: String
+  /// Refonte (build 29) : meilleure série, cartes de la collection, défis de la semaine, programme suivi.
+  let meilleureSerie: Int?
+  let cartes: Int?
+  let defis: [DefiMontre]?
+  let programme: ProgrammeMontre?
+}
+
+struct DefiMontre: Codable, Hashable {
+  let titre: String
+  let fait: Double
+  let but: Double
+}
+
+struct ProgrammeMontre: Codable {
+  let nom: String
+  let semaine: Int
+  let total: Int
 }
 
 /// État envoyé par l'iPhone ; les champs du hub (version 2) sont optionnels.

@@ -151,45 +151,65 @@ struct LigneFC: View {
   }
 }
 
-/// 05 · Répétitions (maquette « Suivre les exercices ») : exercice n/N, reps comptées / visées (ou minuteur), série,
-/// charge et FC, « Fin de série ».
+/// Répétitions (maquette 4) : « Série 2 / 3 », « 8 / 10 » répétitions, charge et FC, « Comptage auto », Valider la série.
 struct EffortView: View {
   @ObservedObject var seance: SeanceEnCours
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 2) {
-        Text("Exercice \(seance.ex + 1)/\(seance.s.exos.count)").font(.system(size: 15)).foregroundColor(Nea.texte2)
+      VStack(spacing: 2) {
+        Text("Série \(seance.serie + 1) / \(seance.exo.series)").font(.system(size: 15)).foregroundColor(.white)
         if seance.enDuree {
           GrosChiffre(texte: Nea.mmss(seance.effortReste), taille: 50)
-          Text("Tiens la position").font(.system(size: 14)).foregroundColor(Nea.texte2)
+          Text("tiens la position").font(.system(size: 15)).foregroundColor(Nea.rose)
         } else {
-          HStack(alignment: .lastTextBaseline, spacing: 6) {
-            Text(String(format: "%02d", seance.compteur.reps))
-              .font(.system(size: 64, weight: .heavy, design: .rounded))
-              .monospacedDigit()
-              .lineLimit(1)
-              .minimumScaleFactor(0.6)
-            Text("/ \(seance.exo.repsTxt) reps").font(.system(size: 18, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+          Text("\(seance.compteur.reps) / \(seance.exo.reps)")
+            .font(.system(size: 54, weight: .heavy, design: .rounded))
+            .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+          Text("répétitions").font(.system(size: 15)).foregroundColor(Nea.rose)
+        }
+        HStack(spacing: 6) {
+          if seance.charge > 0 {
+            Puce(icone: "scalemass.fill", texte: "\(Nea.kg(seance.charge)) kg", couleur: .white)
           }
+          Puce(icone: "heart", texte: seance.entrainement.bpm > 0 ? "\(Int(seance.entrainement.bpm)) bpm" : "-- bpm", couleur: Nea.rose)
         }
-        HStack(spacing: 4) {
-          Text("Série \(seance.serie + 1)/\(seance.exo.series)").font(.system(size: 15)).foregroundColor(Nea.texte2)
-          if !seance.enDuree {
-            Text(seance.compteur.disponible ? "· auto" : "· compte tes reps").font(.system(size: 12)).foregroundColor(Nea.texte2)
-          }
-        }
-        Rectangle().fill(Nea.texte2.opacity(0.25)).frame(height: 0.5).padding(.vertical, 4)
-        LigneFC(seance: seance)
-        Button {
-          seance.finSerie()
-        } label: {
-          Text("Fin de série")
-        }
-        .buttonStyle(BoutonRose())
         .padding(.top, 4)
+        if !seance.enDuree {
+          Text(seance.compteur.disponible ? "Comptage auto" : "Compte tes reps").font(.system(size: 11)).foregroundColor(Nea.texte2)
+        }
+        Button { seance.validerSerie() } label: { Text("Valider la série") }
+          .buttonStyle(BoutonRose())
+          .padding(.top, 2)
+        if !seance.enDuree {
+          Button("Corriger") { seance.finSerie() }
+            .font(.system(size: 13))
+            .foregroundColor(Nea.texte2)
+            .buttonStyle(.plain)
+            .padding(.top, 2)
+        }
       }
     }
+  }
+}
+
+/// Petite pastille : icône et valeur (charge, FC, D+, durée).
+struct Puce: View {
+  let icone: String
+  let texte: String
+  var couleur: Color = .white
+
+  var body: some View {
+    HStack(spacing: 4) {
+      Image(systemName: icone).font(.system(size: 13, weight: .semibold)).foregroundColor(couleur)
+      Text(texte).font(.system(size: 14, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+    }
+    .padding(.vertical, 7)
+    .padding(.horizontal, 8)
+    .frame(maxWidth: .infinity)
+    .background(RoundedRectangle(cornerRadius: 14).fill(Nea.carte))
   }
 }
 
@@ -251,39 +271,30 @@ struct ValidationView: View {
   }
 }
 
-/// 07 · Repos : temps restant, barre de progression, « À suivre », + 15 s et Passer.
+/// Récupération (maquette 5) : anneau qui se vide avec le temps restant, prochaine série, « Passer le repos ».
 struct ReposView: View {
   @ObservedObject var seance: SeanceEnCours
 
   private var part: Double {
-    seance.reposTotal > 0 ? 1 - Double(max(0, seance.reposReste)) / Double(seance.reposTotal) : 0
+    seance.reposTotal > 0 ? Double(max(0, seance.reposReste)) / Double(seance.reposTotal) : 0
+  }
+
+  private var prochaine: String {
+    let reps = seance.exo.sec > 0 ? "\(seance.exo.sec) s" : "\(seance.exo.reps) reps"
+    return seance.serie == 0 ? "\(seance.exo.nom) · \(reps)" : "Prochaine série · \(reps)"
   }
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 4) {
-        GrosChiffre(texte: Nea.mmss(seance.reposReste), taille: 52)
-        Text("restantes").font(.system(size: 15)).foregroundColor(Nea.texte2).frame(maxWidth: .infinity)
-        GeometryReader { g in
-          ZStack(alignment: .leading) {
-            Capsule().fill(Nea.carte)
-            Capsule().fill(Nea.rose).frame(width: g.size.width * CGFloat(part)).shadow(color: Nea.rose.opacity(0.6), radius: 4)
-          }
+      VStack(spacing: 6) {
+        ZStack {
+          Anneau(part: part, trait: 9).shadow(color: Nea.rose.opacity(0.6), radius: 6)
+          Text(Nea.mmss(seance.reposReste)).font(.system(size: 34, weight: .heavy, design: .rounded)).monospacedDigit().minimumScaleFactor(0.6)
         }
-        .frame(height: 6)
-        .padding(.vertical, 4)
-        Text("À suivre").font(.system(size: 13)).foregroundColor(Nea.texte2)
-        Text("\(seance.exo.nom) · \(seance.serie + 1)/\(seance.exo.series)")
-          .font(.system(size: 15, weight: .semibold))
-          .lineLimit(1)
-          .minimumScaleFactor(0.7)
-        HStack(spacing: 6) {
-          Button("+15 s") { seance.plus15() }
-            .buttonStyle(BoutonSombre())
-          Button("Passer") { seance.passerRepos() }
-            .buttonStyle(BoutonRose())
-        }
-        .padding(.top, 4)
+        .frame(width: 112, height: 112)
+        Text(prochaine).font(.system(size: 14)).foregroundColor(Nea.texte2).lineLimit(1).minimumScaleFactor(0.6)
+        Button("Passer le repos") { seance.passerRepos() }.buttonStyle(BoutonSombre())
+        Button("+15 s") { seance.plus15() }.font(.system(size: 13)).foregroundColor(Nea.texte2).buttonStyle(.plain)
       }
     }
   }

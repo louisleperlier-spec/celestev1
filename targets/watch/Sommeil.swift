@@ -101,13 +101,14 @@ struct SommeilView: View {
 
   var body: some View {
     ScrollView {
-      VStack(spacing: 6) {
-        Image("ax_dodo").resizable().scaledToFill().frame(height: 86).frame(maxWidth: .infinity).clipped()
-          .clipShape(RoundedRectangle(cornerRadius: 16))
+      VStack(alignment: .leading, spacing: 6) {
+        Image(systemName: "moon.fill").font(.system(size: 26)).foregroundColor(Nea.rose).shadow(color: Nea.rose.opacity(0.7), radius: 6)
+        Text(s?.coucher ?? "--:--").font(.system(size: 46, weight: .heavy, design: .rounded)).monospacedDigit()
+          .frame(maxWidth: .infinity)
         TimelineView(.periodic(from: .now, by: 30)) { ctx in
-          Text(dans(ctx.date)).font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+          Text(dans(ctx.date) == "Ce soir" ? "Coucher prévu" : "Coucher prévu · \(dans(ctx.date).lowercased())")
+            .font(.system(size: 14)).foregroundColor(Nea.texte2).frame(maxWidth: .infinity)
         }
-        Text(s.map { "Coucher à \($0.coucher)" } ?? "Ouvre NÉA sur l'iPhone").font(.system(size: 15)).foregroundColor(Nea.texte2)
         NavigationLink { ReglerReveilView() } label: {
           LigneMenu(icone: "alarm", titre: "Réveil", valeur: s.map { $0.actif ? $0.reveil : "Désactivé" } ?? "")
         }
@@ -117,7 +118,7 @@ struct SommeilView: View {
           Vibre.jouer(.start)
           voirNuit = true
         } label: {
-          Text(s?.nuit == true ? "Reprendre ma nuit" : "Préparer ma nuit")
+          Text(s?.nuit == true ? "Reprendre ma nuit" : "Commencer ma nuit")
         }
         .buttonStyle(BoutonRose())
         NavigationLink { NuitResumeView() } label: { LigneMenu(icone: "bed.double.fill", titre: "Cette nuit") }.buttonStyle(.plain)

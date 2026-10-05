@@ -1,10 +1,9 @@
 import SwiftUI
 
-/// Accueil = maquette 01 · Choisir : « Entraînement » (Musculation, Course, Vélo) et Démarrer, puis le reste de l'app.
-/// Musculation lance la prochaine séance du programme ; Course et Vélo, une sortie GPS.
+/// Accueil (maquette 1) : « Bonjour Louis », anneaux Récupération / Effort, prochaine séance (lecture), raccourcis Programme · Dehors ·
+/// Sommeil ; dessous, Ma séance / Ma rando liées à l'iPhone et le reste de l'app.
 struct AccueilView: View {
   @ObservedObject private var donnees = Donnees.partagees
-  @AppStorage("nea.activite") private var choix = TypeActivite.muscu.rawValue
   @State private var lancement: SeanceMontre?
   @State private var sortie: TypeActivite?
   @State private var voirSeances = false
@@ -13,74 +12,39 @@ struct AccueilView: View {
   @State private var voirRespiration = false
   @State private var voirRecup = false
 
-  private var type: TypeActivite { TypeActivite(rawValue: choix) ?? .muscu }
-
-  private func sousTitre(_ t: TypeActivite) -> String {
-    switch t {
-    case .muscu:
-      if let s = donnees.prochaine { return "\(s.titre) · \(Int(s.min)) min" }
-      return donnees.etat == nil ? "Ouvre NÉA sur l'iPhone" : "Choisis ta séance"
-    case .course, .velo:
-      return "GPS · conquiers des territoires"
-    case .rando:
-      if let r = donnees.etat?.rando { return r.nom }
-      return "GPS · dénivelé · altitude"
-    }
-  }
-
-  private func demarrer() {
-    switch type {
-    case .muscu:
-      if let s = donnees.prochaine {
-        lancement = s
-      } else {
-        voirSeances = true
-      }
-    case .course, .velo, .rando:
-      sortie = type
-    }
-  }
-
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 8) {
+        Text("Bonjour \(donnees.etat?.prenom ?? "")").font(.system(size: 20, weight: .bold)).lineLimit(1).minimumScaleFactor(0.6)
+        HStack(spacing: 10) {
+          AnneauChiffre(valeur: donnees.etat?.bilan?.recup ?? 0, titre: "Récup.")
+          AnneauChiffre(valeur: donnees.etat?.bilan?.effort ?? 0, titre: "Effort")
+        }
+        .frame(maxWidth: .infinity)
+        if let s = donnees.prochaine {
+          Button { lancement = s } label: { CarteProchaine(s: s) }.buttonStyle(.plain)
+        } else {
+          Text(donnees.etat == nil ? "Ouvre NÉA sur l'iPhone" : "Pas de séance prévue").font(.system(size: 14)).foregroundColor(Nea.texte2)
+        }
+        HStack(spacing: 6) {
+          NavigationLink { ProgrammeView() } label: { Raccourci(icone: "dumbbell.fill", actif: true) }.buttonStyle(.plain)
+          NavigationLink { DehorsView(sortie: $sortie) } label: { Raccourci(icone: "figure.run") }.buttonStyle(.plain)
+          NavigationLink { SommeilView() } label: { Raccourci(icone: "moon.fill") }.buttonStyle(.plain)
+        }
         if let r = donnees.etat?.rando {
-          BlocMaRando(r: r, demarrer: { choix = TypeActivite.rando.rawValue; sortie = .rando })
-            .padding(.bottom, 8)
+          BlocMaRando(r: r, demarrer: { sortie = .rando }).padding(.top, 6)
         }
         if let c = donnees.etat?.choisie {
-          BlocMaSeance(s: c, programme: donnees.etat?.choisieProg ?? "", demarrer: { lancement = c })
-            .padding(.bottom, 8)
+          BlocMaSeance(s: c, programme: donnees.etat?.choisieProg ?? "", demarrer: { lancement = c }).padding(.top, 6)
         }
-        Text("Entraînement").font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
-        ForEach(TypeActivite.allCases) { t in
-          Button {
-            choix = t.rawValue
-            Vibre.jouer(.click)
-          } label: {
-            ChoixActivite(type: t, sousTitre: sousTitre(t), choisi: t == type)
-          }
-          .buttonStyle(.plain)
-        }
-        Button(action: demarrer) {
-          Text("Démarrer")
-        }
-        .buttonStyle(BoutonRose())
-        .padding(.top, 2)
-
-        Text("Plus").font(.system(size: 14)).foregroundColor(Nea.texte2).padding(.top, 8)
-        NavigationLink { SeancesView() } label: { LigneMenu(icone: "calendar", titre: "Mes séances") }.buttonStyle(.plain)
+        Text("Plus").font(.system(size: 14)).foregroundColor(Nea.texte2).padding(.top, 6)
         NavigationLink { RecupView() } label: {
-          LigneMenu(icone: "heart.fill", titre: "Récupération", valeur: donnees.etat?.score.map { "\($0)" } ?? "")
-        }
-        .buttonStyle(.plain)
-        NavigationLink { SommeilView() } label: {
-          LigneMenu(icone: "moon.fill", titre: "Sommeil", valeur: donnees.etat?.sommeil.map { $0.actif ? $0.reveil : "" } ?? "")
+          LigneMenu(icone: "heart.fill", titre: "Ton état", valeur: donnees.etat?.score.map { "\($0)" } ?? "")
         }
         .buttonStyle(.plain)
         NavigationLink { RespirationView() } label: { LigneMenu(icone: "wind", titre: "Respiration") }.buttonStyle(.plain)
-        NavigationLink { CoachView() } label: { LigneMenu(icone: "person.crop.circle", titre: "Mon coach") }.buttonStyle(.plain)
-        NavigationLink { ProgresView() } label: { LigneMenu(icone: "chart.bar.fill", titre: "Progrès") }.buttonStyle(.plain)
+        NavigationLink { ProgresView() } label: { LigneMenu(icone: "chart.bar.fill", titre: "Tes progrès") }.buttonStyle(.plain)
+        NavigationLink { CoachView() } label: { LigneMenu(icone: "person.crop.circle", titre: "Coach") }.buttonStyle(.plain)
         NavigationLink { ReglagesView() } label: { LigneMenu(icone: "gearshape.fill", titre: "Réglages") }.buttonStyle(.plain)
       }
     }
@@ -89,7 +53,7 @@ struct AccueilView: View {
       DetailView(s: s)
     }
     .navigationDestination(isPresented: $voirSeances) {
-      SeancesView()
+      ProgrammeView()
     }
     .navigationDestination(isPresented: $voirChoisie) {
       MaSeanceView()
@@ -129,6 +93,110 @@ struct AccueilView: View {
       donnees.demandeSeance = false
       lancement = s
     }
+  }
+}
+
+/// Anneau orange avec la valeur au centre (accueil).
+struct AnneauChiffre: View {
+  let valeur: Double
+  let titre: String
+
+  var body: some View {
+    ZStack {
+      Anneau(part: valeur / 100, trait: 7)
+        .shadow(color: Nea.rose.opacity(0.6), radius: 5)
+      VStack(spacing: -2) {
+        Text(valeur > 0 ? "\(Int(valeur.rounded()))" : "—").font(.system(size: 24, weight: .heavy, design: .rounded)).minimumScaleFactor(0.6)
+        Text(titre).font(.system(size: 11, weight: .semibold)).foregroundColor(Nea.texte2)
+      }
+    }
+    .frame(width: 70, height: 70)
+  }
+}
+
+/// Prochaine séance : icône, titre, durée et exercices, bouton lecture orange.
+struct CarteProchaine: View {
+  let s: SeanceMontre
+
+  var body: some View {
+    HStack(spacing: 8) {
+      Image(systemName: "dumbbell.fill").font(.system(size: 18)).foregroundColor(Nea.rose)
+      VStack(alignment: .leading, spacing: 1) {
+        Text(s.titre).font(.system(size: 15, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+        Text("\(Int(s.min)) min · \(s.exos.count) exercices").font(.system(size: 12)).foregroundColor(Nea.texte2).lineLimit(1).minimumScaleFactor(0.7)
+      }
+      Spacer(minLength: 2)
+      Image(systemName: "play.fill").font(.system(size: 14, weight: .bold)).foregroundColor(Nea.surRose)
+        .frame(width: 34, height: 34).background(Circle().fill(Nea.rose)).shadow(color: Nea.rose.opacity(0.6), radius: 5)
+    }
+    .padding(.vertical, 9)
+    .padding(.horizontal, 10)
+    .background(RoundedRectangle(cornerRadius: 18).fill(Nea.carte))
+  }
+}
+
+/// Raccourci rond-carré de l'accueil (Programme, Dehors, Sommeil).
+struct Raccourci: View {
+  let icone: String
+  var actif = false
+
+  var body: some View {
+    Image(systemName: icone).font(.system(size: 18, weight: .semibold)).foregroundColor(actif ? Nea.rose : .white)
+      .frame(maxWidth: .infinity, minHeight: 40)
+      .background(RoundedRectangle(cornerRadius: 16).fill(actif ? Nea.rose.opacity(0.15) : Nea.carte))
+      .overlay(RoundedRectangle(cornerRadius: 16).stroke(actif ? Nea.rose.opacity(0.7) : .clear, lineWidth: 1))
+  }
+}
+
+/// Dehors (maquette 6) : Course, Vélo, Randonnée.
+struct DehorsView: View {
+  @Binding var sortie: TypeActivite?
+  @ObservedObject private var donnees = Donnees.partagees
+
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 8) {
+        ForEach([TypeActivite.course, .velo, .rando], id: \.self) { t in
+          Button { sortie = t } label: { LigneMenu(icone: t.icone, titre: t.titre) }.buttonStyle(.plain)
+        }
+        Text("Choisis ton activité").font(.system(size: 14)).foregroundColor(Nea.texte2).padding(.top, 2)
+      }
+    }
+    .navigationTitle("Dehors")
+  }
+}
+
+/// Programme (maquette 2) : semaine n / N en traits, séances de la semaine, « Voir la séance ».
+struct ProgrammeView: View {
+  @ObservedObject private var donnees = Donnees.partagees
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 8) {
+        if let p = donnees.etat?.progres?.programme {
+          Text("Semaine \(p.semaine) / \(p.total)").font(.system(size: 15, weight: .semibold))
+          HStack(spacing: 3) {
+            ForEach(0..<max(1, min(12, p.total)), id: \.self) { i in
+              Capsule().fill(i < p.semaine ? Nea.rose : Nea.carte).frame(height: 5)
+            }
+          }
+          .padding(.bottom, 2)
+        }
+        ForEach(donnees.etat?.semaine ?? []) { s in
+          NavigationLink(value: s) {
+            CarteSeance(s: s, enAvant: s.jour == Nea.aujourdhui())
+          }
+          .buttonStyle(.plain)
+        }
+        if let s = donnees.prochaine {
+          NavigationLink(value: s) { Text("Voir la séance") }.buttonStyle(BoutonRose())
+        }
+        if !(donnees.etat?.explorer ?? []).isEmpty {
+          NavigationLink { ExplorerView() } label: { Label("Séances prêtes", systemImage: "safari") }.buttonStyle(BoutonSombre())
+        }
+      }
+    }
+    .navigationTitle("Programme")
   }
 }
 
@@ -269,7 +337,7 @@ struct CarteSeance: View {
         .frame(width: 26)
       VStack(alignment: .leading, spacing: 1) {
         Text(s.titre).font(.system(size: 16, weight: .bold)).lineLimit(2).minimumScaleFactor(0.8)
-        Text("\(Int(s.min)) min · \(Nea.quand(s.jour))").font(.system(size: 13)).foregroundColor(Nea.texte2)
+        Text("\(Nea.quand(s.jour)) · \(Int(s.min)) min").font(.system(size: 13)).foregroundColor(Nea.texte2)
       }
       Spacer(minLength: 0)
       if enAvant {
@@ -334,7 +402,7 @@ struct ExplorerView: View {
   }
 }
 
-/// 04 · Détail : échauffement, exercices, « Voir tous les exercices », Démarrer.
+/// Séance (maquette 3) : les exercices (nom, séries × reps), « + N exercices », Démarrer ; titre = la séance.
 struct DetailView: View {
   let s: SeanceMontre
   @State private var tout = false
@@ -343,48 +411,52 @@ struct DetailView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 6) {
-        HStack(alignment: .top) {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(s.titre).font(.system(size: 20, weight: .bold)).lineLimit(3).minimumScaleFactor(0.7)
-            Text("\(Int(s.min)) min · \(s.exos.count) exercices").font(.system(size: 14)).foregroundColor(Nea.texte2)
-          }
-          Spacer(minLength: 4)
-          Image(systemName: iconeSeance(s.titre))
-            .font(.system(size: 24))
-            .foregroundColor(Nea.rose)
-            .shadow(color: Nea.rose.opacity(0.7), radius: 6)
-        }
-        LigneExo(icone: "figure.run", nom: "Échauffement", volume: "\(DUREE_ECHAUFFEMENT / 60) min")
         ForEach(Array((tout ? s.exos : Array(s.exos.prefix(2))).enumerated()), id: \.offset) { _, e in
-          LigneExo(icone: "figure.strengthtraining.functional", nom: e.nom, volume: e.volume)
+          LigneExoMaquette(icone: "dumbbell.fill", nom: e.nom, volume: e.volume)
         }
         if s.exos.count > 2 && !tout {
-          Button {
-            tout = true
-          } label: {
+          Button { tout = true } label: {
             HStack(spacing: 8) {
-              Image(systemName: "list.bullet").foregroundColor(Nea.rose)
-              Text("Voir tous les exercices").font(.system(size: 14))
+              Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold)).frame(width: 28, height: 28).background(Circle().fill(Color.white.opacity(0.12)))
+              Text("+ \(s.exos.count - 2) exercices").font(.system(size: 14, weight: .semibold))
               Spacer()
               Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundColor(Nea.texte2)
             }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
           }
           .buttonStyle(.plain)
-          .padding(.vertical, 6)
-          .padding(.horizontal, 4)
         }
-        Button {
-          lancement = s
-        } label: {
-          Label("Démarrer", systemImage: "play.fill")
-        }
-        .buttonStyle(BoutonRose())
+        Text("\(Int(s.min)) min · échauffement \(DUREE_ECHAUFFEMENT / 60) min compris").font(.system(size: 12)).foregroundColor(Nea.texte2)
+        Button { lancement = s } label: { Text("Démarrer") }.buttonStyle(BoutonRose())
       }
     }
-    .navigationTitle("Séance")
+    .navigationTitle(s.titre)
     .fullScreenCover(item: $lancement) { s in
       SeanceView(s: s)
     }
+  }
+}
+
+/// Ligne d'exercice de la maquette : icône, nom en gras, « 3 × 10 » dessous.
+struct LigneExoMaquette: View {
+  let icone: String
+  let nom: String
+  let volume: String
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Image(systemName: icone).font(.system(size: 16)).foregroundColor(.white).frame(width: 24)
+      VStack(alignment: .leading, spacing: 1) {
+        Text(nom).font(.system(size: 15, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+        Text(volume).font(.system(size: 12)).foregroundColor(Nea.texte2)
+      }
+      Spacer(minLength: 0)
+    }
+    .padding(.vertical, 8)
+    .padding(.horizontal, 10)
+    .background(RoundedRectangle(cornerRadius: 16).fill(Nea.carte))
   }
 }
 

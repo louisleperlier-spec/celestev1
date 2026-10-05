@@ -140,6 +140,17 @@ final class SeanceEnCours: ObservableObject {
     phase = .validation
   }
 
+  /// « Valider la série » (maquette) : les reps comptées (ou visées) sont validées tout de suite ; « Corriger » passe par la validation.
+  func validerSerie() {
+    if enDuree {
+      finSerie()
+      return
+    }
+    compteur.arreter()
+    reps = compteur.reps > 0 ? compteur.reps : exo.reps
+    valider()
+  }
+
   func changerReps(_ d: Int) {
     reps = max(0, min(99, reps + d))
   }
@@ -215,7 +226,7 @@ final class SeanceEnCours: ObservableObject {
     case .echauffement: return "Échauffement"
     case .effort: return exo.nom
     case .validation: return "Valider"
-    case .repos: return "Repos"
+    case .repos: return "Récupération"
     case .pause: return "En pause"
     case .bilan: return "Bilan"
     }

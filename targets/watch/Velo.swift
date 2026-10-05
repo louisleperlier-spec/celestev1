@@ -281,49 +281,78 @@ private func allure(_ kmh: Double) -> String {
   return String(format: "%d:%02d", s / 60, s % 60)
 }
 
-/// Maquette 02 · Suivre : chrono, distance, vitesse (ou allure), FC et zone.
+/// Allure façon montre : 5\u{2032}47\u{2033} /km.
+private func allureMaquette(_ kmh: Double) -> String {
+  guard kmh >= 1 else { return "–" }
+  let s = Int((3600 / kmh).rounded())
+  return "\(s / 60)\u{2032}\(String(format: "%02d", s % 60))\u{2033}"
+}
+
+private func chrono(_ s: Int) -> String {
+  s >= 3600 ? String(format: "%d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60) : String(format: "%02d:%02d", s / 60, s % 60)
+}
+
+/// Course / vélo (maquette 7) : petite carte avec le tracé, chrono, distance et allure (ou vitesse), Pause.
+/// Randonnée (maquette 8) : relief et tracé, « Sommet dans 1,2 km », D+ et durée, Pause.
 struct SuivreSortie: View {
   @ObservedObject var sortie: SortieVelo
+  @State private var camera: MapCameraPosition = .userLocation(fallback: .automatic)
+
+  private var sommetTexte: String {
+    if let s = sortie.sentier {
+      if sortie.sommet { return "Sommet atteint !" }
+      return "Sommet dans \(km1(max(0, s.km / 2 - sortie.km))) km"
+    }
+    return sortie.altitude.map { "Altitude \(Int($0)) m" } ?? "Recherche GPS"
+  }
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 0) {
-        Chrono(secondes: sortie.secondes)
-        LigneMesure(valeur: km1(sortie.km), unite: "km")
+      VStack(spacing: 4) {
         if sortie.rando {
-          LigneMesure(valeur: "\(Int(sortie.dplus))", unite: sortie.sentier.map { "m D+\n/ \(Int($0.dplus))" } ?? "m\nD+")
-          LigneMesure(valeur: sortie.altitude.map { "\(Int($0))" } ?? "--", unite: "m\nalt.")
-        } else if sortie.course {
-          LigneMesure(valeur: allure(sortie.vitesse), unite: "min\n/km")
+          Image("ax_rando_terrain").resizable().scaledToFill().frame(height: 72).frame(maxWidth: .infinity).clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+          Text(sommetTexte).font(.system(size: 15, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+          HStack(spacing: 6) {
+            Puce(icone: "mountain.2.fill", texte: "\(Int(sortie.dplus)) m D+")
+            Puce(icone: "stopwatch", texte: Nea.duree(sortie.secondes))
+          }
         } else {
-          LigneMesure(valeur: km1(sortie.vitesse), unite: "km/h")
+          Map(position: $camera) {
+            if sortie.points.count > 1 {
+              MapPolyline(coordinates: sortie.points).stroke(Nea.rose, lineWidth: 4)
+            }
+            if let p = sortie.points.last {
+              Annotation("", coordinate: p) {
+                Circle().fill(Color.white).frame(width: 9, height: 9).overlay(Circle().stroke(Nea.rose, lineWidth: 2))
+              }
+            }
+          }
+          .mapStyle(.standard(emphasis: .muted))
+          .frame(height: 64)
+          .clipShape(RoundedRectangle(cornerRadius: 14))
+          .allowsHitTesting(false)
+          GrosChiffre(texte: chrono(sortie.secondes), taille: 40)
+          HStack(spacing: 8) {
+            Label("\(km1(sortie.km)) km", systemImage: "mappin.and.ellipse")
+            Spacer(minLength: 2)
+            if sortie.course {
+              Label("\(allureMaquette(sortie.vitesse)) /km", systemImage: "clock")
+            } else {
+              Label("\(km1(sortie.vitesse)) km/h", systemImage: "speedometer")
+            }
+          }
+          .font(.system(size: 15, weight: .semibold))
+          .lineLimit(1)
+          .minimumScaleFactor(0.6)
         }
-        LigneMesure(
-          valeur: sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm))" : "--",
-          unite: sortie.zone > 0 ? "bpm\nzone \(sortie.zone)" : "bpm",
-          coeur: true
-        )
-        if let s = sortie.sentier {
-          Text(sortie.sommet ? "Sommet atteint ! 🏔️" : s.nom)
-            .font(.system(size: 13, weight: .semibold))
-            .foregroundColor(Nea.rose)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
-        }
-        Text("\(Int(sortie.entrainement.kcal)) kcal actives · \(sortie.gpsActif ? "GPS actif" : "Recherche GPS")")
+        Text(sortie.entrainement.bpm > 0 ? "\(Int(sortie.entrainement.bpm)) bpm\(sortie.zone > 0 ? " · zone \(sortie.zone)" : "")" : (sortie.gpsActif ? "GPS actif" : "Recherche GPS"))
           .font(.system(size: 12))
           .foregroundColor(Nea.texte2)
-          .lineLimit(1)
-          .minimumScaleFactor(0.7)
-          .padding(.top, 2)
-        if sortie.segment > 1 {
-          Text("Segment \(sortie.segment) · \(Nea.duree(sortie.secondesSegment)) · \(km1(sortie.kmDuSegment)) km")
-            .font(.system(size: 13, weight: .semibold))
-            .foregroundColor(Nea.rose)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
-            .padding(.top, 2)
+        Button(sortie.etape == .pause ? "Reprendre" : "Pause") {
+          if sortie.etape == .pause { sortie.reprendre() } else { sortie.pause() }
         }
+        .buttonStyle(BoutonRose())
       }
     }
   }

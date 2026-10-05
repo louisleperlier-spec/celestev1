@@ -16,6 +16,8 @@ import { COACHES, SEANCES } from '@/data';
 import type { SeanceId } from '@/data/types';
 import { buildPlan, coachById, coachValide, exercice, exKcal, hrMax, lvlN, prog, progWeek, sesKcal, todayIdx } from '@/lib/plan';
 import { wkLocked } from '@/lib/premium';
+import { defi, defisSemaine, possedees } from '@/lib/jeu';
+import { lundiISO } from '@/lib/ligue';
 import { coucherPour } from '@/lib/reveil';
 import { ajouterNuit, baseHrv, heure, lastNight, nouvelleNuit, recovStatus, sleepScore } from '@/lib/sommeil';
 import { casesTrace } from '@/lib/territoires';
@@ -61,7 +63,21 @@ type SeanceMontre = { jour: number; quand: string; titre: string; min: number; k
 type BilanMontre = { effort: number; recup: number; sommeil: number; score: number; recupTxt: string };
 type NuitMontre = { h: number; rhr: number; hrv: number; src: string } | null;
 type CoachMontre = { nom: string; style: string; daily: string; dernier: string };
-type ProgresMontre = { seances: number; objectif: number; serie: number; niveau: number; xp: number; xpNiveau: number; rang: string; derniere: string };
+type ProgresMontre = {
+  seances: number;
+  objectif: number;
+  serie: number;
+  niveau: number;
+  xp: number;
+  xpNiveau: number;
+  rang: string;
+  derniere: string;
+  /** Refonte de la montre (build 29) : meilleure série, cartes de la collection, défis de la semaine, programme suivi. */
+  meilleureSerie?: number;
+  cartes?: number;
+  defis?: { titre: string; fait: number; but: number }[];
+  programme?: { nom: string; semaine: number; total: number };
+};
 type EtatMontre = {
   v: 2;
   prenom: string;
@@ -229,6 +245,10 @@ function etat(): EtatMontre {
       xpNiveau: li.need,
       rang: rankOf(li.n)[0],
       derniere: der ? `${der.title} • ${der.min} min` : '',
+      meilleureSerie: Math.max(st.jeu.records.serie, streak(st.logs, st.days)),
+      cartes: possedees(st.jeu),
+      defis: defisSemaine(lundiISO()).map((id) => defi(id, st)).map((d) => ({ titre: d.titre, fait: d.fait, but: d.but })),
+      programme: { nom: prog(p).nom, semaine: progWeek(p), total: prog(p).sem },
     },
     fcMax: hrMax(st.age),
     poids: st.weight,
