@@ -56,7 +56,9 @@
         "expo-notifications",
         {
           "sounds": [
-            "./assets/sons/reveil_doux.wav"
+            "./assets/sons/reveil_doux.wav",
+            "./assets/sons/reveil_classique.wav",
+            "./assets/sons/reveil_soleil.wav"
           ]
         }
       ],

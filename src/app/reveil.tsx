@@ -6,10 +6,11 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { Sheet } from '@/components/app/Sheet';
 import { Appui, Button, Card, Icon, Text, toast, type IconName } from '@/components/ui';
-import { coucherPour, heuresAuLit, JOURS_COURTS, libelleJours, SONS, type Reveil, type SonReveil } from '@/lib/reveil';
+import { coucherPour, heuresAuLit, JOURS_COURTS, libelleJours, SONS, SONS_DESC, sonValide, type Reveil, type SonReveil } from '@/lib/reveil';
 import { hm } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { programmerReveil, reveilEnAlarme } from '@/store/reveil';
+import { arreterApercu, ecouterSonnerie } from '@/store/sons';
 import { alpha, colors, fonts, ui } from '@/theme';
 
 const HAUT = 62;
@@ -78,7 +79,8 @@ export default function ReveilEcran() {
   const [h, setH] = useState(Math.floor(hm(p.reveil.h) / 60));
   const [m, setM] = useState(Math.round((hm(p.reveil.h) % 60) / 5) * 5 % 60);
   const [jours, setJours] = useState(p.reveil.jours);
-  const [son, setSon] = useState<SonReveil>(p.reveil.son);
+  const [son, setSon] = useState<SonReveil>(sonValide(p.reveil.son));
+  const [ecoute, setEcoute] = useState<SonReveil | null>(null);
   const [vibration, setVibration] = useState(p.reveil.vibration);
   const [objectif, setObjectif] = useState(p.objectif);
   const [feuille, setFeuille] = useState<'jours' | 'son' | 'objectif' | null>(null);
@@ -86,7 +88,21 @@ export default function ReveilEcran() {
   const heure = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   const coucher = coucherPour(heure, objectif);
 
+  const choisirSon = (s: SonReveil) => {
+    setSon(s);
+    if (ecoute === s) {
+      arreterApercu();
+      setEcoute(null);
+    } else setEcoute(ecouterSonnerie(s) ? s : null);
+  };
+  const fermerSon = () => {
+    arreterApercu();
+    setEcoute(null);
+    setFeuille(null);
+  };
+
   const enregistrer = async (actif: boolean) => {
+    arreterApercu();
     const r: Reveil = { h: heure, jours, son, vibration, actif };
     useProfil.getState().reglerReveil(r, objectif);
     const mode = await programmerReveil(r);
@@ -174,16 +190,20 @@ export default function ReveilEcran() {
         <Text style={[styles.petit, styles.centre]}>{jours.length ? libelleJours(jours) : 'Aucun jour : sonne une seule fois'}</Text>
         <Button label="OK" onPress={() => setFeuille(null)} style={styles.mt} />
       </Sheet>
-      <Sheet visible={feuille === 'son'} onClose={() => setFeuille(null)} title="Son">
+      <Sheet visible={feuille === 'son'} onClose={fermerSon} title="Son">
+        <Text style={styles.petit}>Touche un son pour l’écouter. Au réveil, il commence tout bas puis monte doucement.</Text>
         {(Object.keys(SONS) as SonReveil[]).map((s) => (
-          <Appui key={s} accessibilityRole="button" accessibilityState={{ selected: s === son }} onPress={() => setSon(s)} style={[styles.choix, s === son && styles.choixOn]}>
-            <Text weight="semibold" style={styles.ligneTitre}>
-              {SONS[s]}
-            </Text>
-            <Text style={styles.petit}>{s === 'doux' ? 'Carillon qui monte doucement' : 'Sonnerie de l’iPhone'}</Text>
+          <Appui key={s} accessibilityRole="button" accessibilityState={{ selected: s === son }} onPress={() => choisirSon(s)} style={[styles.choix, s === son && styles.choixOn]}>
+            <View style={styles.flex}>
+              <Text weight="semibold" style={styles.ligneTitre}>
+                {SONS[s]}
+              </Text>
+              <Text style={styles.petit}>{SONS_DESC[s]}</Text>
+            </View>
+            {s !== 'iphone' && <Icon name={ecoute === s ? 'pause' : 'play'} size={16} color={s === son ? colors.pink : colors.textSecondary} />}
           </Appui>
         ))}
-        <Button label="OK" onPress={() => setFeuille(null)} style={styles.mt} />
+        <Button label="OK" onPress={fermerSon} style={styles.mt} />
       </Sheet>
       <Sheet visible={feuille === 'objectif'} onClose={() => setFeuille(null)} title="Objectif de sommeil">
         <View style={styles.puces}>
@@ -244,6 +264,6 @@ const styles = StyleSheet.create({
   puceOn: { backgroundColor: colors.pink },
   puceTxt: { fontSize: 14, lineHeight: 18, color: colors.text },
   puceTxtOn: { color: colors.onPrimary },
-  choix: { padding: 14, borderRadius: 16, borderWidth: 1, borderColor: colors.border, marginTop: 10, gap: 2 },
+  choix: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 1, borderColor: colors.border, marginTop: 10 },
   choixOn: { borderColor: colors.pink, backgroundColor: alpha(colors.pink, 0.08) },
 });

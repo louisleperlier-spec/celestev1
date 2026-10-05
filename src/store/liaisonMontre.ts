@@ -35,7 +35,7 @@ import { selectProfil, useProfil } from './profil';
 import { gagnerExplorateur, sommetAtteint } from './rando';
 import { trouverSentier } from './randosPres';
 import { programmerReveil } from './reveil';
-import { useSons } from './sons';
+import { SONS_NUIT, useSons } from './sons';
 import { conquerirTrace } from './territoires';
 
 const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -97,7 +97,7 @@ type EtatMontre = {
   /** Sentier choisi aujourd'hui sur l'iPhone (build 19). */
   rando: RandoMontre | null;
   /** Partie Sommeil (build 27) : réveil, coucher conseillé, nuit en cours, pluie qui joue sur l'iPhone. */
-  sommeil: { reveil: string; actif: boolean; coucher: string; vibration: boolean; objectif: number; nuit: boolean; pluie: boolean };
+  sommeil: { reveil: string; actif: boolean; coucher: string; vibration: boolean; objectif: number; nuit: boolean; pluie: boolean; son: string };
 };
 
 /** Séance terminée sur la montre. */
@@ -265,6 +265,7 @@ function etat(): EtatMontre {
       objectif: st.objectifSommeil,
       nuit: !!st.nuitDebut,
       pluie: useSons.getState().joue,
+      son: SONS_NUIT[useSons.getState().son].nom,
     },
   };
 }
@@ -474,7 +475,6 @@ function recevoirNuit(json: string) {
   const st = useProfil.getState();
   if (n?.action === 'commencer') {
     if (!st.nuitDebut) st.commencerNuit();
-    if (!useSons.getState().joue) useSons.getState().jouer(30);
   } else if (n?.action === 'terminer') {
     useSons.getState().pause();
     st.terminerNuit();

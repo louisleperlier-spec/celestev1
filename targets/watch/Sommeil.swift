@@ -212,12 +212,12 @@ struct ReglerReveilView: View {
   }
 }
 
-// MARK: Nuit (maquette 3) : Axel, l'heure, le réveil, la pluie de l'iPhone (volume à la couronne), Terminer
+// MARK: Nuit (maquette 3) : Axel, l'heure, le réveil, le son apaisant de l'iPhone (volume à la couronne), Terminer
 
 struct NuitMontreView: View {
   @ObservedObject private var donnees = Donnees.partagees
   @Environment(\.dismiss) private var fermer
-  @State private var pluie = true
+  @State private var pluie = false
   @State private var volume: Double = 0.6
   @State private var envoye: Double = 0.6
 
@@ -233,9 +233,9 @@ struct NuitMontreView: View {
           Text("Réveil à \(s.reveil)").font(.system(size: 15)).foregroundColor(Nea.texte2)
         }
         HStack(spacing: 8) {
-          Image(systemName: "cloud.rain.fill").font(.system(size: 20)).foregroundColor(.white)
+          Image(systemName: "waveform").font(.system(size: 20)).foregroundColor(.white)
           VStack(alignment: .leading, spacing: 5) {
-            Text("Pluie douce").font(.system(size: 14, weight: .semibold))
+            Text(donnees.etat?.sommeil?.son ?? "Sons apaisants").font(.system(size: 14, weight: .semibold))
             GeometryReader { g in
               ZStack(alignment: .leading) {
                 Capsule().fill(Nea.texte2.opacity(0.3)).frame(height: 4)
@@ -272,7 +272,7 @@ struct NuitMontreView: View {
       }
     }
     .navigationTitle("Bonne nuit")
-    .onAppear { pluie = donnees.etat?.sommeil?.pluie ?? true }
+    .onAppear { pluie = donnees.etat?.sommeil?.pluie ?? false }
   }
 }
 

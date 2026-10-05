@@ -4,14 +4,15 @@
  */
 import * as Notifications from 'expo-notifications';
 
-import { prochaineSonnerie, type Reveil } from '@/lib/reveil';
+import { FICHIER_SON, prochaineSonnerie, sonValide, type Reveil } from '@/lib/reveil';
 import { hm } from '@/lib/sommeil';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
 
 export type ModeReveil = 'alarme' | 'notification' | 'aucun';
 
-const SON = 'reveil_doux.wav';
+/** Le son choisi n'est dans le bundle qu'à partir du build 30 (sinon iOS joue le son par défaut). */
+const fichier = (r: Reveil) => FICHIER_SON[sonValide(r.son)];
 
 async function annulerNotifs() {
   try {
@@ -27,7 +28,7 @@ async function programmerNotifs(r: Reveil) {
   const contenu: Notifications.NotificationContentInput = {
     title: "Bonjour, c'est l'heure ☀️",
     body: 'Ton réveil NÉA. Bois un verre d’eau et ouvre les rideaux.',
-    sound: r.son === 'doux' ? SON : 'default',
+    sound: fichier(r) || 'default',
     data: { act: 'sleepadd' },
   };
   if (!r.jours.length) {
@@ -56,7 +57,7 @@ export async function programmerReveil(r: Reveil): Promise<ModeReveil> {
   if (!r.actif) return 'aucun';
   if (NeaMontre?.reveilDisponible?.() && NeaMontre.programmerReveil) {
     try {
-      const m = await NeaMontre.programmerReveil(Math.floor(hm(r.h) / 60), hm(r.h) % 60, r.jours, r.son === 'doux' ? SON : '');
+      const m = await NeaMontre.programmerReveil(Math.floor(hm(r.h) / 60), hm(r.h) % 60, r.jours, fichier(r));
       if (m === 'alarmkit') return 'alarme';
     } catch {
       // repli en notifications

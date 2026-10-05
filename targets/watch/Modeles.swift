@@ -121,7 +121,10 @@ struct SommeilMontre: Codable {
   let vibration: Bool
   let objectif: Double
   let nuit: Bool
+  /// Le son apaisant joue sur l'iPhone (nom historique : la pluie).
   let pluie: Bool
+  /// Nom du son choisi sur l'iPhone (build 30).
+  let son: String?
 }
 
 /// Messages Sommeil vers l'iPhone : réveil réglé à la couronne, nuit commencée / terminée, pluie, ressenti du matin.

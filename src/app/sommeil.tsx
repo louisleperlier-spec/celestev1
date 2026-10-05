@@ -1,16 +1,18 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
+import { Sheet } from '@/components/app/Sheet';
 import { Appui, Button, Card, Icon, Text, type IconName } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
 import { coucherPour } from '@/lib/reveil';
 import { MIN_RALENTIR } from '@/store/moments';
 import { useProfil } from '@/store/profil';
-import { PLUIE, useSons } from '@/store/sons';
+import { SONS_NUIT, useSons, type SonNuit } from '@/store/sons';
 import { alpha, colors, fonts, ui } from '@/theme';
 
 /** Une ligne de réglage : icône, titre (et sous-titre), valeur ou contrôle à droite. */
@@ -38,17 +40,24 @@ function Ligne({ icone, titre, sous, droite, onPress }: { icone: IconName; titre
 
 /**
  * Partie Sommeil (maquette de l'utilisateur) : coucher de ce soir d'après le réveil et l'objectif, réveil de l'iPhone, rappel du coucher,
- * routine du soir (respiration, pluie douce), « Commencer ma nuit », journal du sommeil et mes nuits.
+ * routine du soir (respiration, sons apaisants au choix), « Commencer ma nuit », journal du sommeil et mes nuits.
  */
 export default function Sommeil() {
   const p = useProfil(useShallow((s) => ({ reveil: s.reveil, objectif: s.objectifSommeil, nset: s.nset, nuitDebut: s.nuitDebut })));
-  const { joue, jouer, pause } = useSons(useShallow((s) => ({ joue: s.joue, jouer: s.jouer, pause: s.pause })));
+  const { son, joue, jouer, pause } = useSons(useShallow((s) => ({ son: s.son, joue: s.joue, jouer: s.jouer, pause: s.pause })));
+  const [feuille, setFeuille] = useState(false);
   const coucher = coucherPour(p.reveil.h, p.objectif);
 
+  // Aucun son lancé d'office : l'ambiance se met en route seulement si on la demande.
   const commencer = () => {
     if (!p.nuitDebut) useProfil.getState().commencerNuit();
-    if (!useSons.getState().joue) jouer(30);
     router.push('/nuit');
+  };
+
+  const essayer = (s: SonNuit) => {
+    if (s === son && joue) return pause();
+    useSons.getState().choisir(s);
+    jouer(30);
   };
 
   return (
@@ -115,9 +124,10 @@ export default function Sommeil() {
         <Ligne
           icone="cloud"
           titre="Sons apaisants"
-          sous={PLUIE}
+          sous={SONS_NUIT[son].nom}
+          onPress={() => setFeuille(true)}
           droite={
-            <Appui accessibilityRole="button" accessibilityLabel={joue ? 'Pause' : 'Écouter la pluie douce'} onPress={() => (joue ? pause() : jouer(30))} style={styles.lecture}>
+            <Appui accessibilityRole="button" accessibilityLabel={joue ? 'Pause' : `Écouter ${SONS_NUIT[son].nom}`} onPress={() => (joue ? pause() : jouer(30))} style={styles.lecture}>
               <Icon name={joue ? 'pause' : 'play'} size={16} color={colors.text} />
             </Appui>
           }
@@ -141,6 +151,25 @@ export default function Sommeil() {
           </Appui>
         </View>
       </ScrollView>
+
+      <Sheet visible={feuille} onClose={() => setFeuille(false)} title="Sons apaisants">
+        <Text style={styles.petit}>Touche pour écouter. Le son s’arrête seul après 30 min.</Text>
+        {(Object.keys(SONS_NUIT) as SonNuit[]).map((s) => {
+          const on = s === son;
+          return (
+            <Appui key={s} accessibilityRole="button" accessibilityState={{ selected: on }} onPress={() => essayer(s)} style={[styles.choix, on && styles.choixOn]}>
+              <View style={styles.flex}>
+                <Text weight="semibold" style={styles.ligneTitre}>
+                  {SONS_NUIT[s].nom}
+                </Text>
+                <Text style={styles.petit}>{SONS_NUIT[s].desc}</Text>
+              </View>
+              <Icon name={on && joue ? 'pause' : 'play'} size={16} color={on ? colors.pink : colors.textSecondary} />
+            </Appui>
+          );
+        })}
+        <Button label="OK" onPress={() => setFeuille(false)} style={styles.mt} />
+      </Sheet>
     </SafeAreaView>
   );
 }
@@ -166,6 +195,8 @@ const styles = StyleSheet.create({
   valeur: { fontSize: 15, lineHeight: 20 },
   lecture: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg },
   mt: { marginTop: 8 },
+  choix: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, borderWidth: 1, borderColor: colors.border, marginTop: 10 },
+  choixOn: { borderColor: colors.pink, backgroundColor: alpha(colors.pink, 0.08) },
   liens: { flexDirection: 'row', gap: 10 },
   lien: {
     flex: 1,

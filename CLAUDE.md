@@ -341,22 +341,25 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 - [ ] **Partie Sommeil + réveil de l'iPhone (maquettes de l'utilisateur, oct. 2026, build 26)** : **codée, à valider sur iPhone**
   - **`/sommeil`** (hub ; l'ancien écran devient **`/nuits`** « Mes nuits », ouvert par « Voir mes nuits », les stats de Progrès et `?ajout=1`) :
     « Ce soir · Coucher à 23:15 · Objectif · 8 h » (coucher = réveil − objectif, Axel qui dort `DECO_IMAGES.dodo`), Réveil →, Rappel du coucher
-    30 min avant (bascule `nset.bed`), « Ta routine du soir » : Respiration 3 min (`/respirer?min=3`), Sons apaisants · Pluie douce (lecture),
-    Commencer ma nuit (`commencerNuit`, pluie 30 min) → `/nuit`, Journal du sommeil, Voir mes nuits
-  - **`/reveil`** « Ton réveil » : roue heures / minutes (pas de 5), Répéter (jours), Son (Réveil doux / Classique), Vibration, « 23:15 → 07:15 · 8 h au
+    30 min avant (bascule `nset.bed`), « Ta routine du soir » : Respiration 3 min (`/respirer?min=3`), Sons apaisants au choix (feuille :
+    Vagues lentes, Nuit calme, Bruit doux ; la pluie a été retirée, jugée affreuse ; choix gardé `nea-sons`), Commencer ma nuit
+    (`commencerNuit`, **aucun son lancé d'office**, ni par la montre) → `/nuit`, Journal du sommeil, Voir mes nuits
+  - **`/reveil`** « Ton réveil » : roue heures / minutes (pas de 5), Répéter (jours), Son (Réveil doux au marimba, Classique = bip-bip
+    arrondi, Lever du soleil, Sonnerie de l'iPhone ; aperçu de 8 s `ecouterSonnerie`), Vibration, « 23:15 → 07:15 · 8 h au
     lit prévues » (touche → objectif 6 à 10 h), Enregistrer (`reglerReveil` : `reveil`, `objectifSommeil`, et `nset.wake` / `nset.bedT`), Désactiver
   - **vrai réveil** : `modules/nea-montre/ios/ReveilAlarme.swift` = **AlarmKit** (iOS 26+, lien faible, `NSAlarmKitUsageDescription`) : alarme
-    plein écran qui sonne même en silencieux, hebdomadaire, son `reveil_doux.wav` du bundle (plugin expo-notifications `sounds`) ;
+    plein écran qui sonne même en silencieux, hebdomadaire, son choisi du bundle `reveil_doux|classique|soleil.wav`
+    (plugin expo-notifications `sounds`, 28 s, volume qui monte ; `scripts/generer-sons.py` génère aussi `nuit_*.wav`), **build 30+** ;
     `store/reveil.ts` (`programmerReveil`) sinon **repli** en notifications hebdomadaires `nea.reveil.<jour>` avec le même son
-  - **`/nuit`** mode nuit : Axel qui dort (`DECO_IMAGES.nuit`), l'heure en grand, « Réveil à 07:15 », Pluie douce (volume, pause, arrêt 15 / 30 / 45 /
-    60 min / sans, fondu 20 s), Modifier le réveil, Terminer la nuit (≥ 3 h → `/nuits?ajout=1`) ; `store/sons.ts` (expo-audio, boucle
-    `assets/sons/pluie.wav` générée, arrière-plan + mode silencieux, `enableBackgroundPlayback`)
+  - **`/nuit`** mode nuit : Axel qui dort (`DECO_IMAGES.nuit`), l'heure en grand, « Réveil à 07:15 », son apaisant choisi (volume, pause, arrêt 15 / 30 / 45 /
+    60 min / sans, fondu 20 s), Modifier le réveil, Terminer la nuit (≥ 3 h → `/nuits?ajout=1`) ; `store/sons.ts` (expo-audio, boucles
+    `assets/sons/nuit_*.wav` générées, arrière-plan + mode silencieux, `enableBackgroundPlayback`)
   - **`/notes-soir`** « Notes du soir » (Habitudes, Bien-être, Routine : 12 étiquettes `TAGS_SOIR` avec icônes `IconeNote`, note libre) →
     `notesSoir` du profil ; **`/journal-sommeil`** (notes + score de la nuit suivante) ; `lib/reveil.ts` (fonctions pures)
   - **Sommeil sur la montre (maquettes de l'utilisateur, build 27)** : `targets/watch/Sommeil.swift`, menu « Sommeil » de l'accueil : **Sommeil**
     (Axel qui dort `ax_dodo`, « Dans 30 min · Coucher à 23:15 », Réveil →, Préparer ma nuit, Cette nuit →), **Réveil** (heures / minutes à la
-    couronne, vibration, Enregistrer → iPhone `reveil` → `reglerReveil` + `programmerReveil`), **Nuit** (l'heure, « Réveil à », Pluie douce de
-    l'iPhone : lecture / pause et volume à la couronne → `pluie`, Terminer → `nuit`), **Cette nuit** (durée endormi, barre des phases profond / cœur /
+    couronne, vibration, Enregistrer → iPhone `reveil` → `reglerReveil` + `programmerReveil`), **Nuit** (l'heure, « Réveil à », son apaisant de
+    l'iPhone (nom envoyé dans `sommeil.son`, build 30) : lecture / pause et volume à la couronne → `pluie`, Terminer → `nuit`), **Cette nuit** (durée endormi, barre des phases profond / cœur /
     paradoxal, VFC nocturne, FC au repos lus dans Apple Santé par la montre `SommeilSante`, sinon la nuit de l'iPhone ; « Mon ressenti » →
     `ressenti-nuit` : qualité 2 à 5 de la nuit, créée si absente) ; `etat.sommeil` (réveil, coucher, vibration, nuit en cours, pluie) ;
     messages directs `envoyerDirect` (sendMessage si l'iPhone est joignable, sinon file d'attente, sauf la pluie)

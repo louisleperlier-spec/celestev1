@@ -9,7 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Appui, BigNumber, Button, Icon, Text } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
 import { useProfil } from '@/store/profil';
-import { PLUIE, useSons } from '@/store/sons';
+import { SONS_NUIT, useSons } from '@/store/sons';
 import { alpha, colors, ui } from '@/theme';
 
 const ARRETS: (number | null)[] = [15, 30, 45, 60, null];
@@ -37,7 +37,7 @@ function Volume({ v, onChange }: { v: number; onChange: (v: number) => void }) {
   );
 }
 
-/** Mode nuit (maquette de l'utilisateur) : Axel qui dort, l'heure en grand, le réveil, la pluie douce et son arrêt, terminer la nuit. */
+/** Mode nuit (maquette de l'utilisateur) : Axel qui dort, l'heure en grand, le réveil, le son apaisant choisi et son arrêt, terminer la nuit. */
 export default function Nuit() {
   const p = useProfil(useShallow((s) => ({ reveil: s.reveil, nuitDebut: s.nuitDebut })));
   const sons = useSons();
@@ -79,11 +79,11 @@ export default function Nuit() {
 
         <View style={styles.son}>
           <View style={styles.sonIc}>
-            <Icon name="cloud" size={24} color={colors.text} />
+            <Icon name="moon" size={24} color={colors.text} />
           </View>
           <View style={styles.flex}>
             <Text weight="semibold" style={styles.sonNom}>
-              {PLUIE}
+              {SONS_NUIT[sons.son].nom}
             </Text>
             <Volume v={sons.volume} onChange={sons.regler} />
           </View>

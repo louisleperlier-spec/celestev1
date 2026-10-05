@@ -5,13 +5,23 @@
 import { hm } from './sommeil';
 
 /** Jours : 0 = lundi … 6 = dimanche (comme `JOURS` de lib/semaine). */
-export type SonReveil = 'doux' | 'classique';
+export type SonReveil = 'doux' | 'classique' | 'soleil' | 'iphone';
 export type Reveil = { h: string; jours: number[]; son: SonReveil; vibration: boolean; actif: boolean };
 
 export const REVEIL_DEFAUT: Reveil = { h: '07:15', jours: [0, 1, 2, 3, 4], son: 'doux', vibration: true, actif: false };
 export const OBJECTIF_SOMMEIL = 8;
 
-export const SONS: Record<SonReveil, string> = { doux: 'Réveil doux', classique: 'Classique' };
+/** Sonneries du réveil (`assets/sons/reveil_*.wav`, 28 s, volume qui monte ; `scripts/generer-sons.py`). */
+export const SONS: Record<SonReveil, string> = { doux: 'Réveil doux', classique: 'Classique', soleil: 'Lever du soleil', iphone: 'Sonnerie de l’iPhone' };
+export const SONS_DESC: Record<SonReveil, string> = {
+  doux: 'Petite mélodie au marimba qui monte doucement',
+  classique: 'Le bip-bip d’un réveil de chevet, en plus rond',
+  soleil: 'Carillon lumineux sur des accords chauds',
+  iphone: 'Le son par défaut de ton iPhone',
+};
+/** Fichier du bundle (notifications et AlarmKit) ; vide = son par défaut. */
+export const FICHIER_SON: Record<SonReveil, string> = { doux: 'reveil_doux.wav', classique: 'reveil_classique.wav', soleil: 'reveil_soleil.wav', iphone: '' };
+export const sonValide = (s: string | undefined): SonReveil => (s && s in SONS ? (s as SonReveil) : 'doux');
 export const JOURS_COURTS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as const;
 
 export const hhmm = (min: number) => {
