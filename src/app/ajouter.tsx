@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EnTetePage, Recherche } from '@/components/app/Catalogue';
+import { IconeSport } from '@/components/app/IconeSport';
 import { Sheet } from '@/components/app/Sheet';
 import { Appui, BigNumber, Button, Card, Icon, Segmente, Text, toast } from '@/components/ui';
 import { EXERCICE_IMAGES, EXERCICES, GROUPES } from '@/data';
@@ -98,7 +99,9 @@ function Choix({ onSport, onMuscu }: { onSport: (id: string) => void; onMuscu: (
             <View style={styles.grille}>
               {sports.map((s) => (
                 <Appui key={s.id} accessibilityRole="button" accessibilityLabel={s.nom} onPress={() => onSport(s.id)} style={styles.case}>
-                  <Text style={styles.emoji}>{s.emoji}</Text>
+                  <View style={styles.casePastille}>
+                    <IconeSport glyphe={s.icone} size={24} />
+                  </View>
                   <Text weight="medium" style={styles.caseNom} numberOfLines={2}>
                     {s.nom}
                   </Text>
@@ -148,7 +151,7 @@ function FormSport({ id, onRetour }: { id: string; onRetour: () => void }) {
   const enregistrer = () => {
     const r = enregistrerSport(s.id, min, int, quand === 'hier');
     if (!r) return;
-    toast(`${s.emoji} ${s.nom} enregistré · +${r.xp} XP`);
+    toast(`${s.nom} enregistré · +${r.xp} XP`);
     quitter();
   };
   return (
@@ -156,7 +159,9 @@ function FormSport({ id, onRetour }: { id: string; onRetour: () => void }) {
       <EnTeteForm titre={s.nom} onRetour={onRetour} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.hero}>
-          <Text style={styles.heroEmoji}>{s.emoji}</Text>
+          <View style={styles.heroPastille}>
+            <IconeSport glyphe={s.icone} size={46} strokeWidth={1.6} />
+          </View>
         </View>
         <Duree min={min} setMin={setMin} />
         <Card style={styles.bloc}>
@@ -221,7 +226,7 @@ function FormMuscu({ exos, setExos, onRetour }: { exos: ExoLibre[]; setExos: (e:
   const enregistrer = () => {
     const r = enregistrerMuscuLibre(exos, min, quand === 'hier');
     if (!r) return;
-    toast(`💪 Séance enregistrée · +${r.xp} XP`);
+    toast(`Séance enregistrée · +${r.xp} XP`);
     quitter();
   };
 
@@ -338,13 +343,23 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
   },
-  emoji: { fontSize: 28, lineHeight: 34 },
+  casePastille: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: alpha(colors.pink, 0.12) },
   caseNom: { fontSize: 13, lineHeight: 16, textAlign: 'center' },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4 },
   back: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg },
   h1: { ...fonts.bold, flex: 1, fontSize: 26, lineHeight: 32 },
   hero: { alignItems: 'center', paddingVertical: 6 },
-  heroEmoji: { fontSize: 64, lineHeight: 76 },
+  heroPastille: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: alpha(colors.pink, 0.12),
+    borderWidth: 1,
+    borderColor: alpha(colors.pink, 0.35),
+    boxShadow: `0 0 30px ${alpha(colors.pink, 0.3)}`,
+  },
   bloc: { padding: 16, gap: 12 },
   compteur: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   rond: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg },
