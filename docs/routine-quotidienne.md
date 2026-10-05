@@ -39,6 +39,7 @@ Fiche persona 2, à coller mot pour mot dans chaque prompt d'image :
 ## Instructions de la routine
 
 1. Place-toi sur la branche `claude/strategie-ugc-ia` (`git fetch origin claude/strategie-ugc-ia && git checkout claude/strategie-ugc-ia`). Lis `docs/routine-quotidienne.md` (ce fichier), `docs/strategie-ugc-ia.md` et les 7 derniers fichiers de `docs/contenu/`, pour ne jamais répéter une accroche ou une histoire.
+   Si `docs/contenu/` contient déjà le fichier du lendemain, ne le refais pas : arrête-toi et indique simplement où il se trouve.
 2. **Veille des tendances** (recherche web, 10 minutes maximum) :
    - formats, sons et hashtags qui marchent en ce moment sur TikTok dans le fitness féminin, en France et au Québec (TikTok Creative Center, articles récents, comptes du même type que @fitnessleana et @irsaslaw) ;
    - retiens 3 à 5 tendances **exploitables aujourd'hui**, avec la source et la date. Si une info n'est pas vérifiable, dis-le plutôt que de l'inventer.
