@@ -66,13 +66,13 @@ public final class NeaMontreModule: Module {
       ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false))
     }
 
-    /// « L'heure de ralentir » (écran verrouillé) : compte à rebours jusqu'au coucher ; voir ActiviteCoucher.
-    Function("demarrerCoucher") { (coucherMs: Double) -> Bool in
-      ActiviteCoucher.partagee.demarrer(coucher: Date(timeIntervalSince1970: coucherMs / 1000))
+    /// Moments NÉA sur l'écran verrouillé (coucher, séance, pause, pas) : voir ActiviteMoment.
+    Function("demarrerMoment") { (json: String) -> Bool in
+      ActiviteMoment.partagee.demarrer(json)
     }
 
-    Function("finCoucher") {
-      ActiviteCoucher.partagee.terminer()
+    Function("finMoment") { (type: String) in
+      ActiviteMoment.partagee.terminer(type)
     }
 
     /// `garder` : affiche l'état « terminé » quelques minutes ; sinon (abandon) retire tout de suite.

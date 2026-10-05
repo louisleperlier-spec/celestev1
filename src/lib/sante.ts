@@ -109,6 +109,23 @@ export async function nuitSante(now: Date = new Date()): Promise<NuitSante | nul
   }
 }
 
+/** Pas d'aujourd'hui (depuis minuit), ou null sans Apple Santé. */
+export async function pasDuJour(now: Date = new Date()): Promise<number | null> {
+  const m = module();
+  if (!m) return null;
+  try {
+    await autoriser(m);
+    const debut = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const r = await m.queryStatisticsCollectionForQuantity('HKQuantityTypeIdentifierStepCount', ['cumulativeSum'], debut, { day: 1 }, {
+      filter: { date: { startDate: debut, endDate: now } },
+      unit: 'count',
+    });
+    return Math.round(r.reduce((a, x) => a + (x.sumQuantity?.quantity ?? 0), 0));
+  } catch {
+    return null;
+  }
+}
+
 /** Calories actives et minutes d'exercice d'un jour (données des cercles d'activité d'Apple). */
 export type ActiviteJour = { kcal: number; min: number };
 

@@ -65,38 +65,71 @@ final class ActiviteSport {
   }
 }
 
-/// « L'heure de ralentir » : compte à rebours jusqu'à l'heure du coucher (même structure que targets/widgets/CoucherActivite.swift).
-struct NeaCoucherAttributes: ActivityAttributes {
+/// Moments NÉA sur l'écran verrouillé (maquettes de l'utilisateur) : « L'heure de ralentir », « Ta séance approche »,
+/// « Une pause pour toi », « Objectif atteint ! ». Même structure que targets/widgets/MomentActivite.swift.
+struct NeaMomentAttributes: ActivityAttributes {
   public struct ContentState: Codable, Hashable {
-    var coucher: Date
+    /// Compte à rebours jusqu'à cette date, ou grand texte fixe (`valeur`, ex. « 10 240 pas »).
+    var fin: Date?
+    var valeur: String?
+    var sous: String
+    /// Phrase affichée une fois le compte à rebours fini.
+    var finTexte: String?
   }
 
+  var type: String
   var titre: String
+  var symbole: String
+  var image: String
 }
 
-final class ActiviteCoucher {
-  static let partagee = ActiviteCoucher()
+private struct MomentJSON: Decodable {
+  let type: String
+  let titre: String
+  let sous: String
+  let symbole: String
+  let image: String
+  var finMs: Double?
+  var valeur: String?
+  var finTexte: String?
+  /// Pour un moment sans compte à rebours : minutes d'affichage avant de disparaître.
+  var visibleMin: Double?
+}
 
-  /// Une seule à la fois ; ne relance pas si celle de ce soir tourne déjà.
-  func demarrer(coucher: Date) -> Bool {
-    guard ActivityAuthorizationInfo().areActivitiesEnabled else { return false }
-    let deja = Activity<NeaCoucherAttributes>.activities
-    if deja.contains(where: { abs($0.content.state.coucher.timeIntervalSince(coucher)) < 60 && $0.activityState == .active }) { return true }
+final class ActiviteMoment {
+  static let partagee = ActiviteMoment()
+
+  /// Un moment à la fois ; ne relance pas le même (même type et même échéance) s'il tourne déjà.
+  func demarrer(_ json: String) -> Bool {
+    guard ActivityAuthorizationInfo().areActivitiesEnabled,
+          let d = json.data(using: .utf8),
+          let m = try? JSONDecoder().decode(MomentJSON.self, from: d) else { return false }
+    let fin = m.finMs.map { Date(timeIntervalSince1970: $0 / 1000) }
+    let deja = Activity<NeaMomentAttributes>.activities
+    if deja.contains(where: { $0.attributes.type == m.type && $0.activityState == .active && $0.content.state.fin == fin && $0.content.state.valeur == m.valeur }) {
+      return true
+    }
     for a in deja { Task { await a.end(nil, dismissalPolicy: .immediate) } }
+    let etat = NeaMomentAttributes.ContentState(fin: fin, valeur: m.valeur, sous: m.sous, finTexte: m.finTexte)
     do {
-      _ = try Activity.request(
-        attributes: NeaCoucherAttributes(titre: "L'heure de ralentir"),
-        content: ActivityContent(state: .init(coucher: coucher), staleDate: coucher.addingTimeInterval(15 * 60)),
+      let a = try Activity.request(
+        attributes: NeaMomentAttributes(type: m.type, titre: m.titre, symbole: m.symbole, image: m.image),
+        content: ActivityContent(state: etat, staleDate: fin?.addingTimeInterval(15 * 60)),
         pushType: nil
       )
+      if let v = m.visibleMin {
+        // Moment ponctuel (objectif atteint) : reste affiché puis disparaît seul.
+        Task { await a.end(ActivityContent(state: etat, staleDate: nil), dismissalPolicy: .after(Date().addingTimeInterval(v * 60))) }
+      }
       return true
     } catch {
       return false
     }
   }
 
-  func terminer() {
-    for a in Activity<NeaCoucherAttributes>.activities {
+  /// Termine les moments de ce type ("" = tous).
+  func terminer(_ type: String) {
+    for a in Activity<NeaMomentAttributes>.activities where type.isEmpty || a.attributes.type == type {
       Task { await a.end(nil, dismissalPolicy: .immediate) }
     }
   }

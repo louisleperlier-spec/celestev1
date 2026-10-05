@@ -92,6 +92,8 @@ export const DECO_IMAGES = {
   /** Montagne d'ascension (Progrès · Parcours) et relief illustratif d'un sentier (fiche), recadrés des maquettes de l'utilisateur. */
   ascension: require('@/assets/deco/ascension.webp'),
   relief: require('@/assets/deco/relief.webp'),
+  /** Axel en méditation (maquette « Une pause pour toi ») : écran de respiration. */
+  pause: require('@/assets/deco/axel_pause.webp'),
 } satisfies Record<string, ImageSourcePropType>;
 
 /** Vidéo d'accueil en boucle. */

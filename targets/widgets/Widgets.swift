@@ -504,6 +504,6 @@ struct NeaWidgets: WidgetBundle {
     ApercuWidget()
     HorlogeWidget()
     SportActiviteWidget()
-    CoucherActiviteWidget()
+    MomentActiviteWidget()
   }
 }

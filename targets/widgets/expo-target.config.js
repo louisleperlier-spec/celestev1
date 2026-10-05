@@ -17,6 +17,9 @@ module.exports = {
     kai_corps: './images/kai_corps.png',
     luna_corps: './images/luna_corps.png',
     axel_dodo: './images/axel_dodo.png',
+    axel_seance: './images/axel_seance.png',
+    axel_pause: './images/axel_pause.png',
+    axel_pas: './images/axel_pas.png',
   },
   frameworks: ['SwiftUI', 'WidgetKit', 'HealthKit', 'ActivityKit'],
   entitlements: {

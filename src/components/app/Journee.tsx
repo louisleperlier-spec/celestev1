@@ -86,7 +86,7 @@ export function Journee() {
   const ouvrir = (t: Tache) => {
     const st = useProfil.getState();
     if (t.id === 'eau') return st.ajouterVerre();
-    if (t.id === 'calme') return st.basculerCalme();
+    if (t.id === 'calme') return t.fait ? st.basculerCalme() : router.push('/respirer');
     if (t.id === 'recup') return router.push('/recuperation');
     if (t.id === 'nuit') return router.push({ pathname: '/sommeil', params: t.fait ? {} : { ajout: '1' } });
     if (t.id === 'bouger') return router.navigate('/velo');
