@@ -48,7 +48,8 @@ slideshow/
 - `style.position` : `top`, `center`, `bottom` ou une fraction de la hauteur (`0.3`).
 - `style` peut être défini pour tout le carrousel et surchargé slide par slide.
 - Utilise `\n` dans un texte pour forcer un retour à la ligne. Mets les emojis dans la légende plutôt que sur les slides : la police n'en contient pas.
-- Les fichiers qui commencent par `_` (comme `_exemple.json`) ne sont jamais publiés automatiquement.
+- `"fit": "contain"` sur une slide : l'image entière est gardée (sans recadrage) sur un fond flou, utile pour une affiche. Options : `"scale"` (0.9 = 90 % de la largeur) et `"valign"` (`top`, `center`, `bottom`).
+- Les fichiers qui commencent par `_` ne sont jamais publiés automatiquement.
 
 ## En local (optionnel)
 

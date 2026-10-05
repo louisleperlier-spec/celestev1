@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent
 IMAGES_DIR = ROOT / "images"
@@ -35,6 +35,19 @@ def cover(img, width, height):
     """Recadre au centre pour remplir exactement width x height."""
     img = ImageOps.exif_transpose(img).convert("RGB")
     return ImageOps.fit(img, (width, height), Image.LANCZOS, centering=(0.5, 0.5))
+
+
+def contain(img, width, height, scale=1.0, valign="center"):
+    """Place l'image entière (sans la rogner) sur un fond flou et assombri tiré d'elle-même."""
+    img = ImageOps.exif_transpose(img).convert("RGB")
+    background = cover(img, width, height).filter(ImageFilter.GaussianBlur(40))
+    background = ImageEnhance.Brightness(background).enhance(0.45)
+    fitted = ImageOps.contain(img, (int(width * scale), int(height * scale)), Image.LANCZOS)
+    x = (width - fitted.width) // 2
+    margin = height - fitted.height
+    y = {"top": int(margin * 0.08), "bottom": int(margin * 0.92)}.get(valign, margin // 2)
+    background.paste(fitted, (x, y))
+    return background
 
 
 def wrap(text, font, max_width, draw):
@@ -124,7 +137,10 @@ def render(carousel_path):
         if not src.exists():
             sys.exit(f"[{cid}] image introuvable : {src}")
         style = {**base_style, **slide.get("style", {})}
-        img = cover(Image.open(src), WIDTH, HEIGHT)
+        if slide.get("fit") == "contain":
+            img = contain(Image.open(src), WIDTH, HEIGHT, slide.get("scale", 1.0), slide.get("valign", "center"))
+        else:
+            img = cover(Image.open(src), WIDTH, HEIGHT)
         if slide.get("text"):
             draw_text(img, slide["text"], style)
         dest = out / f"{n:02d}.jpg"

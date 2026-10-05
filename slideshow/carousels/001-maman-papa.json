@@ -1,0 +1,52 @@
+{
+  "id": "001-maman-papa",
+  "title": "J'ai arrêté mes études pour créer mon app",
+  "caption": "Aujourd'hui ils sont mes premiers fans 🥹🧡 NÉA, ton coach sport qui s'adapte à ton énergie. Lien en bio · Image virtuelle",
+  "hashtags": [
+    "#sport",
+    "#musculation",
+    "#fitness",
+    "#appdesport",
+    "#startup",
+    "#storytime"
+  ],
+  "style": {
+    "variant": "outline",
+    "size": 64
+  },
+  "slides": [
+    {
+      "image": "ascenseur-parents.jpg",
+      "text": "« Maman, papa… j'arrête mes études pour créer mon application de sport »",
+      "style": {
+        "position": 0.15
+      }
+    },
+    {
+      "image": "cafe.jpg",
+      "text": "Toutes les applis me donnaient le même programme qu'à tout le monde",
+      "style": {
+        "position": 0.62
+      }
+    },
+    {
+      "image": "canape-laptop.jpg",
+      "text": "Alors j'ai passé mes soirées à créer la mienne",
+      "style": {
+        "position": 0.085
+      }
+    },
+    {
+      "image": "nea-affiche.jpg",
+      "fit": "contain",
+      "scale": 0.9,
+      "valign": "center",
+      "text": "Elle s'appelle NÉA",
+      "style": {
+        "variant": "box",
+        "position": 0.085,
+        "size": 60
+      }
+    }
+  ]
+}
