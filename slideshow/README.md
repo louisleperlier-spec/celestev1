@@ -19,8 +19,8 @@ slideshow/
 ├── carousels/    # un fichier .json par carrousel (textes, ordre des images, légende, date)
 ├── fonts/        # TikTok Sans (licence OFL)
 ├── render.py     # images + textes → out/<id>/01.jpg, 02.jpg…
-├── publish.py    # envoie out/<id>/ sur TikTok via Postiz
-└── out/          # slides rendues (non versionnées)
+├── publish.py    # (optionnel) envoie out/<id>/ sur TikTok via Postiz
+└── out/          # slides rendues + legende.txt (non versionnées)
 ```
 
 ## Un carrousel
