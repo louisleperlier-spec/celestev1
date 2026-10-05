@@ -247,9 +247,9 @@ export function StatsHaut({ periode, setPeriode, onPesee }: { periode: Periode; 
         <Mini icone="dumb" valeur={`${fmt(cur.reduce((a, l) => a + (l.vol || 0), 0))} kg`} nom="Volume" />
       </View>
       <Card style={styles.santeCarte}>
-        <LigneSante icone="moon" nom="Sommeil moyen" valeur={som ? `${hS} h ${String(Math.round((som - hS) * 60)).padStart(2, '0')}` : '—'} onPress={() => router.push('/sommeil')} />
+        <LigneSante icone="moon" nom="Sommeil moyen" valeur={som ? `${hS} h ${String(Math.round((som - hS) * 60)).padStart(2, '0')}` : '—'} onPress={() => router.push('/nuits')} />
         <LigneSante icone="pulse" nom="VFC nocturne" valeur={`${baseHrv(nights, hrvChecks)} ms`} onPress={() => router.push('/recuperation')} />
-        <LigneSante icone="heart" nom="FC moyenne" valeur={fc ? `${fc} bpm` : '—'} onPress={() => router.push('/sommeil')} />
+        <LigneSante icone="heart" nom="FC moyenne" valeur={fc ? `${fc} bpm` : '—'} onPress={() => router.push('/nuits')} />
       </Card>
       {santeDisponible() && <Text style={styles.source}>♡ Source : Apple Santé</Text>}
       <Card style={styles.poids}>

@@ -338,6 +338,21 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     **« Une pause pour toi »** (écran **`/respirer`** : 1 min, cercle inspire 4 s / expire 6 s, Axel en méditation `DECO_IMAGES.pause`, coche
     « Prends 2 min pour souffler » + 5 XP ; aussi bouton « Respirer 1 min » des notifications ; `axel_pause`), **« Objectif atteint ! »** (pas du jour
     d'Apple Santé `pasDuJour` ≥ 10 000, 1 fois par jour, affiché 1 h, `axel_pas`) ; images recadrées des maquettes dans `targets/widgets/images/`
+- [ ] **Partie Sommeil + réveil de l'iPhone (maquettes de l'utilisateur, oct. 2026, build 26)** : **codée, à valider sur iPhone**
+  - **`/sommeil`** (hub ; l'ancien écran devient **`/nuits`** « Mes nuits », ouvert par « Voir mes nuits », les stats de Progrès et `?ajout=1`) :
+    « Ce soir · Coucher à 23:15 · Objectif · 8 h » (coucher = réveil − objectif, Axel qui dort `DECO_IMAGES.dodo`), Réveil →, Rappel du coucher
+    30 min avant (bascule `nset.bed`), « Ta routine du soir » : Respiration 3 min (`/respirer?min=3`), Sons apaisants · Pluie douce (lecture),
+    Commencer ma nuit (`commencerNuit`, pluie 30 min) → `/nuit`, Journal du sommeil, Voir mes nuits
+  - **`/reveil`** « Ton réveil » : roue heures / minutes (pas de 5), Répéter (jours), Son (Réveil doux / Classique), Vibration, « 23:15 → 07:15 · 8 h au
+    lit prévues » (touche → objectif 6 à 10 h), Enregistrer (`reglerReveil` : `reveil`, `objectifSommeil`, et `nset.wake` / `nset.bedT`), Désactiver
+  - **vrai réveil** : `modules/nea-montre/ios/ReveilAlarme.swift` = **AlarmKit** (iOS 26+, lien faible, `NSAlarmKitUsageDescription`) : alarme
+    plein écran qui sonne même en silencieux, hebdomadaire, son `reveil_doux.wav` du bundle (plugin expo-notifications `sounds`) ;
+    `store/reveil.ts` (`programmerReveil`) sinon **repli** en notifications hebdomadaires `nea.reveil.<jour>` avec le même son
+  - **`/nuit`** mode nuit : Axel qui dort (`DECO_IMAGES.nuit`), l'heure en grand, « Réveil à 07:15 », Pluie douce (volume, pause, arrêt 15 / 30 / 45 /
+    60 min / sans, fondu 20 s), Modifier le réveil, Terminer la nuit (≥ 3 h → `/nuits?ajout=1`) ; `store/sons.ts` (expo-audio, boucle
+    `assets/sons/pluie.wav` générée, arrière-plan + mode silencieux, `enableBackgroundPlayback`)
+  - **`/notes-soir`** « Notes du soir » (Habitudes, Bien-être, Routine : 12 étiquettes `TAGS_SOIR` avec icônes `IconeNote`, note libre) →
+    `notesSoir` du profil ; **`/journal-sommeil`** (notes + score de la nuit suivante) ; `lib/reveil.ts` (fonctions pures)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

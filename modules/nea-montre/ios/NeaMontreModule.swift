@@ -66,6 +66,19 @@ public final class NeaMontreModule: Module {
       ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false))
     }
 
+    /// Réveil de l'iPhone (AlarmKit, iOS 26+) : voir ReveilAlarme.
+    Function("reveilDisponible") { () -> Bool in
+      ReveilAlarme.disponible
+    }
+
+    AsyncFunction("programmerReveil") { (heure: Int, minute: Int, jours: [Int], son: String) async -> String in
+      await ReveilAlarme.programmer(heure: heure, minute: minute, jours: jours, son: son)
+    }
+
+    Function("annulerReveil") {
+      ReveilAlarme.annuler()
+    }
+
     /// Moments NÉA sur l'écran verrouillé (coucher, séance, pause, pas) : voir ActiviteMoment.
     Function("demarrerMoment") { (json: String) -> Bool in
       ActiviteMoment.partagee.demarrer(json)

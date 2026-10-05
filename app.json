@@ -12,7 +12,8 @@
       "icon": "./assets/images/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSSupportsLiveActivities": true
+        "NSSupportsLiveActivities": true,
+        "NSAlarmKitUsageDescription": "NÉA programme ton réveil sur l'iPhone, même en mode silencieux, à l'heure choisie dans ta partie Sommeil."
       },
       "usesAppleSignIn": true,
       "appleTeamId": "K55493374H",
@@ -51,7 +52,14 @@
           "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours, calculer ta distance et conquérir des territoires, et pour centrer la carte des territoires."
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sons/reveil_doux.wav"
+          ]
+        }
+      ],
       [
         "@kingstinct/react-native-healthkit",
         {
@@ -61,7 +69,14 @@
         }
       ],
       "expo-apple-authentication",
-      "@bacons/apple-targets"
+      "@bacons/apple-targets",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "enableBackgroundPlayback": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

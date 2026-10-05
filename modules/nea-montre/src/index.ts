@@ -16,6 +16,11 @@ type Module = {
   demarrerActivite?(sport: string, symbole: string, debutMs: number): boolean;
   majActivite?(bpm: number, debutMs: number, pause: boolean, ecoule: number, kcal: number): void;
   finActivite?(bpm: number, ecoule: number, kcal: number, garder: boolean): void;
+  /** Réveil de l'iPhone (build 26+) : AlarmKit sur iOS 26, sinon repli en notifications. */
+  reveilDisponible?(): boolean;
+  /** Jours : 0 = lundi … 6 = dimanche ; son : fichier du bundle ('' = son par défaut). Retourne 'alarmkit', 'refuse' ou 'indisponible'. */
+  programmerReveil?(heure: number, minute: number, jours: number[], son: string): Promise<string>;
+  annulerReveil?(): void;
   /** Moments NÉA sur l'écran verrouillé (build 26+) : JSON { type, titre, sous, symbole, image, finMs?, valeur?, finTexte?, visibleMin? }. */
   demarrerMoment?(json: string): boolean;
   /** Termine les moments de ce type ('' = tous). */

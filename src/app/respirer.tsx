@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { cancelAnimation, Easing, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
@@ -12,7 +12,6 @@ import { momentPause, retirer } from '@/store/moments';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, ui } from '@/theme';
 
-const DUREE = 60;
 const INSPIRE = 4;
 const EXPIRE = 6;
 
@@ -21,6 +20,9 @@ const EXPIRE = 6;
  * compte à rebours aussi sur l'écran verrouillé (Activité en direct, build 26+) ; coche « Prends 2 min pour souffler ».
  */
 export default function Respirer() {
+  // ?min=3 depuis la routine du soir ; 1 min par défaut.
+  const { min } = useLocalSearchParams<{ min?: string }>();
+  const DUREE = Math.min(5, Math.max(1, Number(min) || 1)) * 60;
   const [debut, setDebut] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const s = useSharedValue(0.6);
@@ -38,7 +40,7 @@ export default function Respirer() {
       const st = useProfil.getState();
       if (!journeeDu(st.journee).calme) st.basculerCalme();
       st.addXp(5, 'Respiration');
-      toast('Bien joué : 1 minute rien que pour toi 🌿');
+      toast(`Bien joué : ${DUREE / 60} min rien que pour toi 🌿`);
       setTimeout(() => retirer('pause'), 4000);
     };
     const t = setInterval(() => {
@@ -47,7 +49,7 @@ export default function Respirer() {
       else setNow(n);
     }, 250);
     return () => clearInterval(t);
-  }, [debut, s]);
+  }, [debut, s, DUREE]);
 
   const commencer = () => {
     setDebut(Date.now());
@@ -95,7 +97,7 @@ export default function Respirer() {
         <Text style={styles.petit}>Inspire 4 s par le nez, expire 6 s par la bouche. Ton cœur ralentit, ta tête aussi.</Text>
       </View>
       <View style={styles.bas}>
-        {debut ? <Button label="Arrêter" variant="dark" icon="pause" onPress={arreter} /> : <Button label="Commencer 1 minute" icon="play" onPress={commencer} />}
+        {debut ? <Button label="Arrêter" variant="dark" icon="pause" onPress={arreter} /> : <Button label={`Commencer ${DUREE / 60} minute${DUREE > 60 ? 's' : ''}`} icon="play" onPress={commencer} />}
       </View>
     </SafeAreaView>
   );

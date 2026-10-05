@@ -1,207 +1,183 @@
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
+import { useShallow } from 'zustand/react/shallow';
 
-import { BarresVFC } from '@/components/app/BarresVFC';
-import { DetailHead } from '@/components/app/Detail';
-import { NotifSheet } from '@/components/app/NotifSheet';
-import { NuitSheet } from '@/components/app/NuitSheet';
-import { Row } from '@/components/app/Rows';
-import { SectionHead } from '@/components/app/Section';
-import { Button, Card, Icon, Text } from '@/components/ui';
-import { dec } from '@/lib/charges';
-import { JOURS } from '@/lib/semaine';
-import { baseHrv, conseilNuit, lastNight, recovStatus, sleepScore, type Nuit } from '@/lib/sommeil';
+import { Appui, Button, Card, Icon, Text, type IconName } from '@/components/ui';
+import { DECO_IMAGES } from '@/data';
+import { coucherPour } from '@/lib/reveil';
+import { MIN_RALENTIR } from '@/store/moments';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, ui } from '@/theme';
+import { PLUIE, useSons } from '@/store/sons';
+import { alpha, colors, fonts, ui } from '@/theme';
 
-/** Sommeil : score de la nuit, 7 dernières nuits, VFC nocturne, mesures de récupération (vSleep du prototype). */
-export default function Sommeil() {
-  const p = useProfil();
-  // ?ajout=1 : ouverte depuis la notification « Comment as-tu dormi ? » (sleepadd)
-  const { ajout } = useLocalSearchParams<{ ajout?: string }>();
-  const [feuille, setFeuille] = useState(ajout === '1');
-  const [reglages, setReglages] = useState(false);
-  const [now, setNow] = useState(Date.now);
-  useFocusEffect(useCallback(() => setNow(Date.now()), []));
-
-  const ns = p.nights.slice(-7);
-  const base = baseHrv(p.nights, p.hrvChecks);
-  const ln = lastNight(p.nights, new Date(now));
-  const sc = sleepScore(ln, base);
-  const avgH = ns.length ? ns.reduce((a, n) => a + n.h, 0) / ns.length : 0;
-
-  return (
-    <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
-      <DetailHead
-        titre="Sommeil"
-        droite={
-          <Pressable accessibilityRole="button" accessibilityLabel="Réglages" onPress={() => setReglages(true)} style={styles.iconbtn}>
-            <Icon name="bell" />
-          </Pressable>
-        }
-      />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* .sleephead */}
-        <Card style={styles.head}>
-          <Anneau score={sc} />
-          <View style={styles.flex}>
-            <Text weight="bold" style={styles.h3}>
-              {ln ? 'Nuit dernière' : 'Pas encore de nuit notée'}
-            </Text>
-            <Text style={styles.p}>
-              {ln
-                ? `${dec(ln.h)} h • qualité ${ln.q}/5${ln.hrv ? ` • VFC ${ln.hrv} ms` : ''}${ln.rhr ? ` • FC repos ${ln.rhr}` : ''}`
-                : 'Ajoute ta nuit pour obtenir ton score.'}
-            </Text>
-            {sc != null && <Text style={styles.conseil}>{conseilNuit(sc)}</Text>}
-          </View>
-        </Card>
-
-        <Card style={styles.chart}>
-          <View style={styles.h4}>
-            <Text weight="bold" style={styles.h4Txt}>
-              7 dernières nuits
-            </Text>
-            <Text style={styles.h4Small}>moy. {dec(avgH.toFixed(1))} h</Text>
-          </View>
-          <BarresNuits ns={ns} />
-        </Card>
-
-        <Card style={styles.chart}>
-          <View style={styles.h4}>
-            <Text weight="bold" style={styles.h4Txt}>
-              VFC nocturne
-            </Text>
-            <Text style={styles.h4Small}>moy. {base} ms</Text>
-          </View>
-          <BarresVFC hl={ns.filter((n) => n.hrv).map((n) => ({ hrv: n.hrv!, type: 'nuit' as const }))} />
-        </Card>
-
-        <SectionHead title="Mesures de récupération" action="Mesurer" onAction={() => router.push('/recuperation')} />
-        <View style={styles.list}>
-          {p.hrvChecks
-            .slice(-5)
-            .reverse()
-            .map((c) => {
-              const s = recovStatus(c.hrv, base);
-              const quand = new Date(c.d).toLocaleString('fr-CA', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
-              return (
-                <Row key={c.d}>
-                  <View style={[styles.zone, { backgroundColor: s[1] }]} />
-                  <View style={styles.flex}>
-                    <Text weight="semibold" style={styles.h5}>
-                      {c.hrv} ms • {s[0]}
-                    </Text>
-                    <Text style={styles.p5}>
-                      {c.kind === 'post' ? 'Après entraînement' : 'Au réveil'} • {quand} • FC {c.bpm}
-                    </Text>
-                  </View>
-                </Row>
-              );
-            })}
-          {!p.hrvChecks.length && <Text style={styles.noteVide}>Aucune mesure : lance-en une après ta prochaine séance.</Text>}
-        </View>
-        <Text style={styles.note}>Avec Apple Santé, ta nuit, ta VFC nocturne et ta FC au repos sont importées automatiquement depuis ta montre.</Text>
-        <View style={styles.bas} />
-      </ScrollView>
-      <View style={styles.foot}>
-        <Button label="Ajouter ma nuit" icon="plus" onPress={() => setFeuille(true)} />
+/** Une ligne de réglage : icône, titre (et sous-titre), valeur ou contrôle à droite. */
+function Ligne({ icone, titre, sous, droite, onPress }: { icone: IconName; titre: string; sous?: string; droite?: React.ReactNode; onPress?: () => void }) {
+  const contenu = (
+    <Card style={styles.ligne}>
+      <Icon name={icone} size={22} color={colors.text} />
+      <View style={styles.flex}>
+        <Text weight="medium" style={styles.ligneTitre}>
+          {titre}
+        </Text>
+        {!!sous && <Text style={styles.petit}>{sous}</Text>}
       </View>
-      <NuitSheet visible={feuille} onClose={() => setFeuille(false)} />
-      <NotifSheet visible={reglages} onClose={() => setReglages(false)} />
-    </SafeAreaView>
+      {droite}
+    </Card>
+  );
+  return onPress ? (
+    <Appui accessibilityRole="button" accessibilityLabel={titre} onPress={onPress}>
+      {contenu}
+    </Appui>
+  ) : (
+    contenu
   );
 }
 
-/** Anneau du score (.sring : dégradé conique #8f9bff sur #26262b, 78 px). */
-function Anneau({ score }: { score: number | null }) {
-  const R = 35.5;
-  const C = 2 * Math.PI * R;
+/**
+ * Partie Sommeil (maquette de l'utilisateur) : coucher de ce soir d'après le réveil et l'objectif, réveil de l'iPhone, rappel du coucher,
+ * routine du soir (respiration, pluie douce), « Commencer ma nuit », journal du sommeil et mes nuits.
+ */
+export default function Sommeil() {
+  const p = useProfil(useShallow((s) => ({ reveil: s.reveil, objectif: s.objectifSommeil, nset: s.nset, nuitDebut: s.nuitDebut })));
+  const { joue, jouer, pause } = useSons(useShallow((s) => ({ joue: s.joue, jouer: s.jouer, pause: s.pause })));
+  const coucher = coucherPour(p.reveil.h, p.objectif);
+
+  const commencer = () => {
+    if (!p.nuitDebut) useProfil.getState().commencerNuit();
+    if (!useSons.getState().joue) jouer(30);
+    router.push('/nuit');
+  };
+
   return (
-    <View style={styles.ring}>
-      <Svg width={78} height={78} viewBox="0 0 78 78" style={StyleSheet.absoluteFill}>
-        <Circle cx={39} cy={39} r={R} stroke={colors.border} strokeWidth={7} fill="none" />
-        <Circle
-          cx={39}
-          cy={39}
-          r={R}
-          stroke={ui.sommeil}
-          strokeWidth={7}
-          fill="none"
-          strokeDasharray={C}
-          strokeDashoffset={C * (1 - (score ?? 0) / 100)}
-          transform="rotate(-90 39 39)"
+    <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <Appui accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (router.canGoBack() ? router.back() : router.navigate('/accueil'))} style={styles.retour}>
+          <Icon name="left" size={18} color={colors.textSecondary} />
+          <Text style={styles.retourTxt}>Accueil</Text>
+        </Appui>
+        <Text weight="bold" style={styles.h1} accessibilityRole="header">
+          Sommeil
+        </Text>
+        <Text style={styles.sous}>Prépare une nuit à ton rythme.</Text>
+
+        <Card style={styles.soir}>
+          <Image source={DECO_IMAGES.dodo} style={styles.soirImg} contentFit="cover" />
+          <LinearGradient colors={[colors.surface, alpha(colors.surface, 0.85), alpha(colors.surface, 0)]} locations={[0.3, 0.5, 0.8]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} pointerEvents="none" />
+          <View style={styles.soirTxt}>
+            <Text style={styles.petit}>Ce soir</Text>
+            <Text weight="bold" style={styles.soirTitre}>
+              Coucher à
+            </Text>
+            <Text weight="bold" style={styles.soirHeure}>
+              {coucher.replace(':', ':')}
+            </Text>
+            <Text style={styles.petit}>Objectif · {String(p.objectif).replace('.', ',')} h</Text>
+          </View>
+        </Card>
+
+        <Ligne
+          icone="clock"
+          titre="Réveil"
+          onPress={() => router.push('/reveil')}
+          droite={
+            <View style={styles.droite}>
+              <Text weight="medium" style={styles.valeur}>
+                {p.reveil.actif ? p.reveil.h : 'Désactivé'}
+              </Text>
+              <Icon name="right" size={16} color={colors.textSecondary} />
+            </View>
+          }
         />
-      </Svg>
-      <Text weight="extrabold" style={styles.ringB}>
-        {score ?? '--'}
-      </Text>
-      <Text style={styles.ringSmall}>/100</Text>
-    </View>
-  );
-}
+        <Ligne
+          icone="moon"
+          titre="Rappel du coucher"
+          droite={
+            <View style={styles.droite}>
+              <Text style={styles.petit}>{MIN_RALENTIR} min avant</Text>
+              <Switch
+                value={p.nset.bed}
+                onValueChange={(v) => useProfil.getState().reglerNotifs({ ...p.nset, bed: v })}
+                trackColor={{ true: colors.pink, false: ui.iconBg }}
+                thumbColor={colors.text}
+                accessibilityLabel="Rappel du coucher"
+              />
+            </View>
+          }
+        />
 
-/** Durée des 7 dernières nuits, repère à 8 h (svg de vSleep, 320 × 110). */
-function BarresNuits({ ns }: { ns: readonly Nuit[] }) {
-  const { width } = useWindowDimensions();
-  const W = 320;
-  const H = 110;
-  const bw = W / 7;
-  const mx = 10;
-  const w = width - 40 - 28;
-  const y8 = H - (8 / mx) * H;
-  return (
-    <Svg width={w} height={(w * (H + 16)) / W} viewBox={`0 0 ${W} ${H + 16}`} style={styles.svg}>
-      <Defs>
-        <LinearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={ui.sommeil} />
-          <Stop offset="1" stopColor={ui.sommeilFonce} />
-        </LinearGradient>
-      </Defs>
-      <Line x1={0} x2={W} y1={y8} y2={y8} stroke={ui.sommeil} strokeDasharray="4 4" opacity={0.6} />
-      <SvgText x={W - 2} y={y8 - 4} textAnchor="end" fill={ui.sommeil} fontSize={9} fontWeight={fonts.regular.fontWeight}>
-        8 h
-      </SvgText>
-      {ns.map((n, i) => {
-        const h = (n.h / mx) * H;
-        return (
-          <G key={n.d}>
-            <Rect x={i * bw + bw * 0.22} y={H - h} width={bw * 0.56} height={h} rx={4} fill="url(#sg)" />
-            <SvgText x={i * bw + bw / 2} y={H + 12} textAnchor="middle" fill={ui.axe} fontSize={9} fontWeight={fonts.regular.fontWeight}>
-              {JOURS[(new Date(n.d + 'T12:00').getDay() + 6) % 7]}
-            </SvgText>
-          </G>
-        );
-      })}
-    </Svg>
+        <Text weight="bold" style={styles.h2}>
+          Ta routine du soir
+        </Text>
+        <Ligne icone="wave" titre="Respiration" sous="3 min" onPress={() => router.push({ pathname: '/respirer', params: { min: '3' } })} droite={<Icon name="right" size={16} color={colors.textSecondary} />} />
+        <Ligne
+          icone="cloud"
+          titre="Sons apaisants"
+          sous={PLUIE}
+          droite={
+            <Appui accessibilityRole="button" accessibilityLabel={joue ? 'Pause' : 'Écouter la pluie douce'} onPress={() => (joue ? pause() : jouer(30))} style={styles.lecture}>
+              <Icon name={joue ? 'pause' : 'play'} size={16} color={colors.text} />
+            </Appui>
+          }
+        />
+
+        <Button label={p.nuitDebut ? 'Reprendre ma nuit' : 'Commencer ma nuit'} onPress={commencer} style={styles.mt} />
+        <View style={styles.liens}>
+          <Appui accessibilityRole="button" onPress={() => router.push('/journal-sommeil')} style={styles.lien}>
+            <Icon name="book" size={18} color={colors.text} />
+            <Text weight="medium" style={styles.lienTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+              Journal du sommeil
+            </Text>
+            <Icon name="right" size={14} color={colors.textSecondary} />
+          </Appui>
+          <Appui accessibilityRole="button" onPress={() => router.push('/nuits')} style={styles.lien}>
+            <Icon name="chart" size={18} color={colors.text} />
+            <Text weight="medium" style={styles.lienTxt} numberOfLines={1}>
+              Voir mes nuits
+            </Text>
+            <Icon name="right" size={14} color={colors.textSecondary} />
+          </Appui>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { paddingHorizontal: 20, paddingBottom: 40, gap: 10 },
   flex: { flex: 1, minWidth: 0 },
-  iconbtn: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  head: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10, marginHorizontal: 20, padding: 16 },
-  h3: { fontSize: 16, lineHeight: 20 },
-  p: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 3 },
-  conseil: { fontSize: 12, lineHeight: 16, color: ui.sommeil, marginTop: 4 },
-  ring: { width: 78, height: 78, alignItems: 'center', justifyContent: 'center' },
-  ringB: { fontSize: 22, lineHeight: 26 },
-  ringSmall: { fontSize: 10, lineHeight: 12, color: colors.textSecondary },
-  chart: { marginTop: 10, marginHorizontal: 20, paddingTop: 14, paddingHorizontal: 14, paddingBottom: 8 },
-  h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  h4Txt: { fontSize: 14, lineHeight: 18 },
-  h4Small: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
-  svg: { marginTop: 10 },
-  list: { paddingHorizontal: 20 },
-  zone: { width: 10, height: 10, borderRadius: 5 },
-  h5: { fontSize: 14.5, lineHeight: 19 },
-  p5: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
-  noteVide: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary },
-  note: { fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, paddingTop: 8, paddingHorizontal: 20 },
-  bas: { height: 10 },
-  foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
+  retour: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingVertical: 6 },
+  retourTxt: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
+  h1: { ...fonts.bold, fontSize: 32, lineHeight: 38 },
+  sous: { fontSize: 15, lineHeight: 20, color: colors.textSecondary, marginBottom: 6 },
+  h2: { ...fonts.bold, fontSize: 20, lineHeight: 25, marginTop: 10 },
+  petit: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary },
+  soir: { padding: 0, overflow: 'hidden', minHeight: 158 },
+  soirImg: { position: 'absolute', right: 0, top: 0, bottom: 0, width: '62%' },
+  soirTxt: { padding: 18, gap: 2 },
+  soirTitre: { fontSize: 20, lineHeight: 25 },
+  soirHeure: { ...fonts.bold, fontSize: 44, lineHeight: 52, color: colors.pink, letterSpacing: -0.5 },
+  ligne: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14, paddingHorizontal: 16 },
+  ligneTitre: { fontSize: 16, lineHeight: 21 },
+  droite: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  valeur: { fontSize: 15, lineHeight: 20 },
+  lecture: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg },
+  mt: { marginTop: 8 },
+  liens: { flexDirection: 'row', gap: 10 },
+  lien: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    height: 48,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  lienTxt: { flex: 1, fontSize: 13.5, lineHeight: 18 },
 });

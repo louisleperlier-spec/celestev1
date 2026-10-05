@@ -21,6 +21,7 @@ import { actifsEquipe } from '@/lib/ligue';
 import type { MessageChat, QuotaChat } from '@/lib/coach';
 import { basculerRenouvellement, brancherPremium, nouvelAbonnement, type OffreId, type Premium } from '@/lib/premium';
 import { journeeDu, VERRES_EAU, type Journee } from '@/lib/journee';
+import { coucherPour, OBJECTIF_SOMMEIL, REVEIL_DEFAUT, type NoteSoir, type Reveil } from '@/lib/reveil';
 import { ALERTES_DEFAUT, notifsDues, rappelPost, REGLAGES_DEFAUT, type AlertesSante, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
 import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
@@ -85,6 +86,11 @@ type Etat = Profil & {
   jeu: EtatJeu;
   /** « Ta journée » : verres d'eau et pause respiration du jour (cochés à la main). */
   journee: Journee | null;
+  /** Partie Sommeil (maquettes, oct. 2026) : réveil de l'iPhone, objectif de sommeil (h), notes du soir, début de la nuit en cours. */
+  reveil: Reveil;
+  objectifSommeil: number;
+  notesSoir: NoteSoir[];
+  nuitDebut: number | null;
   /** Offre de sortie : fin du compte à rebours de 10 min, et refusée (proposée une seule fois). */
   exitUntil: number;
   exitDeclined: boolean;
@@ -118,6 +124,11 @@ type Actions = {
   ajouterVerre: () => void;
   basculerCalme: () => void;
   marquerJourneeFetee: () => void;
+  /** Réveil (heure, jours, son, vibration) : met aussi à jour le réveil et le coucher des notifications (coucher = réveil − objectif). */
+  reglerReveil: (r: Reveil, objectif?: number) => void;
+  ajouterNoteSoir: (n: NoteSoir) => void;
+  commencerNuit: () => void;
+  terminerNuit: () => void;
   /** Enregistre une nuit (+10 XP « Sommeil »). */
   noterNuit: (n: Nuit) => void;
   /** Enregistre une mesure de récupération (+10 XP « Mesure VFC »). */
@@ -179,6 +190,10 @@ const defauts = (): Etat => ({
   premium: null,
   jeu: JEU_DEFAUT,
   journee: null,
+  reveil: REVEIL_DEFAUT,
+  objectifSommeil: OBJECTIF_SOMMEIL,
+  notesSoir: [],
+  nuitDebut: null,
   exitUntil: 0,
   exitDeclined: false,
   obCoachSet: false,
@@ -251,6 +266,11 @@ export const useProfil = create<Etat & Actions>()(
         set({ journee: { ...j, calme: !j.calme } });
       },
       marquerJourneeFetee: () => set({ journee: { ...journeeDu(get().journee), fete: true } }),
+      reglerReveil: (r, objectif = get().objectifSommeil) =>
+        set({ reveil: r, objectifSommeil: objectif, nset: { ...get().nset, wake: r.h, bedT: coucherPour(r.h, objectif) } }),
+      ajouterNoteSoir: (n) => set({ notesSoir: [n, ...get().notesSoir.filter((x) => x.d.slice(0, 10) !== n.d.slice(0, 10))].slice(0, 120) }),
+      commencerNuit: () => set({ nuitDebut: Date.now() }),
+      terminerNuit: () => set({ nuitDebut: null }),
       noterNuit: (n) => {
         set({ nights: ajouterNuit(get().nights, n) });
         get().addXp(10, 'Sommeil');
@@ -346,6 +366,10 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   premium: s.premium,
   jeu: s.jeu,
   journee: s.journee,
+  reveil: s.reveil,
+  objectifSommeil: s.objectifSommeil,
+  notesSoir: s.notesSoir,
+  nuitDebut: s.nuitDebut,
   exitUntil: s.exitUntil,
   exitDeclined: s.exitDeclined,
 });

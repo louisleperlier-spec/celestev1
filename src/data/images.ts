@@ -94,6 +94,9 @@ export const DECO_IMAGES = {
   relief: require('@/assets/deco/relief.webp'),
   /** Axel en méditation (maquette « Une pause pour toi ») : écran de respiration. */
   pause: require('@/assets/deco/axel_pause.webp'),
+  /** Axel qui dort (maquettes Sommeil) : carte « Ce soir » et mode nuit. */
+  dodo: require('@/assets/deco/axel_dodo.webp'),
+  nuit: require('@/assets/deco/axel_nuit.webp'),
 } satisfies Record<string, ImageSourcePropType>;
 
 /** Vidéo d'accueil en boucle. */
