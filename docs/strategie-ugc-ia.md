@@ -17,15 +17,15 @@ Objectif : faire connaître l'app via TikTok avec un persona IA et du contenu UG
 | Étape | Outil |
 |---|---|
 | Brief, matrice d'angles, scripts | Claude |
-| Images de départ du persona (même visage partout) | Gemini (Nano Banana) avec images de référence |
+| Images de départ du persona (même visage partout) | **Astra** (choix de Louis). À confirmer : s'il s'agit d'Astria (astria.ai), on entraîne un modèle sur le visage du persona et on l'appelle par API. Gemini (Nano Banana) en solution de secours |
 | Vidéo qui parle (voix et lèvres synchronisées) | Veo 3 (même clé Google) ou Sora 2 |
-| Carrousels photo (moins chers) | Images Gemini + texte posé par du code |
+| Carrousels photo (moins chers) | Images Astra + texte posé par du code |
 | Sous-titres au mot près | Whisper (timestamps par mot) → `.ass` → ffmpeg |
 | Montage, 9:16, musique, grain | ffmpeg (scripts) |
 | Publication programmée | Postiz (API publique) |
 | Lancement quotidien | GitHub Action |
 
-Clés nécessaires : Google AI Studio (Gemini et Veo), OpenAI si Sora, Postiz (avec le compte TikTok connecté), Anthropic.
+Clés nécessaires : Astra (images), Google AI Studio (Veo), OpenAI si Sora, Postiz (avec le compte TikTok connecté), Anthropic.
 
 ## 3. Le pipeline
 
