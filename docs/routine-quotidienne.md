@@ -1,7 +1,8 @@
 # Routine quotidienne : contenu TikTok NÉA
 
-Chaque jour à 8h58 (heure du Québec), une session Claude lance automatiquement les instructions ci-dessous.
-Le résultat est écrit dans `docs/contenu/AAAA-MM-JJ.md` et poussé sur la branche `claude/strategie-ugc-ia`.
+Chaque soir à 18h58 (heure du Québec), une session Claude lance automatiquement les instructions ci-dessous et prépare le contenu **du lendemain**.
+Le résultat est écrit dans `docs/contenu/AAAA-MM-JJ.md` (date du lendemain) et poussé sur la branche `claude/strategie-ugc-ia`.
+Le soir même, Louis génère les images dans GPT Astra et programme les posts dans TikTok pour le lendemain à 12h30.
 
 Pour changer le contenu de la routine : modifie ce fichier et demande à Claude de mettre la routine à jour.
 
@@ -47,9 +48,9 @@ Fiche persona 2, à coller mot pour mot dans chaque prompt d'image :
    - la légende avec « Lien en bio · Image virtuelle » et 5 ou 6 hashtags.
 4. **Compte 2** : même chose, avec un carrousel de conseils de 5 ou 6 slides et la fiche persona 2. Les conseils doivent être justes et prudents : pas de promesse de perte de poids, pas de conseil médical.
 5. **Bonus** : 1 idée de mème avec la mascotte NÉA (texte du mème et scène), et 1 idée qui reprend une des tendances repérées à l'étape 2.
-6. **Rappel du jour** : publier à 12h30 heure du Québec, activer le label « Contenu généré par IA », ajouter un son tendance.
-7. Écris tout dans `docs/contenu/AAAA-MM-JJ.md` (date du jour, heure du Québec), puis commit et push sur `claude/strategie-ugc-ia`.
-8. Termine par un résumé de 5 lignes maximum : les 2 accroches du jour et la tendance la plus intéressante.
+6. **Rappel de programmation** : programmer ce soir les 2 posts pour demain 12h30 heure du Québec, activer le label « Contenu généré par IA », ajouter un son tendance.
+7. Écris tout dans `docs/contenu/AAAA-MM-JJ.md`, avec la **date du lendemain** (heure du Québec), puis commit et push sur `claude/strategie-ugc-ia`.
+8. Termine par un résumé de 5 lignes maximum : les 2 accroches de demain et la tendance la plus intéressante.
 
 ## Règles
 
