@@ -2,6 +2,8 @@
 
 Objectif : faire connaître l'app via TikTok avec un persona IA et du contenu UGC généré et publié automatiquement.
 
+> **Décision du 5 oct. :** pas de vidéo pour l'instant. On fait des **carrousels photo** : images de Louis (GPT Astra), textes écrits par Claude, publication sur TikTok via Postiz. Le système est dans `slideshow/` (voir `slideshow/README.md`).
+
 ## 1. La référence : @irsaslaw (« Irsa », app Fibi)
 
 - Persona **100 % IA** (images Gemini, vidéos Sora) qui promeut une app de muscu pour femmes, Fibi.

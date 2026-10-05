@@ -1,0 +1,60 @@
+# Publie sur TikTok (via Postiz) chaque carrousel ajouté ou modifié dans slideshow/carousels/.
+# Les fichiers qui commencent par « _ » (exemples, brouillons) sont ignorés.
+# Secrets à définir dans le repo : POSTIZ_API_KEY (obligatoire), POSTIZ_TIKTOK_ID et POSTIZ_URL (optionnels).
+name: Carrousels TikTok
+
+on:
+  push:
+    branches: [main]
+    paths: ["slideshow/carousels/**"]
+  workflow_dispatch:
+    inputs:
+      carousels:
+        description: "Fichiers à publier (séparés par des espaces, chemins depuis slideshow/)"
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: slideshow
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: Carrousels à publier
+        id: files
+        env:
+          INPUT_CAROUSELS: ${{ inputs.carousels }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ -n "$INPUT_CAROUSELS" ]; then
+            files="$INPUT_CAROUSELS"
+          else
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              BEFORE="$GITHUB_SHA~1"
+            fi
+            files=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- carousels/ \
+              | sed 's|^slideshow/||' | grep -E '^carousels/[^_][^/]*\.json$' || true)
+          fi
+          echo "files=$(echo $files)" >> "$GITHUB_OUTPUT"
+          echo "À publier : ${files:-aucun}"
+
+      - name: Rendu et publication
+        if: steps.files.outputs.files != ''
+        env:
+          POSTIZ_API_KEY: ${{ secrets.POSTIZ_API_KEY }}
+          POSTIZ_TIKTOK_ID: ${{ secrets.POSTIZ_TIKTOK_ID }}
+          POSTIZ_URL: ${{ secrets.POSTIZ_URL || 'https://api.postiz.com/public/v1' }}
+          FILES: ${{ steps.files.outputs.files }}
+        run: |
+          python3 render.py $FILES
+          python3 publish.py $FILES

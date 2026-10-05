@@ -1,0 +1,14 @@
+{
+  "id": "exemple",
+  "title": "J'ai tout misé sur mon app",
+  "caption": "Je regrette rien 🫶 L'app c'est Celeste, dispo sur l'App Store · Image virtuelle",
+  "hashtags": ["#startup", "#fondatrice", "#appli", "#entrepreneur", "#storytime"],
+  "style": { "variant": "outline", "position": "center", "size": 64 },
+  "slides": [
+    { "image": "demo-1.jpg", "text": "« Maman papa, j'arrête mes études pour créer mon application »" },
+    { "image": "demo-2.jpg", "text": "Ils m'ont regardée comme si j'étais folle" },
+    { "image": "demo-3.jpg", "text": "6 mois de nuits blanches, seule dans ma chambre" },
+    { "image": "demo-4.jpg", "text": "Aujourd'hui elle est sur l'App Store", "style": { "position": "bottom" } },
+    { "image": "demo-5.jpg", "text": "Elle s'appelle Celeste", "style": { "variant": "box" } }
+  ]
+}
