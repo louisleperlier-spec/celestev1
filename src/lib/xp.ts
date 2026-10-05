@@ -10,7 +10,10 @@ export type Log = {
   /** Début (ISO) et source : activités de l'Apple Watch (récap avec la FC d'Apple Santé). */
   debut?: string;
   src?: 'montre';
-  type: 'muscu' | 'velo' | 'course' | 'rando';
+  type: 'muscu' | 'velo' | 'course' | 'rando' | 'sport';
+  /** Autre sport noté à la main (`lib/sports.ts`) ; musculation libre (séries notées à la main). */
+  sport?: string;
+  libre?: boolean;
   title: string;
   min: number;
   cal: number;

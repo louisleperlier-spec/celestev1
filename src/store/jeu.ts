@@ -57,7 +57,7 @@ export function ouvrirPaquet(id: string): { paquet: Paquet; tirages: Tirage[]; x
   return { paquet, tirages: r.tirages, xp: r.xp, turbos: r.turbos };
 }
 
-const libelle = (l: Log) => (l.type === 'velo' ? 'Sortie vélo' : l.type === 'course' ? 'Course' : l.type === 'rando' ? 'Randonnée' : 'Séance terminée');
+const libelle = (l: Log) => (l.type === 'velo' ? 'Sortie vélo' : l.type === 'course' ? 'Course' : l.type === 'rando' ? 'Randonnée' : l.type === 'sport' ? l.title : 'Séance terminée');
 
 /** Une activité vient d'être ajoutée au journal. */
 function apresActivite(l: Log, avant: readonly Log[]) {

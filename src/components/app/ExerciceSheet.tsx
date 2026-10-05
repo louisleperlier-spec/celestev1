@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
@@ -68,6 +69,17 @@ function Contenu({ id, it: it0, onClose, onDemo }: { id: ExerciceId; it?: PlanIt
       </View>
       <Text style={styles.sub}>{e.muscles}</Text>
       <Button label="Voir la démo guidée" variant="dark" icon="play" onPress={onDemo} style={styles.demo} />
+      {/* Musculation libre : noter des séries de cet exercice (ex. tractions) sans passer par une séance guidée. */}
+      <Button
+        label="Noter mes séries"
+        variant="dark"
+        icon="edit"
+        onPress={() => {
+          onClose();
+          router.push({ pathname: '/ajouter', params: { exo: id } });
+        }}
+        style={styles.noter}
+      />
 
       <Text weight="bold" style={styles.h4}>
         Comment faire le mouvement
@@ -159,6 +171,7 @@ const styles = StyleSheet.create({
   },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   demo: { marginTop: 14 },
+  noter: { marginTop: 10 },
   h4: { fontSize: 14, lineHeight: 18, marginTop: 18, marginBottom: 8 },
   step: { flexDirection: 'row', gap: 10, marginBottom: 9 },
   stepN: { width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,107,26,0.18)', alignItems: 'center', justifyContent: 'center', marginTop: 1 },

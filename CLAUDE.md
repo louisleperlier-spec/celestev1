@@ -313,6 +313,13 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     l'iPhone » (`BlocMaRando`, `MaRandoView`) ; la montre renvoie `sport: 'rando'` + `dplus`, `altMax`, `sentier` → `recevoirRando`
     (journal, XP, sommet, carte Explorateur `gagnerExplorateur`, territoires) ; récap `/activite` avec D+
   - reste : liste validée, photo au sommet
+- [ ] **Ajouter une activité (hors cahier des charges, demandé par l'utilisateur, oct. 2026)** : **publié en EAS Update, à valider sur iPhone**
+  - écran `/ajouter` (bouton « + » de l'onglet Programme, `EnTete`) : **musculation libre** (exercices de la bibliothèque, séries reps × kg,
+    0 kg au poids du corps ; aussi « Noter mes séries » de la fiche exercice → `/ajouter?exo=<id>`, ex. tractions), **47 autres sports**
+    (`lib/sports.ts` : raquettes, équipe, combat, eau, glisse, forme, plein air ; MET du Compendium, intensité ×0,75 / 1 / 1,25, `hk` =
+    HKWorkoutActivityType), lien vers les séances guidées ; durée, aujourd'hui / hier
+  - `store/activites.ts` : journal (`type: 'sport'` + `sport`, ou `muscu` + `libre`), XP (sport 20 + min/3, libre 30 + 2/série, 70 max),
+    quête « séance » (aujourd'hui), carte récompense (store/jeu), Apple Santé (`enregistrerEntrainement` + `hk`), cercles et série
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

@@ -14,7 +14,7 @@ export const ENTRAINEMENT: Rubrique[] = [
   { label: 'Rando', href: '/rando' },
 ];
 
-/** En-tête d'onglet : grand titre (et sous-titre), bouton « + » (séances prêtes), puis le contrôle segmenté des rubriques. */
+/** En-tête d'onglet : grand titre (et sous-titre), bouton « + » (ajouter une activité : musculation libre, autres sports, séances prêtes), puis le contrôle segmenté des rubriques. */
 export function EnTete({ titre, sous, rubriques, actif }: { titre: string; sous?: string; rubriques: readonly Rubrique[]; actif: string }) {
   return (
     <View style={styles.wrap}>
@@ -25,7 +25,7 @@ export function EnTete({ titre, sous, rubriques, actif }: { titre: string; sous?
           </Text>
           {!!sous && <Text style={styles.sous}>{sous}</Text>}
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Ajouter une séance" onPress={() => router.push('/seances')} style={styles.plus}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Ajouter une activité" onPress={() => router.push('/ajouter')} style={styles.plus}>
           <Icon name="plus" size={20} color={colors.text} />
         </Pressable>
       </View>
