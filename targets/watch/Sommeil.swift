@@ -308,8 +308,8 @@ struct NuitResumeView: View {
           Text("de sommeil").font(.system(size: 15)).foregroundColor(Nea.texte2)
           Phases(n: nuit)
           HStack(spacing: 6) {
-            Tuile(icone: "waveform.path.ecg", titre: "VFC", valeur: hrv.map { "\(Int($0.rounded()))" } ?? "—", unite: "ms")
-            Tuile(icone: "heart", titre: "FC au repos", valeur: rhr.map { "\(Int($0.rounded()))" } ?? "—", unite: "bpm")
+            TuileNuit(icone: "waveform.path.ecg", titre: "VFC", valeur: hrv.map { "\(Int($0.rounded()))" } ?? "—", unite: "ms")
+            TuileNuit(icone: "heart", titre: "FC au repos", valeur: rhr.map { "\(Int($0.rounded()))" } ?? "—", unite: "bpm")
           }
           if let q = note {
             Label(["", "Épuisé", "Fatigué", "Moyen", "Reposé", "En pleine forme"][q], systemImage: "checkmark.circle.fill")
@@ -375,7 +375,7 @@ private struct Phases: View {
   }
 }
 
-private struct Tuile: View {
+private struct TuileNuit: View {
   let icone: String
   let titre: String
   let valeur: String
