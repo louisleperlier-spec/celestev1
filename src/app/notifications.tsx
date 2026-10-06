@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DetailHead } from '@/components/app/Detail';
 import { NotifSheet } from '@/components/app/NotifSheet';
 import { Button, Card, Icon, Text, toast } from '@/components/ui';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { ouvrirNotif, verifierNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { colors } from '@/theme';
@@ -46,9 +48,13 @@ export default function Notifications() {
             list.map((n) => (
               <Pressable key={n.id} accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id, n.lien)}>
                 <Card style={styles.nrow}>
-                  <View style={[styles.nic, { backgroundColor: n.col }]}>
-                    <Icon name={n.icon} color={colors.text} />
-                  </View>
+                  {n.masc ? (
+                    <Image source={MASCOTTE_IMAGES[n.masc]} style={styles.masc} contentFit="contain" />
+                  ) : (
+                    <View style={[styles.nic, { backgroundColor: n.col }]}>
+                      <Icon name={n.icon} color={colors.text} />
+                    </View>
+                  )}
                   <View style={styles.flex}>
                     <Text weight="semibold" style={styles.h5}>
                       {n.title}
@@ -74,6 +80,7 @@ export default function Notifications() {
 }
 
 const styles = StyleSheet.create({
+  masc: { width: 44, height: 52 },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   iconbtn: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },

@@ -395,6 +395,11 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - **révocation Apple à la suppression du compte** (règle 5.1.1(v)) : `revoquerApple` (store/compte) redemande un code à Apple si le compte a
     une identité Apple, puis fonction Edge **`revoquer-apple`** (code → jeton → `/auth/revoke`, JWT ES256 avec `jose`) ; à faire : clé
     « Sign in with Apple » (developer.apple.com → Keys) et secrets `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY`, déployer la fonction
+- [ ] **Mascotte NÉA (planche de l'utilisateur, oct. 2026)** : 5 expressions détourées du fond jaune (`assets/mascotte/` : face, motive, fatigue,
+  fier, boude ; `MASCOTTE_IMAGES` de `data/images.ts`, `ExpressionMascotte` dans `lib/enrage.ts`) ; `expressionEnrage(moment, niveau)` : fière
+  (Taquin), bras croisés (Vénère / Sans pitié), motivée (série, retour), fatiguée (repos) ; `Notif.masc` → la mascotte remplace l'icône dans la
+  bannière et la liste des notifications ; tête de la section Axel Enragé du Profil ; `Fete.mascotte` (« Série sauvée ! ») ;
+  reste : nom de la mascotte, images jointes aux notifications du téléphone, écran verrouillé / montre (build)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

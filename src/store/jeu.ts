@@ -16,6 +16,7 @@ import { lundiISO } from '@/lib/ligue';
 import { nouvellesMissions, recompensee, SUCCES, type SuccesId } from '@/lib/succes';
 import { GEL_PALIER, GEL_RESERVE, GEL_RESERVE_PLUS, gelsDispo, joursAGeler, serie } from '@/lib/gel';
 import { estPremium } from '@/lib/premium';
+import type { ExpressionMascotte } from '@/lib/enrage';
 import { lvlInfo, type Log } from '@/lib/xp';
 
 import { useProfil } from './profil';
@@ -30,6 +31,8 @@ export type Fete = {
   gains: string[];
   /** Carte succès débloquée : affichée à la place du coach. */
   succes?: SuccesId;
+  /** Mascotte NÉA à la place du coach (gel de série). */
+  mascotte?: ExpressionMascotte;
 };
 
 export const useFetes = create<{ file: Fete[] }>(() => ({ file: [] }));
@@ -110,6 +113,7 @@ export function verifierGels() {
     titre: 'Série sauvée !',
     sous: `${jours.length > 1 ? `${jours.length} gels utilisés` : 'Un gel a été utilisé'} pour le jour manqué : ta série de ${n} jours tient toujours 🔥`,
     emoji: '🧊',
+    mascotte: 'motive',
     gains: [reste > 0 ? `${reste} gel${reste > 1 ? 's' : ''} en réserve` : 'Plus de gel en réserve : à toi de jouer'],
   });
 }

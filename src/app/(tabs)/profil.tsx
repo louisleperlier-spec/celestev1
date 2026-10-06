@@ -14,9 +14,10 @@ import { NotifSheet } from '@/components/app/NotifSheet';
 import { PeseeSheet } from '@/components/app/PeseeSheet';
 import { Glow, Icon, Segmente, Text, toast, type IconName } from '@/components/ui';
 import { COACH_IMAGES, GOALS } from '@/data';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { dec } from '@/lib/charges';
 import { ordreAccueil } from '@/lib/accueil';
-import { messageEnrage, NB_MESSAGES_ENRAGE, NIVEAUX_ENRAGE, type NiveauEnrage } from '@/lib/enrage';
+import { expressionEnrage, messageEnrage, NB_MESSAGES_ENRAGE, NIVEAUX_ENRAGE, type NiveauEnrage } from '@/lib/enrage';
 import type { AlertesSante, ReglagesNotifs } from '@/lib/notifs';
 import { testerAlertes } from '@/store/alertes';
 import { annoncer, demanderAutorisation } from '@/store/notifs';
@@ -161,6 +162,15 @@ export default function Profil() {
           <Ligne icon="bell" titre="Heures et délai" sous="Réveil, coucher, délai après la séance" onPress={() => setReglages(true)} />
         </Section>
 
+        <View style={styles.enrageTete}>
+          <Glow width={200} height={160} intensity={0.45} />
+          <Image
+            source={MASCOTTE_IMAGES[p.nset.enrage ? expressionEnrage('seance', p.nset.enrageNiv ?? 'venere') : 'fatigue']}
+            style={styles.enrageImg}
+            contentFit="contain"
+          />
+          <Text style={styles.enrageBulle}>{p.nset.enrage ? 'Je te surveille. 👀' : 'Je dors… pour l’instant. 💤'}</Text>
+        </View>
         <Section titre="Axel Enragé 😤">
           <Bascule
             titre="Mode Sans excuses"
@@ -189,7 +199,7 @@ export default function Profil() {
               sous="Un exemple tout de suite"
               onPress={() => {
                 const ex = messageEnrage('seance', p.nset.enrageNiv ?? 'venere', { prenom: p.name, seance: 'Ta séance', date: new Date(Date.now() + Math.floor(Math.random() * 30) * 864e5) });
-                annoncer({ type: 'motivation', icon: 'flame', col: colors.pink, act: 'seance', ...ex });
+                annoncer({ type: 'motivation', icon: 'flame', col: colors.pink, act: 'seance', masc: expressionEnrage('seance', p.nset.enrageNiv ?? 'venere'), ...ex });
               }}
             />
           )}
@@ -384,6 +394,9 @@ function Bascule({ titre, sous, on, onChange }: { titre: string; sous: string; o
 }
 
 const styles = StyleSheet.create({
+  enrageTete: { alignItems: 'center', marginTop: 18, marginBottom: -6 },
+  enrageImg: { width: 120, height: 140 },
+  enrageBulle: { fontSize: 13, lineHeight: 18, color: colors.textSecondary, marginTop: 4 },
   enrage: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
   enrageDesc: { fontSize: 13, lineHeight: 18, color: colors.textSecondary },
   root: { flex: 1, backgroundColor: colors.bg },

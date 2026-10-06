@@ -257,7 +257,7 @@ export function demarrerNotifs() {
     if (s.nset.enrage && s.logs.length > avant.logs.length && avant.logs.length) {
       const avantDernier = avant.logs.reduce((m, l) => Math.max(m, +new Date(l.d)), 0);
       if (Date.now() - avantDernier >= 3 * 864e5) {
-        annoncer({ type: 'motivation', icon: 'flame', col: COULEURS_NOTIF.post, act: 'accueil', ...messageEnrage('retour', s.nset.enrageNiv ?? 'venere', { prenom: s.name }) });
+        annoncer({ type: 'motivation', icon: 'flame', col: COULEURS_NOTIF.post, act: 'accueil', masc: 'motive', ...messageEnrage('retour', s.nset.enrageNiv ?? 'venere', { prenom: s.name }) });
       }
     }
   });

@@ -1,9 +1,11 @@
+import { Image } from 'expo-image';
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, Text } from '@/components/ui';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { ouvrirNotif, useBanniere } from '@/store/notifs';
 import { alpha, colors, ui } from '@/theme';
 
@@ -20,9 +22,13 @@ export function NotifBanniere() {
   return (
     <Animated.View style={[styles.wrap, { top: insets.top + 8 }, anim]}>
       <Pressable accessibilityRole="button" onPress={() => ouvrirNotif(n.act, n.id, n.lien)} style={styles.banner}>
-        <View style={[styles.nic, { backgroundColor: n.col }]}>
-          <Icon name={n.icon} color={colors.text} />
-        </View>
+        {n.masc ? (
+          <Image source={MASCOTTE_IMAGES[n.masc]} style={styles.masc} contentFit="contain" />
+        ) : (
+          <View style={[styles.nic, { backgroundColor: n.col }]}>
+            <Icon name={n.icon} color={colors.text} />
+          </View>
+        )}
         <View style={styles.flex}>
           <Text weight="bold" style={styles.b}>
             {n.title}
@@ -35,6 +41,7 @@ export function NotifBanniere() {
 }
 
 const styles = StyleSheet.create({
+  masc: { width: 44, height: 52 },
   wrap: { position: 'absolute', left: 12, right: 12, zIndex: 70 },
   banner: {
     flexDirection: 'row',

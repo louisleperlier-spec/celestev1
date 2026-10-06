@@ -7,7 +7,7 @@ import type { Premium } from './premium';
 import { dayKey } from './xp';
 import { baseHrv, conseilNuit, hm, lastNight, sleepScore, type MesureVFC, type Nuit } from './sommeil';
 
-import type { NiveauEnrage } from './enrage';
+import type { ExpressionMascotte, NiveauEnrage } from './enrage';
 
 export type ReglagesNotifs = {
   /** VFC post-entraînement */
@@ -68,6 +68,8 @@ export type Notif = {
   body: string;
   /** Activité à ouvrir (date de fin du journal). */
   lien?: string;
+  /** Mascotte à la place de l'icône (Axel Enragé). */
+  masc?: ExpressionMascotte;
 };
 
 export type NouvelleNotif = Omit<Notif, 'id' | 'd' | 'read'>;

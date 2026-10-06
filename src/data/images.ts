@@ -1,6 +1,7 @@
 // Généré depuis NEA-donnees-et-images.zip (identique aux constantes du prototype `prototype/nea-app.html`).
 // Ne pas modifier à la main : corriger la source puis régénérer.
 
+import type { ExpressionMascotte } from '@/lib/enrage';
 import type { ImageSourcePropType } from 'react-native';
 
 import type { CoachId, ExerciceId } from './types';
@@ -98,6 +99,15 @@ export const DECO_IMAGES = {
   dodo: require('@/assets/deco/axel_dodo.webp'),
   nuit: require('@/assets/deco/axel_nuit.webp'),
 } satisfies Record<string, ImageSourcePropType>;
+
+/** Mascotte NÉA (planche de l'utilisateur, oct. 2026, détourée) : de face, motivée, fatiguée, fière, bras croisés. */
+export const MASCOTTE_IMAGES = {
+  face: require('@/assets/mascotte/face.webp'),
+  motive: require('@/assets/mascotte/motive.webp'),
+  fatigue: require('@/assets/mascotte/fatigue.webp'),
+  fier: require('@/assets/mascotte/fier.webp'),
+  boude: require('@/assets/mascotte/boude.webp'),
+} satisfies Record<ExpressionMascotte, ImageSourcePropType>;
 
 /** Vidéo d'accueil en boucle. */
 export const VIDEO_ACCUEIL: number = require('@/assets/deco/v_axel.mp4');

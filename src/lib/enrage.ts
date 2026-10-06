@@ -6,6 +6,8 @@
  */
 
 export type NiveauEnrage = 'taquin' | 'venere' | 'sanspitie';
+/** Expressions de la mascotte (`MASCOTTE_IMAGES` de @/data). */
+export type ExpressionMascotte = 'face' | 'motive' | 'fatigue' | 'fier' | 'boude';
 export type MomentEnrage = 'seance' | 'relance' | 'serie' | 'absent' | 'repos' | 'retour';
 
 export const NIVEAUX_ENRAGE: Record<NiveauEnrage, { nom: string; desc: string }> = {
@@ -150,3 +152,10 @@ export function messageEnrage(
 /** Nombre de messages (pour l'écran de réglage). */
 export const NB_MESSAGES_ENRAGE =
   REPOS.length + Object.values(BANQUES).reduce((a, b) => a + b.taquin.length + b.venere.length + b.sanspitie.length, 0);
+
+/** Expression de la mascotte pour un message : fière (Taquin), bras croisés (Vénère, Sans pitié), motivée (série, retour), fatiguée (repos). */
+export function expressionEnrage(moment: MomentEnrage, niveau: NiveauEnrage): ExpressionMascotte {
+  if (moment === 'repos') return 'fatigue';
+  if (moment === 'retour' || moment === 'serie') return 'motive';
+  return niveau === 'taquin' ? 'fier' : 'boude';
+}

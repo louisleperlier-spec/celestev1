@@ -6,6 +6,7 @@ import Animated, { Easing, Extrapolation, interpolate, useAnimatedStyle, useShar
 
 import { Button, Glow, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
 import { fermerFete, useFetes, vibrerFete, type Fete as FeteT } from '@/store/jeu';
 import { useProfil } from '@/store/profil';
@@ -76,7 +77,7 @@ function Contenu({ f }: { f: FeteT }) {
         ) : (
           <View style={styles.coach}>
             <Glow width={220} height={200} intensity={0.55} />
-            <Image source={COACH_IMAGES[coach].corps} style={styles.coachImg} contentFit="contain" />
+            <Image source={f.mascotte ? MASCOTTE_IMAGES[f.mascotte] : COACH_IMAGES[coach].corps} style={styles.coachImg} contentFit="contain" />
           </View>
         )}
         <Text style={styles.emoji}>{f.emoji}</Text>
