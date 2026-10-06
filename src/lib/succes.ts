@@ -4,7 +4,8 @@
  * Les cartes d'exercices (lib/jeu.ts) restent la récompense de chaque activité.
  */
 import type { EtatJeu } from './jeu';
-import { streak, type Log } from './xp';
+import { serie } from './gel';
+import { type Log } from './xp';
 
 export type SuccesId = 'premier-pas' | 'endurance' | 'force' | 'explorateur' | 'inarretable';
 export type MissionId = `${SuccesId}:${1 | 2}`;
@@ -100,7 +101,7 @@ export const SUCCES: readonly Succes[] = [
         xp: 450,
         but: 7,
         unite: 'j',
-        fait: (e) => Math.max(e.jeu.records.serie, streak(e.logs, e.days)),
+        fait: (e) => Math.max(e.jeu.records.serie, serie(e)),
       },
       { id: 'inarretable:2', titre: 'Progression', texte: 'Bats 3 de tes records.', xp: 300, but: 3, fait: (e) => e.jeu.nbRecords ?? 0 },
     ],

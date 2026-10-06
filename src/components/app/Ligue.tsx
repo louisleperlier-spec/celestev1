@@ -17,7 +17,8 @@ import type { CoachId } from '@/data/types';
 import { dec, fmt } from '@/lib/charges';
 import { actifSemaine, actifsEquipe, xpSemaine } from '@/lib/ligue';
 import { isPremium } from '@/lib/premium';
-import { boosts, lvlInfo, mult, rankOf, streak, todayQuests } from '@/lib/xp';
+import { serie } from '@/lib/gel';
+import { boosts, lvlInfo, mult, rankOf, todayQuests } from '@/lib/xp';
 import { rafraichirLigue, useCompte } from '@/store/compte';
 import { ajouterAmi, creerEquipe, quitterEquipe, rejoindreEquipe, renommerEquipe, useLigue, type Resultat } from '@/store/ligue';
 import { useProfil } from '@/store/profil';
@@ -54,7 +55,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
   const rk = rankOf(li.n);
   const autres = l.membres.filter((m) => m.actif).length;
   const tA = actifsEquipe(autres, p.logs, date);
-  const b = boosts(streak(p.logs, p.days, date), p.boostUntil, tA, now);
+  const b = boosts(serie(p, date), p.boostUntil, tA, now);
   const m = mult(b);
   const q = todayQuests(p.quests, date);
   const turboActif = p.boostUntil > now;

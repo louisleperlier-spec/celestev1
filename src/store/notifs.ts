@@ -16,7 +16,8 @@ import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { DAYSPOS } from '@/data/templates';
 import type { JoursParSemaine } from '@/data/types';
 import { messageEnrage } from '@/lib/enrage';
-import { dayKey, streak } from '@/lib/xp';
+import { serie as serieDe } from '@/lib/gel';
+import { dayKey } from '@/lib/xp';
 
 import { MIN_RALENTIR, verifierMoments } from './moments';
 import { semaineDe, useProfil } from './profil';
@@ -214,7 +215,7 @@ async function programmerEnrage(now: Date) {
     await poser(a(jour, 21, 0), messageEnrage('relance', niv, v), data);
   }
   // Série en danger : aujourd'hui est un jour prévu, rien de fait, la série tombe à minuit.
-  const serie = streak(st.logs, st.days, now);
+  const serie = serieDe(st, now);
   if (!bougeAuj && !fatigue && serie >= 2 && DAYSPOS[String(st.days) as JoursParSemaine].includes(auj)) {
     await poser(a(now, 20, 30), messageEnrage('serie', niv, { prenom: st.name, n: serie, date: now }), { act: 'seance' });
   }

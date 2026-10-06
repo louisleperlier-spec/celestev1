@@ -23,7 +23,7 @@ export function LivePills({ bpm, zone, hrv, kcal, centre, src = 'sim' }: { bpm: 
       </View>
       <View style={styles.pill}>
         <Icon name="wave" size={15} />
-        <Text style={styles.small}>VFC</Text>
+        <Text style={styles.small}>VFC est.</Text>
         <Text weight="bold" style={styles.b}>
           {hrv || '--'}
         </Text>
@@ -38,7 +38,7 @@ export function LivePills({ bpm, zone, hrv, kcal, centre, src = 'sim' }: { bpm: 
           <Text style={styles.small}>kcal</Text>
         </View>
       )}
-      <Text style={[styles.src, centre && styles.srcCentre]}>{src === 'montre' ? 'Apple Watch' : 'Simulation'}</Text>
+      <Text style={[styles.src, centre && styles.srcCentre]}>{src === 'montre' ? 'FC : Apple Watch · VFC estimée' : 'Valeurs estimées (sans capteur)'}</Text>
     </View>
   );
 }

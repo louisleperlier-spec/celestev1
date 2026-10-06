@@ -6,7 +6,7 @@
  * - défi de la semaine réussi : « Défi réussi ! » + booster de 3 cartes.
  * Les fêtes passent par `useFetes` (affichées par `components/app/Fete.tsx`).
  */
-import { Vibration } from 'react-native';
+import { AppState, Vibration } from 'react-native';
 import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
@@ -14,7 +14,9 @@ import { toast } from '@/components/ui/Toast';
 import { defi, defisSemaine, meilleurs, nouveauPaquet, ouvrir, recordsBattus, type EtatJeu, type Paquet, type Rarete, type Tirage } from '@/lib/jeu';
 import { lundiISO } from '@/lib/ligue';
 import { nouvellesMissions, recompensee, SUCCES, type SuccesId } from '@/lib/succes';
-import { lvlInfo, streak, type Log } from '@/lib/xp';
+import { GEL_PALIER, GEL_RESERVE, GEL_RESERVE_PLUS, gelsDispo, joursAGeler, serie } from '@/lib/gel';
+import { estPremium } from '@/lib/premium';
+import { lvlInfo, type Log } from '@/lib/xp';
 
 import { useProfil } from './profil';
 
@@ -73,7 +75,7 @@ function apresActivite(l: Log, avant: readonly Log[]) {
 /** Série de jours : record quand la meilleure série est dépassée. */
 function verifierSerie() {
   const st = useProfil.getState();
-  const n = streak(st.logs, st.days);
+  const n = serie(st);
   if (n <= st.jeu.records.serie) return;
   const ancien = st.jeu.records.serie;
   majJeu((j) => ({ ...j, records: { ...j.records, serie: n }, nbRecords: (j.nbRecords ?? 0) + (ancien >= 3 ? 1 : 0) }));
@@ -81,6 +83,35 @@ function verifierSerie() {
     donner(1, 'Record : meilleure série', 1);
     feter({ titre: 'Série record !', sous: `${n} jours d'affilée, du jamais vu 🔥`, emoji: '🔥', gains: ['1 carte Rare ou mieux'] });
   }
+}
+
+/** Gel de série : un gel gagné tous les 7 jours de série (réserve de 2, 3 avec NÉA Plus). */
+function gagnerGel() {
+  const st = useProfil.getState();
+  const n = serie(st);
+  const palier = Math.floor(n / GEL_PALIER) * GEL_PALIER;
+  if (palier < GEL_PALIER || palier <= (st.jeu.gelPalier ?? 0)) return;
+  const max = estPremium(st.premium) ? GEL_RESERVE_PLUS : GEL_RESERVE;
+  const stock = gelsDispo(st.jeu);
+  majJeu((j) => ({ ...j, gelPalier: palier, gels: Math.min(max, stock + 1) }));
+  if (stock < max) toast(`🧊 ${n} jours de série : +1 gel de série (${Math.min(max, stock + 1)} en réserve)`);
+}
+
+/** À l'ouverture : un jour de séance manqué est gelé tout seul si un gel est en réserve et qu'il sauve la série. */
+export function verifierGels() {
+  const st = useProfil.getState();
+  if (!st.onboarded || !st.logs.length) return;
+  const jours = joursAGeler(st.logs, st.days, st.jeu);
+  if (!jours.length) return;
+  const reste = gelsDispo(st.jeu) - jours.length;
+  majJeu((j) => ({ ...j, gels: reste, gelsUtilises: [...(j.gelsUtilises ?? []), ...jours].slice(-60) }));
+  const n = serie(useProfil.getState());
+  feter({
+    titre: 'Série sauvée !',
+    sous: `${jours.length > 1 ? `${jours.length} gels utilisés` : 'Un gel a été utilisé'} pour le jour manqué : ta série de ${n} jours tient toujours 🔥`,
+    emoji: '🧊',
+    gains: [reste > 0 ? `${reste} gel${reste > 1 ? 's' : ''} en réserve` : 'Plus de gel en réserve : à toi de jouer'],
+  });
 }
 
 /** Défis de la semaine réussis : booster de 3 cartes chacun. */
@@ -126,11 +157,18 @@ export function demarrerJeu() {
   // Joueur existant : records repris de son journal, sans fête.
   const st0 = useProfil.getState();
   if (!st0.jeu.records.serie && !st0.jeu.records.vol && st0.logs.length) {
-    majJeu((j) => ({ ...j, records: { ...meilleurs(st0.logs), serie: streak(st0.logs, st0.days) } }));
+    majJeu((j) => ({ ...j, records: { ...meilleurs(st0.logs), serie: serie(st0) } }));
   }
   // Missions déjà réussies avant cette version (journal existant) : récompensées au lancement.
-  if (useProfil.persist.hasHydrated()) verifierSucces();
-  else useProfil.persist.onFinishHydration(() => verifierSucces());
+  const auLancement = () => {
+    verifierSucces();
+    verifierGels();
+  };
+  if (useProfil.persist.hasHydrated()) auLancement();
+  else useProfil.persist.onFinishHydration(auLancement);
+  AppState.addEventListener('change', (a) => {
+    if (a === 'active') verifierGels();
+  });
   useProfil.subscribe((s, p) => {
     if (!s.onboarded) return;
     // Une seule activité ajoutée (pas un chargement de compte).
@@ -144,7 +182,10 @@ export function demarrerJeu() {
       feter({ titre: `Niveau ${nApres} !`, sous: 'Tu montes en puissance, continue comme ça 💪', emoji: '⚡', gains: ['Booster de 3 cartes', '+1 Turbo x2'] });
     }
     if (s.logs !== p.logs || s.nights !== p.nights || s.hrvChecks !== p.hrvChecks || s.xpLog !== p.xpLog) {
-      if (nouvelle) verifierSerie();
+      if (nouvelle) {
+        verifierSerie();
+        gagnerGel();
+      }
       verifierDefis();
       verifierSucces();
     }

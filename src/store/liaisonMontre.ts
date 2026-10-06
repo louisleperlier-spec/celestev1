@@ -26,7 +26,8 @@ import { colors } from '@/theme';
 import { catSession, sessionForDay, type SeanceJour, type Semaine } from '@/lib/semaine';
 import { motivationDuJour } from '@/lib/motivation';
 import { caloriesRando, xpRando } from '@/lib/rando';
-import { lvlInfo, rankOf, streak } from '@/lib/xp';
+import { serie } from '@/lib/gel';
+import { lvlInfo, rankOf } from '@/lib/xp';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { envoyer as envoyerAuCoach } from './coach';
@@ -239,13 +240,13 @@ function etat(): EtatMontre {
     progres: {
       seances: st.logs.filter((l) => new Date(l.d) >= lundi).length,
       objectif: st.days,
-      serie: streak(st.logs, st.days),
+      serie: serie(st),
       niveau: li.n,
       xp: li.cur,
       xpNiveau: li.need,
       rang: rankOf(li.n)[0],
       derniere: der ? `${der.title} • ${der.min} min` : '',
-      meilleureSerie: Math.max(st.jeu.records.serie, streak(st.logs, st.days)),
+      meilleureSerie: Math.max(st.jeu.records.serie, serie(st)),
       cartes: possedees(st.jeu),
       defis: defisSemaine(lundiISO()).map((id) => defi(id, st)).map((d) => ({ titre: d.titre, fait: d.fait, but: d.but })),
       programme: { nom: prog(p).nom, semaine: progWeek(p), total: prog(p).sem },
@@ -346,7 +347,7 @@ function recevoir(json: string) {
   useChoixMontre.setState({ choix: null });
   const apres = useProfil.getState();
   apres.addXp(2 * r.series, 'Série');
-  apres.addXp(40 + 5 * Math.min(10, streak(apres.logs, apres.days)), 'Séance');
+  apres.addXp(40 + 5 * Math.min(10, serie(apres)), 'Séance');
   apres.quest('seance');
   apres.programmerPost('muscu', null);
   annoncer({

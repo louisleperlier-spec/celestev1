@@ -24,7 +24,8 @@ import { journeeDu, VERRES_EAU, type Journee } from '@/lib/journee';
 import { coucherPour, OBJECTIF_SOMMEIL, REVEIL_DEFAUT, type NoteSoir, type Reveil } from '@/lib/reveil';
 import { ALERTES_DEFAUT, notifsDues, rappelPost, REGLAGES_DEFAUT, type AlertesSante, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
 import { ajouterNuit, type MesureVFC, type Nuit } from '@/lib/sommeil';
-import { boosts, gainXp, lvlInfo, streak, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
+import { serie } from '@/lib/gel';
+import { boosts, gainXp, lvlInfo, todayQuests, type Log, type QuestId, type QuetesDuJour } from '@/lib/xp';
 
 /** Questionnaire santé : 5 cases (0/1) + les deux confirmations. */
 export type Sante = {
@@ -251,7 +252,7 @@ export const useProfil = create<Etat & Actions>()(
       addXp: (base, label) => {
         const st = get();
         const before = lvlInfo(st.xp).n;
-        const g = gainXp(base, boosts(streak(st.logs, st.days), st.boostUntil, actifsEquipe(autresActifs(), st.logs)));
+        const g = gainXp(base, boosts(serie(st), st.boostUntil, actifsEquipe(autresActifs(), st.logs)));
         const xpLog = [...st.xpLog, { d: new Date().toISOString(), xp: g, l: label }].slice(-400);
         const after = lvlInfo(st.xp + g).n;
         set({ xp: st.xp + g, xpLog, tokens: st.tokens + Math.max(0, after - before) });

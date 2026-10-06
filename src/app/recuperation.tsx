@@ -45,7 +45,7 @@ export default function Recuperation() {
           <>
             <Anneau couleur={r.st[1]} fini>
               <BigNumber value={r.hrv} size={52} />
-              <Text style={styles.ringSmall}>ms de VFC</Text>
+              <Text style={styles.ringSmall}>ms de VFC (estimée)</Text>
             </Anneau>
             <Text style={[styles.h1, styles.h1Res, { color: r.st[1] }]}>{r.st[0]}</Text>
             <Text style={styles.sub}>{r.st[2]}</Text>

@@ -41,8 +41,8 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
           <View style={styles.grid}>
             <Kpi icon="clock" label="Durée" value={mmss(r.sec)} />
             <Kpi icon="trend" label="Volume" value={`${fmt(r.vol)} kg`} />
-            <Kpi icon="heart" label="FC moyenne" value={`${r.st.avg} bpm`} em={`max ${r.st.max}`} emGris />
-            <Kpi icon="wave" label="VFC moyenne" value={`${r.st.hrv} ms`} />
+            <Kpi icon="heart" label={r.montre ? 'FC moyenne' : 'FC estimée'} value={`${r.st.avg} bpm`} em={`max ${r.st.max}`} emGris />
+            <Kpi icon="wave" label="VFC estimée" value={`${r.st.hrv} ms`} />
             <Kpi icon="flame" label="Calories" value={String(r.cal)} />
             <Kpi icon="trophy" label="XP gagnée" value={`+${r.xp}`} em={`boost x${dec(r.m.toFixed(2))}`} />
           </View>
@@ -51,7 +51,7 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
               <Text weight="semibold" style={styles.h4Txt}>
                 Fréquence cardiaque
               </Text>
-              <Text style={styles.h4Small}>{r.montre ? 'Apple Watch' : 'simulée'}</Text>
+              <Text style={styles.h4Small}>{r.montre ? 'Apple Watch' : 'estimée, sans capteur'}</Text>
             </View>
             <CourbeFC samples={r.hr} age={age} />
             <ListeZones z={r.st.z} />

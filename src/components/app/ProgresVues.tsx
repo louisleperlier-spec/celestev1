@@ -20,7 +20,8 @@ import { CARTES, possedees } from '@/lib/jeu';
 import { santeDisponible } from '@/lib/sante';
 import { baseHrv } from '@/lib/sommeil';
 import { avancement, debloque, missionFaite, SUCCES, type SuccesId } from '@/lib/succes';
-import { lvlInfo, rankOf, streak, todayQuests, type Log } from '@/lib/xp';
+import { gelsDispo, GEL_PALIER, serieAvecGels } from '@/lib/gel';
+import { lvlInfo, rankOf, todayQuests, type Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts, ui } from '@/theme';
 
@@ -39,7 +40,9 @@ export function Parcours() {
   const { width } = useWindowDimensions();
   const li = lvlInfo(xp);
   const [rang, couleurRang] = rankOf(li.n);
-  const serie = Math.max(jeu.records.serie, streak(logs, days));
+  const actuelle = serieAvecGels(logs, days, jeu.gelsUtilises);
+  const serie = Math.max(jeu.records.serie, actuelle);
+  const gels = gelsDispo(jeu);
   // Trois étapes affichées : les deux niveaux précédents et le niveau actuel (ou 1, 2, 3 au début).
   const debut = Math.max(1, li.n - 2);
   const etapes = [debut, debut + 1, debut + 2];
@@ -99,6 +102,17 @@ export function Parcours() {
         <Tuile valeur={fmt(xp)} nom="XP au total" icone="chart" />
         <Tuile valeur={`${serie} ${serie > 1 ? 'jours' : 'jour'}`} nom="Meilleure série" icone="flame" />
       </View>
+      <Card style={styles.gel}>
+        <Text style={styles.gelEmoji}>🧊</Text>
+        <View style={styles.flex}>
+          <Text weight="bold" style={styles.h3}>
+            {gels} gel{gels > 1 ? 's' : ''} de série · série actuelle {actuelle} j
+          </Text>
+          <Text style={styles.petit}>
+            Un jour de séance manqué ne casse pas ta série : un gel est utilisé tout seul. +1 gel tous les {GEL_PALIER} jours de série.
+          </Text>
+        </View>
+      </Card>
 
       <Card style={styles.etape}>
         <Text weight="bold" style={styles.h3}>
@@ -393,6 +407,8 @@ export function Collection() {
 }
 
 const styles = StyleSheet.create({
+  gel: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+  gelEmoji: { fontSize: 28, lineHeight: 34 },
   flex: { flex: 1, minWidth: 0 },
   pile: { gap: 14 },
   h2: { fontSize: 22, lineHeight: 27 },

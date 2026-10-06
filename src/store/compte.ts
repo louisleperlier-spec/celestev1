@@ -162,8 +162,30 @@ export async function deconnecter() {
 }
 
 /** Suppression définitive du compte et de toutes ses données sur le serveur, puis sur l'appareil. */
+/**
+ * Compte créé avec Apple : on redemande un code à Apple (Face ID) pour révoquer l'accès avant la suppression
+ * (règle 5.1.1(v) de l'App Store, fonction Edge `revoquer-apple`). Retourne false si l'utilisateur ferme la fenêtre d'Apple.
+ */
+async function revoquerApple(): Promise<boolean> {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user?.identities?.some((i) => i.provider === 'apple')) return true;
+  let code: string | null = null;
+  try {
+    const AppleAuthentication = await import('expo-apple-authentication');
+    if (!(await AppleAuthentication.isAvailableAsync())) return true;
+    code = (await AppleAuthentication.signInAsync({ requestedScopes: [] })).authorizationCode;
+  } catch (e) {
+    if ((e as { code?: string }).code === 'ERR_REQUEST_CANCELED') return false;
+    return true;
+  }
+  // Une révocation qui échoue (fonction pas encore déployée…) n'empêche pas la suppression du compte.
+  if (code) await supabase.functions.invoke('revoquer-apple', { body: { code } }).catch(() => null);
+  return true;
+}
+
 export async function supprimerCompte(): Promise<Resultat> {
   if (useCompte.getState().userId) {
+    if (!(await revoquerApple())) return { ok: false, erreur: 'Confirme avec Apple pour supprimer ton compte' };
     const { error } = await supabase.rpc('supprimer_mon_compte');
     if (error) return { ok: false, erreur: message(error) };
     await supabase.auth.signOut();

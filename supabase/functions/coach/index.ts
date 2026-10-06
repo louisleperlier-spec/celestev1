@@ -1,12 +1,15 @@
 // NÉA : coach IA (étape 9). Fonction Edge Supabase (Deno) qui appelle Claude.
 // La clé ANTHROPIC_API_KEY est un secret de la fonction (supabase secrets set), jamais dans l'app.
 // Réservée aux comptes connectés ; limite quotidienne comptée côté serveur (supabase/coach.sql).
+// Abonnés NÉA Plus (droit `plus` lu chez RevenueCat avec le secret REVENUECAT_SECRET_KEY) : illimité, avec un plafond anti-abus.
 // Reçoit les derniers messages et un résumé du profil, jamais l'email.
 import Anthropic from 'npm:@anthropic-ai/sdk@^0.128.0';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 /** Messages gratuits par jour (chatLeft du prototype). */
 const LIMITE = 3;
+/** Plafond quotidien d'un abonné (protège la facture en cas d'abus). */
+const LIMITE_PLUS = 100;
 const MODELE = 'claude-opus-5';
 
 type Message = { r: 'me' | 'bot'; t: string };
@@ -36,6 +39,25 @@ function lire(b: unknown): Demande | null {
   return { coach: { nom: texte(c.nom, 30), style: texte(c.style, 80), voix: texte(c.voix, 600) }, profil: texte(o.profil, 3000), messages };
 }
 
+/** Abonnement NÉA Plus actif : l'identifiant RevenueCat de l'app est l'identifiant du compte Supabase. */
+async function abonne(userId: string): Promise<boolean> {
+  const cle = Deno.env.get('REVENUECAT_SECRET_KEY');
+  if (!cle) return false;
+  try {
+    const r = await fetch(`https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}`, {
+      headers: { Authorization: `Bearer ${cle}`, Accept: 'application/json' },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!r.ok) return false;
+    const corps = (await r.json()) as { subscriber?: { entitlements?: Record<string, { expires_date: string | null }> } };
+    const droit = corps.subscriber?.entitlements?.plus;
+    return !!droit && (droit.expires_date === null || Date.parse(droit.expires_date) > Date.now());
+  } catch {
+    // RevenueCat injoignable : limite gratuite.
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   if (req.method !== 'POST') return json({ erreur: 'methode' }, 405);
@@ -53,9 +75,10 @@ Deno.serve(async (req) => {
 
   // Limite du jour (jour UTC, comme dayKey du prototype).
   const jour = new Date().toISOString().slice(0, 10);
-  const { data: reste, error: eq } = await admin.rpc('coach_consommer', { p_user: userId, p_jour: jour, p_max: LIMITE });
+  const plus = await abonne(userId);
+  const { data: reste, error: eq } = await admin.rpc('coach_consommer', { p_user: userId, p_jour: jour, p_max: plus ? LIMITE_PLUS : LIMITE });
   if (eq) return json({ erreur: 'serveur' }, 500);
-  if (reste === -1) return json({ erreur: 'limite', reste: 0 }, 429);
+  if (reste === -1) return json({ erreur: 'limite', reste: 0, plus }, 429);
 
   // Consigne du prototype (ask) : personnage, tutoiement, 2 à 4 phrases, jamais de conseil médical.
   const system = `Tu es ${d.coach.nom}, coach sportif IA de l'app NÉA, style ${d.coach.style}. Personnalité : ${d.coach.voix}. Tu tutoies, tu réponds en français, en 2 à 4 phrases, concret. Jamais de conseil médical : en cas de douleur ou de problème de santé, oriente vers un professionnel.

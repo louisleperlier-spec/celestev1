@@ -382,6 +382,19 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     Vénère / Sans pitié, 69 messages (séance 19 h 30, relance 21 h, série en danger 20 h 30, absence 3 et 5 jours à midi, retour en bannière) ;
     jamais sur le corps ni le poids, pas de gros mots ; rien si une activité est faite le jour même ; nuit en surcharge (`bilanCoeur`) → message
     calme ; `programmerEnrage` dans `reprogrammer()` ; « Me faire secouer maintenant » = exemple en bannière
+- [ ] **Avant la sortie (oct. 2026)** : **publié en EAS Update, à valider sur iPhone**
+  - **gel de série** (`lib/gel.ts`, comme Duolingo) : un jour de séance manqué (jour prévu par `DAYSPOS`) est gelé tout seul à l'ouverture
+    (`verifierGels`, store/jeu, au lancement et au retour) s'il sauve une série d'au moins 2 jours ; fête « Série sauvée ! » ; 1 gel au départ,
+    +1 tous les 7 jours de série (`gagnerGel`, `gelPalier`), réserve 2 (3 avec NÉA Plus) ; `jeu.gels` / `gelsUtilises` ; `streak` du prototype
+    inchangé : `serie(e)` / `serieAvecGels` lui donnent les jours gelés comme des jours actifs (boosts, XP, Ligue, montre, succès, Axel) ;
+    carte 🧊 dans Progrès → Parcours
+  - **valeurs estimées** : « VFC est. », « Valeurs estimées (sans capteur) » / « FC : Apple Watch · VFC estimée » (`LivePills`), « FC estimée »
+    et « VFC estimée » dans le récap, « ms de VFC (estimée) » de la mesure d'1 min
+  - **coach illimité pour NÉA Plus côté serveur** : `abonne()` lit le droit `plus` chez RevenueCat (`GET /v1/subscribers/<id du compte>`, secret
+    `REVENUECAT_SECRET_KEY` de la fonction `coach`), plafond 100 messages / jour ; sans secret : 3 messages pour tous
+  - **révocation Apple à la suppression du compte** (règle 5.1.1(v)) : `revoquerApple` (store/compte) redemande un code à Apple si le compte a
+    une identité Apple, puis fonction Edge **`revoquer-apple`** (code → jeton → `/auth/revoke`, JWT ES256 avec `jose`) ; à faire : clé
+    « Sign in with Apple » (developer.apple.com → Keys) et secrets `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY`, déployer la fonction
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

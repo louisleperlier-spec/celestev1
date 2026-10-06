@@ -17,6 +17,7 @@ import type { MesureVFC, Nuit } from './sommeil';
 import { weekDates } from './semaine';
 import type { MissionId } from './succes';
 import { hash, type Log } from './xp';
+import type { EtatGel } from './gel';
 
 /** 0 Commune, 1 Rare, 2 Épique, 3 Légendaire. */
 export type Rarete = 0 | 1 | 2 | 3;
@@ -79,7 +80,7 @@ export type EtatJeu = {
   /** Cartes succès : missions récompensées et records battus (champs ajoutés après coup, d'où l'option). */
   missions?: MissionId[];
   nbRecords?: number;
-};
+} & EtatGel;
 export const JEU_DEFAUT: EtatJeu = { cartes: {}, paquets: [], records: { vol: 0, kmVelo: 0, kmCourse: 0, min: 0, serie: 0 }, defis: { sem: '', pris: [] } };
 
 export type Tirage = { id: CarteId; nouvelle: boolean; xp: number };
