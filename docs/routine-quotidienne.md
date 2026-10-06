@@ -17,6 +17,9 @@ Pour changer le contenu de la routine : modifie ce fichier et demande à Claude 
 
 ### Compte 1 : histoire de la fondatrice (persona IA)
 
+Compte TikTok : **@jasmine.aura09** (« jasmine.aura »). La persona s'appelle Jasmine.
+Premiers chiffres (6 oct., 18h40) : « Maman, papa » 116 vues, « Mamie » 97 vues, 0 abonnée, 3 j'aime.
+
 Format inspiré de @irsaslaw : une jeune femme raconte qu'elle crée son app de sport, avec sa famille et ses doutes, beaucoup d'émotion, et la dernière slide renvoie vers NÉA.
 Déjà publiés : « Maman, papa, j'arrête mes études… » (001) et « Mamie, je crée une application de sport » (002).
 
