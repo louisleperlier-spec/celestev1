@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { catalogueStyles as cs, Chip, EnTetePage, ExerciceLigne, FILTRES_GROUPES, filtrerGroupe, normaliser, Recherche, sousTitreExo, type FiltreGroupe } from '@/components/app/Catalogue';
 import { ExerciceSheet } from '@/components/app/ExerciceSheet';
 import { rowStyles } from '@/components/app/Rows';
-import { Text } from '@/components/ui';
 import { EXERCICES, GROUPES, MATERIEL } from '@/data';
 import type { ExerciceId } from '@/data/types';
 import { colors } from '@/theme';
@@ -35,7 +35,7 @@ export default function Exercices() {
           {liste.map((e) => (
             <ExerciceLigne key={e.id} e={e} sous={sousTitreExo(e, MATERIEL[e.materiel])} onPress={() => setExo(e.id)} />
           ))}
-          {!liste.length && <Text style={[cs.note, cs.noteVide]}>Aucun exercice trouvé.</Text>}
+          {!liste.length && <MascotteVide texte="Aucun exercice trouvé. Essaie un autre mot !" expression="fatigue" />}
         </View>
       </ScrollView>
       <ExerciceSheet id={exo} onClose={() => setExo(null)} />

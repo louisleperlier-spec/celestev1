@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { CourbeFC, ListeZones } from '@/components/app/Coeur';
 import { DetailHead } from '@/components/app/Detail';
 import { Kpi } from '@/components/app/Recap';
@@ -56,7 +57,7 @@ export default function Activite() {
     return (
       <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
         <DetailHead titre="Activité" />
-        <Text style={styles.vide}>Aucune activité pour l&apos;instant.</Text>
+        <MascotteVide texte="Aucune activité pour l’instant. On bouge ?" expression="boude" />
       </SafeAreaView>
     );
   }

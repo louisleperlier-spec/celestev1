@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { EnTetePage } from '@/components/app/Catalogue';
 import { IconeNote } from '@/components/app/IconeNote';
 import { Button, Card, Text } from '@/components/ui';
@@ -27,7 +28,7 @@ export default function JournalSommeil() {
       <EnTetePage titre="Journal du sommeil" sous="Ce qui a marqué tes soirées, et la nuit qui a suivi" retour="/sommeil" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <Button label="Ajouter mes notes du soir" icon="edit" onPress={() => router.push('/notes-soir')} />
-        {!p.notes.length && <Text style={styles.vide}>Pas encore de notes. Ce soir, note ce qui a marqué ta journée : café tardif, stress, lecture…</Text>}
+        {!p.notes.length && <MascotteVide texte="Pas encore de notes. Ce soir, note ce qui a marqué ta journée : café tardif, stress, lecture…" />}
         {p.notes.map((n) => {
           const nuit = nuitApres(n.d);
           const sc = sleepScore(nuit, base);

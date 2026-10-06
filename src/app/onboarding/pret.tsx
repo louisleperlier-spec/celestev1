@@ -1,8 +1,10 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, Icon, Text } from '@/components/ui';
+import { Button, Glow, Icon, Text } from '@/components/ui';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { coachById, LVLN, lvlN, nextSession, prog } from '@/lib/plan';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
@@ -34,8 +36,9 @@ export default function Pret() {
         <View style={styles.back} />
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.ok}>
-          <Icon name="check" size={26} strokeWidth={3} color={colors.onPrimary} />
+        <View style={styles.mascotte}>
+          <Glow width={220} height={170} intensity={0.5} />
+          <Image source={MASCOTTE_IMAGES.fier} style={styles.mascotteImg} contentFit="contain" accessibilityLabel="La mascotte NÉA, fière" />
         </View>
         <Text style={styles.eyebrow}>TON PROGRAMME EST PRÊT</Text>
         <Text style={styles.title}>À toi de jouer{profil.name ? ', ' + profil.name : ''}.</Text>
@@ -125,6 +128,8 @@ function Stat({ icon, fort, sous }: { icon: 'cal' | 'clock'; fort: string; sous:
 }
 
 const styles = StyleSheet.create({
+  mascotte: { alignSelf: 'center', alignItems: 'center', justifyContent: 'flex-end', width: 220, height: 150 },
+  mascotteImg: { width: 110, height: 140 },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 10, height: 52, paddingHorizontal: 12 },

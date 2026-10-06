@@ -5,7 +5,6 @@ import { Modal, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { Easing, Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming, type SharedValue } from 'react-native-reanimated';
 
 import { Button, Glow, Text } from '@/components/ui';
-import { COACH_IMAGES } from '@/data';
 import { MASCOTTE_IMAGES } from '@/data/images';
 import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
 import { fermerFete, useFetes, vibrerFete, type Fete as FeteT } from '@/store/jeu';
@@ -57,7 +56,6 @@ function Confettis() {
 
 /** Contenu d'une fête : coach, titre, gains, « Ouvrir mes cartes ». */
 function Contenu({ f }: { f: FeteT }) {
-  const coach = useProfil((s) => s.coach);
   const aOuvrir = useProfil((s) => s.jeu.paquets.length);
   const s = useSharedValue(0);
   useEffect(() => {
@@ -77,7 +75,7 @@ function Contenu({ f }: { f: FeteT }) {
         ) : (
           <View style={styles.coach}>
             <Glow width={220} height={200} intensity={0.55} />
-            <Image source={f.mascotte ? MASCOTTE_IMAGES[f.mascotte] : COACH_IMAGES[coach].corps} style={styles.coachImg} contentFit="contain" />
+            <Image source={MASCOTTE_IMAGES[f.mascotte ?? 'motive']} style={styles.coachImg} contentFit="contain" />
           </View>
         )}
         <Text style={styles.emoji}>{f.emoji}</Text>

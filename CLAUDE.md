@@ -398,8 +398,13 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 - [ ] **Mascotte NÉA (planche de l'utilisateur, oct. 2026)** : 5 expressions détourées du fond jaune (`assets/mascotte/` : face, motive, fatigue,
   fier, boude ; `MASCOTTE_IMAGES` de `data/images.ts`, `ExpressionMascotte` dans `lib/enrage.ts`) ; `expressionEnrage(moment, niveau)` : fière
   (Taquin), bras croisés (Vénère / Sans pitié), motivée (série, retour), fatiguée (repos) ; `Notif.masc` → la mascotte remplace l'icône dans la
-  bannière et la liste des notifications ; tête de la section Axel Enragé du Profil ; `Fete.mascotte` (« Série sauvée ! ») ;
-  reste : nom de la mascotte, images jointes aux notifications du téléphone, écran verrouillé / montre (build)
+  bannière et la liste des notifications ; tête de la section Axel Enragé du Profil ; **partout** : accueil `bienvenue` (remplace la vidéo
+  d'Axel, flotte avec Reanimated), « Ton programme est prêt » (fière), toutes les fêtes (`Fete.mascotte`, motivée par défaut à la place du
+  coach), listes vides (`MascotteVide`, components/app/Mascotte.tsx), **image jointe aux notifications du téléphone** (`store/pieceJointe.ts` :
+  PNG `notif_*.png` copié dans le cache à chaque fois, `planifier(expr, …)` dans `reprogrammer` et Axel Enragé) ; **build** : moments de
+  l'écran verrouillé (`targets/widgets/images/axel_*.png` : dodo → fatiguée, séance → motivée, pause → de face, pas → fière) et notifications
+  de la montre (`ax_*` : énergique / séance → motivée, détendu / stable → de face, fatigue / dodo → fatiguée, stressé → bras croisés, forme →
+  fière) ; les coachs (dont Axel) et les scènes illustrées (salle, étirements, course, sommet, méditation, sommeil) restent ; reste : son nom
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

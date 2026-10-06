@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { ENTRAINEMENT, Rubriques } from '@/components/app/EnTete';
 import { PastilleDifficulte } from '@/components/app/Rando';
 import { Appui, Button, Icon, Text } from '@/components/ui';
@@ -125,7 +126,7 @@ export default function Randonnee() {
         ) : pres.etat === 'erreur' && !pres.liste.length ? (
           <Text style={styles.vide}>Impossible de joindre OpenStreetMap pour l’instant. Vérifie ta connexion.</Text>
         ) : !proposee ? (
-          <Text style={styles.vide}>Aucun sentier balisé trouvé à moins de 30 km. Essaie une rando libre !</Text>
+          <MascotteVide texte="Aucun sentier balisé trouvé à moins de 30 km. Essaie une rando libre !" />
         ) : (
           <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: proposee.s.id } })} style={styles.suggestion} accessibilityRole="button">
             <View style={styles.badgeSemaine}>
@@ -198,7 +199,7 @@ export default function Randonnee() {
         </Appui>
 
         <Text style={styles.h2}>À explorer</Text>
-        {liste.length === 0 && <Text style={styles.vide}>Aucun sentier pour ce filtre pour l’instant.</Text>}
+        {liste.length === 0 && <MascotteVide texte="Aucun sentier pour ce filtre pour l’instant." />}
         {liste.map((s, i) => (
           <Animated.View key={s.id} entering={FadeInDown.delay(Math.min(i, 8) * 55).duration(380).springify().damping(18)}>
             <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>

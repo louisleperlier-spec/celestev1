@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Carte } from '@/components/app/Carte';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
@@ -194,7 +195,7 @@ export default function Velo() {
               </Card>
             ))
           ) : (
-            <Text style={styles.vide}>Aucune sortie pour l&apos;instant.</Text>
+            <MascotteVide texte="Aucune sortie pour l’instant. Ton vélo t’attend !" expression="boude" />
           )}
         </View>
         <View style={styles.bas} />

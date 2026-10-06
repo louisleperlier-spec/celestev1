@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { EnTetePage, Recherche } from '@/components/app/Catalogue';
 import { IconeSport } from '@/components/app/IconeSport';
 import { Sheet } from '@/components/app/Sheet';
@@ -111,7 +112,7 @@ function Choix({ onSport, onMuscu }: { onSport: (id: string) => void; onMuscu: (
             </View>
           </View>
         ))}
-        {!familles.length && <Text style={[styles.petit, styles.vide]}>Aucun sport trouvé.</Text>}
+        {!familles.length && <MascotteVide texte="Aucun sport trouvé. Essaie un autre mot !" />}
       </ScrollView>
     </>
   );
@@ -324,7 +325,7 @@ function ChoixExercice({ visible, onClose, onChoisir }: { visible: boolean; onCl
             <Icon name="plus" size={18} color={colors.pink} />
           </Appui>
         ))}
-        {!liste.length && <Text style={[styles.petit, styles.vide]}>Aucun exercice trouvé.</Text>}
+        {!liste.length && <MascotteVide texte="Aucun exercice trouvé. Essaie un autre mot !" />}
       </ScrollView>
     </Sheet>
   );

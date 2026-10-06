@@ -15,11 +15,12 @@ import { sessionForDay } from '@/lib/semaine';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { DAYSPOS } from '@/data/templates';
 import type { JoursParSemaine } from '@/data/types';
-import { messageEnrage } from '@/lib/enrage';
+import { expressionEnrage, messageEnrage, type ExpressionMascotte, type MomentEnrage } from '@/lib/enrage';
 import { serie as serieDe } from '@/lib/gel';
 import { dayKey } from '@/lib/xp';
 
 import { MIN_RALENTIR, verifierMoments } from './moments';
+import { pieceJointe } from './pieceJointe';
 import { semaineDe, useProfil } from './profil';
 
 /** Bannière affichée en haut de l'écran pendant 7 s (.nbanner). */
@@ -88,6 +89,12 @@ function prochaine(h: string, now: Date): Date {
   return d;
 }
 
+/** Programme une notification avec la mascotte en image. */
+async function planifier(e: ExpressionMascotte, req: Notifications.NotificationRequestInput) {
+  const attachments = await pieceJointe(e);
+  return Notifications.scheduleNotificationAsync(attachments.length ? { ...req, content: { ...req.content, attachments } } : req);
+}
+
 /**
  * Reprogramme les notifications du téléphone : rappels VFC en attente, prochain bilan de nuit, rappel du coucher chaque jour.
  * Le texte du bilan est celui connu maintenant (le plus souvent « Comment as-tu dormi ? », la nuit n'étant pas encore notée).
@@ -105,20 +112,20 @@ export async function reprogrammer(now: Date = new Date()) {
   for (const p of st.pending) {
     if (p.at <= +now) continue;
     const n = p.type === 'trial' ? notifEssai(st.premium) : notifPost(p, st.nset, base);
-    if (n) await Notifications.scheduleNotificationAsync({ content: contenu(n), trigger: { type: DATE, date: new Date(p.at) } });
+    if (n) await planifier('face', { content: contenu(n), trigger: { type: DATE, date: new Date(p.at) } });
   }
   if (st.nset.sleep) {
     let reveil = prochaine(st.nset.wake, now);
     if (st.lastWake === dayKey(reveil)) reveil = new Date(+reveil + 864e5);
     const n = lastNight(st.nights, reveil);
-    await Notifications.scheduleNotificationAsync({ content: contenu(notifNuit(n, sleepScore(n, base))), trigger: { type: DATE, date: reveil } });
+    await planifier('face', { content: contenu(notifNuit(n, sleepScore(n, base))), trigger: { type: DATE, date: reveil } });
   }
   // Motivation du jour : les 7 prochains matins, un message différent chaque jour (jamais le même avant d'avoir vu les 123).
   if (st.nset.motiv !== false) {
     const h = st.nset.motivT ?? '08:00';
     let jour = prochaine(h, now);
     for (let k = 0; k < 7; k++, jour = new Date(+jour + 864e5)) {
-      await Notifications.scheduleNotificationAsync({
+      await planifier('motive', {
         content: { title: 'Ta dose de motivation 🔥', body: motivationDuJour(st.progStart, st.name, jour), data: { act: 'accueil' } },
         trigger: { type: DATE, date: jour },
       });
@@ -128,7 +135,7 @@ export async function reprogrammer(now: Date = new Date()) {
   if (st.nset.coeur !== false) {
     let jour = prochaine('17:30', now);
     for (let k = 0; k < 4; k++, jour = new Date(+jour + 2 * 864e5)) {
-      await Notifications.scheduleNotificationAsync({ content: { ...conseilRythme(jour), data: { act: 'sleep' } }, trigger: { type: DATE, date: jour } });
+      await planifier('face', { content: { ...conseilRythme(jour), data: { act: 'sleep' } }, trigger: { type: DATE, date: jour } });
     }
   }
   // « On bouge ensemble ? » à 18 h les jours de séance (pas aujourd'hui si une séance est déjà faite) ; sur la montre :
@@ -145,7 +152,7 @@ export async function reprogrammer(now: Date = new Date()) {
       const jour = (auj + k) % 7;
       const s = sessionForDay(sem, jour);
       if (!s || s.ride || !s.items.length) continue;
-      await Notifications.scheduleNotificationAsync({
+      await planifier('motive', {
         content: {
           title: 'On bouge ensemble ? 💪',
           body: `${s.titre} · ${Math.round(s.min)} min`,
@@ -157,7 +164,7 @@ export async function reprogrammer(now: Date = new Date()) {
       // 15 min avant : « Ta séance approche » ; la toucher ouvre NÉA, qui pose le compte à rebours sur l'écran verrouillé.
       const avant = new Date(+quand - 15 * 60e3);
       if (+avant > +now) {
-        await Notifications.scheduleNotificationAsync({
+        await planifier('motive', {
           content: { title: 'Ta séance approche 🏋️', body: `${s.titre} · ${Math.round(s.min)} min, dans 15 min.`, data: { act: 'seance', d: String(jour) } },
           trigger: { type: DATE, date: avant },
         });
@@ -166,13 +173,13 @@ export async function reprogrammer(now: Date = new Date()) {
   }
   if (st.nset.enrage) await programmerEnrage(now);
   if (st.nset.bed) {
-    await Notifications.scheduleNotificationAsync({
+    await planifier('fatigue', {
       content: contenu(notifCoucher(st.nset)),
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: Math.floor(hm(st.nset.bedT) / 60), minute: hm(st.nset.bedT) % 60 },
     });
     // « L'heure de ralentir » 30 min avant : la toucher ouvre NÉA, qui pose le compte à rebours sur l'écran verrouillé.
     const avant = (hm(st.nset.bedT) - MIN_RALENTIR + 1440) % 1440;
-    await Notifications.scheduleNotificationAsync({
+    await planifier('fatigue', {
       content: { title: "L'heure de ralentir 🌙", body: `Ton coucher dans ${MIN_RALENTIR} min. Pose l'écran, baisse la lumière, respire.`, data: { act: 'sleep' } },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: Math.floor(avant / 60), minute: avant % 60 },
     });
@@ -187,8 +194,10 @@ async function programmerEnrage(now: Date) {
   const st = useProfil.getState();
   const niv = st.nset.enrageNiv ?? 'venere';
   const DATE = Notifications.SchedulableTriggerInputTypes.DATE;
-  const poser = (date: Date, m: { title: string; body: string }, data: Record<string, string>) =>
-    +date > +now ? Notifications.scheduleNotificationAsync({ content: { ...m, data }, trigger: { type: DATE, date } }) : null;
+  const poser = (date: Date, moment: MomentEnrage, v: Parameters<typeof messageEnrage>[2], data: Record<string, string>) => {
+    const m = messageEnrage(moment, niv, v);
+    return +date > +now ? planifier(expressionEnrage(moment, niv), { content: { ...m, data }, trigger: { type: DATE, date } }) : null;
+  };
   const a = (d: Date, h: number, min: number) => {
     const x = new Date(d);
     x.setHours(h, min, 0, 0);
@@ -206,25 +215,25 @@ async function programmerEnrage(now: Date) {
     const s = sessionForDay(sem, (auj + k) % 7);
     if (!s || s.ride || !s.items.length) continue;
     if (k === 0 && fatigue) {
-      await poser(a(jour, 19, 30), messageEnrage('repos', niv, { date: jour }), { act: 'sleep' });
+      await poser(a(jour, 19, 30), 'repos', { date: jour }, { act: 'sleep' });
       continue;
     }
     const v = { prenom: st.name, seance: s.titre, n: Math.round(s.min), date: jour };
     const data = { act: 'seance', d: String((auj + k) % 7) };
-    await poser(a(jour, 19, 30), messageEnrage('seance', niv, v), data);
-    await poser(a(jour, 21, 0), messageEnrage('relance', niv, v), data);
+    await poser(a(jour, 19, 30), 'seance', v, data);
+    await poser(a(jour, 21, 0), 'relance', v, data);
   }
   // Série en danger : aujourd'hui est un jour prévu, rien de fait, la série tombe à minuit.
   const serie = serieDe(st, now);
   if (!bougeAuj && !fatigue && serie >= 2 && DAYSPOS[String(st.days) as JoursParSemaine].includes(auj)) {
-    await poser(a(now, 20, 30), messageEnrage('serie', niv, { prenom: st.name, n: serie, date: now }), { act: 'seance' });
+    await poser(a(now, 20, 30), 'serie', { prenom: st.name, n: serie, date: now }, { act: 'seance' });
   }
   // Absence : 3 puis 5 jours après la dernière activité.
   const dernier = st.logs.reduce((m, l) => Math.max(m, +new Date(l.d)), 0);
   if (dernier) {
     for (const n of [3, 5]) {
       const quand = a(new Date(dernier + n * 864e5), 12, 0);
-      await poser(quand, messageEnrage('absent', niv, { prenom: st.name, n, date: quand }), { act: 'seance' });
+      await poser(quand, 'absent', { prenom: st.name, n, date: quand }, { act: 'seance' });
     }
   }
 }

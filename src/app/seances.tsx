@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { MascotteVide } from '@/components/app/Mascotte';
 import { catalogueStyles as cs, Chip, EnTetePage, lieuDuProfil, normaliser, OngletsLieux, Recherche, SeanceLigne } from '@/components/app/Catalogue';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
-import { Card, Text } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { GOALF, LIEUX, SEANCES } from '@/data';
 import type { GoalFiltre, LieuId, SeanceId } from '@/data/types';
 import { useProfil } from '@/store/profil';
@@ -48,7 +49,7 @@ export default function Seances() {
               </View>
             ))
           ) : (
-            <Text style={[cs.note, cs.noteVide]}>{k ? 'Aucune séance trouvée.' : 'Aucune séance pour cet objectif ici : essaie un autre lieu.'}</Text>
+            <MascotteVide texte={k ? 'Aucune séance trouvée.' : 'Aucune séance pour cet objectif ici : essaie un autre lieu.'} />
           )}
         </Card>
       </ScrollView>

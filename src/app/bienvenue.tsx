@@ -1,14 +1,12 @@
-import MaskedView from '@react-native-masked-view/masked-view';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEvent } from 'expo';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View, type ViewStyle } from 'react-native';
+import { useEffect } from 'react';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
 
-import { Button, RadialBackground, Text } from '@/components/ui';
-import { DECO_IMAGES, VIDEO_ACCUEIL } from '@/data';
+import { Button, Glow, RadialBackground, Text } from '@/components/ui';
+import { MASCOTTE_IMAGES } from '@/data/images';
 import { colors, fonts } from '@/theme';
 
 /** Fond .wel : halo rose au centre et violet en haut à gauche. */
@@ -21,28 +19,14 @@ const FOND = [
 export default function Bienvenue() {
   const { width, height } = useWindowDimensions();
   // Hauteur limitée pour que le titre, le texte et les boutons tiennent sans défiler.
-  const videoW = Math.min(width, 440, (height * 0.42 * 720) / 760);
-  const videoH = (videoW * 760) / 720;
-  const player = useVideoPlayer(VIDEO_ACCUEIL, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  // L'image fixe d'Axel reste visible tant que la vidéo n'est pas prête (poster du prototype).
-  const { status } = useEvent(player, 'statusChange', { status: player.status });
-
-  const video = (
-    <>
-      <Image source={DECO_IMAGES.pAxel} style={StyleSheet.absoluteFill} contentFit="cover" />
-      <VideoView
-        player={player}
-        style={[StyleSheet.absoluteFill, status !== 'readyToPlay' && styles.hidden]}
-        contentFit="cover"
-        nativeControls={false}
-        accessibilityLabel="Axel, la mascotte NÉA, animé"
-      />
-    </>
-  );
+  const h = Math.min(height * 0.38, 360);
+  const w = (h * 295) / 420;
+  // La mascotte flotte doucement (monte, descend, s'étire un peu).
+  const t = useSharedValue(0);
+  useEffect(() => {
+    t.set(withRepeat(withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.sin) }), -1, true));
+  }, [t]);
+  const flotte = useAnimatedStyle(() => ({ transform: [{ translateY: -10 * t.get() }, { scaleY: 1 + 0.02 * t.get() }] }));
 
   return (
     <View style={styles.root}>
@@ -56,17 +40,13 @@ export default function Bienvenue() {
             COACHING SPORTIF IA
           </Text>
 
-          {/* Vidéo d'Axel, bords fondus (mask radial-gradient du prototype). */}
-          {Platform.OS === 'web' ? (
-            <View style={[{ width: videoW, height: videoH }, styles.video, MASQUE_WEB]}>{video}</View>
-          ) : (
-            <MaskedView
-              style={[{ width: videoW, height: videoH }, styles.video]}
-              maskElement={<MasqueRadial width={videoW} height={videoH} />}
-            >
-              {video}
-            </MaskedView>
-          )}
+          {/* Mascotte NÉA (remplace la vidéo d'Axel). */}
+          <View style={[styles.mascotte, { height: h + 30, width: Math.min(width, 440) }]}>
+            <Glow width={Math.min(width, 440)} height={h + 30} intensity={0.55} />
+            <Animated.View style={flotte}>
+              <Image source={MASCOTTE_IMAGES.face} style={{ width: w, height: h }} contentFit="contain" accessibilityLabel="La mascotte NÉA" />
+            </Animated.View>
+          </View>
 
           <View style={styles.pad}>
             <Text style={styles.h1}>
@@ -88,26 +68,6 @@ export default function Bienvenue() {
   );
 }
 
-/** Sur le web, MaskedView n'existe pas : on reprend le masque CSS du prototype (.hv). */
-const GRADIENT_MASQUE = 'radial-gradient(ellipse 62% 60% at 50% 50%, #000 30%, rgba(0,0,0,.6) 60%, transparent 100%)';
-const MASQUE_WEB = { maskImage: GRADIENT_MASQUE, WebkitMaskImage: GRADIENT_MASQUE } as unknown as ViewStyle;
-
-/** Opaque au centre, transparent sur les bords : ellipse 62 % × 60 %. */
-function MasqueRadial({ width, height }: { width: number; height: number }) {
-  return (
-    <Svg width={width} height={height}>
-      <Defs>
-        <RadialGradient id="masque" cx="50%" cy="50%" rx="50%" ry="50%">
-          <Stop offset="0.3" stopColor={colors.bg} stopOpacity={1} />
-          <Stop offset="0.6" stopColor={colors.bg} stopOpacity={0.6} />
-          <Stop offset="1" stopColor={colors.bg} stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Ellipse cx={width / 2} cy={height / 2} rx={width * 0.62} ry={height * 0.6} fill="url(#masque)" />
-    </Svg>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
@@ -121,8 +81,7 @@ const styles = StyleSheet.create({
   pk: { color: colors.pink },
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
-  hidden: { opacity: 0 },
   mt10: { marginTop: 10 },
-  video: { alignSelf: 'center', overflow: 'hidden' },
+  mascotte: { alignSelf: 'center', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 },
   tag: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
 });
