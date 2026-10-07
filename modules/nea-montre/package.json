@@ -1,0 +1,10 @@
+{
+  "name": "nea-montre",
+  "version": "1.0.0",
+  "description": "Liaison iPhone ↔ Apple Watch de NÉA (WatchConnectivity)",
+  "main": "src/index.ts",
+  "license": "UNLICENSED",
+  "author": "NÉA",
+  "homepage": "https://neacoach.app",
+  "private": true
+}
