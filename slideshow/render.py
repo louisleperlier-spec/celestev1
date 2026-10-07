@@ -22,7 +22,7 @@ FONTS = {
 
 WIDTH, HEIGHT = 1080, 1920
 DEFAULT_STYLE = {
-    "variant": "outline",  # "outline" : blanc contour noir · "box" : texte noir sur fond blanc
+    "variant": "outline",  # "outline" : blanc contour noir · "box" : texte noir sur fond blanc · "minimal" : blanc fin, ombre douce
     "position": "center",  # "top", "center", "bottom" ou une fraction de la hauteur (0.0 à 1.0)
     "size": 64,  # taille max ; réduite automatiquement si le texte ne tient pas
     "font": "bold",
@@ -93,6 +93,21 @@ def draw_text(img, text, style):
     pos = style["position"]
     center_y = HEIGHT * (POSITIONS[pos] if isinstance(pos, str) else float(pos))
     top = center_y - line_height * len(lines) / 2
+
+    if style["variant"] == "minimal":
+        # Texte blanc fin avec une ombre douce, façon carrousels « wellness aesthetic »
+        shadow = Image.new("L", img.size, 0)
+        shadow_draw = ImageDraw.Draw(shadow)
+        for i, line in enumerate(lines):
+            w = draw.textlength(line, font=font)
+            shadow_draw.text(((WIDTH - w) / 2, top + i * line_height), line, font=font, fill=170)
+        shadow = shadow.filter(ImageFilter.GaussianBlur(max(4, size // 6)))
+        img.paste(Image.new("RGB", img.size, "black"), (0, 0), shadow)
+        draw = ImageDraw.Draw(img)
+        for i, line in enumerate(lines):
+            w = draw.textlength(line, font=font)
+            draw.text(((WIDTH - w) / 2, top + i * line_height), line, font=font, fill="white")
+        return img
 
     for i, line in enumerate(lines):
         if not line:

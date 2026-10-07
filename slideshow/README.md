@@ -44,7 +44,7 @@ slideshow/
 ```
 
 - `date` : optionnelle. Avec, le post est programmé dans Postiz ; sans, il part tout de suite.
-- `style.variant` : `outline` (texte blanc contour noir) ou `box` (texte noir sur fond blanc).
+- `style.variant` : `outline` (texte blanc contour noir), `box` (texte noir sur fond blanc) ou `minimal` (petit texte blanc avec ombre douce, style « wellness aesthetic » ; à utiliser avec `"font": "semibold"` et `"size": 46`).
 - `style.position` : `top`, `center`, `bottom` ou une fraction de la hauteur (`0.3`).
 - `style` peut être défini pour tout le carrousel et surchargé slide par slide.
 - Utilise `\n` dans un texte pour forcer un retour à la ligne. Mets les emojis dans la légende plutôt que sur les slides : la police n'en contient pas.
