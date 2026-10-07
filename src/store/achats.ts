@@ -78,7 +78,8 @@ export function demarrerAchats() {
   });
 }
 
-export type ResultatAchat = 'ok' | 'annule' | 'erreur';
+/** `introuvable` : l'App Store n'a pas renvoyé le produit (abonnement pas prêt chez Apple, contrat Paid Apps inactif). */
+export type ResultatAchat = 'ok' | 'annule' | 'erreur' | 'introuvable';
 
 /** Achat d'une offre par l'App Store (feuille de paiement d'Apple). */
 export async function acheterReel(id: OffreId): Promise<ResultatAchat> {
@@ -86,7 +87,7 @@ export async function acheterReel(id: OffreId): Promise<ResultatAchat> {
   if (!m) return 'erreur';
   try {
     const [produit] = await m.getProducts([PRODUITS[id]], m.PRODUCT_CATEGORY.SUBSCRIPTION);
-    if (!produit) return 'erreur';
+    if (!produit) return 'introuvable';
     const r = await m.purchaseStoreProduct(produit);
     appliquer(r.customerInfo);
     return versPremium(r.customerInfo) ? 'ok' : 'erreur';

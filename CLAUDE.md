@@ -140,7 +140,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     dispositifs médicaux (aucun) ; RevenueCat : app « NEA (App Store) » `com.neacoach.app`, clé d'achat intégré .p8 valide (Key ID 4A2592768H),
     3 produits rattachés au droit `plus` (« Could not check » = pas de clé App Store Connect API, sans effet sur les achats) ;
     `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (clé `appl_`) dans EAS preview + production, publiée en EAS Update
-  - reste : compte sandbox + achat de test ; URL des notifications serveur RevenueCat dans App Store Connect (production + sandbox, v2) ;
+  - **captures de revue téléversées par l'API** (paywall rendu en 1290 × 2796) : les 3 abonnements passent de MISSING_METADATA à
+    **READY_TO_SUBMIT** (sinon l'App Store ne renvoie pas les produits, même en TestFlight) ; `acheterReel` rend `introuvable` dans ce cas
+  - reste : achat de test (TestFlight = gratuit) ; URL des notifications serveur RevenueCat dans App Store Connect (production + sandbox, v2) ;
     secret `REVENUECAT_SECRET_KEY` de la fonction `coach`
   - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 2 offres (annuel, mensuel), frise de l'essai, X après 2 s, textes
     légaux, Restaurer / Conditions / Confidentialité) ; `?suite=compte` après « C'est parti » de l'onboarding (puis création de compte)

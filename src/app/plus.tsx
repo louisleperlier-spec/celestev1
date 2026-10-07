@@ -79,6 +79,7 @@ export default function Plus() {
       // Vrai achat : feuille de paiement d'Apple, l'abonnement arrive par RevenueCat.
       const r = await acheterReel(o.id);
       if (r === 'annule') return;
+      if (r === 'introuvable') return toast("Cet abonnement n'est pas encore disponible sur l'App Store. Réessaie plus tard.");
       if (r === 'erreur') return toast("L'achat n'a pas abouti, réessaie");
       useProfil.getState().recompenserAchat();
     } else useProfil.getState().acheterPlus(o.id);
