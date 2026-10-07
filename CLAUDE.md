@@ -134,7 +134,14 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     rejoint celle d'un ami ; boost Équipe x1,2 si 3 membres actifs dans la semaine ; classement « Équipes » = toutes les équipes (nom + XP)
   - sans compte : niveau, boosts, Turbo et quêtes locaux, classement réduit à soi, carte « Créer mon compte »
   - Turbo « Activer » renvoie à NÉA Plus (étape 11) ; icône `bolt` absente du prototype (éclair ajouté)
-- [ ] 11. NÉA Plus (RevenueCat) : **paywall, accès et vrais achats codés (en attente de la clé RevenueCat)**
+- [ ] 11. NÉA Plus (RevenueCat) : **vrais achats actifs (oct. 2026), à tester en sandbox sur iPhone**
+  - **fait par l'utilisateur (7 oct. 2026)** : contrat Paid Apps **actif** (bloqué un mois faute de formulaires fiscaux), banque, formulaires
+    fiscaux (TVQ FP 2506-V, W-8BEN article 7(1) 0 %, certificat américain), statut de marchand DSA (UE), partie XX (services personnels : non),
+    dispositifs médicaux (aucun) ; RevenueCat : app « NEA (App Store) » `com.neacoach.app`, clé d'achat intégré .p8 valide (Key ID 4A2592768H),
+    3 produits rattachés au droit `plus` (« Could not check » = pas de clé App Store Connect API, sans effet sur les achats) ;
+    `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (clé `appl_`) dans EAS preview + production, publiée en EAS Update
+  - reste : compte sandbox + achat de test ; URL des notifications serveur RevenueCat dans App Store Connect (production + sandbox, v2) ;
+    secret `REVENUECAT_SECRET_KEY` de la fonction `coach`
   - paywall `/plus` fidèle à vPaywall (coach, titre personnalisé, courbe, 5 avantages, 2 offres (annuel, mensuel), frise de l'essai, X après 2 s, textes
     légaux, Restaurer / Conditions / Confidentialité) ; `?suite=compte` après « C'est parti » de l'onboarding (puis création de compte)
   - offre de sortie une seule fois (39,99 $ la 1re année, compte à rebours réel de 10 min), feuille d'achat, « Ton abonnement »
