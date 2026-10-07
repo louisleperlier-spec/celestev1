@@ -417,7 +417,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
 - [ ] **1re version App Store (7 oct. 2026)** : **Amis, Équipes et Territoires masqués** (`lib/fonctions.ts` : `AMIS`, `EQUIPES`, `TERRITOIRES` à `false` ;
   le code reste, seuls les accès sont cachés : Ligue (niveau, boosts, Turbo, quêtes, sans classement ni ajout d'ami), Sorties, Progrès, récap rando, paywall, textes d'autorisation de position,
   description de la fiche) ; confidentialité de l'app publiée (8 types, fonctionnalité de l'app, liés, sans suivi) ; coordonnées et notes de
-  vérification (fr) ; **build 1.0.0 (34)** de production (canal `production` : les mises à jour EAS de l'app publiée vont sur la branche `production`)
+  vérification (fr) ; 5 visuels iPhone refaits (titres et mascotte des maquettes de l'utilisateur + vrais écrans de l'app exportée en web) ;
+  **build 1.0.0 (34)** de production attaché à la version (canal `production` : les mises à jour EAS de l'app publiée vont sur la branche `production`) ;
+  les 1ers abonnements ne peuvent pas être ajoutés par l'API (`FIRST_SUBSCRIPTION_MUST_BE_SUBMITTED_ON_VERSION`) : à cocher sur la page de la version
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
