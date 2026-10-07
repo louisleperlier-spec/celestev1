@@ -8,10 +8,11 @@ export type Rubrique = { label: string; href: Href };
 
 /** Rubriques de l'onglet « Programme » (la Randonnée y vit depuis la direction « nuit », 4 onglets). */
 export const ENTRAINEMENT: Rubrique[] = [
-  { label: 'Programme', href: '/programme' },
+  { label: 'Plan', href: '/programme' },
   { label: 'Calendrier', href: { pathname: '/programme', params: { vue: 'calendrier' } } },
   { label: 'Sorties', href: '/velo' },
   { label: 'Rando', href: '/rando' },
+  { label: 'Yoga', href: '/yoga' },
 ];
 
 /** En-tête d'onglet : grand titre (et sous-titre), bouton « + » (ajouter une activité : musculation libre, autres sports, séances prêtes), puis le contrôle segmenté des rubriques. */

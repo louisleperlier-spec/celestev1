@@ -75,6 +75,7 @@ export default function RootLayout() {
         <Stack.Screen name="bienvenue" options={{ animation: 'fade' }} />
         <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
         <Stack.Screen name="seance-en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
+        <Stack.Screen name="yoga/en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false, gestureEnabled: false }} />
         <Stack.Screen name="randonnee/en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
         <Stack.Screen name="randonnee/recap" options={{ animation: 'fade_from_bottom' }} />
         <Stack.Screen name="activite" options={{ animation: 'fade_from_bottom' }} />

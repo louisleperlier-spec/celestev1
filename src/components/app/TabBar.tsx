@@ -9,7 +9,7 @@ import { useSportLive } from '@/store/sportLive';
 import { IconeSport } from './IconeSport';
 import { alpha, colors, ui } from '@/theme';
 
-type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/progres' | '/profil' | '/coach';
+type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/yoga' | '/progres' | '/profil' | '/coach';
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
 /**
@@ -18,7 +18,7 @@ type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
  */
 const ONGLETS: Onglet[] = [
   { label: 'Accueil', icon: 'home', href: '/accueil', ecrans: ['/accueil', '/profil'] },
-  { label: 'Programme', icon: 'cal', href: '/programme', ecrans: ['/programme', '/velo', '/rando'] },
+  { label: 'Programme', icon: 'cal', href: '/programme', ecrans: ['/programme', '/velo', '/rando', '/yoga'] },
   { label: 'Progrès', icon: 'chart', href: '/progres', ecrans: ['/progres', '/ligue'] },
   { label: 'Coach', icon: 'bulle', href: '/coach', ecrans: ['/coach'] },
 ];

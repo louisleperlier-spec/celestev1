@@ -61,7 +61,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <EnTete titre="Ton programme" sous="Un peu mieux, chaque semaine." rubriques={ENTRAINEMENT} actif="Programme" />
+      <EnTete titre="Ton programme" sous="Un peu mieux, chaque semaine." rubriques={ENTRAINEMENT} actif="Plan" />
       {/* Direction « nuit » : semaine, programme suivi, séance du jour. */}
       <View style={styles.haut}>
         <SemaineJours />

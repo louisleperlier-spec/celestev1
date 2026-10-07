@@ -14,15 +14,23 @@ const finActivite = (hier: boolean) => new Date(Date.now() - (hier ? 864e5 : 0))
 
 export type ResultatActivite = { xp: number; cal: number };
 
-export function enregistrerSport(id: string, min: number, intensite: Intensite, hier: boolean, fc?: { hrAvg: number; hrMax: number; hrv: number }): ResultatActivite | null {
+/** `titre` : nom affiché dans le journal (ex. une séance de yoga guidée), sinon le nom du sport. */
+export function enregistrerSport(
+  id: string,
+  min: number,
+  intensite: Intensite,
+  hier: boolean,
+  fc?: { hrAvg: number; hrMax: number; hrv: number },
+  titre?: string,
+): ResultatActivite | null {
   const s = sportParId(id);
   if (!s || min < 1) return null;
   const st = useProfil.getState();
   const fin = finActivite(hier);
   const debut = new Date(+fin - min * 60e3);
   const cal = kcalSport(s.met, st.weight, min, intensite);
-  st.addLog({ d: fin.toISOString(), debut: debut.toISOString(), type: 'sport', sport: s.id, title: s.nom, min, cal, vol: 0, ...(fc && fc.hrAvg > 0 ? fc : {}) });
-  const xp = useProfil.getState().addXp(xpSport(min) + (intensite === 'intense' ? 5 : 0), s.nom);
+  st.addLog({ d: fin.toISOString(), debut: debut.toISOString(), type: 'sport', sport: s.id, title: titre ?? s.nom, min, cal, vol: 0, ...(fc && fc.hrAvg > 0 ? fc : {}) });
+  const xp = useProfil.getState().addXp(xpSport(min) + (intensite === 'intense' ? 5 : 0), titre ?? s.nom);
   if (!hier) useProfil.getState().quest('seance');
   enregistrerEntrainement({ type: 'sport', debut, fin, kcal: cal, hk: s.hk });
   return { xp, cal };

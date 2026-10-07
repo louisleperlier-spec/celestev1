@@ -423,6 +423,17 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   (« Ajouter pour vérification » sur chaque abonnement, dans le même brouillon) ; copyright « 2026 Louis Leperlier » ; en-tête et image des résultats
   de recherche faits (3840 × 1646, 3840 × 2560) ; **soumis à la vérification d'Apple le 7 oct. 2026 à 13 h 38** (app 1.0.0 (34) + groupe NÉA Plus
   + 3 abonnements, soumission 1bcc5045-8b61-46d2-b1e9-fc553dfc1733)
+- [ ] **Yoga (hors cahier des charges, demandé par l'utilisateur, oct. 2026)** : **publié en EAS Update (preview), à valider sur iPhone**
+  - choix validés : **30 séances prêtes**, **toutes gratuites**, images des postures générées par l'utilisateur (prompt et liste dans
+    `docs/yoga-images.md`, fichiers `<id>.png` → `assets/yoga/<id>.webp` + `YOGA_IMAGES` de `data/yogaImages.ts` ; sans image : lotus `IconeSport`)
+  - `data/yoga.ts` : 40 postures (nom, sanskrit, zones, niveau, deux côtés, 3 consignes, souffle, version plus douce) et 30 séances (objectif
+    Débuter / Matin / Souplesse / Dos / Équilibre / Force / Récupération / Détente / Sommeil, niveau, style Hatha / Vinyasa / Yin / Doux, étapes
+    `[posture, secondes]`) ; `lib/yoga.ts` : étapes jouées (deux côtés dédoublés), durée (+ 5 s de transition), séance du moment (matin / soir / du jour)
+  - 5e rubrique **Yoga** de l'onglet Programme (`(tabs)/yoga.tsx`, rubrique « Programme » renommée **« Plan »** pour tenir sur une ligne) :
+    séance du moment, filtres, liste, « Les 40 postures » (`/yoga/postures`) ; fiche `/yoga/[id]` (déroulé, fiche posture `PostureSheet`) ;
+    **lecteur guidé** `/yoga/en-cours` (préparation 5 s puis tenue, côté droit / gauche, minuteur, consignes, souffle, à suivre, temps restant,
+    pause / précédente / suivante, vibration à chaque changement, écran gardé allumé `expo-keep-awake`) ; bilan « Namasté » → `enregistrerSport('yoga', …, titre)`
+    (journal, XP, quête, carte, Apple Santé HKWorkoutActivityType 57)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

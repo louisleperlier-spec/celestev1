@@ -14,6 +14,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="programme" />
       <Tabs.Screen name="velo" />
       <Tabs.Screen name="rando" />
+      <Tabs.Screen name="yoga" />
       <Tabs.Screen name="ligue" />
       <Tabs.Screen name="progres" />
       <Tabs.Screen name="profil" />
