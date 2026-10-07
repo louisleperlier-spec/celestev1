@@ -13,6 +13,7 @@ import { Button, Card, Icon, Text, type IconName } from '@/components/ui';
 import { trouverSentier as sentier } from '@/store/randosPres';
 import { AXEL_SOMMET, photoGrande } from '@/data/randosImages';
 import { vibrerFete } from '@/store/jeu';
+import { TERRITOIRES } from '@/lib/fonctions';
 import { useRando } from '@/store/rando';
 import { colors, fonts, ui } from '@/theme';
 
@@ -120,7 +121,7 @@ export default function RecapRando() {
             </View>
           )}
 
-          {r.cases > 0 && <Text style={[styles.p, styles.mt]}>⬢ {r.cases} cases traversées pour tes territoires.</Text>}
+          {TERRITOIRES && r.cases > 0 && <Text style={[styles.p, styles.mt]}>⬢ {r.cases} cases traversées pour tes territoires.</Text>}
           <BandeauCartes style={styles.mt} />
           <Button label="Partager ma rando" icon="arrow" onPress={partager} style={styles.mt} />
         </View>

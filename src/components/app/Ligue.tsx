@@ -15,6 +15,7 @@ import { Button, Card, Icon, Segmente, Text, toast, isIconName } from '@/compone
 import { QUESTS } from '@/data/ligue';
 import type { CoachId } from '@/data/types';
 import { dec, fmt } from '@/lib/charges';
+import { EQUIPES } from '@/lib/fonctions';
 import { actifSemaine, actifsEquipe, xpSemaine } from '@/lib/ligue';
 import { isPremium } from '@/lib/premium';
 import { serie } from '@/lib/gel';
@@ -62,7 +63,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
   const monWk = xpSemaine(p.xpLog, date);
 
   const rows: Ligne[] =
-    seg === 'amis'
+    seg === 'amis' || !EQUIPES
       ? [
           { key: 'moi', nom: p.name + ' (toi)', coach: p.coach, moi: true, tot: p.xp, wk: monWk },
           ...l.amis.map((a) => ({ key: a.id, nom: a.prenom, coach: a.coach, tot: a.xp, wk: a.xpSemaine })),
@@ -217,7 +218,13 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
 
         {/* .seg : Amis | Équipes | Cette semaine / Total */}
         <View style={styles.seg}>
-          <Segmente options={[['amis', 'Amis'], ['equipes', 'Équipes']] as const} value={seg} onChange={setSeg} style={styles.flex} />
+          {EQUIPES ? (
+            <Segmente options={[['amis', 'Amis'], ['equipes', 'Équipes']] as const} value={seg} onChange={setSeg} style={styles.flex} />
+          ) : (
+            <Text weight="semibold" style={[styles.h5, styles.flex]}>
+              Amis
+            </Text>
+          )}
           <Pressable accessibilityRole="button" onPress={() => setPer(per === 'semaine' ? 'total' : 'semaine')} style={styles.perBtn}>
             <Text weight="semibold" style={styles.perTxt}>
               {per === 'semaine' ? 'Cette semaine' : 'Total'}
@@ -260,10 +267,10 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
             <Text weight="bold" style={styles.b14}>
               Joue avec tes amis
             </Text>
-            <Text style={styles.small}>Crée ton compte pour ajouter tes amis, former une équipe et débloquer le boost Équipe +20 %.</Text>
+            <Text style={styles.small}>{EQUIPES ? 'Crée ton compte pour ajouter tes amis, former une équipe et débloquer le boost Équipe +20 %.' : 'Crée ton compte pour ajouter tes amis et comparer vos XP.'}</Text>
             <Button label="Créer mon compte" onPress={() => router.push({ pathname: '/compte', params: { mode: 'signup' } })} style={styles.mt12} />
           </Card>
-        ) : l.equipe ? (
+        ) : !EQUIPES ? null : l.equipe ? (
           <>
             <SectionHead title={l.equipe.nom} action="Renommer" onAction={() => ouvrir('nom')} />
             {/* .teamc */}

@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
+import { TERRITOIRES } from '@/lib/fonctions';
 import { BandeauCartes, DefisSemaine, MesRecords } from '@/components/app/Jeu';
 import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
@@ -124,7 +125,7 @@ export default function Progres() {
           <CourbePoids ws={ws} labels={labels} />
         </Card>
 
-            <EntreeTerritoires />
+            {TERRITOIRES && <EntreeTerritoires />}
         {/* .qcard */}
         <LinearGradient colors={[colors.surface, colors.surface, mix(colors.mauve, 30, colors.surface)]} locations={[0, 0.4, 1]} start={{ x: 0, y: 0.4 }} end={{ x: 1, y: 0.6 }} style={styles.qcard}>
           <Text style={styles.qText}>« {c.prog} »</Text>

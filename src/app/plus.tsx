@@ -105,7 +105,7 @@ export default function Plus() {
     ['dumb', `Tous les programmes des ${COACHES.length} coachs`],
     ['bulle', 'Ton coach IA en illimité'],
     ['heart', 'Récupération avancée'],
-    ['users', "Turbo XP et boosts d'équipe"],
+    ['users', 'Turbo XP et boosts'],
     ['bike', 'Vélo : zones cardio et historique'],
   ];
   const cta = plan.trial ? `Essayer ${plan.trial} jours gratuitement` : `S'abonner : ${money(plan.prix)}/${plan.per}`;

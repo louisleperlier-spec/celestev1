@@ -49,7 +49,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours, calculer ta distance et conquérir des territoires, et pour centrer la carte des territoires."
+          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours et calculer ta distance."
         }
       ],
       [

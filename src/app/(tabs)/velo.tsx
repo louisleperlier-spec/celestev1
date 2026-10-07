@@ -8,6 +8,7 @@ import { MascotteVide } from '@/components/app/Mascotte';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Carte } from '@/components/app/Carte';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
+import { TERRITOIRES } from '@/lib/fonctions';
 import { CourbeFC, ListeZones } from '@/components/app/Coeur';
 import { LivePills } from '@/components/app/LivePills';
 import { SectionHead } from '@/components/app/Section';
@@ -55,7 +56,7 @@ export default function Velo() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnTete titre="Tes sorties" sous="Vélo, course et territoires." rubriques={ENTRAINEMENT} actif="Sorties" />
+        <EnTete titre="Tes sorties" sous={TERRITOIRES ? 'Vélo, course et territoires.' : 'Vélo et course.'} rubriques={ENTRAINEMENT} actif="Sorties" />
 
         {/* .modes */}
         <View style={styles.modes}>
@@ -122,7 +123,7 @@ export default function Velo() {
         </Text>
 
         {/* Territoires : conquête du quartier en vélo et en course */}
-        <EntreeTerritoires />
+        {TERRITOIRES && <EntreeTerritoires />}
 
         {/* Dernière sortie */}
         {r && (
@@ -142,7 +143,7 @@ export default function Velo() {
               <Case label="Calories" value={String(r.cal)} />
             </View>
             <ListeZones z={r.st.z} />
-            {r.cases ? (
+            {TERRITOIRES && r.cases ? (
               <Pressable accessibilityRole="button" onPress={() => router.push('/territoires')} style={styles.conq}>
                 <Icon name="hexa" color={colors.pink} />
                 <View style={styles.flex}>
