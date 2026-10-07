@@ -414,6 +414,10 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   l'écran verrouillé (`targets/widgets/images/axel_*.png` : dodo → fatiguée, séance → motivée, pause → de face, pas → fière) et notifications
   de la montre (`ax_*` : énergique / séance → motivée, détendu / stable → de face, fatigue / dodo → fatiguée, stressé → bras croisés, forme →
   fière) ; les coachs (dont Axel) et les scènes illustrées (salle, étirements, course, sommet, méditation, sommeil) restent ; reste : son nom
+- [ ] **1re version App Store (7 oct. 2026)** : **Équipes et Territoires masqués** (`lib/fonctions.ts` : `EQUIPES`, `TERRITOIRES` à `false` ;
+  le code reste, seuls les accès sont cachés : Ligue (amis seulement), Sorties, Progrès, récap rando, paywall, textes d'autorisation de position,
+  description de la fiche) ; confidentialité de l'app publiée (8 types, fonctionnalité de l'app, liés, sans suivi) ; coordonnées et notes de
+  vérification (fr) ; **build 1.0.0 (33)** de production (canal `production` : les mises à jour EAS de l'app publiée vont sur la branche `production`)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
