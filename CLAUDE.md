@@ -420,6 +420,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   vérification (fr) ; 5 visuels iPhone refaits (titres et mascotte des maquettes de l'utilisateur + vrais écrans de l'app exportée en web) ;
   **build 1.0.0 (34)** de production attaché à la version (canal `production` : les mises à jour EAS de l'app publiée vont sur la branche `production`) ;
   les 1ers abonnements ne peuvent pas être ajoutés par l'API (`FIRST_SUBSCRIPTION_MUST_BE_SUBMITTED_ON_VERSION`) : à cocher sur la page de la version
+  (« Ajouter pour vérification » sur chaque abonnement, dans le même brouillon) ; copyright « 2026 Louis Leperlier » ; en-tête et image des résultats
+  de recherche faits (3840 × 1646, 3840 × 2560) ; **soumis à la vérification d'Apple le 7 oct. 2026 à 13 h 38** (app 1.0.0 (34) + groupe NÉA Plus
+  + 3 abonnements, soumission 1bcc5045-8b61-46d2-b1e9-fc553dfc1733)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 
