@@ -15,7 +15,7 @@ import { Button, Card, Icon, Segmente, Text, toast, isIconName } from '@/compone
 import { QUESTS } from '@/data/ligue';
 import type { CoachId } from '@/data/types';
 import { dec, fmt } from '@/lib/charges';
-import { EQUIPES } from '@/lib/fonctions';
+import { AMIS, EQUIPES } from '@/lib/fonctions';
 import { actifSemaine, actifsEquipe, xpSemaine } from '@/lib/ligue';
 import { isPremium } from '@/lib/premium';
 import { serie } from '@/lib/gel';
@@ -216,52 +216,56 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
           })}
         </View>
 
-        {/* .seg : Amis | Équipes | Cette semaine / Total */}
-        <View style={styles.seg}>
-          {EQUIPES ? (
-            <Segmente options={[['amis', 'Amis'], ['equipes', 'Équipes']] as const} value={seg} onChange={setSeg} style={styles.flex} />
-          ) : (
-            <Text weight="semibold" style={[styles.h5, styles.flex]}>
-              Amis
-            </Text>
-          )}
-          <Pressable accessibilityRole="button" onPress={() => setPer(per === 'semaine' ? 'total' : 'semaine')} style={styles.perBtn}>
-            <Text weight="semibold" style={styles.perTxt}>
-              {per === 'semaine' ? 'Cette semaine' : 'Total'}
-            </Text>
-          </Pressable>
-        </View>
-        <View style={[styles.list, styles.mt12]}>
-          {rows.map((r, i) => {
-            const rn = lvlInfo(r.tot).n;
-            return (
-              <Row key={r.key} style={[styles.lrow, r.moi && styles.lrowMoi]}>
-                <Text weight="extrabold" style={[styles.pos, i < 3 && { color: ui.podium[i] }]}>
-                  {i + 1}
+        {AMIS && (
+          <>
+            {/* .seg : Amis | Équipes | Cette semaine / Total */}
+            <View style={styles.seg}>
+              {EQUIPES ? (
+                <Segmente options={[['amis', 'Amis'], ['equipes', 'Équipes']] as const} value={seg} onChange={setSeg} style={styles.flex} />
+              ) : (
+                <Text weight="semibold" style={[styles.h5, styles.flex]}>
+                  Amis
                 </Text>
-                {r.equipe ? (
-                  <View style={styles.tav}>
-                    <Icon name="usercheck" color={colors.pinkLight} />
-                  </View>
-                ) : (
-                  <CoachFace id={r.coach!} size={38} borderWidth={1} />
-                )}
-                <View style={styles.flex}>
-                  <Text weight="semibold" style={styles.h5} numberOfLines={1}>
-                    {r.nom}
-                  </Text>
-                  <Text style={styles.p}>{r.equipe ? 'Équipe' : 'Niveau ' + rn + ' • ' + rankOf(rn)[0]}</Text>
-                </View>
-                <Text weight="bold" style={styles.lxp}>
-                  {fmt(r[cle])} XP
+              )}
+              <Pressable accessibilityRole="button" onPress={() => setPer(per === 'semaine' ? 'total' : 'semaine')} style={styles.perBtn}>
+                <Text weight="semibold" style={styles.perTxt}>
+                  {per === 'semaine' ? 'Cette semaine' : 'Total'}
                 </Text>
-              </Row>
-            );
-          })}
-          {!rows.length && <Text style={styles.vide}>{connecte ? 'Aucune équipe pour l’instant : crée la tienne !' : 'Crée ton compte pour voir les équipes.'}</Text>}
-        </View>
+              </Pressable>
+            </View>
+            <View style={[styles.list, styles.mt12]}>
+              {rows.map((r, i) => {
+                const rn = lvlInfo(r.tot).n;
+                return (
+                  <Row key={r.key} style={[styles.lrow, r.moi && styles.lrowMoi]}>
+                    <Text weight="extrabold" style={[styles.pos, i < 3 && { color: ui.podium[i] }]}>
+                      {i + 1}
+                    </Text>
+                    {r.equipe ? (
+                      <View style={styles.tav}>
+                        <Icon name="usercheck" color={colors.pinkLight} />
+                      </View>
+                    ) : (
+                      <CoachFace id={r.coach!} size={38} borderWidth={1} />
+                    )}
+                    <View style={styles.flex}>
+                      <Text weight="semibold" style={styles.h5} numberOfLines={1}>
+                        {r.nom}
+                      </Text>
+                      <Text style={styles.p}>{r.equipe ? 'Équipe' : 'Niveau ' + rn + ' • ' + rankOf(rn)[0]}</Text>
+                    </View>
+                    <Text weight="bold" style={styles.lxp}>
+                      {fmt(r[cle])} XP
+                    </Text>
+                  </Row>
+                );
+              })}
+              {!rows.length && <Text style={styles.vide}>{connecte ? 'Aucune équipe pour l’instant : crée la tienne !' : 'Crée ton compte pour voir les équipes.'}</Text>}
+            </View>
+          </>
+        )}
 
-        {!connecte ? (
+        {!AMIS ? null : !connecte ? (
           /* Sans compte : amis et équipes ont besoin du serveur */
           <Card style={[styles.teamc, styles.mt22]}>
             <Text weight="bold" style={styles.b14}>
@@ -333,7 +337,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
           </>
         )}
 
-        {connecte && (
+        {AMIS && connecte && (
           <>
             {/* .invite */}
             <Card style={styles.carteAction}>
