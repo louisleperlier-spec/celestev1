@@ -33,6 +33,15 @@ Format inspiré de @fitnessleana : carrousels « 5 habitudes / 3 erreurs / ce qu
 Fiche persona 2, à coller mot pour mot dans chaque prompt d'image :
 > Jeune femme de 23 ans, cheveux blonds foncés mi-longs attachés en queue de cheval haute, quelques mèches qui tombent, yeux verts, taches de rousseur légères, peau naturelle sans maquillage marqué, silhouette sportive mais normale (pas une athlète). Tenue : brassière noire, t-shirt oversize gris clair, legging noir, baskets blanches.
 
+### Recette « carrousel valeur » (compte 2 en priorité)
+
+Inspirée des carrousels « DOs and DON'Ts » qui font plus de 250 000 j'aime et 80 000 enregistrements :
+- **6 slides.** Slide 1 : photo large et spontanée, avec l'accroche « 5 façons de [résultat concret] ». Slides 2 à 6 : un conseil numéroté par slide, vraiment utile, **avec un chiffre précis** (séries, minutes, pas, heures).
+- **NÉA apparaît sur UNE seule slide du milieu** (jamais la 1re ni la dernière), écrit « NÉA » entre guillemets à l'intérieur du conseil, avec la photo d'une main qui tient un téléphone montrant le vrai écran de l'app. Toutes les autres slides sont de la valeur pure.
+- **Zone de texte sûre :** entre 300 px du haut et les 25 % du bas d'un cadre 1080×1920, pour que l'interface de TikTok ne recouvre rien.
+- **Légende décontractée en minuscules**, avec 4 à 6 hashtags.
+- **Pas de fausse promesse santé :** pas de « perdre du ventre » ciblé (la perte de gras localisée n'existe pas), pas de régime extrême.
+
 ### Style commun des prompts d'image
 
 > Photo verticale 9:16 prise à l'iPhone, rendu brut et naturel, lumière réelle, léger grain, aucune retouche beauté, aucun effet studio. Texte en surimpression : police sans-serif blanche très grasse, fin contour noir, centré horizontalement, placé entre 35 % et 75 % de la hauteur, sans cacher le visage. Petit compteur blanc « X/N » en haut à gauche. Orthographe française exacte, accents compris, aucune autre écriture dans l'image.
