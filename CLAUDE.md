@@ -422,7 +422,9 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   les 1ers abonnements ne peuvent pas être ajoutés par l'API (`FIRST_SUBSCRIPTION_MUST_BE_SUBMITTED_ON_VERSION`) : à cocher sur la page de la version
   (« Ajouter pour vérification » sur chaque abonnement, dans le même brouillon) ; copyright « 2026 Louis Leperlier » ; en-tête et image des résultats
   de recherche faits (3840 × 1646, 3840 × 2560) ; **soumis à la vérification d'Apple le 7 oct. 2026 à 13 h 38** (app 1.0.0 (34) + groupe NÉA Plus
-  + 3 abonnements, soumission 1bcc5045-8b61-46d2-b1e9-fc553dfc1733)
+  + 3 abonnements, soumission 1bcc5045-8b61-46d2-b1e9-fc553dfc1733) ; vérification accélérée accordée ; **refus du 13 oct.** (guideline
+  abonnements : pas de lien EULA dans la fiche) → liens « Conditions d'utilisation (CLUF) » (EULA standard d'Apple), conditions et confidentialité
+  ajoutés à la description, **resoumis le 13 oct.** ; DSA (UE) : justificatif d'adresse demandé par Apple, envoyé par l'utilisateur
 - [ ] **Yoga (hors cahier des charges, demandé par l'utilisateur, oct. 2026)** : **publié en EAS Update (preview), à valider sur iPhone**
   - choix validés : **30 séances prêtes**, **toutes gratuites**, images des postures générées par l'utilisateur (prompt et liste dans
     `docs/yoga-images.md`, fichiers `<id>.png` → `assets/yoga/<id>.webp` + `YOGA_IMAGES` de `data/yogaImages.ts` ; sans image : lotus `IconeSport`)
