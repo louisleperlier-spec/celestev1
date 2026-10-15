@@ -20,6 +20,7 @@ import { QUESTS } from '@/data/ligue';
 import { actifsEquipe } from '@/lib/ligue';
 import type { MessageChat, QuotaChat } from '@/lib/coach';
 import { basculerRenouvellement, brancherPremium, nouvelAbonnement, type OffreId, type Premium } from '@/lib/premium';
+import { avecRessenti, type Ressenti } from '@/lib/bilan';
 import { journeeDu, VERRES_EAU, type Journee } from '@/lib/journee';
 import { coucherPour, OBJECTIF_SOMMEIL, REVEIL_DEFAUT, type NoteSoir, type Reveil } from '@/lib/reveil';
 import { ALERTES_DEFAUT, notifsDues, rappelPost, REGLAGES_DEFAUT, type AlertesSante, type EnAttente, type Notif, type NouvelleNotif, type ReglagesNotifs } from '@/lib/notifs';
@@ -89,6 +90,8 @@ type Etat = Profil & {
   jeu: EtatJeu;
   /** « Ta journée » : verres d'eau et pause respiration du jour (cochés à la main). */
   journee: Journee | null;
+  /** Check-in du matin de l'Accueil (énergie, sommeil, courbatures), le plus récent en premier (`lib/bilan.ts`). */
+  ressentis: Ressenti[];
   /** Partie Sommeil (maquettes, oct. 2026) : réveil de l'iPhone, objectif de sommeil (h), notes du soir, début de la nuit en cours. */
   reveil: Reveil;
   objectifSommeil: number;
@@ -127,6 +130,7 @@ type Actions = {
   addLog: (l: Log) => void;
   /** « Ta journée » : un verre d'eau de plus, pause respiration faite / défaite, fête de la journée parfaite. */
   ajouterVerre: () => void;
+  noterRessenti: (r: Ressenti) => void;
   basculerCalme: () => void;
   marquerJourneeFetee: () => void;
   /** Réveil (heure, jours, son, vibration) : met aussi à jour le réveil et le coucher des notifications (coucher = réveil − objectif). */
@@ -196,6 +200,7 @@ const defauts = (): Etat => ({
   premium: null,
   jeu: JEU_DEFAUT,
   journee: null,
+  ressentis: [],
   reveil: REVEIL_DEFAUT,
   objectifSommeil: OBJECTIF_SOMMEIL,
   notesSoir: [],
@@ -269,6 +274,7 @@ export const useProfil = create<Etat & Actions>()(
         setTimeout(() => toast('Quête réussie : +' + g + ' XP'), 900);
       },
       addLog: (l) => set({ logs: [l, ...get().logs] }),
+      noterRessenti: (r) => set({ ressentis: avecRessenti(get().ressentis, r) }),
       ajouterVerre: () => {
         const j = journeeDu(get().journee);
         set({ journee: { ...j, eau: Math.min(VERRES_EAU, j.eau + 1) } });
@@ -379,6 +385,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   premium: s.premium,
   jeu: s.jeu,
   journee: s.journee,
+  ressentis: s.ressentis,
   reveil: s.reveil,
   objectifSommeil: s.objectifSommeil,
   notesSoir: s.notesSoir,

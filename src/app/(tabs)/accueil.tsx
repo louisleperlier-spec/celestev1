@@ -1,8 +1,10 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BilanDuJour, CarteCollection, CarteMessageCoach, CarteProchaineSeance, RessentiSheet, TeteSeance } from '@/components/app/Bilan';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { BandeauCartes } from '@/components/app/Jeu';
 import { Journee } from '@/components/app/Journee';
@@ -10,7 +12,7 @@ import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
 import { SectionHead } from '@/components/app/Section';
-import { AnneauxDuJour, CarteCoach, CarteSeance, TuilesSante } from '@/components/app/Tableau';
+import { TuilesSante } from '@/components/app/Tableau';
 import { Appui, Card, Icon, Text } from '@/components/ui';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
 import { estPremium } from '@/lib/premium';
@@ -19,13 +21,19 @@ import { useProfil, useSemaine } from '@/store/profil';
 import { colors, gradients, ui } from '@/theme';
 
 
-/** Onglet Accueil (direction « nuit ») : anneaux Récupération / Effort, coach, prochaine séance, Sommeil / VFC, Ta journée. */
+/**
+ * Onglet Accueil (maquette de l'utilisateur, oct. 2026) : bilan du jour utile même sans Apple Watch (Énergie et
+ * Sommeil / Courbatures du check-in, Activité du journal), message du coach, prochaine séance, cartes à découvrir.
+ */
 export default function Accueil() {
   const p = useProfil();
   const sem = useSemaine();
   const ns = nextSession(sem);
   const s = ns.s;
   const nonLues = p.notifs.some((n) => !n.read);
+  // Check-in du matin ; la clé remet la feuille à zéro à chaque ouverture.
+  const [feuille, setFeuille] = useState(0);
+  const ouvrirRessenti = () => setFeuille((n) => (n > 0 ? n + 1 : Math.abs(n) + 1));
 
   const commencer = () => {
     if (s.ride) return lancerSortie(s.min, s.cat);
@@ -45,17 +53,26 @@ export default function Accueil() {
     ),
     bilan: (
       <View style={styles.pad}>
-        <AnneauxDuJour />
+        <Text weight="bold" style={styles.h2} accessibilityRole="header">
+          Ton bilan du jour
+        </Text>
+        <BilanDuJour onRessenti={ouvrirRessenti} />
       </View>
     ),
     coach: (
       <View style={[styles.pad, styles.mt]}>
-        <CarteCoach />
+        <CarteMessageCoach onRessenti={ouvrirRessenti} />
       </View>
     ),
     seance: (
+      <View style={[styles.pad, styles.mtSection]}>
+        <TeteSeance offset={ns.offset} />
+        <CarteProchaineSeance s={s} offset={ns.offset} onLancer={commencer} />
+      </View>
+    ),
+    cartes: (
       <View style={[styles.pad, styles.mt]}>
-        <CarteSeance s={s} offset={ns.offset} onCommencer={commencer} />
+        <CarteCollection />
       </View>
     ),
     plus: (
@@ -130,6 +147,7 @@ export default function Accueil() {
             </Animated.View>
           ))}
       </ScrollView>
+      {feuille > 0 && <RessentiSheet key={feuille} visible onClose={() => setFeuille((n) => -n)} />}
     </SafeAreaView>
   );
 }
@@ -138,10 +156,12 @@ const styles = StyleSheet.create({
   bandeau: { marginHorizontal: 20, marginTop: 12 },
   journee: { marginHorizontal: 20, marginTop: 16 },
   root: { flex: 1, backgroundColor: colors.bg },
-  scroll: { paddingBottom: 28 },
+  scroll: { paddingBottom: 120 },
   flex: { flex: 1 },
   pad: { marginHorizontal: 20 },
   mt: { marginTop: 14 },
+  mtSection: { marginTop: 24 },
+  h2: { fontSize: 22, lineHeight: 28, letterSpacing: -0.3, marginBottom: 12 },
   marque: { fontSize: 30, lineHeight: 36, letterSpacing: 1.5 },
   bonjour: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 14 },
   top: {

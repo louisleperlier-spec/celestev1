@@ -436,6 +436,17 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     **lecteur guidé** `/yoga/en-cours` (préparation 5 s puis tenue, côté droit / gauche, minuteur, consignes, souffle, à suivre, temps restant,
     pause / précédente / suivante, vibration à chaque changement, écran gardé allumé `expo-keep-awake`) ; bilan « Namasté » → `enregistrerSport('yoga', …, titre)`
     (journal, XP, quête, carte, Apple Santé HKWorkoutActivityType 57)
+- [ ] **Bilan du jour de l'Accueil (maquette de l'utilisateur, 15 oct. 2026)** : **à publier en EAS Update puis valider sur iPhone**
+  - remplace les grands anneaux Récupération / Effort (utile sans Apple Watch) : `components/app/Bilan.tsx` + `lib/bilan.ts` ;
+    **Énergie** (check-in : Épuisé → Au top, 5 segments, « Ton ressenti · 9 h 12 », Modifier mon ressenti), **Activité** (minutes et
+    activités du jour tirées du journal, barres L → D de la semaine, « Enregistrée dans NÉA » / « Avec ton Apple Watch »), ligne
+    **Sommeil / Courbatures** (check-in), **message du coach** (check-in à faire, séance faite, journée en douceur si énergie ≤ 2,
+    courbatures ≥ modérées ou mauvaise nuit, sinon motivation du jour), **prochaine séance** (titre « Push » + « Pecs, épaules, triceps »
+    tiré de « Push : … » ou des groupes, pastille Aujourd'hui / Demain / jour, Voir la séance), **cartes à découvrir** (`cartes`, à ouvrir
+    sinon CARTES − possédées)
+  - check-in `RessentiSheet` (3 questions) → `ressentis` du profil (sauvegardé avec le compte, 60 max, jour **local** `jourLocal`) ;
+    ordre par défaut : bilan, coach, séance, cartes, NÉA Plus, Ta journée (Sommeil et VFC masqué) ; `cartes` ajoutée aux ordres déjà
+    personnalisés ; icônes `diag`, `cadeau`, `biceps` ; anneaux de la montre inchangés
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

@@ -80,6 +80,16 @@ const ICONS = {
   ),
   wave: <Path d="M2 12h3l2-5 3 10 3-8 2 3h7" />,
   moon: <Path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />,
+  /** Flèche en diagonale (« Modifier mon ressenti »). */
+  diag: <Path d="M7 17L17 7M9 7h8v8" />,
+  cadeau: (
+    <>
+      <Rect x="3" y="8" width="18" height="4" rx="1" />
+      <Path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8M12 8v13M12 8S10.5 3.5 8 3.5A2.25 2.25 0 0 0 8 8M12 8s1.5-4.5 4-4.5A2.25 2.25 0 0 1 16 8" />
+    </>
+  ),
+  /** Bras plié (courbatures). */
+  biceps: <Path d="M6 21c-1.5-3-2-7 0-11 1.2-2.4 2.6-4.6 4.5-6l2 1.6-1.6 2.2 1.6 1.4c1.6-1.4 4.3-1.2 5.8.5 2.2 2.4 1.6 6.3-1.2 8C14.6 19 10 19.5 6 21z" />,
   search: (
     <>
       <Circle cx="11" cy="11" r="7" />

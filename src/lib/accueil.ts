@@ -1,13 +1,14 @@
 /** Cartes de l'Accueil, à afficher ou masquer et à ordonner (« Mon écran d'accueil » du Profil). */
-export type IdCarte = 'bilan' | 'journee' | 'coach' | 'seance' | 'plus' | 'reperes' | 'cercles' | 'ligue';
+export type IdCarte = 'bilan' | 'journee' | 'coach' | 'seance' | 'cartes' | 'plus' | 'reperes' | 'cercles' | 'ligue';
 
 export type CarteAccueil = { id: IdCarte; on: boolean };
 
 export const CARTES_ACCUEIL: Readonly<Record<IdCarte, { titre: string; sous: string }>> = {
-  bilan: { titre: 'Ton bilan du jour', sous: 'Anneaux Récupération et Effort' },
+  bilan: { titre: 'Ton bilan du jour', sous: 'Énergie, activité, sommeil et courbatures' },
   journee: { titre: 'Ta journée', sous: 'Les choses à faire aujourd’hui pour une bonne journée' },
   coach: { titre: 'Mot du coach', sous: 'Son message du jour' },
-  seance: { titre: 'Ta prochaine séance', sous: 'Exercices et bouton Commencer' },
+  seance: { titre: 'Ta prochaine séance', sous: 'Groupes travaillés, durée et Voir la séance' },
+  cartes: { titre: 'Cartes à découvrir', sous: 'Tes cartes à ouvrir et ta collection' },
   plus: { titre: 'NÉA Plus', sous: "L'essai gratuit (version gratuite seulement)" },
   reperes: { titre: 'Sommeil et VFC', sous: 'Ta dernière nuit et ta dernière VFC' },
   cercles: { titre: 'Tes cercles de la semaine', sous: 'Bouger, Exercice, Sommeil, Récupération' },
@@ -18,9 +19,10 @@ export const ACCUEIL_DEFAUT: readonly CarteAccueil[] = [
   { id: 'bilan', on: true },
   { id: 'coach', on: true },
   { id: 'seance', on: true },
-  { id: 'reperes', on: true },
-  { id: 'journee', on: true },
+  { id: 'cartes', on: true },
   { id: 'plus', on: true },
+  { id: 'journee', on: true },
+  { id: 'reperes', on: false },
   { id: 'cercles', on: false },
   { id: 'ligue', on: false },
 ];
@@ -33,6 +35,11 @@ export function ordreAccueil(sauve: readonly CarteAccueil[] | undefined | null):
   if (!connues.some((c) => c.id === 'journee')) {
     const i = Math.max(connues.findIndex((c) => c.id === 'reperes'), connues.findIndex((c) => c.id === 'bilan'));
     connues.splice(i + 1, 0, { id: 'journee', on: true });
+  }
+  // Bilan du jour refait (oct. 2026) : « Cartes à découvrir » affichée sous la prochaine séance, même avec un ordre personnalisé.
+  if (!connues.some((c) => c.id === 'cartes')) {
+    const i = connues.findIndex((c) => c.id === 'seance');
+    connues.splice(i < 0 ? connues.length : i + 1, 0, { id: 'cartes', on: true });
   }
   const manquantes = ACCUEIL_DEFAUT.filter((d) => !connues.some((c) => c.id === d.id)).map((d) => ({ ...d, on: false }));
   return [...connues, ...manquantes];
