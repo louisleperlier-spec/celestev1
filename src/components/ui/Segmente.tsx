@@ -20,7 +20,7 @@ export function Segmente<T extends string>({ options, value, onChange, style }: 
         const on = k === value;
         return (
           <Pressable key={k} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => onChange(k)} style={[styles.seg, on && styles.on]}>
-            <Text weight={on ? 'semibold' : 'medium'} style={[styles.txt, on && styles.txtOn]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+            <Text weight={on ? 'semibold' : 'medium'} style={[styles.txt, on && styles.txtOn]} numberOfLines={1}>
               {l}
             </Text>
           </Pressable>

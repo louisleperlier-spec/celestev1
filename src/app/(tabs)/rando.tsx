@@ -124,7 +124,15 @@ export default function Randonnee() {
         ) : pres.etat === 'refus' ? (
           <Text style={styles.vide}>Autorise ta position pour voir les vrais sentiers près de chez toi.</Text>
         ) : pres.etat === 'erreur' && !pres.liste.length ? (
-          <Text style={styles.vide}>Impossible de joindre OpenStreetMap pour l’instant. Vérifie ta connexion.</Text>
+          <View style={styles.erreur}>
+            <Text style={styles.vide}>Les serveurs des sentiers ne répondent pas pour l’instant.</Text>
+            <Appui onPress={() => chercherRandosPres(true)} accessibilityRole="button" style={styles.reessayer}>
+              <Icon name="refresh" size={16} color={colors.pink} />
+              <Text weight="semibold" style={styles.reessayerTxt}>
+                Réessayer
+              </Text>
+            </Appui>
+          </View>
         ) : !proposee ? (
           <MascotteVide texte="Aucun sentier balisé trouvé à moins de 30 km. Essaie une rando libre !" />
         ) : (
@@ -245,6 +253,9 @@ export default function Randonnee() {
 }
 
 const styles = StyleSheet.create({
+  erreur: { gap: 10, alignItems: 'flex-start' },
+  reessayer: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 100, borderWidth: 1, borderColor: colors.pink },
+  reessayerTxt: { fontSize: 14, lineHeight: 18, color: colors.pink },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   scroll: { paddingHorizontal: 20, paddingBottom: 30 },

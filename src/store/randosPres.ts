@@ -28,15 +28,35 @@ export const useRandosPres = create<Pres>()(
 export const trouverSentier = (id: string | undefined): Sentier | undefined =>
   sentierFixe(id) ?? (id ? useRandosPres.getState().liste.find((s) => s.id === id) : undefined);
 
-const SERVEURS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
+// Plusieurs serveurs publics d'Overpass : le principal refuse les requêtes sans nom d'app, les autres sont parfois saturés.
+const SERVEURS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+];
+/** Nom de l'app demandé par les serveurs d'OpenStreetMap. */
+const AGENT = 'NEA-Coach/1.0 (iOS; +https://www.neacoach.xyz; nea.coach.app@gmail.com)';
 
 async function overpass(q: string): Promise<ElementOSM[]> {
   for (const url of SERVEURS) {
+    const fin = new AbortController();
+    const minuteur = setTimeout(() => fin.abort(), 25_000);
     try {
-      const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'data=' + encodeURIComponent(q) });
-      if (r.ok) return ((await r.json()) as { elements: ElementOSM[] }).elements;
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'User-Agent': AGENT },
+        body: 'data=' + encodeURIComponent(q),
+        signal: fin.signal,
+      });
+      if (r.ok) {
+        const j = (await r.json()) as { elements?: ElementOSM[] };
+        if (Array.isArray(j.elements)) return j.elements;
+      }
     } catch {
       // Serveur suivant.
+    } finally {
+      clearTimeout(minuteur);
     }
   }
   throw new Error('overpass');
