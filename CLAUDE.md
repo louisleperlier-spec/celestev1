@@ -414,7 +414,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   l'écran verrouillé (`targets/widgets/images/axel_*.png` : dodo → fatiguée, séance → motivée, pause → de face, pas → fière) et notifications
   de la montre (`ax_*` : énergique / séance → motivée, détendu / stable → de face, fatigue / dodo → fatiguée, stressé → bras croisés, forme →
   fière) ; les coachs (dont Axel) et les scènes illustrées (salle, étirements, course, sommet, méditation, sommeil) restent ; reste : son nom
-- [ ] **1re version App Store (7 oct. 2026)** : **Amis, Équipes et Territoires masqués** (`lib/fonctions.ts` : `AMIS`, `EQUIPES`, `TERRITOIRES` à `false` ;
+- [x] **1re version App Store (7 oct. 2026)** : **Amis, Équipes et Territoires masqués** (`lib/fonctions.ts` : `AMIS`, `EQUIPES`, `TERRITOIRES` à `false` ;
   le code reste, seuls les accès sont cachés : Ligue (niveau, boosts, Turbo, quêtes, sans classement ni ajout d'ami), Sorties, Progrès, récap rando, paywall, textes d'autorisation de position,
   description de la fiche) ; confidentialité de l'app publiée (8 types, fonctionnalité de l'app, liés, sans suivi) ; coordonnées et notes de
   vérification (fr) ; 5 visuels iPhone refaits (titres et mascotte des maquettes de l'utilisateur + vrais écrans de l'app exportée en web) ;
@@ -424,7 +424,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   de recherche faits (3840 × 1646, 3840 × 2560) ; **soumis à la vérification d'Apple le 7 oct. 2026 à 13 h 38** (app 1.0.0 (34) + groupe NÉA Plus
   + 3 abonnements, soumission 1bcc5045-8b61-46d2-b1e9-fc553dfc1733) ; vérification accélérée accordée ; **refus du 13 oct.** (guideline
   abonnements : pas de lien EULA dans la fiche) → liens « Conditions d'utilisation (CLUF) » (EULA standard d'Apple), conditions et confidentialité
-  ajoutés à la description, **resoumis le 13 oct.** ; DSA (UE) : justificatif d'adresse demandé par Apple, envoyé par l'utilisateur
+  ajoutés à la description, **resoumis le 13 oct.** ; **approuvée le 15 oct. 2026 : en vente sur l'App Store** (READY_FOR_SALE, 3 abonnements APPROVED, https://apps.apple.com/app/id6816691008) ; DSA (UE) : justificatif d'adresse demandé par Apple, envoyé par l'utilisateur
 - [ ] **Yoga (hors cahier des charges, demandé par l'utilisateur, oct. 2026)** : **publié en EAS Update (preview), à valider sur iPhone**
   - choix validés : **30 séances prêtes**, **toutes gratuites**, images des postures générées par l'utilisateur (prompt et liste dans
     `docs/yoga-images.md`, fichiers `<id>.png` → `assets/yoga/<id>.webp` + `YOGA_IMAGES` de `data/yogaImages.ts` ; sans image : lotus `IconeSport`)
