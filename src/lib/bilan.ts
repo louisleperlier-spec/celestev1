@@ -73,7 +73,7 @@ export function activite(logs: readonly Log[], now: Date = new Date()): Activite
 
 /** « 1 séance terminée », « 2 activités terminées »… */
 export function phraseActivite(a: Activite, types: readonly Log['type'][] = []): string {
-  if (!a.n) return 'Rien d’enregistré aujourd’hui';
+  if (!a.n) return 'Aucune séance';
   const muscu = types.length > 0 && types.every((t) => t === 'muscu');
   const mot = muscu ? 'séance' : 'activité';
   return `${a.n} ${mot}${a.n > 1 ? 's' : ''} terminée${a.n > 1 ? 's' : ''}`;

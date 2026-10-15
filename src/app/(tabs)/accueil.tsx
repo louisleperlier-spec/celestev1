@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BilanDuJour, CarteCollection, CarteMessageCoach, CarteProchaineSeance, RessentiSheet, TeteSeance } from '@/components/app/Bilan';
 import { SemaineCercles } from '@/components/app/Cercles';
-import { BandeauCartes } from '@/components/app/Jeu';
 import { Journee } from '@/components/app/Journee';
 import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
@@ -135,8 +134,6 @@ export default function Accueil() {
           </Text>
           <Text style={styles.date}>Ton rythme, aujourd’hui.</Text>
         </View>
-        {/* Cartes gagnées pas encore ouvertes. */}
-        <BandeauCartes style={styles.bandeau} />
 
         {ordreAccueil(p.accueil)
           .filter((x) => x.on)
@@ -153,7 +150,6 @@ export default function Accueil() {
 }
 
 const styles = StyleSheet.create({
-  bandeau: { marginHorizontal: 20, marginTop: 12 },
   journee: { marginHorizontal: 20, marginTop: 16 },
   root: { flex: 1, backgroundColor: colors.bg },
   scroll: { paddingBottom: 120 },

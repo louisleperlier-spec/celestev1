@@ -133,7 +133,7 @@ function CarteEnergie({ onRessenti }: { onRessenti: () => void }) {
         </View>
         <View style={styles.flex} />
         <View style={styles.lien}>
-          <Text weight="semibold" style={styles.lienTxt} numberOfLines={2}>
+          <Text weight="semibold" style={styles.lienTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {r ? 'Modifier mon ressenti' : 'Donner mon ressenti'}
           </Text>
           <Icon name="diag" size={16} color={colors.pink} strokeWidth={2} />
@@ -179,7 +179,7 @@ function CarteActivite() {
           ))}
         </View>
         <Text style={styles.source} numberOfLines={1}>
-          {a.montre ? 'Avec ton Apple Watch' : 'Enregistrée dans NÉA'}
+          {!a.n ? 'À toi de jouer !' : a.montre ? 'Avec ton Apple Watch' : 'Enregistrée dans NÉA'}
         </Text>
       </Card>
     </Appui>
@@ -193,17 +193,23 @@ function LigneReponses({ onRessenti }: { onRessenti: () => void }) {
       <Card style={styles.ligne}>
         <View style={styles.ligneHaut}>
           <View style={styles.ligneMoitie}>
-            <Icon name="moon" size={22} color={ui.tuileSommeil} fill={ui.tuileSommeil} />
-            <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
-              Sommeil : {r ? SOMMEIL[r.sommeil].toLowerCase() : '—'}
-            </Text>
+            <Icon name="moon" size={24} color={ui.tuileSommeil} fill={ui.tuileSommeil} />
+            <View style={styles.flex}>
+              <Text style={styles.ligneNom}>Sommeil</Text>
+              <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+                {r ? SOMMEIL[r.sommeil] : '—'}
+              </Text>
+            </View>
           </View>
           <View style={styles.separateur} />
           <View style={styles.ligneMoitie}>
-            <Icon name="biceps" size={22} color={colors.pink} />
-            <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
-              Courbatures : {r ? COURBATURES[r.courbatures].toLowerCase() : '—'}
-            </Text>
+            <Icon name="biceps" size={24} color={colors.pink} />
+            <View style={styles.flex}>
+              <Text style={styles.ligneNom}>Courbatures</Text>
+              <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+                {r ? COURBATURES[r.courbatures] : '—'}
+              </Text>
+            </View>
           </View>
         </View>
         <Text style={styles.ligneBas}>{r ? 'Tes réponses du matin' : 'Touche pour répondre'}</Text>
@@ -404,10 +410,11 @@ const styles = StyleSheet.create({
   jour: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
   jourAuj: { color: colors.text, ...fonts.semibold },
   source: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 6 },
-  ligne: { paddingVertical: 14, paddingHorizontal: 10, gap: 8 },
+  ligne: { paddingVertical: 14, paddingHorizontal: 10, gap: 10 },
   ligneHaut: { flexDirection: 'row', alignItems: 'center' },
-  ligneMoitie: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, minWidth: 0 },
-  ligneTxt: { flexShrink: 1, fontSize: 14.5, lineHeight: 19 },
+  ligneMoitie: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, minWidth: 0, paddingHorizontal: 6 },
+  ligneNom: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
+  ligneTxt: { fontSize: 17, lineHeight: 22 },
   separateur: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', backgroundColor: colors.border, marginHorizontal: 8 },
   ligneBas: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, textAlign: 'center' },
   coach: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
