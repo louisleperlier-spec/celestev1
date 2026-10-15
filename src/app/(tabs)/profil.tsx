@@ -26,6 +26,7 @@ import { estPremium, ligneAbonnement } from '@/lib/premium';
 import { santeDisponible } from '@/lib/sante';
 import { lvlInfo, rankOf } from '@/lib/xp';
 import { deconnecter, supprimerCompte, useCompte } from '@/store/compte';
+import { ouvrirAvis } from '@/store/note';
 import { selectProfil, useProfil } from '@/store/profil';
 
 import { NeaMontre } from '../../../modules/nea-montre/src';
@@ -276,6 +277,7 @@ export default function Profil() {
         </Section>
 
         <Section titre="Aide et confidentialité">
+          <Ligne icon="star" titre="Noter NÉA" sous="Ton avis sur l'App Store aide beaucoup" onPress={() => void ouvrirAvis()} />
           <Ligne icon="book" titre="Conditions d'utilisation" sous="Et avertissement santé" onPress={() => router.push('/legal/conditions')} />
           <Ligne
             icon="book"

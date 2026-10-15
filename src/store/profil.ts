@@ -92,6 +92,8 @@ type Etat = Profil & {
   journee: Journee | null;
   /** Check-in du matin de l'Accueil (énergie, sommeil, courbatures), le plus récent en premier (`lib/bilan.ts`). */
   ressentis: Ressenti[];
+  /** Demandes de note App Store déjà faites (dates en ms, `store/note.ts`). */
+  noteDemandes: number[];
   /** Partie Sommeil (maquettes, oct. 2026) : réveil de l'iPhone, objectif de sommeil (h), notes du soir, début de la nuit en cours. */
   reveil: Reveil;
   objectifSommeil: number;
@@ -201,6 +203,7 @@ const defauts = (): Etat => ({
   jeu: JEU_DEFAUT,
   journee: null,
   ressentis: [],
+  noteDemandes: [],
   reveil: REVEIL_DEFAUT,
   objectifSommeil: OBJECTIF_SOMMEIL,
   notesSoir: [],
@@ -386,6 +389,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   jeu: s.jeu,
   journee: s.journee,
   ressentis: s.ressentis,
+  noteDemandes: s.noteDemandes,
   reveil: s.reveil,
   objectifSommeil: s.objectifSommeil,
   notesSoir: s.notesSoir,

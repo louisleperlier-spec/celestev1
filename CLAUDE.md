@@ -447,6 +447,10 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - check-in `RessentiSheet` (3 questions) → `ressentis` du profil (sauvegardé avec le compte, 60 max, jour **local** `jourLocal`) ;
     ordre par défaut : bilan, coach, séance, cartes, NÉA Plus, Ta journée (Sommeil et VFC masqué) ; `cartes` ajoutée aux ordres déjà
     personnalisés ; icônes `diag`, `cadeau`, `biceps` ; anneaux de la montre inchangés
+- [ ] **Note App Store (demandée par l'utilisateur, 15 oct. 2026)** : `lib/note.ts` (après 3 activités, puis tous les 120 jours au plus) +
+  `store/note.ts` (`proposerNoteSiBon` au retour sur l'Accueil, fenêtre native `expo-store-review`, chargée seulement si le module natif
+  `ExpoStoreReview` existe : **build 35+**, rien sur le build 34) ; `noteDemandes` du profil ; Profil → Aide → « Noter NÉA » (lien
+  `?action=write-review`, marche dès maintenant)
 - [ ] 12. Analytics, polish, accessibilité, performance
 - [ ] 13. TestFlight + App Store
 

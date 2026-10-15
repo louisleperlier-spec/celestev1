@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ import { Appui, Card, Icon, Text } from '@/components/ui';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
 import { estPremium } from '@/lib/premium';
 import { nextSession } from '@/lib/semaine';
+import { proposerNoteSiBon } from '@/store/note';
 import { useProfil, useSemaine } from '@/store/profil';
 import { colors, gradients, ui } from '@/theme';
 
@@ -30,6 +31,8 @@ export default function Accueil() {
   const ns = nextSession(sem);
   const s = ns.s;
   const nonLues = p.notifs.some((n) => !n.read);
+  // Note App Store après la 3e activité terminée (fenêtre native d'Apple).
+  useFocusEffect(useCallback(() => void proposerNoteSiBon(), []));
   // Check-in du matin ; la clé remet la feuille à zéro à chaque ouverture.
   const [feuille, setFeuille] = useState(0);
   const ouvrirRessenti = () => setFeuille((n) => (n > 0 ? n + 1 : Math.abs(n) + 1));
