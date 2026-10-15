@@ -436,7 +436,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     **lecteur guidé** `/yoga/en-cours` (préparation 5 s puis tenue, côté droit / gauche, minuteur, consignes, souffle, à suivre, temps restant,
     pause / précédente / suivante, vibration à chaque changement, écran gardé allumé `expo-keep-awake`) ; bilan « Namasté » → `enregistrerSport('yoga', …, titre)`
     (journal, XP, quête, carte, Apple Santé HKWorkoutActivityType 57)
-- [ ] **Bilan du jour de l'Accueil (maquette de l'utilisateur, 15 oct. 2026)** : **à publier en EAS Update puis valider sur iPhone**
+- [ ] **Bilan du jour de l'Accueil (maquette de l'utilisateur, 15 oct. 2026)** : **publié en EAS Update (preview + production, sans le Yoga : `YOGA = false` dans `lib/fonctions.ts`), à valider sur iPhone**
   - remplace les grands anneaux Récupération / Effort (utile sans Apple Watch) : `components/app/Bilan.tsx` + `lib/bilan.ts` ;
     **Énergie** (check-in : Épuisé → Au top, 5 segments, « Ton ressenti · 9 h 12 », Modifier mon ressenti), **Activité** (minutes et
     activités du jour tirées du journal, barres L → D de la semaine, « Enregistrée dans NÉA » / « Avec ton Apple Watch »), ligne

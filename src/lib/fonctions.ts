@@ -5,3 +5,5 @@
 export const AMIS = false;
 export const EQUIPES = false;
 export const TERRITOIRES = false;
+/** Yoga (30 séances) : prêt, pas encore ouvert dans l'app de l'App Store (choix de l'utilisateur, 15 oct. 2026). */
+export const YOGA = false;

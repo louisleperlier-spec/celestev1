@@ -2,17 +2,19 @@ import { router, type Href } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon, Segmente, Text } from '@/components/ui';
+import { YOGA } from '@/lib/fonctions';
 import { colors, fonts, ui } from '@/theme';
 
 export type Rubrique = { label: string; href: Href };
 
 /** Rubriques de l'onglet « Programme » (la Randonnée y vit depuis la direction « nuit », 4 onglets). */
 export const ENTRAINEMENT: Rubrique[] = [
-  { label: 'Plan', href: '/programme' },
+  // « Plan » pour tenir à 5 rubriques avec le Yoga.
+  { label: YOGA ? 'Plan' : 'Programme', href: '/programme' },
   { label: 'Calendrier', href: { pathname: '/programme', params: { vue: 'calendrier' } } },
   { label: 'Sorties', href: '/velo' },
   { label: 'Rando', href: '/rando' },
-  { label: 'Yoga', href: '/yoga' },
+  ...(YOGA ? [{ label: 'Yoga', href: '/yoga' } as const] : []),
 ];
 
 /** En-tête d'onglet : grand titre (et sous-titre), bouton « + » (ajouter une activité : musculation libre, autres sports, séances prêtes), puis le contrôle segmenté des rubriques. */
