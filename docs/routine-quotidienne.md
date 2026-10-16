@@ -33,6 +33,24 @@ Format inspiré de @fitnessleana : carrousels « 5 habitudes / 3 erreurs / ce qu
 Fiche persona 2, à coller mot pour mot dans chaque prompt d'image :
 > Jeune femme de 23 ans, cheveux blonds foncés mi-longs attachés en queue de cheval haute, quelques mèches qui tombent, yeux verts, taches de rousseur légères, peau naturelle sans maquillage marqué, silhouette sportive mais normale (pas une athlète). Tenue : brassière noire, t-shirt oversize gris clair, legging noir, baskets blanches.
 
+### Compte 3 : PVT → mines du Québec (personnage 3D)
+
+Compte TikTok : **@lenamoove**, nom affiché « mathis.minesqc » (identifiant à passer en @mathis.minesqc). Ce compte ne parle **pas** de NÉA.
+Bio : « PVT → mines du Québec ⛏️ Les vraies infos 🇫🇷🇨🇦 Guide sur mon Insta 👇 ».
+Premiers chiffres (16 oct.) : « Travailler dans les mines au Québec ? » 92 vues, « PVT → mine, les 4 étapes » 39 vues, 68 abonnés (achetés, sans valeur pour la portée).
+Audience : Français et Belges de 18 à 35 ans qui préparent un PVT (Programme vacances-travail, EIC) au Canada et cherchent un emploi bien payé.
+Ce qui marche : l'accroche en **question** (92 vues) bat la liste (39 vues). Viser l'argent, la peur ou le « est-ce possible pour moi ».
+
+Fiche personnage 3, à coller mot pour mot dans chaque prompt d'image :
+> Personnage 3D style film d'animation, jeune homme d'environ 25 ans, cheveux bruns bouclés, yeux marron, barbe de trois jours légère, sourire confiant. Casque de chantier blanc avec lampe frontale et petit autocollant du drapeau du Québec, combinaison de travail orange haute visibilité avec bandes réfléchissantes grises, gants et bottes de sécurité.
+
+Décor de référence : chevalement de mine en acier la nuit, neige au sol, sapins, petits bâtiments éclairés, flocons qui tombent. Texte sur un panneau en bois accroché au chevalement, police grasse noire avec mots-clés en orange.
+
+Règles propres au compte 3 :
+- **Aucun chiffre inventé.** Salaires, horaires, primes : uniquement des chiffres sourcés (Guichet-Emplois du Canada, offres d'emploi réelles, sites officiels) et indiquer la source dans le fichier du jour. Si un chiffre n'est pas vérifiable, formuler sans chiffre.
+- Démarches PVT : renvoyer aux sources officielles (IRCC, canada.ca) ; pas de conseil juridique ni de promesse d'obtenir un permis ou un emploi.
+- Mots-clés à mettre dans la slide 1 **et** au début de la légende : « PVT Canada », « mines Québec », « travailler au Canada », « emploi Québec ».
+
 ### Recette « carrousel valeur » (compte 2 en priorité)
 
 Inspirée des carrousels « DOs and DON'Ts » qui font plus de 250 000 j'aime et 80 000 enregistrements :
@@ -60,10 +78,11 @@ Inspirée des carrousels « DOs and DON'Ts » qui font plus de 250 000 j'aime et
    - pour chaque slide : le texte exact, puis le prompt GPT Astra complet (fiche persona 1 + scène + texte + compteur + style commun) ;
    - la légende avec « Lien en bio · Image virtuelle » et 5 ou 6 hashtags.
 4. **Compte 2** : même chose, avec un carrousel de conseils de 5 ou 6 slides et la fiche persona 2. Les conseils doivent être justes et prudents : pas de promesse de perte de poids, pas de conseil médical.
+4 bis. **Compte 3** : 1 carrousel de 5 ou 6 slides dans le style 3D du compte (fiche personnage 3 + décor de référence), accroche en question, info utile et vérifiée. Même structure : titre, texte et prompt GPT Astra de chaque slide, légende avec 4 à 6 hashtags (#pvtcanada #pvt #quebec #mines #travailleraucanada…), et les sources des chiffres.
 5. **Bonus** : 1 idée de mème avec la mascotte NÉA (texte du mème et scène), et 1 idée qui reprend une des tendances repérées à l'étape 2.
-6. **Rappel de programmation** : programmer ce soir les 2 posts pour demain 12h30 heure du Québec, activer le label « Contenu généré par IA », ajouter un son tendance.
+6. **Rappel de programmation** : programmer ce soir les 3 posts pour demain 12h30 heure du Québec, activer le label « Contenu généré par IA », ajouter un son tendance.
 7. Écris tout dans `docs/contenu/AAAA-MM-JJ.md`, avec la **date du lendemain** (heure du Québec), puis commit et push sur `claude/strategie-ugc-ia`.
-8. Termine par un résumé de 5 lignes maximum : les 2 accroches de demain et la tendance la plus intéressante.
+8. Termine par un résumé de 5 lignes maximum : les 3 accroches de demain et la tendance la plus intéressante.
 
 ## Règles
 
