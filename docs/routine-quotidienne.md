@@ -15,15 +15,25 @@ Pour changer le contenu de la routine : modifie ce fichier et demande à Claude 
 - Les images sont générées par Louis dans **GPT Astra** (ChatGPT). Les textes sont posés soit directement dans l'image, soit par `slideshow/render.py`.
 - Publication à la main dans TikTok, 1 post par jour et par compte, à 12h30 heure du Québec.
 
-### Compte 1 : histoire de la fondatrice (persona IA)
+### Compte 1 : @axel.coach.nea (le coach robot de NÉA)
 
-Compte TikTok : **@jasmine.aura09** (« jasmine.aura »). La persona s'appelle Jasmine.
-Premiers chiffres (6 oct., 18h40) : « Maman, papa » 116 vues, « Mamie » 97 vues, 0 abonnée, 3 j'aime.
+Depuis le 21 oct., le compte 1 s'appelle **@axel.coach.nea** et met en scène **Axel**, le robot coach de NÉA (vidéos Google Flow, voir `docs/videos-google-flow.md`, et carrousels). Les 2 carrousels de Jasmine du 5 et 6 oct. sont passés en privé.
 
-Format inspiré de @irsaslaw : une jeune femme raconte qu'elle crée son app de sport, avec sa famille et ses doutes, beaucoup d'émotion, et la dernière slide renvoie vers NÉA.
-Déjà publiés : « Maman, papa, j'arrête mes études… » (001) et « Mamie, je crée une application de sport » (002).
+Stats du 22 oct. (TikTok Studio) :
+- « Ta batterie n'est pas toujours à 100 %… » (21 oct., 17 h 40) : **668 vues**, 11 j'aime, 1 commentaire, visionnage moyen 5,7 s, vu en entier 9,4 %. **Meilleur angle : fatigue, énergie basse, culpabilité douce.**
+- « Tu compares ton début au chapitre 20 de quelqu'un d'autre… » (21 oct., 20 h 44) : 131 vues, visionnage moyen 18,7 s, vu en entier 3,6 % (bonne rétention, accroche trop faible).
+- 1 abonnée, 2 vues de profil sur 28 jours : les vidéos ne donnent pas encore envie d'aller sur le profil.
 
-Fiche persona 1, à coller mot pour mot dans chaque prompt d'image :
+Règles du compte 1 :
+- Axel parle **à la 2e personne** (« tu ») comme un coach bienveillant et un peu taquin. Angles prioritaires : énergie basse, fatigue, culpabilité, recommencer, comparaison aux autres.
+- **Vidéos de 7 à 10 s** (un seul clip Flow), réplique de 15 mots max, accroche écrite à l'écran dès la 1re seconde.
+- Chaque post finit par une raison de s'abonner : « Abonne-toi, demain je te dis quoi faire quand… » (série).
+- Publication vers **17 h 30 – 18 h** (heure du Québec) : c'est le créneau du meilleur post.
+
+Fiche d'Axel, à coller mot pour mot dans chaque prompt (image ou vidéo) :
+> Le robot coach de l'app NÉA : petite tête-robot ronde et brillante, noir laqué, deux yeux en LED orange en forme d'arcs souriants, bandeau de sport orange en tissu éponge sur le front, gros casque audio noir avec reflets orange, halo de lumière orange autour de lui. Corps de robot noir mat aux formes arrondies. Style 3D d'animation, éclairage doux. Voix masculine chaleureuse et un peu taquine, en français, débit rapide de coach.
+
+Archive : la persona Jasmine (fiche ci-dessous) n'est plus utilisée sur ce compte, à garder pour un autre compte éventuel.
 > Jeune femme de 22 ans, longs cheveux châtain foncé ondulés avec un effet un peu décoiffé, yeux noisette, taches de rousseur légères, peau naturelle sans maquillage marqué, sourire doux en coin. Style décontracté : sweat oversize anthracite, t-shirt blanc, jogging gris, ou tenue de salle noire.
 
 ### Compte 2 : conseils salle pour débutantes (persona IA)
@@ -73,14 +83,14 @@ Inspirée des carrousels « DOs and DON'Ts » qui font plus de 250 000 j'aime et
 2. **Veille des tendances** (recherche web, 10 minutes maximum) :
    - formats, sons et hashtags qui marchent en ce moment sur TikTok dans le fitness féminin, en France et au Québec (TikTok Creative Center, articles récents, comptes du même type que @fitnessleana et @irsaslaw) ;
    - retiens 3 à 5 tendances **exploitables aujourd'hui**, avec la source et la date. Si une info n'est pas vérifiable, dis-le plutôt que de l'inventer.
-3. **Compte 1** : écris 1 carrousel de 5 ou 6 slides qui continue l'histoire de la fondatrice. Donne, dans l'ordre :
+3. **Compte 1 (@axel.coach.nea)** : écris 1 vidéo Google Flow d'Axel (prompt complet avec la fiche d'Axel, réplique de 15 mots max, texte d'accroche à poser au montage) **ou** 1 carrousel de 5 ou 6 slides avec Axel, sur l'angle énergie / fatigue / culpabilité douce. Donne, dans l'ordre :
    - le titre (90 caractères maximum) ;
    - pour chaque slide : le texte exact, puis le prompt GPT Astra complet (fiche persona 1 + scène + texte + compteur + style commun) ;
    - la légende avec « Lien en bio · Image virtuelle » et 5 ou 6 hashtags.
 4. **Compte 2** : même chose, avec un carrousel de conseils de 5 ou 6 slides et la fiche persona 2. Les conseils doivent être justes et prudents : pas de promesse de perte de poids, pas de conseil médical.
 4 bis. **Compte 3** : 1 carrousel de 5 ou 6 slides dans le style 3D du compte (fiche personnage 3 + décor de référence), accroche en question, info utile et vérifiée. Même structure : titre, texte et prompt GPT Astra de chaque slide, légende avec 4 à 6 hashtags (#pvtcanada #pvt #quebec #mines #travailleraucanada…), et les sources des chiffres.
 5. **Bonus** : 1 idée de mème avec la mascotte NÉA (texte du mème et scène), et 1 idée qui reprend une des tendances repérées à l'étape 2.
-6. **Rappel de programmation** : programmer ce soir les 3 posts pour demain 12h30 heure du Québec, activer le label « Contenu généré par IA », ajouter un son tendance.
+6. **Rappel de programmation** : programmer ce soir les posts de demain : compte 1 vers 17 h 30 – 18 h, comptes 2 et 3 à 12 h 30 (heure du Québec), activer le label « Contenu généré par IA », ajouter un son tendance.
 7. Écris tout dans `docs/contenu/AAAA-MM-JJ.md`, avec la **date du lendemain** (heure du Québec), puis commit et push sur `claude/strategie-ugc-ia`.
 8. Termine par un résumé de 5 lignes maximum : les 3 accroches de demain et la tendance la plus intéressante.
 
