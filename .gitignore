@@ -46,3 +46,6 @@ example
 targets/*/Assets.xcassets
 targets/widgets/Assets.xcassets
 targets/watch-widgets/Assets.xcassets
+
+# Démos du skill d'animation (vidéos et GIF, ~10 Mo) : inutiles au skill
+.agents/skills/rossark-motion-skill/demo/
