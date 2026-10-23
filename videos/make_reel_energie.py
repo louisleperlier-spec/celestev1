@@ -210,7 +210,7 @@ def brand(canvas, f, color=INK):
     place(canvas, im, W / 2 + bx, 1640 + by)
 
 # ---------- scènes ----------
-T1, T2, T3, T4, T5, END = 0, 66, 150, 252, 345, 450
+T1, T2, T3, T4, T5, END = 0, 66, 150, 252, 345, 495
 
 def frame(f):
     c = PAPER.copy().convert("RGBA")
