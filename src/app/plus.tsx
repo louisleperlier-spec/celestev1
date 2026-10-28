@@ -11,7 +11,7 @@ import { PLANS } from '@/data/monetisation';
 import { mmss } from '@/lib/coeur';
 import { coachById, prog } from '@/lib/plan';
 import { isPremium, money, type OffreId } from '@/lib/premium';
-import { achatsReels, acheterReel, restaurerReel } from '@/store/achats';
+import { achatsReels, acheterReel, eligibilites, restaurerReel } from '@/store/achats';
 import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, gradients, ui } from '@/theme';
@@ -24,13 +24,15 @@ type Offre = {
   trial?: number;
   after?: number;
 };
-/** Offre de sortie : 3 jours gratuits, puis 39,99 $ la 1re année, ensuite 59,99 $/an. */
+/**
+ * Offre de sortie : 39,99 $ payés d'avance pour la 1re année, ensuite 59,99 $/an (produit `…annuel.offre`, sans essai
+ * gratuit dans App Store Connect). Proposée seulement si Apple l'accorde encore à ce compte (`eligibilites`).
+ */
 const OFFRE_SORTIE: Offre = {
   id: 'an39',
   nom: 'Annuel (offre 1re année)',
   prix: 39.99,
   per: 'an',
-  trial: 3,
   after: 59.99,
 };
 
@@ -45,7 +47,18 @@ export default function Plus() {
   const [sortie, setSortie] = useState(false);
   const [croix, setCroix] = useState(false);
   const [now] = useState(Date.now);
-  const plan = PLANS.find((x) => x.id === sel) ?? PLANS[0];
+  // Offres de bienvenue qu'Apple accorde encore à ce compte (null : achat simulé, tout est possible).
+  const [elig, setElig] = useState<{ essai: boolean; offre: boolean } | null>(null);
+  useEffect(() => {
+    let vivant = true;
+    void eligibilites().then((e) => vivant && setElig(e));
+    return () => {
+      vivant = false;
+    };
+  }, []);
+  // Plus d'essai gratuit pour qui l'a déjà eu : on n'affiche pas une promesse qu'Apple ne tiendrait pas.
+  const plans = PLANS.map((x) => (x.trial && elig && !elig.essai ? { ...x, trial: undefined } : x));
+  const plan = plans.find((x) => x.id === sel) ?? plans[0];
   const mo = PLANS[1].prix * 12;
   const save = Math.round((1 - PLANS[0].prix / mo) * 100);
   const f = (d: number) => new Date(d).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' });
@@ -65,7 +78,8 @@ export default function Plus() {
   /** Fermer : l'offre de sortie une seule fois, 10 minutes (data-pwclose). */
   const fermer = () => {
     const st = useProfil.getState();
-    if (!isPremium() && (!st.exitUntil || st.exitUntil > Date.now()) && !st.exitDeclined) {
+    const offrePossible = !achatsReels() || elig?.offre === true;
+    if (offrePossible && !isPremium() && (!st.exitUntil || st.exitUntil > Date.now()) && !st.exitDeclined) {
       if (!st.exitUntil) st.set({ exitUntil: Date.now() + 10 * 60000 });
       setSortie(true);
       return;
@@ -80,7 +94,8 @@ export default function Plus() {
       const r = await acheterReel(o.id);
       if (r === 'annule') return;
       if (r === 'introuvable') return toast("Cet abonnement n'est pas encore disponible sur l'App Store. Réessaie plus tard.");
-      if (r === 'erreur') return toast("L'achat n'a pas abouti, réessaie");
+      if (r === 'attente') return toast("Paiement en attente chez Apple : NÉA Plus s'ouvrira dès qu'il sera confirmé.");
+      if (r === 'erreur') return toast("L'achat n'a pas abouti. Si Apple t'a débité, touche « Restaurer ».");
       useProfil.getState().recompenserAchat();
     } else useProfil.getState().acheterPlus(o.id);
     toast(o.trial ? 'Essai activé : 3 jours offerts' : 'Bienvenue dans NÉA Plus');
@@ -138,7 +153,7 @@ export default function Plus() {
           </View>
 
           <View style={styles.plans}>
-            {PLANS.map((x) => {
+            {plans.map((x) => {
               const on = x.id === sel;
               return (
                 <Pressable
@@ -313,7 +328,7 @@ function OffreSortie({ visible, prenom, onAccept, onRefus, onFin }: { visible: b
         <Text style={styles.exSmall}>la première année</Text>
       </View>
       <Text style={styles.exSub}>
-        Soit 0,77 $ par semaine, avec toujours <Text style={styles.exBlanc}>3 jours gratuits</Text> pour essayer.
+        Soit <Text style={styles.exBlanc}>0,77 $ par semaine</Text> pour ta première année.
       </Text>
       <View style={styles.exclock}>
         <Icon name="clock" size={16} color={ui.plusLien} />
@@ -327,8 +342,8 @@ function OffreSortie({ visible, prenom, onAccept, onRefus, onFin }: { visible: b
         <Text style={styles.skip}>Non merci, continuer en gratuit</Text>
       </Pressable>
       <Text style={styles.legal}>
-        Essai gratuit de 3 jours, puis 39,99 $ la première année, ensuite 59,99 $ par an, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la
-        période. Offre proposée une seule fois.
+        39,99 $ payés aujourd&apos;hui pour la première année, ensuite 59,99 $ par an, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de
+        la période. Offre proposée une seule fois, pour un premier abonnement. Taxes en sus.
       </Text>
     </Sheet>
   );
