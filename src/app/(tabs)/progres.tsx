@@ -2,10 +2,12 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, G, Line, LinearGradient as SvgGradient, Path, Rect, Stop, Text as SvgText } from 'react-native-svg';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { EntreeTerritoires } from '@/components/app/EntreeTerritoires';
 import { TERRITOIRES } from '@/lib/fonctions';
 import { BandeauCartes, DefisSemaine, MesRecords } from '@/components/app/Jeu';
@@ -36,6 +38,7 @@ const avgOf = (logs: readonly Log[], k: 'hrAvg' | 'hrv') => {
 
 /** Onglet Progrès (direction « nuit ») : rubriques Parcours, Statistiques, Collection et Ligue. */
 export default function Progres() {
+  const defile = useDefilementOnglets();
   const profil = useProfil();
   const c = coachById(profil.coach);
   const [p, setP] = useState<Periode>('Semaine');
@@ -60,7 +63,7 @@ export default function Progres() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         {/* En-tête et rubriques (maquettes « nuit ») */}
         <View style={styles.tete}>
           <Text weight="bold" style={styles.h1} accessibilityRole="header">
@@ -143,7 +146,7 @@ export default function Progres() {
 
         {rub === 'Ligue' && <Ligue integree />}
         <View style={styles.basPage} />
-      </ScrollView>
+      </Animated.ScrollView>
       <Pesee visible={pesee} onClose={() => setPesee(false)} />
     </SafeAreaView>
   );

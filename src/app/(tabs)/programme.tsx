@@ -3,8 +3,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { catalogueStyles as cs, lieuDuProfil, OngletsLieux, SeanceLigne } from '@/components/app/Catalogue';
 import { CoachFace } from '@/components/app/CoachFace';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
@@ -42,6 +44,7 @@ export default function Programme() {
  * et mon niveau avec « Tout voir », et la bibliothèque d'exercices. Les listes complètes sont dans /seances et /exercices.
  */
 function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
+  const defile = useDefilementOnglets();
   const profil = useProfil();
   const p = selectProfil(profil);
   const sem = useSemaine();
@@ -60,7 +63,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
   const choix = [...duLieu].sort((x, y) => rang(x) - rang(y)).slice(0, 4);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
       <EnTete titre="Ton programme" sous="Un peu mieux, chaque semaine." rubriques={ENTRAINEMENT} actif={ENTRAINEMENT[0].label} />
       {/* Direction « nuit » : semaine, programme suivi, séance du jour. */}
       <View style={styles.haut}>
@@ -155,7 +158,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
         </Card>
       </Appui>
       <View style={{ height: 10 }} />
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }
 

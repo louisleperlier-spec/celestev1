@@ -1,9 +1,10 @@
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { BilanDuJour, CarteCollection, CarteMessageCoach, CarteProchaineSeance, RessentiSheet, TeteSeance } from '@/components/app/Bilan';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { Journee } from '@/components/app/Journee';
@@ -26,6 +27,7 @@ import { colors, gradients, ui } from '@/theme';
  * Sommeil / Courbatures du check-in, Activité du journal), message du coach, prochaine séance, cartes à découvrir.
  */
 export default function Accueil() {
+  const defile = useDefilementOnglets();
   const p = useProfil();
   const sem = useSemaine();
   const ns = nextSession(sem);
@@ -116,7 +118,7 @@ export default function Accueil() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* En-tête (direction « nuit ») : NÉA, cloche, profil ; puis bonjour. */}
         <View style={styles.top}>
           <Text weight="bold" style={styles.marque} accessibilityRole="header">
@@ -146,7 +148,7 @@ export default function Accueil() {
               {cartes[x.id]}
             </Animated.View>
           ))}
-      </ScrollView>
+      </Animated.ScrollView>
       {feuille > 0 && <RessentiSheet key={feuille} visible onClose={() => setFeuille((n) => -n)} />}
     </SafeAreaView>
   );

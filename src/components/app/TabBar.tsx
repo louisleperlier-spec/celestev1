@@ -1,5 +1,7 @@
 import { router, usePathname } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import Animated, { makeMutable, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Appui, Icon, Text, type IconName } from '@/components/ui';
@@ -13,8 +15,8 @@ type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/yoga
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
 
 /**
- * 4 onglets (direction « nuit », maquettes de l'utilisateur) : Accueil (+ Profil), Programme (Programme, Calendrier,
- * Sorties, Randonnée), Progrès (+ Ligue) et Coach. Les écrans gardent leurs adresses.
+ * 4 onglets : Accueil (+ Profil), Programme (Programme, Calendrier, Sorties, Randonnée), Progrès (+ Ligue) et Coach.
+ * Les écrans gardent leurs adresses.
  */
 const ONGLETS: Onglet[] = [
   { label: 'Accueil', icon: 'home', href: '/accueil', ecrans: ['/accueil', '/profil'] },
@@ -22,6 +24,42 @@ const ONGLETS: Onglet[] = [
   { label: 'Progrès', icon: 'chart', href: '/progres', ecrans: ['/progres', '/ligue'] },
   { label: 'Coach', icon: 'bulle', href: '/coach', ecrans: ['/coach'] },
 ];
+
+/**
+ * Mesures du design 10K « Navigation principale » (ProcessIGTabMetrics) : barre de 50 pt dans une capsule à 4 pt de marge,
+ * 20 pt sur les côtés, 10 pt entre la capsule et le bouton rond, icônes de 24 pt ; réduite jusqu'à 85 % sur 100 pt de défilement.
+ */
+const HAUT = 50;
+const MARGE = 4;
+const EXT = HAUT + MARGE * 2;
+const DISTANCE = 100;
+const ECHELLE_MIN = 0.85;
+const RESSORT = { damping: 26, stiffness: 300, mass: 0.7 };
+
+/** Réduction de la barre (0 ouverte, 1 réduite), partagée entre les écrans qui défilent et la barre. */
+const reduction = makeMutable(0);
+
+/**
+ * À brancher sur le ScrollView principal d'un onglet (`Animated.ScrollView onScroll={…} scrollEventThrottle={16}`) :
+ * descendre réduit la barre au fil du doigt, remonter la rouvre (comme Instagram) ; en haut de page elle est toujours ouverte.
+ */
+export function useDefilementOnglets() {
+  const avant = useSharedValue(0);
+  return useAnimatedScrollHandler({
+    onScroll: (e) => {
+      const y = e.contentOffset.y;
+      const dy = y - avant.value;
+      avant.value = y;
+      const peutDefiler = e.contentSize.height > e.layoutMeasurement.height + DISTANCE;
+      if (y <= 0 || !peutDefiler) reduction.value = 0;
+      else reduction.value = Math.min(1, Math.max(0, reduction.value + dy / DISTANCE));
+    },
+    onEndDrag: () => {
+      // Au lâcher, la barre se range franchement d'un côté ou de l'autre.
+      reduction.value = withSpring(reduction.value > 0.5 ? 1 : 0, RESSORT);
+    },
+  });
+}
 
 /** Sport en direct : bandeau au-dessus des onglets (sport, chrono, BPM), toucher → écran en direct. */
 function SportEnCours() {
@@ -42,58 +80,104 @@ function SportEnCours() {
   );
 }
 
-/** Barre d'onglets flottante en pilule : icône et libellé, orange (avec halo) pour l'onglet ouvert. */
+/**
+ * Barre d'onglets du design 10K « Navigation principale » : capsule flottante d'icônes seules, pastille de sélection qui glisse
+ * d'un onglet à l'autre, et à côté un bouton rond « Ajouter une activité » (à la place du scan de repas de Process).
+ * Toucher la barre la rouvre si elle était réduite.
+ */
 export function TabBar() {
   const path = usePathname();
   const insets = useSafeAreaInsets();
+  const actif = Math.max(
+    0,
+    ONGLETS.findIndex((o) => o.ecrans.some((e) => path.startsWith(e))),
+  );
+  const [largeur, setLargeur] = useState(0);
+  const case_ = largeur / ONGLETS.length;
+  const x = useSharedValue(actif);
+
+  useEffect(() => {
+    x.set(withSpring(actif, RESSORT));
+    // Changer d'onglet rouvre la barre.
+    reduction.set(withTiming(0, { duration: 250 }));
+  }, [actif, x]);
+
+  const pastille = useAnimatedStyle(() => ({ width: case_, transform: [{ translateX: x.value * case_ }] }));
+  const echelle = useAnimatedStyle(() => ({ transform: [{ scale: 1 - reduction.value * (1 - ECHELLE_MIN) }] }));
+  const rouvrir = () => reduction.set(withTiming(0, { duration: 250 }));
+
   return (
     <View style={[styles.zone, { paddingBottom: Math.max(10, insets.bottom - 8) }]}>
       <SportEnCours />
-      <View style={styles.pilule} accessibilityRole="tablist">
-        {ONGLETS.map((o) => {
-          const on = o.ecrans.some((e) => path.startsWith(e));
-          const color = on ? colors.pink : colors.textSecondary;
-          return (
-            <Appui
-              key={o.label}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: on }}
-              accessibilityLabel={o.label}
-              style={styles.tab}
-              echelle={0.9}
-              onPress={() => router.navigate(o.href)}
-            >
-              <View style={[styles.ic, on && styles.icOn]}>
-                <Icon name={o.icon} size={22} color={color} strokeWidth={on ? 2.3 : 1.9} />
-              </View>
-              <Text weight={on ? 'semibold' : 'medium'} style={[styles.label, { color }]}>
-                {o.label}
-              </Text>
-            </Appui>
-          );
-        })}
-      </View>
+      <Animated.View style={[styles.rangee, echelle, { transformOrigin: 'bottom' }]}>
+        <View
+          style={styles.capsule}
+          accessibilityRole="tablist"
+          onTouchStart={rouvrir}
+          onLayout={(e: LayoutChangeEvent) => setLargeur(e.nativeEvent.layout.width - MARGE * 2)}
+        >
+          {largeur > 0 && <Animated.View pointerEvents="none" style={[styles.pastille, pastille]} />}
+          {ONGLETS.map((o, i) => {
+            const on = i === actif;
+            return (
+              <Pressable
+                key={o.label}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={o.label}
+                style={styles.tab}
+                onPress={() => router.navigate(o.href)}
+              >
+                <Icon name={o.icon} size={24} color={on ? colors.pink : colors.textSecondary} strokeWidth={on ? 2.3 : 1.9} />
+              </Pressable>
+            );
+          })}
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ajouter une activité"
+          accessibilityHint="Ouvre l'ajout d'une séance libre ou d'un autre sport"
+          onPress={() => {
+            rouvrir();
+            router.push('/ajouter');
+          }}
+          style={({ pressed }) => [styles.rond, pressed && styles.presse]}
+        >
+          <Icon name="plus" size={24} color={colors.text} strokeWidth={2.2} />
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  zone: { paddingHorizontal: 14, paddingTop: 6, backgroundColor: colors.bg },
-  pilule: {
+  zone: { paddingHorizontal: 20, paddingTop: 6, backgroundColor: colors.bg },
+  rangee: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  capsule: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    borderRadius: 30,
+    height: EXT,
+    padding: MARGE,
+    borderRadius: EXT / 2,
     backgroundColor: ui.barre,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border2,
-    boxShadow: `0 -6px 30px ${alpha(colors.pink, 0.08)}`,
+    boxShadow: `0 8px 30px ${alpha(colors.bgAlt, 0.6)}`,
   },
-  tab: { flex: 1, alignItems: 'center', gap: 2 },
-  ic: { width: 40, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
-  icOn: { boxShadow: `0 0 18px ${alpha(colors.pink, 0.35)}` },
-  label: { fontSize: 11, lineHeight: 14 },
+  pastille: { position: 'absolute', top: MARGE, left: MARGE, height: HAUT, borderRadius: HAUT / 2, backgroundColor: alpha(colors.text, 0.12) },
+  tab: { flex: 1, height: HAUT, alignItems: 'center', justifyContent: 'center' },
+  rond: {
+    width: EXT + 4,
+    height: EXT + 4,
+    borderRadius: (EXT + 4) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: ui.barre,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border2,
+    boxShadow: `0 8px 30px ${alpha(colors.bgAlt, 0.6)}`,
+  },
+  presse: { transform: [{ scale: 0.94 }] },
   direct: {
     flexDirection: 'row',
     alignItems: 'center',

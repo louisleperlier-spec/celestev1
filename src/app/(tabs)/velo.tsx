@@ -1,9 +1,11 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { MascotteVide } from '@/components/app/Mascotte';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { Carte } from '@/components/app/Carte';
@@ -30,6 +32,7 @@ const RESISTANCES = [2, 4, 5, 6, 8, 10];
  * plus la course à pied (hors prototype). Dehors au vrai GPS, chaque sortie conquiert les territoires traversés.
  */
 export default function Velo() {
+  const defile = useDefilementOnglets();
   const v = useVelo();
   const p = useProfil();
   const age = p.age;
@@ -55,7 +58,7 @@ export default function Velo() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         <EnTete titre="Tes sorties" sous={TERRITOIRES ? 'Vélo, course et territoires.' : 'Vélo et course.'} rubriques={ENTRAINEMENT} actif="Sorties" />
 
         {/* .modes */}
@@ -200,7 +203,7 @@ export default function Velo() {
           )}
         </View>
         <View style={styles.bas} />
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

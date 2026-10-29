@@ -2,9 +2,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Children, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { EnTetePage } from '@/components/app/Catalogue';
 import { ouvrirSante, ouvrirWatch } from '@/components/app/ouvrirSante';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
@@ -34,6 +36,7 @@ import { colors, fonts, glow, ui } from '@/theme';
 
 /** Onglet Profil (vProfile du prototype). */
 export default function Profil() {
+  const defile = useDefilementOnglets();
   const p = useProfil();
   const email = useCompte((s) => s.email);
   const c = coachById(p.coach);
@@ -67,7 +70,7 @@ export default function Profil() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         <EnTetePage titre="Profil" retour="/accueil" />
         {/* .prof */}
         <View style={styles.prof}>
@@ -307,7 +310,7 @@ export default function Profil() {
           />
         </Section>
         <View style={{ height: 10 }} />
-      </ScrollView>
+      </Animated.ScrollView>
       <PeseeSheet visible={pesee} onClose={() => setPesee(false)} />
       <NotifSheet visible={reglages} onClose={() => setReglages(false)} />
       <AbonnementSheet visible={abonnement} onClose={() => setAbonnement(false)} />

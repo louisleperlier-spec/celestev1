@@ -2,10 +2,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { MascotteVide } from '@/components/app/Mascotte';
 import { ENTRAINEMENT, Rubriques } from '@/components/app/EnTete';
 import { PastilleDifficulte } from '@/components/app/Rando';
@@ -57,6 +58,7 @@ function Chiffres({ s, clair = false }: { s: Sentier; clair?: boolean }) {
 
 /** Onglet Randonnée (maquette de l'utilisateur) : filtres, rando de la semaine, sentiers à explorer, rando libre. */
 export default function Randonnee() {
+  const defile = useDefilementOnglets();
   const [filtre, setFiltre] = useState<Filtre | null>(null);
   const enCours = useRando((s) => s.run);
   const semaine = randoSemaine(SENTIERS, lundiISO());
@@ -75,7 +77,7 @@ export default function Randonnee() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Rubriques rubriques={ENTRAINEMENT} actif="Rando" sansMarge />
         <View style={styles.tete}>
           <View style={styles.flex}>
@@ -247,7 +249,7 @@ export default function Randonnee() {
           />
         </View>
         <Text style={styles.note}>Données indicatives : vérifie le sentier, l’accès et les conditions auprès du parc avant de partir.</Text>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useDefilementOnglets } from '@/components/app/TabBar';
 import { ENTRAINEMENT, Rubriques } from '@/components/app/EnTete';
 import { IconeSport } from '@/components/app/IconeSport';
 import { ImagePosture } from '@/components/app/Yoga';
@@ -51,13 +52,14 @@ function Ligne({ s }: { s: SeanceYoga }) {
 
 /** Yoga (hors cahier des charges, demandé par l'utilisateur) : séance du moment, filtres, 30 séances guidées gratuites, postures. */
 export default function Yoga() {
+  const defile = useDefilementOnglets();
   const [filtre, setFiltre] = useState<Filtre | null>(null);
   const moment = seanceDuMoment(SEANCES_YOGA);
   const liste = SEANCES_YOGA.filter((s) => garde(s, filtre));
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Rubriques rubriques={ENTRAINEMENT} actif="Yoga" sansMarge />
         <View style={styles.tete}>
           <View style={styles.flex}>
@@ -118,7 +120,7 @@ export default function Yoga() {
           </View>
           <Icon name="right" size={18} color={colors.textSecondary} />
         </Appui>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

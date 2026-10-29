@@ -91,6 +91,12 @@ ses médias sont ceux d'une autre app, non repris) : illustration en grand 3:4 �
 (3 étapes numérotées dans une carte), « Muscles travaillés » cochés (tirés de `muscles`, pas de « bénéfices » inventés), erreur à éviter, plan du coach
 et charge, « Noter mes séries » ; « Voir la démo guidée » collé en bas (`Sheet` prend un `pied`).
 
+**Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
+ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
+bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
+(`useDefilementOnglets` sur le défilement principal d'Accueil, Programme, Progrès, Profil, Sorties, Randonnée, Yoga : `Animated.ScrollView`) ; bandeau
+du sport en direct gardé au-dessus.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 
