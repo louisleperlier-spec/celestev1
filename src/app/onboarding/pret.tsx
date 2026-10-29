@@ -99,7 +99,7 @@ export default function Pret() {
           </View>
         </View>
 
-        <Pressable accessibilityRole="button" onPress={() => router.navigate('/onboarding/objectifs')} style={styles.modifier}>
+        <Pressable accessibilityRole="button" onPress={() => router.navigate('/onboarding/discussion')} style={styles.modifier}>
           <Icon name="edit" size={20} />
           <Text style={styles.modifierTxt}>Modifier mes réponses</Text>
           <Icon name="right" size={18} color={colors.textSecondary} />

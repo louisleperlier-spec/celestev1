@@ -21,6 +21,13 @@ pour les séries secondaires (zones cardio en dégradé mauve → rose, toujours
 (`EnTete` : titre, « + » → séances prêtes, segmenté Programme · Calendrier · Sorties (vélo, course, stationnaire)), **Progrès** (+ Ligue dessous, `Ligue integree`)
 et **Coach** (`(tabs)/coach.tsx` : ressenti du jour, Adapter ma séance, Préparer ma semaine, dernier échange, saisie → `/chat`) ;
 les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne changent pas.
+**Onboarding refait avec les designs 10K (oct. 2026, demandé par l'utilisateur, portés de SwiftUI en RN)** : prénom en grand champ centré
+(`ObCentre`, Continuer collé au clavier) → **discussion** (`/onboarding/discussion`, `components/onboarding/Discussion.tsx` : NÉA écrit lettre
+à lettre, toucher = tout afficher, anciens messages qui s'éloignent, réponses en pastilles, lueur orange qui respire, retour arrière dans le fil,
+carte « Construit autour de toi ») pour objectifs, niveau, lieu (+ matériel de `GEAR`), séances et durée → âge sur une roue (14 à 99) → poids au
+pavé numérique (KG / LBS, stocké en kg) → santé → coach (citation tapée dans une bulle) → **engagement par appui long** (3 s sur la tête du coach,
+3 engagements qui s'allument) → préparation → prêt ; 7 segments ; `niveau`, `lieu`, `rythme`, `profil` et `Regle.tsx` retirés ; `objectifs` ne
+sert plus qu'au Profil ; pas d'`expo-haptics` (module natif absent du build 34).
 **Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
 `BigChoice`, `Coche`, `NombresSegmentes`, `PetitChoix`, `ListeCoches`, `InfoCarte`), niveau en barres, lieu + « Ton matériel » (matériel du lieu
 d'après `GEAR`, pas de choix libre : `buildPlan` inchangé), rythme en bloc 2–7, poids sur une règle (`Regle.tsx`, affichage kg / lb, stocké en kg),

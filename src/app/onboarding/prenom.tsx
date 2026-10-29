@@ -2,26 +2,18 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
-import { ObScaffold } from '@/components/onboarding/ObScaffold';
-import { toast } from '@/components/ui';
+import { ObCentre } from '@/components/onboarding/ObCentre';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
-/** 1/8 — Prénom (vObName). */
+/** 1/7 — Prénom (design 10K « Prénom » : grand champ centré, clavier ouvert, Continuer au-dessus du clavier). */
 export default function Prenom() {
   const name = useProfil((s) => s.name);
   const set = useProfil((s) => s.set);
   const [valeur, setValeur] = useState(name);
 
-  const verifier = () => {
-    if (!name) {
-      toast('Écris ton prénom');
-      return false;
-    }
-  };
-
   return (
-    <ObScaffold step="prenom" eyebrow="FAISONS CONNAISSANCE" title="Comment tu t'appelles ?" sub="Ton coach va t'appeler comme ça." onNext={verifier}>
+    <ObCentre step="prenom" title="Comment tu t'appelles ?" sub="Ton coach va t'appeler comme ça." ok={!!name}>
       <TextInput
         style={styles.input}
         value={valeur}
@@ -30,34 +22,31 @@ export default function Prenom() {
           set({ name: v.trim() });
         }}
         placeholder="Ton prénom"
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={colors.textTertiary}
+        selectionColor={colors.pink}
         autoComplete="given-name"
         textContentType="givenName"
         autoCapitalize="words"
+        autoCorrect={false}
         maxLength={20}
         autoFocus
         returnKeyType="next"
         onSubmitEditing={() => {
-          if (verifier() !== false) router.push('/onboarding/objectifs');
+          if (name) router.push('/onboarding/discussion');
         }}
         accessibilityLabel="Ton prénom"
       />
-    </ObScaffold>
+    </ObCentre>
   );
 }
 
 const styles = StyleSheet.create({
-  // .inp.big
   input: {
-    height: 64,
-    paddingHorizontal: 16,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: 16,
-    color: colors.text,
     ...fonts.bold,
-    fontSize: 22,
+    fontSize: 40,
+    minHeight: 64,
+    color: colors.text,
     textAlign: 'center',
+    paddingHorizontal: 12,
   },
 });

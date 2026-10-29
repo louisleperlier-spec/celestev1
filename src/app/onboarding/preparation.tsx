@@ -62,7 +62,7 @@ export default function Preparation() {
       </View>
       <View style={styles.segs}>
         {Array.from({ length: 7 }, (_, k) => (
-          <View key={k} style={[styles.seg, k < 5 + Math.min(2, fait) ? styles.segOn : styles.segOff]} />
+          <View key={k} style={[styles.seg, k < 7 ? styles.segOn : styles.segOff]} />
         ))}
       </View>
 

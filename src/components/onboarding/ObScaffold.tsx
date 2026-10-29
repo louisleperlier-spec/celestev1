@@ -10,7 +10,8 @@ import { colors, fonts } from '@/theme';
 import { OB_COUNT, OB_STEPS, obHref, obNext, type ObStep } from './steps';
 
 type Props = {
-  step: ObStep;
+  /** Étape de l'onboarding (absente hors onboarding : `horsOnboarding`). */
+  step?: ObStep;
   /** Petit titre au-dessus (« TON EXPÉRIENCE »…). */
   eyebrow?: string;
   title: string;
@@ -34,11 +35,11 @@ export function ObScaffold({ step, eyebrow, title, sub, children, ok = true, cta
   const next = () => {
     if (onNext?.() === false) return;
     if (horsOnboarding) return horsOnboarding.suivant();
-    router.push(obHref(obNext(step)));
+    if (step) router.push(obHref(obNext(step)));
   };
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
-      {horsOnboarding ? <Retour /> : <ObBar step={step} />}
+      {horsOnboarding || !step ? <Retour /> : <ObBar step={step} />}
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {header ?? (
           <>
@@ -73,23 +74,28 @@ export function Retour() {
   );
 }
 
-/** Retour + 8 segments + « n/8 » (.obh2). */
-export function ObBar({ step }: { step: ObStep }) {
+/**
+ * Retour + segments + « n/7 ». `avance` (0 à 1) remplit en partie le segment de l'étape en cours (discussion),
+ * `onRetour` remplace le retour (retour arrière dans la discussion).
+ */
+export function ObBar({ step, avance = 1, onRetour }: { step: ObStep; avance?: number; onRetour?: () => void }) {
   const i = OB_STEPS.indexOf(step);
   return (
     <View style={styles.bar}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Retour"
-        onPress={() => (router.canGoBack() ? router.back() : router.replace('/bienvenue'))}
+        onPress={onRetour ?? (() => (router.canGoBack() ? router.back() : router.replace('/bienvenue')))}
         style={styles.back}
       >
         <Icon name="left" />
       </Pressable>
       <View style={styles.segs} accessibilityLabel={`Étape ${Math.min(i + 1, OB_COUNT)} sur ${OB_COUNT}`}>
-        {Array.from({ length: OB_COUNT }, (_, k) =>
-          <View key={k} style={[styles.seg, k <= i ? styles.segOn : styles.segOff]} />,
-        )}
+        {Array.from({ length: OB_COUNT }, (_, k) => (
+          <View key={k} style={[styles.seg, styles.segOff]}>
+            {k <= i && <View style={[styles.segOn, { width: k < i ? '100%' : `${Math.round(avance * 100)}%` }]} />}
+          </View>
+        ))}
       </View>
       <Text style={styles.stepn}>
         {Math.min(i + 1, OB_COUNT)}/{OB_COUNT}
@@ -103,8 +109,8 @@ const styles = StyleSheet.create({
   bar: { flexDirection: 'row', alignItems: 'center', gap: 10, height: 52, paddingHorizontal: 12 },
   back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   segs: { flex: 1, flexDirection: 'row', gap: 6 },
-  seg: { flex: 1, height: 4, borderRadius: 2 },
-  segOn: { backgroundColor: colors.pink },
+  seg: { flex: 1, height: 4, borderRadius: 2, overflow: 'hidden' },
+  segOn: { height: 4, borderRadius: 2, backgroundColor: colors.pink },
   segOff: { backgroundColor: colors.border },
   stepn: { width: 34, fontSize: 14, lineHeight: 18, color: colors.textSecondary, textAlign: 'right' },
   scroll: { paddingHorizontal: 20, paddingBottom: 16 },

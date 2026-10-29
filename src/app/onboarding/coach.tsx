@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CoachFace } from '@/components/app/CoachFace';
 import { Sheet } from '@/components/app/Sheet';
+import { TexteTape } from '@/components/onboarding/Discussion';
 import { ObBar, Retour } from '@/components/onboarding/ObScaffold';
 import { Button, Glow, Icon, Text, toast, type IconName } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
@@ -59,7 +60,7 @@ export default function Coach() {
       {depuisProfil ? <Retour /> : <ObBar step="coach" />}
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.pad}>
-          {!depuisProfil && <Text style={styles.eyebrow}>DERNIÈRE ÉTAPE</Text>}
+          {!depuisProfil && <Text style={styles.eyebrow}>TON COACH</Text>}
           <Text style={styles.title}>Choisis ton coach.</Text>
           <Text style={styles.sub}>{depuisProfil ? 'Chaque coach a sa personnalité et son style de programme.' : 'La bonne énergie pour avancer.'}</Text>
         </View>
@@ -112,7 +113,9 @@ export default function Coach() {
           <Text weight="semibold" style={styles.spec}>
             {casse(c.spec)}
           </Text>
-          <Text style={styles.quote}>{c.quote}</Text>
+          <View style={styles.bulle}>
+            <TexteTape texte={c.quote} style={styles.quote} />
+          </View>
 
           <View style={styles.infos}>
             {infos.map(([ic, k, v], i) => (
@@ -137,7 +140,7 @@ export default function Coach() {
           label={depuisProfil ? `Choisir ${c.nom}` : `C'est parti avec ${c.nom}`}
           arrow
           onPress={() => {
-            if (!depuisProfil) return router.push('/onboarding/preparation');
+            if (!depuisProfil) return router.push('/onboarding/engagement');
             toast('Programme de ' + c.nom + ' créé');
             router.dismissAll();
             router.navigate('/programme');
@@ -193,7 +196,8 @@ const styles = StyleSheet.create({
   recoTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkLight },
   cname: { textAlign: 'center', ...fonts.black, fontSize: 40, lineHeight: 48, letterSpacing: -0.6, marginTop: 8 },
   spec: { textAlign: 'center', fontSize: 19, lineHeight: 24, color: colors.pink },
-  quote: { textAlign: 'center', fontSize: 17, lineHeight: 24, color: colors.textSecondary, marginTop: 10, paddingHorizontal: 10 },
+  bulle: { marginTop: 14, paddingVertical: 14, paddingHorizontal: 18, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.06)', borderWidth: 1, borderColor: colors.border2 },
+  quote: { textAlign: 'center', fontSize: 17, lineHeight: 24, color: colors.text },
   infos: { marginTop: 20 },
   info: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16, paddingHorizontal: 4 },
   infoSep: { borderTopWidth: 1, borderTopColor: colors.border },
