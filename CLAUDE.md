@@ -111,6 +111,12 @@ puis « Essaie NÉA Plus gratuitement » (gratuit seulement, → paywall), carte
 deviennent des sections (`TitreSection` 17 pt + action 13 pt à droite, 16 pt de marge, 36 pt entre sections, message du coach et cartes à découvrir
 collés à la section d'avant) ; la carte `plus` de l'ordre personnalisé passe dans la pile.
 
+**Progrès (design 10K « Progression », process-profile-progress, oct. 2026)** : en-tête « Tes progrès » 28 pt + 2 boutons ronds (calendrier →
+`/programme?vue=calendrier`, profil) ; rubrique **Statistiques** = Semaine / Mois / Année + cartes de mesures (`components/app/Metriques.tsx`,
+`CarteMetrique` : carte 28 pt, titre gris 14 pt, cadre sombre rayon 18, chiffre 34 pt + unité, graphique SVG 132 pt, « Évolution : … vs période
+précédente. ») : Séances (barres + tendance en pointillés, dernière barre orange), Temps actif (aire), Sommeil moyen et VFC nocturne (courbe à points),
+Poids (pointillés + axe, « + Ajouter ») ; l'ancienne carte Cœur, la courbe de poids et `StatsHaut` ne sont plus affichées ; cercles et citation gardés.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 
