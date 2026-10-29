@@ -125,7 +125,7 @@ liste `NOUVEAUTES` de `lib/nouveautes.ts` **à tenir à jour à chaque publicati
 « Aide NÉA à grandir » (lauriers SVG + 5 étoiles, les 3 coachs, « Ton parcours avec NÉA » = vrais chiffres en cartes qui défilent, jamais de faux avis
 ni de nombre d'utilisateurs, « Pas satisfait ? Écris-nous » (mail), bouton blanc « Noter NÉA » = fenêtre native (build 35+) sinon page « Écrire un avis »,
 croix = plus tard, « Ne plus me demander ») si `!avisFini`, ≥ 1 activité, au plus tous les 3 jours ; aussi après la 3e activité (Accueil, tous les 120 j)
-et depuis Profil → « Noter NÉA ».
+et depuis Profil → « Noter NÉA ». **Publiés en production (29 oct. 2026)** avec Progrès 10K et les nouvelles scènes.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
