@@ -95,7 +95,7 @@ et charge, « Noter mes séries » ; « Voir la démo guidée » collé en bas (
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
 (`useDefilementOnglets` sur le défilement principal d'Accueil, Programme, Progrès, Profil, Sorties, Randonnée, Yoga : `Animated.ScrollView`) ; bandeau
-du sport en direct gardé au-dessus.
+du sport en direct gardé au-dessus. **Fiche exercice et navigation publiées en production (29 oct. 2026).**
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
