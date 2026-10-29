@@ -158,8 +158,12 @@ function Ruban({ index, pos, onChoix }: { index: number; pos: SharedValue<number
   const H = EP + CREUX + 8;
   const choisi = COACHES[index].c;
 
+  // Angles des deux bouts calculés ici : la fonction `angle` n'est pas un worklet et ferait planter l'app sur iPhone
+  // si on l'appelait depuis le fil d'animation (sur le web, tout tourne dans le même fil et ça passe).
+  const aDebut = angle(0);
+  const aFin = angle(N - 1);
   const pastille = useAnimatedStyle(() => {
-    const a = interpolate(pos.value, [0, N - 1], [angle(0), angle(N - 1)]);
+    const a = interpolate(pos.value, [0, N - 1], [aDebut, aFin]);
     return {
       transform: [{ translateX: cx + r * Math.sin(a) - 42 }, { translateY: cy - r * Math.cos(a) - 24 }, { rotate: `${a}rad` }],
     };
