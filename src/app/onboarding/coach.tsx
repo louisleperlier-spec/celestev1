@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -6,12 +7,12 @@ import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, {
   Easing,
   FadeIn,
-  FadeInDown,
   interpolate,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withRepeat,
+  withDelay,
   withSpring,
   withTiming,
   type SharedValue,
@@ -22,13 +23,12 @@ import Svg, { Path } from 'react-native-svg';
 import { CoachFace } from '@/components/app/CoachFace';
 import { Sheet } from '@/components/app/Sheet';
 import { dureeRevele, OrbeSiri, Reflet, REVELE_DELAI, TexteRevele, TexteScintille } from '@/components/onboarding/ChoixCoach';
-import { ObBar, Retour } from '@/components/onboarding/ObScaffold';
-import { Button, Glow, Icon, Text, toast } from '@/components/ui';
+import { Glow, Icon, Text, toast } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
 import type { Coach as CoachT } from '@/data/types';
 import { coachById, recoCoach } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, fonts } from '@/theme';
+import { alpha, colors, fonts, ui } from '@/theme';
 
 const ORDRE = COACHES.map((c) => c.id);
 const N = ORDRE.length;
@@ -38,6 +38,8 @@ const approche = (c: CoachT) => `${c.traits[0]} et ${c.traits[1].toLowerCase()}`
 /** Ce que le coach dit dans sa bulle, à tour de rôle (ses phrases des données). */
 const repliques = (c: CoachT) => [c.quote, c.daily, c.prog];
 const RESSORT = { damping: 20, stiffness: 160, mass: 0.9 };
+/** Haut de la mascotte dans la scène. */
+const HAUT_MASCOTTE = 18;
 
 /**
  * Une mascotte : changer de coach est une transformation (fondu, échelle), jamais un glissement de côté.
@@ -46,19 +48,34 @@ const RESSORT = { damping: 20, stiffness: 160, mass: 0.9 };
 function Mascotte({ c, i, pos, taille, souffle }: { c: CoachT; i: number; pos: SharedValue<number>; taille: number; souffle: SharedValue<number> }) {
   const style = useAnimatedStyle(() => {
     const pres = Math.max(0, 1 - Math.min(Math.abs(i - pos.value), 1));
-    // Il respire : monte de 6 pt et grandit à peine, sur 2,4 s.
-    return {
-      opacity: pres,
-      transform: [{ translateY: -6 * souffle.value }, { scale: (0.92 + 0.08 * pres) * (1 + 0.015 * souffle.value) }],
-      zIndex: Math.round(pres * 10),
-    };
+    return { opacity: pres, transform: [{ scale: 0.92 + 0.08 * pres }], zIndex: Math.round(pres * 10) };
   });
+  // Il respire : monte de 6 pt et grandit à peine, sur 2,4 s (son reflet reste au sol).
+  const corps = useAnimatedStyle(() => ({ transform: [{ translateY: -6 * souffle.value }, { scale: 1 + 0.015 * souffle.value }] }));
   return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.centre, style]}>
-      <Glow width={taille * 1.1} height={taille} color={c.c} intensity={0.32} />
-      <Image source={COACH_IMAGES[c.id].corps} style={{ width: taille, height: taille }} contentFit="contain" />
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.mascotte, style]}>
+      <View style={{ width: taille, height: taille }}>
+        <Glow width={taille * 1.1} height={taille} color={c.c} intensity={0.3} />
+        <Animated.View style={corps}>
+          <Image source={COACH_IMAGES[c.id].corps} style={{ width: taille, height: taille }} contentFit="contain" />
+        </Animated.View>
+      </View>
+      {/* Reflet sur le sol noir, qui s'efface vers le bas. */}
+      <View style={{ width: taille, height: taille * 0.42, overflow: 'hidden', marginTop: -taille * 0.03 }}>
+        <Image source={COACH_IMAGES[c.id].corps} style={[styles.reflet, { width: taille, height: taille }]} contentFit="contain" />
+        <LinearGradient colors={[alpha(colors.bgAlt, 0.35), colors.bgAlt]} locations={[0, 0.85]} style={StyleSheet.absoluteFill} />
+      </View>
     </Animated.View>
   );
+}
+
+/** Entrée en cascade jouée une seule fois (opacité + montée), pour un bloc qui ne doit jamais rejouer son entrée. */
+function useEntree(delai: number, depuis: number) {
+  const v = useSharedValue(0);
+  useEffect(() => {
+    v.set(withDelay(delai, withSpring(1, { damping: 18, stiffness: 120 })));
+  }, [delai, v]);
+  return useAnimatedStyle(() => ({ opacity: Math.min(1, v.value), transform: [{ translateY: (1 - v.value) * depuis }] }));
 }
 
 /**
@@ -109,7 +126,7 @@ function BulleCoach({ c }: { c: CoachT }) {
   return (
     <Animated.View style={[styles.bulle, anime]}>
       <Svg width={26} height={12} style={styles.pointe}>
-        <Path d="M0 12 Q10 6 13 0 Q16 6 26 12 Z" fill={colors.surface} />
+        <Path d="M0 12 Q10 6 13 0 Q16 6 26 12 Z" fill={alpha(colors.surface, 0.8)} />
       </Svg>
       {courant.pense ? (
         <Animated.View entering={FadeIn.duration(200)} style={styles.pense}>
@@ -139,7 +156,7 @@ function Ruban({ index, pos, onChoix }: { index: number; pos: SharedValue<number
   const p3 = point(theta);
   const sommet = point(0);
   const H = EP + CREUX + 8;
-  const choisi = colors.pink;
+  const choisi = COACHES[index].c;
 
   const pastille = useAnimatedStyle(() => {
     const a = interpolate(pos.value, [0, N - 1], [angle(0), angle(N - 1)]);
@@ -171,7 +188,7 @@ function Ruban({ index, pos, onChoix }: { index: number; pos: SharedValue<number
             fill="none"
           />
         </Svg>
-        <Animated.View pointerEvents="none" style={[styles.pastilleArc, { borderColor: alpha(choisi, 0.7), shadowColor: choisi }, pastille]} />
+        <Animated.View pointerEvents="none" style={[styles.pastilleArc, { borderColor: alpha(colors.text, 0.3), shadowColor: choisi }, pastille]} />
         {COACHES.map((x, k) => {
           const a = angle(k);
           const p = point(a);
@@ -249,75 +266,88 @@ export default function Coach() {
       choisir(projete < -width * 0.22 ? idx + 1 : projete > width * 0.22 ? idx - 1 : idx);
     });
 
-  const taille = Math.min(width * 0.7, height * 0.3);
+  // Cascade : titre, puis bloc du bas, puis le ruban qui monte du bord.
+  const entreeTete = useEntree(380, 14);
+  const entreeBas = useEntree(700, 14);
+  const entreeRuban = useEntree(940, 90);
+  const taille = Math.min(width * 0.82, height * 0.36);
+  const continuer = () => {
+    if (!depuisProfil) return router.push('/onboarding/engagement');
+    toast('Programme de ' + c.nom + ' créé');
+    router.dismissAll();
+    router.navigate('/programme');
+  };
 
   return (
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
-        {depuisProfil ? <Retour /> : <ObBar step="coach" />}
+        <View style={styles.haut}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Retour"
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/bienvenue'))}
+            style={styles.rond}
+          >
+            <Icon name="left" size={20} />
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel={`Comparer les ${N} coachs`} onPress={() => setComparer(true)} style={styles.rond}>
+            <Icon name="sliders" size={18} />
+          </Pressable>
+        </View>
 
-        <Animated.View entering={FadeInDown.delay(380).duration(500)} style={styles.tete}>
+        <Animated.View style={[styles.tete, entreeTete]}>
           <Text weight="medium" style={styles.salut}>
             {name ? `Salut ${name} 👋` : 'Salut 👋'}
           </Text>
-          <Text style={styles.title}>Quel coach te ressemble ?</Text>
+          <Text style={styles.title}>Quelle personnalité de coach préfères-tu{'\u00a0'}?</Text>
         </Animated.View>
 
         <GestureDetector gesture={geste}>
           <View style={styles.scene}>
-            <View style={styles.flex}>
-              {COACHES.map((x, i) => (
-                <Mascotte key={x.id} c={x} i={i} pos={pos} taille={taille} souffle={souffle} />
-              ))}
-            </View>
-            <View pointerEvents="none" style={styles.bulleZone}>
+            {COACHES.map((x, i) => (
+              <Mascotte key={x.id} c={x} i={i} pos={pos} taille={taille} souffle={souffle} />
+            ))}
+            {/* Le panneau, posé juste sous le visage du coach. */}
+            <View pointerEvents="none" style={[styles.bulleZone, { top: HAUT_MASCOTTE + taille * 0.5 }]}>
               <BulleCoach c={c} />
             </View>
           </View>
         </GestureDetector>
 
-        <Animated.View entering={FadeInDown.delay(700).duration(500)} style={styles.bas}>
-          <Animated.View key={c.id} entering={FadeIn.duration(260)} style={styles.nomBloc}>
+        <Animated.View style={[styles.bas, entreeBas]}>
+          <View style={styles.nomBloc}>
             <Text style={[styles.nom, { color: c.c }]}>{c.nom}</Text>
-            <Text weight="medium" style={styles.spec}>
-              {casse(c.spec)} · {c.style}
-            </Text>
             {reco && (
-              <View style={styles.reco}>
-                <Icon name="star" size={12} color={colors.pink} />
-                <Text weight="semibold" style={styles.recoTxt}>
-                  Recommandé pour toi
-                </Text>
-              </View>
+              <Text weight="semibold" style={styles.recoTxt}>
+                Recommandé pour toi
+              </Text>
             )}
-          </Animated.View>
+          </View>
           <Reflet cle={c.id}>
-            <Button
-              label={depuisProfil ? `Choisir ${c.nom}` : `Continuer avec ${c.nom}`}
-              arrow
-              onPress={() => {
-                if (!depuisProfil) return router.push('/onboarding/engagement');
-                toast('Programme de ' + c.nom + ' créé');
-                router.dismissAll();
-                router.navigate('/programme');
-              }}
-            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={depuisProfil ? `Choisir ${c.nom}` : `Continuer avec ${c.nom}`}
+              onPress={continuer}
+              style={({ pressed }) => [styles.blanc, { shadowColor: c.c }, pressed && styles.blancPresse]}
+            >
+              <LinearGradient colors={[colors.text, ui.text2]} style={StyleSheet.absoluteFill} />
+              <Text weight="bold" style={[styles.blancTxt, styles.devant]}>
+                {depuisProfil ? `Choisir ${c.nom}` : 'Continuer'}
+              </Text>
+              <View style={styles.devant}>
+                <Icon name="arrow" size={17} color={colors.onPrimary} />
+              </View>
+            </Pressable>
           </Reflet>
           <View style={styles.aide}>
             <Icon name="swap" size={14} color={colors.textTertiary} />
-            <Text style={styles.aideTxt}>Glisse pour choisir</Text>
-            <Text style={styles.aideTxt}>·</Text>
-            <Pressable accessibilityRole="button" onPress={() => setComparer(true)} hitSlop={8}>
-              <Text style={[styles.aideTxt, styles.lien]}>Comparer les {N} coachs</Text>
-            </Pressable>
+            <Text weight="medium" style={styles.aideTxt}>
+              Glisse pour choisir ton coach
+            </Text>
           </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInDown.delay(940)
-            .duration(560)
-            .withInitialValues({ transform: [{ translateY: 90 }] })}
-        >
+        <Animated.View style={entreeRuban}>
           <Ruban index={idx} pos={pos} onChoix={choisir} />
         </Animated.View>
 
@@ -351,22 +381,42 @@ export default function Coach() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root: { flex: 1, backgroundColor: colors.bgAlt },
+  haut: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 4 },
+  rond: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: alpha(colors.text, 0.08) },
+  mascotte: { alignItems: 'center', paddingTop: HAUT_MASCOTTE },
+  reflet: { transform: [{ scaleY: -1 }], opacity: 0.5 },
+  blanc: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 8,
+    height: 52,
+    paddingHorizontal: 32,
+    borderRadius: 26,
+    overflow: 'hidden',
+    shadowOpacity: 0.35,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 12 },
+  },
+  blancPresse: { transform: [{ translateY: 2 }, { scale: 0.98 }] },
+  devant: { zIndex: 1 },
+  blancTxt: { fontSize: 17, lineHeight: 22, color: colors.onPrimary },
   flex: { flex: 1 },
   centre: { alignItems: 'center', justifyContent: 'center' },
-  tete: { alignItems: 'center', paddingHorizontal: 28, paddingTop: 6 },
+  tete: { alignItems: 'center', paddingHorizontal: 32, paddingTop: 2 },
   salut: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
-  title: { ...fonts.bold, fontSize: 26, lineHeight: 32, textAlign: 'center', marginTop: 4 },
+  title: { ...fonts.bold, fontSize: 25, lineHeight: 31, textAlign: 'center', marginTop: 6 },
   scene: { flex: 1, minHeight: 260 },
-  bulleZone: { paddingHorizontal: 24, paddingTop: 12 },
+  bulleZone: { position: 'absolute', left: 26, right: 26, zIndex: 20 },
   bulle: {
     paddingTop: 14,
     paddingBottom: 16,
     paddingHorizontal: 20,
-    borderRadius: 24,
-    backgroundColor: colors.surface,
+    borderRadius: 28,
+    backgroundColor: alpha(colors.surface, 0.8),
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: alpha(colors.text, 0.08),
     minHeight: 74,
     justifyContent: 'center',
   },
@@ -374,7 +424,7 @@ const styles = StyleSheet.create({
   pense: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   penseTxt: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
   replique: { fontSize: 17, lineHeight: 24, color: colors.text },
-  bas: { paddingHorizontal: 20, paddingTop: 12, gap: 14 },
+  bas: { paddingHorizontal: 20, paddingTop: 8, gap: 16 },
   nomBloc: { alignItems: 'center', gap: 2 },
   nom: { ...fonts.bold, fontSize: 36, lineHeight: 44 },
   spec: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
@@ -389,7 +439,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.pink,
   },
-  recoTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkLight },
+  recoTxt: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   aide: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   aideTxt: { fontSize: 13.5, lineHeight: 18, color: colors.textTertiary },
   lien: { color: colors.textSecondary, textDecorationLine: 'underline' },

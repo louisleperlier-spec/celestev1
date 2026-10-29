@@ -29,7 +29,10 @@ pavé numérique (KG / LBS, stocké en kg) → santé → **coach** (design 10K 
 changement de coach en fondu + échelle au glissement (`react-native-gesture-handler`, `GestureHandlerRootView` local), bulle à pointe où le coach
 « réfléchit » (orbe `OrbeSiri` : 8 points en vague sur halo rose / violet / bleu / orange) puis dévoile en vague mot à mot (`TexteRevele`, 34 ms
 par lettre, 1,2 à 6 s) ses phrases `quote` / `daily` / `prog` (`components/onboarding/ChoixCoach.tsx`, paquet 10K vérifié, sans ressource média : portrait = mascotte),
-entrée en cascade (titre, bloc du bas, ruban qui monte), reflet sur Continuer à chaque coach, glisser le long du ruban, nom à sa couleur, ruban en arc avec les 4 têtes, « Comparer les 4 coachs ») → **engagement par appui long** (3 s sur la tête du coach,
+entrée en cascade (titre, bloc du bas, ruban qui monte), reflet sur Continuer à chaque coach, glisser le long du ruban ; mise en page de la maquette 10K
+(oct. 2026, capture de l'utilisateur) : fond presque noir, bouton retour rond + « Comparer » en haut, « Quelle personnalité de coach préfères-tu ? », mascotte
+en grand avec reflet au sol, bulle sur le corps sous le visage, nom seul à sa couleur, **Continuer blanc en relief** (exception validée au bouton orange),
+pastille claire du ruban à halo de la couleur du coach ; entrées jouées une seule fois (`useEntree`, les `entering` se rejouaient au changement de coach), nom à sa couleur, ruban en arc avec les 4 têtes, « Comparer les 4 coachs ») → **engagement par appui long** (3 s sur la tête du coach,
 3 engagements qui s'allument) → préparation → prêt ; 7 segments ; `niveau`, `lieu`, `rythme`, `profil` et `Regle.tsx` retirés ; `objectifs` ne
 sert plus qu'au Profil ; pas d'`expo-haptics` (module natif absent du build 34).
 **Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
