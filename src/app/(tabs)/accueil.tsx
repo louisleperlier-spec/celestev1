@@ -5,22 +5,22 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useDefilementOnglets } from '@/components/app/TabBar';
-import { BilanDuJour, CarteCollection, CarteMessageCoach, CarteProchaineSeance, RessentiSheet, TeteSeance } from '@/components/app/Bilan';
+import { ACCUEIL, FlammeSerie, PileCartes, TitreSection } from '@/components/app/AccueilDesign';
+import { BilanDuJour, CarteCollection, CarteMessageCoach, CarteProchaineSeance, quandSeance, RessentiSheet } from '@/components/app/Bilan';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { Journee } from '@/components/app/Journee';
 import { Ligue } from '@/components/app/Ligue';
 import { lancerSortie } from '@/components/app/lancerSortie';
 import { ouvrirPlus } from '@/components/app/ouvrirPlus';
-import { SectionHead } from '@/components/app/Section';
 import { TuilesSante } from '@/components/app/Tableau';
-import { Appui, Card, Icon, Text } from '@/components/ui';
+import { Appui, Icon, Text } from '@/components/ui';
 import { ordreAccueil, type IdCarte } from '@/lib/accueil';
+import { serie } from '@/lib/gel';
 import { estPremium } from '@/lib/premium';
 import { nextSession } from '@/lib/semaine';
 import { proposerNoteSiBon } from '@/store/note';
 import { useProfil, useSemaine } from '@/store/profil';
-import { colors, gradients, ui } from '@/theme';
-
+import { colors } from '@/theme';
 
 /**
  * Onglet Accueil (maquette de l'utilisateur, oct. 2026) : bilan du jour utile même sans Apple Watch (Énergie et
@@ -48,83 +48,62 @@ export default function Accueil() {
     });
   };
 
-  /** Cartes de l'Accueil, affichées dans l'ordre choisi (« Mon écran d'accueil » du Profil). */
-  const cartes: Record<IdCarte, React.ReactNode> = {
-    journee: (
-      <View style={styles.journee}>
-        <Journee />
-      </View>
-    ),
-    bilan: (
-      <View style={styles.pad}>
-        <Text weight="bold" style={styles.h2} accessibilityRole="header">
-          Ton bilan du jour
-        </Text>
-        <BilanDuJour onRessenti={ouvrirRessenti} />
-      </View>
-    ),
-    coach: (
-      <View style={[styles.pad, styles.mt]}>
-        <CarteMessageCoach onRessenti={ouvrirRessenti} />
-      </View>
-    ),
-    seance: (
-      <View style={[styles.pad, styles.mtSection]}>
-        <TeteSeance offset={ns.offset} />
-        <CarteProchaineSeance s={s} offset={ns.offset} onLancer={commencer} />
-      </View>
-    ),
-    cartes: (
-      <View style={[styles.pad, styles.mt]}>
-        <CarteCollection />
-      </View>
-    ),
-    plus: (
-      <>
-        {/* NÉA Plus, seulement en version gratuite */}
-        {!estPremium(p.premium) && (
-          <Appui accessibilityRole="button" onPress={() => ouvrirPlus()} style={styles.pad}>
-            <Card style={styles.upsell}>
-              <View style={styles.upsellIcon}>
-                <Icon name="star" size={18} color={gradients.gold[1]} />
-              </View>
-              <View style={styles.flex}>
-                <Text weight="semibold" style={styles.upsellB}>
-                  Essaie NÉA Plus gratuitement
-                </Text>
-                <Text style={styles.upsellSmall}>3 jours offerts • tous les programmes, coach illimité</Text>
-              </View>
-              <Icon name="right" size={16} color={colors.textTertiary} />
-            </Card>
-          </Appui>
-        )}
-      </>
-    ),
-    reperes: (
-      <View style={[styles.pad, styles.mt]}>
-        <TuilesSante />
-      </View>
-    ),
-    cercles: (
-      <>
-        <SectionHead title="Tes cercles de la semaine" />
-        <View style={styles.pad}>
-          <SemaineCercles />
-        </View>
-      </>
-    ),
-    ligue: <Ligue integree />,
+  const jours = serie(p);
+
+  /**
+   * Cartes de l'Accueil, dans l'ordre choisi (« Mon écran d'accueil » du Profil), en sections du design 10K « Accueil quotidien » :
+   * titre de 17 pt et action à droite, 36 pt entre les sections ; le message du coach et les cartes à découvrir collent à la section d'avant.
+   */
+  const cartes: Record<IdCarte, { titre?: string; action?: string; onAction?: () => void; colle?: boolean; contenu: React.ReactNode } | null> = {
+    journee: { contenu: <Journee /> },
+    bilan: { titre: 'Ton bilan du jour', action: 'Mon ressenti', onAction: ouvrirRessenti, contenu: <BilanDuJour onRessenti={ouvrirRessenti} /> },
+    coach: { colle: true, contenu: <CarteMessageCoach onRessenti={ouvrirRessenti} /> },
+    seance: {
+      titre: 'Ta prochaine séance',
+      action: quandSeance(ns.offset),
+      onAction: () => router.navigate('/programme'),
+      contenu: <CarteProchaineSeance s={s} offset={ns.offset} onLancer={commencer} />,
+    },
+    cartes: { colle: true, contenu: <CarteCollection /> },
+    // NÉA Plus passe dans la pile de cartes du haut.
+    plus: null,
+    reperes: { titre: 'Tes repères', contenu: <TuilesSante /> },
+    cercles: { titre: 'Tes cercles de la semaine', contenu: <SemaineCercles /> },
+    ligue: { contenu: <Ligue integree /> },
   };
+
+  // Pile du haut (PlanHomeUpgradeProCard) : bienvenue (à balayer), puis l'essai de NÉA Plus en version gratuite.
+  const pile = [
+    {
+      id: 'bienvenue',
+      titre: 'Bienvenue dans NÉA',
+      sous: 'Ton programme est prêt. Fais ta séance, note ton ressenti et avance chaque jour.',
+      coach: p.coach,
+    },
+    ...(estPremium(p.premium)
+      ? []
+      : [
+          {
+            id: 'plus',
+            titre: 'Essaie NÉA Plus gratuitement',
+            sous: '3 jours offerts : tous les programmes et ton coach en illimité.',
+            coach: p.coach === 'axel' ? ('nova' as const) : ('axel' as const),
+            onPress: () => ouvrirPlus(),
+          },
+        ]),
+  ];
+
+  const visibles = ordreAccueil(p.accueil).filter((x) => x.on && cartes[x.id]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        {/* En-tête (direction « nuit ») : NÉA, cloche, profil ; puis bonjour. */}
+        {/* En-tête (design 10K) : « Salut {prénom} » à gauche, la série en flamme, la cloche et le profil à droite. */}
         <View style={styles.top}>
-          <Text weight="bold" style={styles.marque} accessibilityRole="header">
-            NÉA
+          <Text weight="bold" style={styles.h1} numberOfLines={1} accessibilityRole="header">
+            Salut {p.name}
           </Text>
-          <View style={styles.flex} />
+          <FlammeSerie jours={jours} onPress={() => router.navigate('/progres')} />
           <Appui accessibilityRole="button" accessibilityLabel="Notifications" style={styles.rond} onPress={() => router.push('/notifications')}>
             <Icon name="bell" size={20} />
             {nonLues && <View style={styles.bellDot} />}
@@ -133,21 +112,26 @@ export default function Accueil() {
             <Icon name="user" size={21} />
           </Appui>
         </View>
-        <View style={styles.bonjour}>
-          <Text weight="bold" style={styles.h1} numberOfLines={1}>
-            Bonjour {p.name}
-          </Text>
-          <Text style={styles.date}>Ton rythme, aujourd’hui.</Text>
-        </View>
 
-        {ordreAccueil(p.accueil)
-          .filter((x) => x.on)
-          .map((x, i) => (
-            // Les cartes arrivent l'une après l'autre (glissé du bas + ressort).
-            <Animated.View key={x.id} entering={FadeInDown.delay(60 + i * 70).duration(450).springify().damping(18)}>
-              {cartes[x.id]}
+        <PileCartes cartes={pile} />
+
+        {visibles.map((x, i) => {
+          const c = cartes[x.id]!;
+          return (
+            // Les sections arrivent l'une après l'autre (glissé du bas + ressort).
+            <Animated.View
+              key={x.id}
+              entering={FadeInDown.delay(60 + i * 70)
+                .duration(450)
+                .springify()
+                .damping(18)}
+              style={c.colle ? styles.colle : styles.section}
+            >
+              {c.titre ? <TitreSection titre={c.titre} action={c.action} onAction={c.onAction} /> : null}
+              {c.contenu}
             </Animated.View>
-          ))}
+          );
+        })}
       </Animated.ScrollView>
       {feuille > 0 && <RessentiSheet key={feuille} visible onClose={() => setFeuille((n) => -n)} />}
     </SafeAreaView>
@@ -155,107 +139,14 @@ export default function Accueil() {
 }
 
 const styles = StyleSheet.create({
-  journee: { marginHorizontal: 20, marginTop: 16 },
   root: { flex: 1, backgroundColor: colors.bg },
-  scroll: { paddingBottom: 120 },
-  flex: { flex: 1 },
-  pad: { marginHorizontal: 20 },
-  mt: { marginTop: 14 },
-  mtSection: { marginTop: 24 },
-  h2: { fontSize: 22, lineHeight: 28, letterSpacing: -0.3, marginBottom: 12 },
-  marque: { fontSize: 30, lineHeight: 36, letterSpacing: 1.5 },
-  bonjour: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 14 },
-  top: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingTop: 10,
-    paddingHorizontal: 20,
-  },
-  h1: { fontSize: 28, lineHeight: 34, letterSpacing: -0.4 },
-  date: {
-    fontSize: 15,
-    lineHeight: 20,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  rond: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: {
-    backgroundColor: ui.dark,
-    borderWidth: 1.5,
-    borderColor: colors.pink,
-  },
-  initiale: { fontSize: 17, lineHeight: 22, color: colors.pinkLight },
-  // Pastille rose tant qu'une notification n'est pas lue
-  bellDot: {
-    position: 'absolute',
-    top: 10,
-    right: 11,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.pink,
-  },
-  coachWrap: { marginTop: 12, marginHorizontal: 20 },
-  coach: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-  },
-  coachImg: { width: 76, height: 86 },
-  coachTitre: { fontSize: 16, lineHeight: 21 },
-  coachTxt: {
-    fontSize: 14,
-    lineHeight: 19,
-    color: colors.textSecondary,
-    marginTop: 3,
-  },
-  coachLien: {
-    fontSize: 14,
-    lineHeight: 18,
-    color: colors.pinkLight,
-    marginTop: 6,
-  },
-  seance: { padding: 18 },
-  scene: { marginTop: -18, marginHorizontal: -18, marginBottom: 14, aspectRatio: 16 / 9, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  seanceHaut: { gap: 4 },
-  quand: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
-  seanceTitre: { fontSize: 21, lineHeight: 26 },
-  meta: { fontSize: 14, lineHeight: 19, color: colors.textSecondary },
-  vignettes: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  plus: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    backgroundColor: ui.dark,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  plusTxt: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
-  btn: { marginTop: 14 },
-  upsell: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 12,
-    paddingVertical: 14,
-  },
-  upsellIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: ui.dark,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  upsellB: { fontSize: 15, lineHeight: 20 },
-  upsellSmall: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
+  // Marges du design : 16 pt sur les côtés, 36 pt entre les sections.
+  scroll: { paddingHorizontal: ACCUEIL.marge, paddingBottom: 120 },
+  section: { marginTop: ACCUEIL.entreSections },
+  colle: { marginTop: 14 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 10 },
+  h1: { flex: 1, fontSize: 28, lineHeight: 34, letterSpacing: -0.4 },
+  rond: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+  // Pastille orange tant qu'une notification n'est pas lue
+  bellDot: { position: 'absolute', top: 10, right: 11, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.pink },
 });

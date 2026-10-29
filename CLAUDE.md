@@ -104,6 +104,13 @@ en rail à liseré avec pastille de verre qui glisse (`ChoixOffre`, prix barré 
 **bouton blanc à halo orange** (`BoutonBlanc`) ; la frise de l'essai est retirée. **Correctif du 30 oct.** : l'écran du coach plantait sur iPhone
 (fonction non worklet appelée dans `useAnimatedStyle` du ruban) ; règle : dans un worklet, seulement des nombres ou des fonctions `'worklet'`.
 
+**Accueil (design 10K « Accueil quotidien », process-home-page, oct. 2026)** : `(tabs)/accueil.tsx` + `components/app/AccueilDesign.tsx` :
+« Salut {prénom} » + série en flamme (`FlammeSerie`, `serie` de lib/gel → Progrès) + cloche + profil ; **pile de 2 cartes sombres** (`PileCartes`,
+148 pt, coins 24, mascotte du coach à droite, croix ronde, carte de dos qui dépasse de 11 pt à 94,5 % / 72 %) : « Bienvenue dans NÉA » à balayer,
+puis « Essaie NÉA Plus gratuitement » (gratuit seulement, → paywall), cartes masquées gardées (`nea-accueil-cartes-masquees`) ; les cartes de l'Accueil
+deviennent des sections (`TitreSection` 17 pt + action 13 pt à droite, 16 pt de marge, 36 pt entre sections, message du coach et cartes à découvrir
+collés à la section d'avant) ; la carte `plus` de l'ordre personnalisé passe dans la pile.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 
