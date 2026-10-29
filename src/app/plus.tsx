@@ -1,7 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Sheet } from '@/components/app/Sheet';
@@ -14,7 +15,7 @@ import { isPremium, money, type OffreId } from '@/lib/premium';
 import { achatsReels, acheterReel, eligibilites, restaurerReel } from '@/store/achats';
 import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, gradients, ui } from '@/theme';
+import { alpha, colors, fonts, gradients, ui } from '@/theme';
 
 type Offre = {
   id: OffreId;
@@ -46,7 +47,6 @@ export default function Plus() {
   const [achat, setAchat] = useState<Offre | null>(null);
   const [sortie, setSortie] = useState(false);
   const [croix, setCroix] = useState(false);
-  const [now] = useState(Date.now);
   // Offres de bienvenue qu'Apple accorde encore à ce compte (null : achat simulé, tout est possible).
   const [elig, setElig] = useState<{ essai: boolean; offre: boolean } | null>(null);
   useEffect(() => {
@@ -61,7 +61,6 @@ export default function Plus() {
   const plan = plans.find((x) => x.id === sel) ?? plans[0];
   const mo = PLANS[1].prix * 12;
   const save = Math.round((1 - PLANS[0].prix / mo) * 100);
-  const f = (d: number) => new Date(d).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' });
 
   // La croix n'apparaît qu'après 2 secondes.
   useEffect(() => {
@@ -116,102 +115,77 @@ export default function Plus() {
     } else toast(useCompte.getState().userId ? 'Aucun achat trouvé pour ce compte' : 'Connecte-toi pour restaurer tes achats');
   };
 
+  // Avantages (PaywallBevelFeatureCatalog) : les 3 principaux, puis « inclut également ».
   const feats: [IconName, string][] = [
     ['dumb', `Tous les programmes des ${COACHES.length} coachs`],
     ['bulle', 'Ton coach IA en illimité'],
     ['heart', 'Récupération avancée'],
-    ['users', 'Turbo XP et boosts'],
+  ];
+  const aussi: [IconName, string][] = [
+    ['bolt', 'Turbo XP et boosts'],
     ['bike', 'Vélo : zones cardio et historique'],
   ];
-  const cta = plan.trial ? `Essayer ${plan.trial} jours gratuitement` : `S'abonner : ${money(plan.prix)}/${plan.per}`;
+  const cta = plan.trial ? `Essayer ${plan.trial} jours gratuitement` : 'Continuer, sans engagement';
+  const mensuel = plans[1];
+  const annuel = plans[0];
 
   return (
     <View style={styles.root}>
+      {/* Fond (PaywallBevelBackdrop) : noir en haut, qui se réchauffe vers l'orange NÉA en bas. */}
+      <LinearGradient
+        colors={[colors.bgAlt, colors.bgAlt, alpha(colors.pink, 0.06), alpha(colors.pink, 0.16), alpha(colors.pink, 0.24)]}
+        locations={[0, 0.3, 0.55, 0.8, 1]}
+        style={StyleSheet.absoluteFill}
+      />
       <SafeAreaView style={styles.flex} edges={['top', 'left', 'right', 'bottom']}>
         {/* Croix : visible après 2 s */}
         <View style={styles.haut}>
           <Pressable accessibilityRole="button" accessibilityLabel="Fermer" onPress={fermer} disabled={!croix} style={[styles.pwx, { opacity: croix ? 1 : 0 }]}>
-            <Icon name="x" size={24} />
+            <Icon name="x" size={18} />
           </Pressable>
         </View>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-          <Text weight="bold" style={styles.eyebrow}>
-            NÉA PLUS
+          <Text style={styles.h1}>
+            {'Débloque ton plan personnalisé avec '}
+            <Text style={[styles.h1, styles.h1Plus]}>{'NÉA\u00a0Plus'}</Text>
           </Text>
-          <Text style={styles.h1}>Va plus loin avec {c.nom}.</Text>
           <Text style={styles.sub}>
-            {p.name ? p.name + ', ton' : 'Ton'} programme « {pr.nom} » est prêt.
+            {p.name ? p.name + ', ton' : 'Ton'} programme « {pr.nom} » avec {c.nom}, au même endroit.
           </Text>
 
           <View style={styles.feats}>
             {feats.map(([ic, t]) => (
-              <View key={t} style={styles.feat}>
-                <Icon name={ic} size={26} color={colors.text} />
-                <Text style={styles.featTxt}>{t}</Text>
-              </View>
+              <Avantage key={t} icon={ic} texte={t} />
+            ))}
+            <View style={styles.aussi}>
+              <View style={styles.aussiTrait} />
+              <Text weight="medium" style={styles.aussiTxt}>
+                inclut également
+              </Text>
+              <View style={styles.aussiTrait} />
+            </View>
+            {aussi.map(([ic, t]) => (
+              <Avantage key={t} icon={ic} texte={t} />
             ))}
           </View>
-
-          <View style={styles.plans}>
-            {plans.map((x) => {
-              const on = x.id === sel;
-              return (
-                <Pressable
-                  key={x.id}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected: on }}
-                  onPress={() => setSel(x.id as OffreId)}
-                  style={[styles.pl, on && styles.plOn]}
-                >
-                  <View style={[styles.rad, on && styles.radOn]}>{on && <View style={styles.radPoint} />}</View>
-                  <View style={styles.flex}>
-                    <View style={styles.plTete}>
-                      <Text weight="bold" style={styles.plNom}>
-                        {x.nom}
-                      </Text>
-                      {x.id === 'an' && (
-                        <View style={styles.eco}>
-                          <Text weight="bold" style={styles.ecoTxt}>
-                            Économise {save} %
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <View style={styles.prixLigne}>
-                      <BigNumber value={`${money(x.prix)} CA`} size={26} style={styles.prix} />
-                      <Text style={styles.per}>/ {x.per}</Text>
-                    </View>
-                    {x.trial ? <Text style={styles.plSous}>{x.trial} jours gratuits, puis facturation annuelle</Text> : null}
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          {/* Frise de l'essai */}
-          {plan.trial ? (
-            <View style={styles.tl}>
-              <View style={styles.tlLigne} />
-              <View style={styles.tlRang}>
-                <View style={[styles.tlPoint, styles.tlPointOn]} />
-                <Text style={styles.tlTxt}>Aujourd&apos;hui : début de l&apos;essai</Text>
-              </View>
-              <View style={styles.tlRang}>
-                <View style={styles.tlPoint} />
-                <Text style={styles.tlTxt}>
-                  Dans {plan.trial} jours ({f(now + plan.trial * 864e5)}) : {money(plan.prix)} CA / {plan.per}
-                </Text>
-              </View>
-            </View>
-          ) : null}
         </ScrollView>
 
         <View style={styles.foot}>
-          <Button label={cta} onPress={() => (achatsReels() ? acheter(plan) : setAchat(plan))} />
+          <ChoixOffre
+            sel={sel}
+            onChange={setSel}
+            annuel={{ titre: annuel.nom, barre: money(mo), prix: money(annuel.prix) }}
+            mensuel={{ titre: mensuel.nom, prix: money(mensuel.prix) }}
+            badge={`Économise ${save} %`}
+          />
+          <Text style={styles.essai}>
+            {plan.trial ? `${plan.trial} jours gratuits, puis ${money(plan.prix)} CA par ${plan.per}` : `${money(plan.prix)} CA par ${plan.per}`}
+          </Text>
+          <BoutonBlanc label={cta} onPress={() => (achatsReels() ? acheter(plan) : setAchat(plan))} />
           <Text style={styles.legal}>
             {plan.trial
               ? `Puis ${money(plan.prix)} CA/${plan.per}, renouvelé automatiquement. Annule au moins 24 h avant la fin de l'essai pour éviter les frais. Taxes en sus.`
-              : `${money(plan.prix)} CA par mois, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la période. Taxes en sus.`}
+              : `${money(plan.prix)} CA par ${plan.per}, renouvelé automatiquement sauf annulation au moins 24 h avant la fin de la période. Taxes en sus.`}
           </Text>
           <View style={styles.liens}>
             <Text style={styles.lien} onPress={restaurer}>
@@ -255,6 +229,92 @@ export default function Plus() {
   );
 }
 
+/** Ligne d'avantage (PaywallBevelFeatureRow) : icône dans une case de 30 pt, texte en 17 medium. */
+function Avantage({ icon, texte }: { icon: IconName; texte: string }) {
+  return (
+    <View style={styles.feat}>
+      <View style={styles.featIc}>
+        <Icon name={icon} size={22} color={alpha(colors.text, 0.88)} />
+      </View>
+      <Text weight="medium" style={styles.featTxt}>
+        {texte}
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * Choix Annuel / Mensuel (PaywallBevelPlanSegmentPicker) : rail à liseré, pastille de verre qui glisse vers l'offre choisie
+ * (ressort), prix barré de l'annuel (12 mois au prix mensuel) et badge d'économie posé sur le bord haut.
+ */
+function ChoixOffre({
+  sel,
+  onChange,
+  annuel,
+  mensuel,
+  badge,
+}: {
+  sel: OffreId;
+  onChange: (o: OffreId) => void;
+  annuel: { titre: string; barre: string; prix: string };
+  mensuel: { titre: string; prix: string };
+  badge: string;
+}) {
+  const [larg, setLarg] = useState(0);
+  const x = useSharedValue(sel === 'an' ? 0 : 1);
+  useEffect(() => {
+    x.set(withSpring(sel === 'an' ? 0 : 1, { damping: 20, stiffness: 220, mass: 0.8 }));
+  }, [sel, x]);
+  const moitie = larg / 2;
+  const pastille = useAnimatedStyle(() => ({ width: moitie, transform: [{ translateX: x.value * moitie }] }));
+  const segs: { id: OffreId; titre: string; prix: string; barre?: string }[] = [
+    { id: 'an', ...annuel },
+    { id: 'mois', ...mensuel },
+  ];
+  return (
+    <View style={styles.rail} onLayout={(e: LayoutChangeEvent) => setLarg(e.nativeEvent.layout.width - 12)} accessibilityRole="radiogroup">
+      {larg > 0 && <Animated.View pointerEvents="none" style={[styles.pastilleOffre, pastille]} />}
+      {segs.map((o) => {
+        const on = o.id === sel;
+        return (
+          <Pressable key={o.id} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => onChange(o.id)} style={styles.seg}>
+            <Text weight={on ? 'bold' : 'semibold'} style={[styles.segTitre, !on && styles.segOff]}>
+              {o.titre}
+            </Text>
+            <Text style={styles.segPrixLigne} numberOfLines={1}>
+              {o.barre ? <Text style={[styles.segBarre, !on && styles.segOff]}>{o.barre} </Text> : null}
+              <Text weight={on ? 'bold' : 'semibold'} style={[styles.segPrix, !on && styles.segOff]}>
+                {o.prix}
+              </Text>
+            </Text>
+          </Pressable>
+        );
+      })}
+      <View pointerEvents="none" style={[styles.badgeZone, { width: moitie }]}>
+        <View style={styles.badge}>
+          <Text weight="bold" style={styles.badgeTxt}>
+            {badge}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+/** Bouton Continuer (PaywallBevelContinueButton) : pilule blanche de 56 pt à texte noir, halo orange flou derrière. */
+function BoutonBlanc({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <View style={styles.ctaZone}>
+      <View pointerEvents="none" style={styles.ctaHalo} />
+      <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.cta, pressed && styles.ctaPresse]}>
+        <Text weight="bold" style={styles.ctaTxt}>
+          {label}
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
 /** Confirmation d'achat simulée (buySheet), sans clé RevenueCat ; sinon la feuille de paiement d'Apple la remplace. */
 function AchatSheet({ offre: o, onClose, onConfirm }: { offre: Offre | null; onClose: () => void; onConfirm: (o: Offre) => void }) {
   return (
@@ -293,7 +353,19 @@ function AchatSheet({ offre: o, onClose, onConfirm }: { offre: Offre | null; onC
 }
 
 /** Offre de sortie, une seule fois, compte à rebours réel de 10 minutes (exitOffer). */
-function OffreSortie({ visible, prenom, onAccept, onRefus, onFin }: { visible: boolean; prenom: string; onAccept: () => void; onRefus: () => void; onFin: () => void }) {
+function OffreSortie({
+  visible,
+  prenom,
+  onAccept,
+  onRefus,
+  onFin,
+}: {
+  visible: boolean;
+  prenom: string;
+  onAccept: () => void;
+  onRefus: () => void;
+  onFin: () => void;
+}) {
   const fin = useProfil((s) => s.exitUntil);
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
@@ -350,12 +422,61 @@ function OffreSortie({ visible, prenom, onAccept, onRefus, onFin }: { visible: b
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  ctaTxt: { fontSize: 17, lineHeight: 22, color: colors.bgAlt },
+  ctaPresse: { opacity: 0.94, transform: [{ scale: 0.985 }] },
+  cta: {
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.text,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    boxShadow: `0 4px 16px ${alpha(colors.pink, 0.35)}`,
+  },
+  ctaHalo: {
+    position: 'absolute',
+    left: 4,
+    right: 4,
+    top: 6,
+    bottom: 6,
+    borderRadius: 999,
+    backgroundColor: alpha(colors.pink, 0.38),
+    boxShadow: `0 0 22px 6px ${alpha(colors.pink, 0.45)}`,
+  },
+  ctaZone: { marginTop: 12, justifyContent: 'center' },
+  essai: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
+  badgeTxt: { fontSize: 12, lineHeight: 15, color: colors.onPrimary },
+  badgeZone: { position: 'absolute', top: -12, left: 6, alignItems: 'center' },
+  badge: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 999, backgroundColor: colors.pink },
+  segBarre: { fontSize: 16, lineHeight: 21, color: colors.textSecondary, textDecorationLine: 'line-through' },
+  segPrix: { fontSize: 16, lineHeight: 21, color: colors.text },
+  segPrixLigne: { fontSize: 16, lineHeight: 21 },
+  segOff: { color: alpha(colors.text, 0.56) },
+  segTitre: { fontSize: 18, lineHeight: 23 },
+  seg: { flex: 1, minHeight: 88, justifyContent: 'center', gap: 7, paddingHorizontal: 14 },
+  pastilleOffre: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+    bottom: 6,
+    borderRadius: 24,
+    backgroundColor: alpha(colors.text, 0.12),
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: alpha(colors.text, 0.3),
+    boxShadow: `0 2px 6px ${alpha(colors.bgAlt, 0.5)}`,
+  },
+  rail: { flexDirection: 'row', padding: 6, marginTop: 12, borderRadius: 30, borderWidth: 1, borderColor: alpha(colors.text, 0.26) },
+  aussiTxt: { fontSize: 12, lineHeight: 16, color: colors.textTertiary },
+  aussiTrait: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border2 },
+  aussi: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10 },
+  featIc: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
+  h1Plus: { color: colors.pink },
+  root: { flex: 1, backgroundColor: colors.bgAlt },
   flex: { flex: 1, minWidth: 0 },
-  scroll: { paddingHorizontal: 20, paddingBottom: 12 },
-  haut: { height: 48, paddingHorizontal: 12, justifyContent: 'center' },
+  scroll: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 12 },
+  haut: { height: 48, paddingHorizontal: 16, alignItems: 'flex-end', justifyContent: 'center' },
   eyebrow: { fontSize: 15, lineHeight: 20, letterSpacing: 2.4, color: colors.pink, textAlign: 'center' },
-  featTxt: { flex: 1, fontSize: 17, lineHeight: 22 },
+  featTxt: { flex: 1, fontSize: 17, lineHeight: 22, color: alpha(colors.text, 0.92) },
   plTete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   eco: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999, backgroundColor: colors.pink },
   ecoTxt: { fontSize: 13, lineHeight: 17, color: colors.onPrimary },
@@ -383,10 +504,10 @@ const styles = StyleSheet.create({
     letterSpacing: 2.2,
     color: ui.onGold,
   },
-  h1: { ...fonts.black, fontSize: 32, lineHeight: 38, letterSpacing: -0.5, textAlign: 'center', marginTop: 6 },
-  sub: { color: colors.textSecondary, fontSize: 15, lineHeight: 20, marginTop: 6, textAlign: 'center' },
-  feats: { gap: 16, paddingTop: 22, paddingHorizontal: 6 },
-  feat: { flexDirection: 'row', alignItems: 'center', gap: 18 },
+  h1: { ...fonts.bold, fontSize: 31, lineHeight: 37, letterSpacing: -0.45, textAlign: 'center' },
+  sub: { color: colors.textSecondary, fontSize: 15, lineHeight: 20, marginTop: 12, textAlign: 'center' },
+  feats: { paddingTop: 26, paddingHorizontal: 2 },
+  feat: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 6 },
   b14: { fontSize: 14, lineHeight: 18 },
   small12: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
   plans: { gap: 12, paddingTop: 24 },
@@ -402,7 +523,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   plOn: { borderColor: colors.pink, borderWidth: 2, backgroundColor: ui.selFond },
-  rad: { width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
+  rad: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 2,
+    borderColor: colors.textSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
   radOn: { borderColor: colors.pink },
   plNom: { fontSize: 18, lineHeight: 23 },
   tl: { marginTop: 22, paddingTop: 18, gap: 18, borderTopWidth: 1, borderTopColor: colors.border, paddingHorizontal: 12 },
@@ -410,7 +540,7 @@ const styles = StyleSheet.create({
   foot: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 8 },
   legal: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, textAlign: 'center', marginTop: 10 },
   lien: { fontSize: 13, lineHeight: 18, color: colors.textSecondary },
-  pwx: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  pwx: { width: 34, height: 34, borderRadius: 17, backgroundColor: alpha(colors.text, 0.12), alignItems: 'center', justifyContent: 'center' },
   buyh: { alignItems: 'center', marginBottom: 14 },
   buyTitre: { fontSize: 17, lineHeight: 22 },
   buySimule: {

@@ -97,6 +97,13 @@ bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), bar
 (`useDefilementOnglets` sur le défilement principal d'Accueil, Programme, Progrès, Profil, Sorties, Randonnée, Yoga : `Animated.ScrollView`) ; bandeau
 du sport en direct gardé au-dessus. **Fiche exercice et navigation publiées en production (29 oct. 2026).**
 
+**Paywall (design 10K « Abonnements », process-paywall, oct. 2026)** : écran principal de `/plus` refait, logique d'achat inchangée (RevenueCat,
+éligibilité à l'essai, offre de sortie, Restaurer, mentions légales) : fond noir qui se réchauffe vers l'orange en bas, « Débloque ton plan personnalisé
+avec NÉA Plus » (31 pt, NÉA Plus en orange), programme et coach en sous-titre, 3 avantages + « inclut également » + 2 (`Avantage`), choix Annuel / Mensuel
+en rail à liseré avec pastille de verre qui glisse (`ChoixOffre`, prix barré = 12 mois au mensuel, badge « Économise 62 % » sur le bord), ligne de l'essai,
+**bouton blanc à halo orange** (`BoutonBlanc`) ; la frise de l'essai est retirée. **Correctif du 30 oct.** : l'écran du coach plantait sur iPhone
+(fonction non worklet appelée dans `useAnimatedStyle` du ruban) ; règle : dans un worklet, seulement des nombres ou des fonctions `'worklet'`.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 
