@@ -125,7 +125,7 @@ des exercices en grandes cartes 156 × 252 à coins de 22 avec « 3×12 », touc
 cartes (mascotte du coach, pastille « Semaine n/N » orange ou durée / cadenas), Séances prêtes et Bibliothèque en sections de 36 pt ;
 **Calendrier** = mois en grand (« Octobre. »), « PROGRESSION · n jours actifs ce mois », carte du mois (flèches, cercles : fait en orange, prévue en
 anneau, choisi cerclé de blanc ; au-delà de la semaine en cours seules les séances du plan sont prévues), panneau du jour (Faite / Aujourd'hui /
-Prévue / Manquée / Repos, Voir la séance), chiffres Série · Ce mois · Semaine (orange plein), « Ton plan » + Modifier ma semaine.
+Prévue / Manquée / Repos, Voir la séance), chiffres Série · Ce mois · Semaine (orange plein), « Ton plan » + Modifier ma semaine. **Publié en production (29 oct. 2026).**
 
 **Mises à jour annoncées + invitation à noter (designs 10K « Mise à jour d'app » et « Demande d'avis », maquette « Help us grow » de l'utilisateur, oct. 2026)** :
 après chaque mise à jour EAS appliquée, `store/majs.ts` compare `Updates.updateId` à la dernière annoncée (`nea-maj-annoncee`, pas sur la 1re ouverture
