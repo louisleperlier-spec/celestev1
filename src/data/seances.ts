@@ -11,7 +11,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 1,
     goal: 'Perte de graisse',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Un circuit simple en intervalles pour démarrer la perte de gras chez toi, sans matériel lourd. Chaque exercice dure 40 secondes, avec 20 secondes pour souffler.',
     ex: [
       'squat_poids_corps:3:40s:20',
@@ -103,7 +103,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 2,
     goal: 'Tonification',
-    coach: 'luna',
+    coach: 'kai',
     desc: '12 minutes pour un ventre solide : abdos, obliques et gainage en intervalles.',
     ex: [
       'crunch:3:40s:20',
@@ -119,7 +119,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 2,
     goal: 'Tonification',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Des cuisses et des fessiers plus forts avec seulement des haltères.',
     ex: [
       'goblet_squat:4:10-12:60',
@@ -155,7 +155,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 2,
     goal: 'Force',
-    coach: 'luna',
+    coach: 'kai',
     feat: 1,
     desc: 'Mouvements polyarticulaires lourds puis isolation : une séance jambes complète en une demi-heure.',
     ex: [
@@ -239,7 +239,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 2,
     goal: 'Tonification',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Hip thrust et variantes pour des fessiers plus forts et plus ronds.',
     ex: [
       'hip_thrust:4:10-12:75',
@@ -273,7 +273,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 2,
     goal: 'Perte de graisse',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Quatre exercices, quatre tours, zéro matériel.',
     ex: [
       'mountain_climbers:4:40s:20',
@@ -288,7 +288,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 3,
     goal: 'Force',
-    coach: 'luna',
+    coach: 'kai',
     feat: 1,
     desc: 'Barres de traction et barres parallèles du parc : force au poids du corps pour les avancés.',
     ex: [
@@ -317,7 +317,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 2,
     goal: 'Endurance',
-    coach: 'luna',
+    coach: 'kai',
     ride: 30,
     desc: "10 min d'échauffement, puis 6 fois 1 min vite et 2 min tranquille, 5 min de retour au calme.",
     ex: ['velo_stationnaire:1:30m:0'],
@@ -345,7 +345,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 2,
     goal: 'Endurance',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Des jambes solides et un cardio qui grimpe, sur un simple banc.',
     ex: [
       'fentes_marche:4:12:45',
@@ -361,7 +361,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 1,
     goal: 'Perte de graisse',
-    coach: 'luna',
+    coach: 'kai',
     feat: 1,
     desc: 'Pas le temps ? Une douzaine de minutes, sans matériel, pour faire monter le cardio et garder la forme.',
     ex: [
@@ -410,7 +410,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 2,
     goal: 'Prise de muscle',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Pompes et haltères pour construire des pectoraux épais, sans banc de salle.',
     ex: [
       'pompes:4:12-15:60',
@@ -442,7 +442,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'maison',
     lvl: 3,
     goal: 'Perte de graisse',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Cinq exercices intenses, quatre tours : la séance la plus efficace pour brûler en peu de temps.',
     ex: [
       'mountain_climbers:4:40s:20',
@@ -569,7 +569,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'salle',
     lvl: 2,
     goal: 'Prise de muscle',
-    coach: 'luna',
+    coach: 'kai',
     desc: 'Tous les grands mouvements en une séance : idéal si tu vas en salle 2 ou 3 fois par semaine.',
     ex: [
       'squat_barre:4:8:90',
@@ -641,7 +641,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 3,
     goal: 'Perte de graisse',
-    coach: 'luna',
+    coach: 'kai',
     feat: 1,
     desc: '20 secondes à fond, 10 secondes de repos, 8 tours par exercice. Court, mais très intense.',
     ex: ['mountain_climbers:8:20s:10', 'squat_poids_corps:8:20s:10', 'pompes:8:20s:10'],
@@ -652,7 +652,7 @@ export const SEANCES: readonly Seance[] = [
     lieu: 'ext',
     lvl: 1,
     goal: 'Tonification',
-    coach: 'luna',
+    coach: 'kai',
     desc: "Un circuit abdos et gainage à faire sur l'herbe, sans matériel.",
     ex: [
       'crunch:3:40s:20',

@@ -89,9 +89,9 @@ const EX: Readonly<Record<ExerciceId, Exercice & { idx: number }>> = Object.from
 export const exercice = (id: ExerciceId) => EX[id];
 export const coachById = (id: CoachId): Coach => COACHES.find((c) => c.id === id) ?? COACHES[0];
 
-/** Coach d'un état sauvegardé ou d'un autre joueur : Blaze → Luna, Rex → Axel (coachs retirés), inconnu → Axel. */
+/** Coach d'un état sauvegardé ou d'un autre joueur : Blaze et Luna → Kai, Rex → Axel (coachs retirés), inconnu → Axel. */
 export function coachValide(id: string | null | undefined): CoachId {
-  if (id === 'blaze') return 'luna';
+  if (id === 'blaze' || id === 'luna') return 'kai';
   if (id === 'rex') return 'axel';
   return COACHES.some((c) => c.id === id) ? (id as CoachId) : 'axel';
 }
@@ -225,7 +225,7 @@ export function buildPlan(p: Profil, now: number = Date.now()): Plan {
 
   // Adaptations selon les objectifs
   const fin: ExerciceId = allowed(EX.velo_stationnaire, c, p) ? 'velo_stationnaire' : 'mountain_climbers';
-  if ((p.goals.includes('poids') || p.goals.includes('endu')) && !['kai', 'luna'].includes(c.id)) {
+  if ((p.goals.includes('poids') || p.goals.includes('endu')) && c.id !== 'kai') {
     sessions.forEach((s) => {
       if (!s.items.some((i) => EX[i.id].groupe === 'cardio')) s.items.push(mkItem(fin, c, L, true));
     });
@@ -289,16 +289,16 @@ export function nextSession(plan: Plan, today: number = todayIdx()): { s: PlanSe
 
 /** Coach recommandé selon les objectifs (et le niveau). */
 export function recoCoach(goals: readonly GoalId[], level: NiveauId): CoachId {
-  const sc: Record<CoachId, number> = { axel: 0, nova: 0, kai: 0, luna: 0 };
+  const sc: Record<CoachId, number> = { axel: 0, nova: 0, kai: 0 };
   const m: Record<GoalId, (CoachId | number)[]> = {
-    // Blaze et Rex retirés : leurs points vont à Luna (Blaze) et Axel (Rex).
+    // Blaze, Rex puis Luna retirés : leurs points vont à Kai (Blaze, Luna) et Axel (Rex), la confiance à Nova.
     masse: ['axel', 4],
-    poids: ['luna', 2, 'kai', 2],
-    forme: ['nova', 2, 'luna', 1],
+    poids: ['kai', 4],
+    forme: ['nova', 2, 'kai', 1],
     endu: ['kai', 3],
     mental: ['nova', 3],
     disc: ['axel', 3],
-    conf: ['luna', 2, 'axel', 1],
+    conf: ['nova', 2, 'axel', 1],
   };
   goals.forEach((g) => {
     const a = m[g] || [];

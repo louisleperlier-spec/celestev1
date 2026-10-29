@@ -12,7 +12,7 @@ import type { CoachId, GoalId, ProgrammeId, SeanceId } from '@/data/types';
 import { buildPlan, coachValide, type Duree, type Jours, type Plan, type Profil } from '@/lib/plan';
 import { addedKey, type Intensite, type Semaine } from '@/lib/semaine';
 import { ACCUEIL_DEFAUT, type CarteAccueil } from '@/lib/accueil';
-import { JEU_DEFAUT, type EtatJeu } from '@/lib/jeu';
+import { JEU_DEFAUT, migrerJeu, type EtatJeu } from '@/lib/jeu';
 import { toast } from '@/components/ui/Toast';
 import { autresActifs } from './ligue';
 import { QUESTS } from '@/data/ligue';
@@ -399,11 +399,11 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
 });
 
 /** Remplace l'état local par celui du compte (connexion sur un appareil). */
-/** Blaze et Rex retirés : leur coach devient Luna / Axel, leurs programmes suivis sont oubliés. */
+/** Coachs retirés (Blaze, Rex, Luna) : leur coach devient Kai / Axel, leurs programmes suivis sont oubliés, leurs cartes passent au remplaçant. */
 function nettoyer(e: Partial<EtatSauvegarde>): Partial<EtatSauvegarde> {
-  if (!e.coach && !e.progs) return e;
+  if (!e.coach && !e.progs && !e.jeu) return e;
   const progs = Object.fromEntries(Object.entries(e.progs ?? {}).filter(([c]) => coachValide(c) === c)) as EtatSauvegarde['progs'];
-  return { ...e, ...(e.coach ? { coach: coachValide(e.coach) } : {}), progs };
+  return { ...e, ...(e.coach ? { coach: coachValide(e.coach) } : {}), progs, ...(e.jeu ? { jeu: migrerJeu(e.jeu) } : {}) };
 }
 
 export const chargerEtat = (e: Partial<EtatSauvegarde>) => useProfil.setState({ ...defauts(), ...nettoyer(e), obCoachSet: true });

@@ -2,11 +2,13 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Glow, RadialBackground, Text } from '@/components/ui';
-import { MASCOTTE_IMAGES } from '@/data/images';
+import { COACHES } from '@/data/coaches';
+import { COACH_IMAGES } from '@/data/images';
+import type { CoachId } from '@/data/types';
 import { colors, fonts } from '@/theme';
 
 /** Fond .wel : halo rose au centre et violet en haut à gauche. */
@@ -15,18 +17,34 @@ const FOND = [
   { rx: 40, ry: 30, cx: 15, cy: 20, color: 'rgba(120,60,255,0.18)' },
 ] as const;
 
+/** Les 3 coachs, le Capitaine au centre et devant (planche de l'utilisateur, oct. 2026). */
+const TRIO: readonly { id: CoachId; echelle: number; decale: number }[] = [
+  { id: 'nova', echelle: 0.74, decale: 0 },
+  { id: 'axel', echelle: 1, decale: 600 },
+  { id: 'kai', echelle: 0.74, decale: 1200 },
+];
+
+/** Un coach qui flotte doucement, chacun à son rythme. */
+function Flottant({ id, h, decale }: { id: CoachId; h: number; decale: number }) {
+  const t = useSharedValue(0);
+  useEffect(() => {
+    t.set(withDelay(decale, withRepeat(withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.sin) }), -1, true)));
+  }, [t, decale]);
+  const flotte = useAnimatedStyle(() => ({ transform: [{ translateY: -8 * t.get() }] }));
+  const c = COACHES.find((x) => x.id === id)!;
+  return (
+    <Animated.View style={[styles.flottant, flotte]}>
+      <Glow width={h * 0.9} height={h} color={c.c} intensity={0.35} />
+      <Image source={COACH_IMAGES[id].corps} style={{ width: h * 0.62, height: h }} contentFit="contain" accessibilityLabel={`Le coach ${c.nom}`} />
+    </Animated.View>
+  );
+}
+
 /** Accueil (vWelcome du prototype). */
 export default function Bienvenue() {
   const { width, height } = useWindowDimensions();
   // Hauteur limitée pour que le titre, le texte et les boutons tiennent sans défiler.
-  const h = Math.min(height * 0.38, 360);
-  const w = (h * 295) / 420;
-  // La mascotte flotte doucement (monte, descend, s'étire un peu).
-  const t = useSharedValue(0);
-  useEffect(() => {
-    t.set(withRepeat(withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.sin) }), -1, true));
-  }, [t]);
-  const flotte = useAnimatedStyle(() => ({ transform: [{ translateY: -10 * t.get() }, { scaleY: 1 + 0.02 * t.get() }] }));
+  const h = Math.min(height * 0.38, 360, Math.min(width, 440) / 1.55);
 
   return (
     <View style={styles.root}>
@@ -40,12 +58,13 @@ export default function Bienvenue() {
             COACHING SPORTIF IA
           </Text>
 
-          {/* Mascotte NÉA (remplace la vidéo d'Axel). */}
+          {/* Les 3 coachs NÉA (remplacent la mascotte). */}
           <View style={[styles.mascotte, { height: h + 30, width: Math.min(width, 440) }]}>
-            <Glow width={Math.min(width, 440)} height={h + 30} intensity={0.55} />
-            <Animated.View style={flotte}>
-              <Image source={MASCOTTE_IMAGES.face} style={{ width: w, height: h }} contentFit="contain" accessibilityLabel="La mascotte NÉA" />
-            </Animated.View>
+            {TRIO.map((x) => (
+              <View key={x.id} style={x.id === 'axel' ? styles.devant : styles.cote}>
+                <Flottant id={x.id} h={h * x.echelle} decale={x.decale} />
+              </View>
+            ))}
           </View>
 
           <View style={styles.pad}>
@@ -82,6 +101,10 @@ const styles = StyleSheet.create({
   sub: { color: colors.textSecondary, fontSize: 14, lineHeight: 19.6, marginTop: 6 },
   foot: { paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 },
   mt10: { marginTop: 10 },
-  mascotte: { alignSelf: 'center', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 },
+  mascotte: { alignSelf: 'center', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', marginTop: 12 },
+  flottant: { alignItems: 'center', justifyContent: 'flex-end' },
+  // Les deux coachs des côtés se glissent un peu derrière celui du centre.
+  cote: { marginHorizontal: -10, zIndex: 0 },
+  devant: { zIndex: 1 },
   tag: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, textAlign: 'center', marginTop: 12 },
 });

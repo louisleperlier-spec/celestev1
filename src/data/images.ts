@@ -74,10 +74,6 @@ export const COACH_IMAGES: Readonly<Record<CoachId, { corps: ImageSourcePropType
     corps: require('@/assets/coachs/kai_corps.png'),
     tete: require('@/assets/coachs/kai_tete.webp'),
   },
-  luna: {
-    corps: require('@/assets/coachs/luna_corps.png'),
-    tete: require('@/assets/coachs/luna_tete.webp'),
-  },
 };
 
 /** Décors : podium, poses d'Axel et scènes illustrées (salle, étirements, course, sommet ; recadrées en bandeau 16:9). */

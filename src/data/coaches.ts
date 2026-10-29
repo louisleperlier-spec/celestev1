@@ -3,7 +3,7 @@
 
 import type { Coach } from './types';
 
-/** Les 4 coachs (`COACHES`) : Blaze et Rex du prototype retirés (écart validé). */
+/** Les 3 coachs (`COACHES`) : Blaze, Rex puis Luna du prototype retirés (écarts validés). */
 export const COACHES: readonly Coach[] = [
   {
     id: 'axel',
@@ -151,52 +151,6 @@ export const COACHES: readonly Coach[] = [
         'circuit_bas',
         'cardio',
       ],
-    },
-  },
-  {
-    id: 'luna',
-    nom: 'Luna',
-    spec: 'ÉNERGIE',
-    c: '#ffd21f',
-    traits: ['Joyeuse', 'Dynamique', 'Fun'],
-    style: 'HIIT fun',
-    quote: "Le sport, ça doit être fun ! On bouge, on sourit, on s'éclate.",
-    daily: 'Mets ta playlist et on y va !',
-    prog: 'Wow, regarde-moi cette courbe !',
-    desc: "Intervalles : 40 secondes d'effort, 20 secondes de récup. Séances courtes, variées et rythmées.",
-    reps: [10, 20],
-    sets: [3, 3, 4],
-    rest: 20,
-    time: 40,
-    tempo: 'Rapide',
-    rep_s: 2,
-    int: 0.86,
-    voix: 'pétillante, enthousiaste, fun, quelques emojis',
-    fav: [
-      'mountain_climbers',
-      'squat_poids_corps',
-      'pompes',
-      'fentes_arriere',
-      'crunch',
-      'step_up',
-      'pont_fessier',
-      'elevations_laterales',
-      'curl_marteau',
-      'dead_bug',
-      'planche_laterale',
-      'goblet_squat',
-      'developpe_epaules',
-      'rowing_un_bras',
-      'fentes_marche',
-      'extension_triceps_couche',
-    ],
-    split: {
-      '2': ['hiit_full', 'hiit_abdos'],
-      '3': ['hiit_haut', 'hiit_bas', 'hiit_full'],
-      '4': ['hiit_haut', 'hiit_bas', 'hiit_full', 'hiit_abdos'],
-      '5': ['hiit_haut', 'hiit_bas', 'hiit_full', 'hiit_abdos', 'hiit_full'],
-      '6': ['hiit_haut', 'hiit_bas', 'hiit_full', 'hiit_abdos', 'hiit_haut', 'hiit_bas'],
-      '7': ['hiit_haut', 'hiit_bas', 'hiit_full', 'hiit_abdos', 'hiit_haut', 'hiit_bas', 'hiit_full'],
     },
   },
 ];

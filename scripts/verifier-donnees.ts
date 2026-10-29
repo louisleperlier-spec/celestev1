@@ -22,10 +22,10 @@ const verifier = (ok: boolean, message: string) => {
 // Nombres attendus (cahier des charges, sections 4 et 5)
 const programmes = Object.values(PROGRAMMES).flat();
 const comptes = [
-  ['Coachs', COACHES.length, 4],
+  ['Coachs', COACHES.length, 3],
   ['Exercices', EXERCICES.length, 50],
   ['Séances', SEANCES.length, 41],
-  ['Programmes', programmes.length, 12],
+  ['Programmes', programmes.length, 9],
 ] as const;
 for (const [nom, trouve, attendu] of comptes) {
   console.log(`${trouve === attendu ? '✔' : '✘'} ${nom} : ${trouve} / ${attendu}`);
@@ -69,7 +69,7 @@ for (const [, chemin] of imagesTs.matchAll(/require\('@\/assets\/([^']+)'\)/g)) 
 const nbImagesEx = EXERCICES.filter((e) => existsSync(join(dossierEx, `${e.id}.webp`))).length;
 const nbCoachs = COACHES.filter((c) => existsSync(join(ROOT, 'assets/coachs', `${c.id}_corps.png`)) && existsSync(join(ROOT, 'assets/coachs', `${c.id}_tete.webp`))).length;
 console.log(`${nbImagesEx === 50 ? '✔' : '✘'} Images d'exercices : ${nbImagesEx} / 50`);
-console.log(`${nbCoachs === 4 ? '✔' : '✘'} Images de coachs (corps + tête) : ${nbCoachs} / 4`);
+console.log(`${nbCoachs === 3 ? '✔' : '✘'} Images de coachs (corps + tête) : ${nbCoachs} / 3`);
 
 if (erreurs.length) {
   console.error(`\n${erreurs.length} problème(s) :\n- ${erreurs.join('\n- ')}`);

@@ -77,28 +77,4 @@ export const PROGRAMMES: Readonly<Record<CoachId, readonly Programme[]>> = {
       rest: 20,
     },
   ],
-  luna: [
-    {
-      id: 'hiit',
-      nom: 'HIIT fun',
-      sem: 6,
-      desc: 'Des intervalles variés qui passent vite.',
-    },
-    {
-      id: 'abdos',
-      nom: "Abdos d'été",
-      sem: 4,
-      desc: 'Gainage, abdos et cardio pour un ventre solide.',
-      tpls: ['abdos_ete', 'hiit_full', 'abdos_ete', 'hiit_bas'],
-    },
-    {
-      id: 'express',
-      nom: 'Express 15 minutes',
-      sem: 4,
-      desc: "30 s d'effort, 2 tours : parfait avant le travail.",
-      tpls: ['hiit_full', 'hiit_haut', 'hiit_bas'],
-      time: 30,
-      sets: [2, 2, 2],
-    },
-  ],
 };

@@ -2,7 +2,7 @@
  * Cartes récompense, records et défis de la semaine (hors prototype, demandés par l'utilisateur, oct. 2026).
  * Fonctions pures : l'état (`EtatJeu`) est rangé dans le profil, les effets (XP, fêtes) dans `store/jeu.ts`.
  *
- * Cartes : les 50 exercices + les 4 coachs (54). Rareté : Légendaire = coach ; Épique = exercice de niveau 2 ou 3 ;
+ * Cartes : les 50 exercices + les 3 coachs (53). Rareté : Légendaire = coach ; Épique = exercice de niveau 2 ou 3 ;
  * Rare = niveau 1 sur machine, poulie ou vélo ; Commune = niveau 1 aux haltères ou au poids du corps.
  * Une carte à chaque activité terminée, un booster de 3 (dont une Rare ou mieux) pour un niveau ou un défi,
  * une carte Rare ou mieux pour un record. Doubles recyclés en XP ; une Légendaire nouvelle donne un Turbo x2.
@@ -14,6 +14,7 @@ import { GROUPES } from '@/data/referentiels';
 import type { CoachId, Exercice, ExerciceId } from '@/data/types';
 
 import type { MesureVFC, Nuit } from './sommeil';
+import { coachValide } from './plan';
 import { weekDates } from './semaine';
 import type { MissionId } from './succes';
 import { hash, type Log } from './xp';
@@ -40,6 +41,17 @@ export const CARTES: readonly Carte[] = [
   ...SENTIERS.map((r): Carte => ({ id: `rando:${r.id}`, nom: r.nom, sous: 'Explorateur', rarete: 3, rando: r.id })),
 ];
 const PAR_ID = new Map(CARTES.map((c) => [c.id, c]));
+
+/** Carte d'un coach retiré (Blaze, Rex, Luna) → celle du coach qui le remplace ; les autres restent. */
+const carteValide = (id: CarteId): CarteId => (id.startsWith('coach:') ? `coach:${coachValide(id.slice(6))}` : id);
+
+/** État de jeu sauvegardé avant le retrait d'un coach : ses cartes (collection et paquets) passent au coach qui le remplace. */
+export function migrerJeu(jeu: EtatJeu): EtatJeu {
+  if (!Object.keys(jeu.cartes).some((k) => carteValide(k as CarteId) !== k) && !jeu.paquets.some((p) => p.cartes.some((c) => carteValide(c) !== c))) return jeu;
+  const cartes: EtatJeu['cartes'] = {};
+  for (const [k, n] of Object.entries(jeu.cartes) as [CarteId, number][]) cartes[carteValide(k)] = (cartes[carteValide(k)] ?? 0) + n;
+  return { ...jeu, cartes, paquets: jeu.paquets.map((p) => ({ ...p, cartes: p.cartes.map(carteValide) })) };
+}
 export const carte = (id: CarteId) => PAR_ID.get(id)!;
 
 /** Une carte au hasard, de rareté au moins `min`. */

@@ -76,6 +76,15 @@ partout ; **fiche d'un sentier** : tuile Difficulté, « Ton parcours en relief 
 sommet, Départ → Sommet → Retour, km · aller-retour / boucle), « Démarrer la rando » + « Ouvrir sur la montre » juste dessous ;
 mises à jour à distance appliquées tout de suite (`store/majs.ts` : vérifie à l'ouverture et au retour, télécharge, relance).
 
+**3 coachs et nouvelles mascottes (oct. 2026, planche de l'utilisateur : L'Allié bleu, Le Capitaine orange, Le Scientifique vert)** :
+Luna retirée (comme Blaze et Rex) : ses 15 séances et ses points de `recoCoach` passent à Kai (confiance → Nova), ses 3 programmes supprimés ;
+`coachValide` : Blaze et Luna → Kai, Rex → Axel ; `nettoyer` migre aussi les cartes `coach:luna` (`migrerJeu`) ; `comparer-plan` toujours à 0.
+Axel = Le Capitaine, Nova = L'Allié, Kai = Le Scientifique (noms des coachs gardés). Images détourées par IA (ISNet, onnxruntime) :
+corps, têtes (`<coach>_tete.webp`, bras levé effacé), montre, complications (+ `_teinte`), widgets, bandeau `ax_coach` ; **mascotte** remplacée
+partout : `face` = l'Allié, `motive` = le Capitaine, `fier` = le Scientifique, `fatigue` = tête de l'Allié, `boude` = tête du Capitaine en colère
+(+ pièces jointes `notif_*`) ; bienvenue = les 3 coachs qui flottent (Capitaine au centre) ; « Ton programme est prêt » = le coach choisi.
+Montre et widgets : nouvelles images au prochain build ; les scènes illustrées (`ax_*`, `axel_dodo`…, `DECO_IMAGES`) restent à refaire.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

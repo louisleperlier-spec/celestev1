@@ -1,7 +1,7 @@
 /// <reference types="node" />
 /**
  * Compare la logique de l'app à celle d'origine du prototype : buildPlan sur tous les
- * coachs (les 4 gardés) × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés),
+ * coachs (les 3 gardés) × programmes × niveaux × lieux × jours × durées (objectifs, poids et semaine variés),
  * loadFor (charges), catSession (séances du catalogue × intensité), streak, lvlInfo/rankOf.
  *
  * Lancer : npm run comparer-plan

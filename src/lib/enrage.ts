@@ -46,7 +46,7 @@ const SEANCE: Banque = {
   sanspitie: [
     '{p}. {s}. Maintenant. Je ne le répéterai pas. (Si, je le répéterai.) 💀',
     'Ta séance pleure dans un coin. Tu es fier de toi ? 😢',
-    'J’ai prévenu Luna, Kai et Nova. Ils sont tous très déçus. Très.',
+    'J’ai prévenu Kai et Nova. Ils sont très déçus. Très.',
     'Je t’ai préparé {s}. Toi, tu m’as préparé une déception. 💀',
     'Les escargots du quartier ont fait plus de kilomètres que toi cette semaine. 🐌',
     'Ton tapis de sport a demandé l’asile chez le voisin.',

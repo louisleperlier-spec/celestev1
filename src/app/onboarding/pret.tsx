@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Glow, Icon, Text } from '@/components/ui';
-import { MASCOTTE_IMAGES } from '@/data/images';
+import { COACH_IMAGES } from '@/data/images';
 import { coachById, LVLN, lvlN, nextSession, prog } from '@/lib/plan';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
@@ -37,8 +37,8 @@ export default function Pret() {
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.mascotte}>
-          <Glow width={220} height={170} intensity={0.5} />
-          <Image source={MASCOTTE_IMAGES.fier} style={styles.mascotteImg} contentFit="contain" accessibilityLabel="La mascotte NÉA, fière" />
+          <Glow width={220} height={170} color={c.c} intensity={0.5} />
+          <Image source={COACH_IMAGES[c.id].corps} style={styles.mascotteImg} contentFit="contain" accessibilityLabel={`Ton coach ${c.nom}`} />
         </View>
         <Text style={styles.eyebrow}>TON PROGRAMME EST PRÊT</Text>
         <Text style={styles.title}>À toi de jouer{profil.name ? ', ' + profil.name : ''}.</Text>

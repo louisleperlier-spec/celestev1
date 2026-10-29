@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArcRespire, Bulle, CarteResume, FENETRE, Pastille, useDiscussion } from '@/components/onboarding/Discussion';
 import { ObBar } from '@/components/onboarding/ObScaffold';
 import { Button, Text } from '@/components/ui';
-import { GEAR, GOALS, MASCOTTE_IMAGES, MATERIEL, type LieuOnboarding } from '@/data';
+import { COACH_IMAGES, GEAR, GOALS, MATERIEL, type LieuOnboarding } from '@/data';
 import { LVLN, lvlN, type Duree, type Jours, type NiveauId } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { alpha, colors } from '@/theme';
@@ -112,7 +112,7 @@ export default function Discussion() {
       <ArcRespire />
       <ObBar step="discussion" avance={Math.max(0.08, avance)} onRetour={retour} />
       <View style={styles.coach}>
-        <Image source={MASCOTTE_IMAGES.face} style={styles.mascotte} contentFit="contain" />
+        <Image source={COACH_IMAGES.nova.tete} style={styles.mascotte} contentFit="contain" />
         <Text weight="semibold" style={styles.coachNom}>
           NÉA
         </Text>
