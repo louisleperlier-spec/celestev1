@@ -130,7 +130,7 @@ Prévue / Manquée / Repos, Voir la séance), chiffres Série · Ce mois · Sema
 **Profil (design 10K « Réglages », process-settings, oct. 2026)** : barre du haut (retour rond, « Profil » centré), carte « Mon compte » (tête du coach,
 prénom, coach · poids · âge → `/reglages`, puis niveau et rang avec XP en `BarreTraits`), sections à titre gris 13 pt et cartes à liseré (coins de 22),
 lignes à icône seule (colonne 28 pt), titre 16 pt, précision grise, chevron ; bascules avec icône ; suppression en bouton rouge à liseré ;
-pied « NÉA v1.0.0 · mise à jour du … » (`Updates.createdAt`). Toutes les entrées et la logique d'avant sont gardées.
+pied « NÉA v1.0.0 · mise à jour du … » (`Updates.createdAt`). Toutes les entrées et la logique d'avant sont gardées. **Publié en production (29 oct. 2026).**
 
 **Mises à jour annoncées + invitation à noter (designs 10K « Mise à jour d'app » et « Demande d'avis », maquette « Help us grow » de l'utilisateur, oct. 2026)** :
 après chaque mise à jour EAS appliquée, `store/majs.ts` compare `Updates.updateId` à la dernière annoncée (`nea-maj-annoncee`, pas sur la 1re ouverture
