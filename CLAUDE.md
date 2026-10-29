@@ -25,7 +25,9 @@ les routes `/accueil`, `/ligue`, `/programme`, `/velo`, `/progres`, `/profil` ne
 (`ObCentre`, Continuer collé au clavier) → **discussion** (`/onboarding/discussion`, `components/onboarding/Discussion.tsx` : NÉA écrit lettre
 à lettre, toucher = tout afficher, anciens messages qui s'éloignent, réponses en pastilles, lueur orange qui respire, retour arrière dans le fil,
 carte « Construit autour de toi ») pour objectifs, niveau, lieu (+ matériel de `GEAR`), séances et durée → âge sur une roue (14 à 99) → poids au
-pavé numérique (KG / LBS, stocké en kg) → santé → coach (citation tapée dans une bulle) → **engagement par appui long** (3 s sur la tête du coach,
+pavé numérique (KG / LBS, stocké en kg) → santé → **coach** (design 10K « Choix du coach » : « Salut … 👋 · Quel coach te ressemble ? », mascotte en grand qui respire,
+changement de coach en fondu + échelle au glissement (`react-native-gesture-handler`, `GestureHandlerRootView` local), bulle à pointe où le coach
+« réfléchit » puis écrit ses phrases `quote` / `daily` / `prog`, nom à sa couleur, ruban en arc avec les 4 têtes, « Comparer les 4 coachs ») → **engagement par appui long** (3 s sur la tête du coach,
 3 engagements qui s'allument) → préparation → prêt ; 7 segments ; `niveau`, `lieu`, `rythme`, `profil` et `Regle.tsx` retirés ; `objectifs` ne
 sert plus qu'au Profil ; pas d'`expo-haptics` (module natif absent du build 34).
 **Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
