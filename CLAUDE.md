@@ -84,7 +84,8 @@ corps, têtes (`<coach>_tete.webp`, bras levé effacé), montre, complications (
 partout : `face` = l'Allié, `motive` = le Capitaine, `fier` = le Scientifique, `fatigue` = tête de l'Allié, `boude` = tête du Capitaine en colère
 (+ pièces jointes `notif_*`) ; bienvenue = les 3 coachs qui flottent (Capitaine au centre) ; « Ton programme est prêt » = le coach choisi.
 **Publié en production (EAS Update, 29 oct. 2026)** avec le nouvel onboarding et les correctifs d'achat.
-Montre et widgets : nouvelles images au prochain build ; les scènes illustrées (`ax_*`, `axel_dodo`…, `DECO_IMAGES`) restent à refaire.
+Montre et widgets : nouvelles images au prochain build ; **scènes de l'app refaites (29 oct. 2026, visuels de l'utilisateur)** : `DECO_IMAGES.salle` (Capitaine aux haltères),
+`etirement` (Scientifique sur le tapis), `course` (Allié en trail au lever du soleil), `dodo` et `nuit` (Allié au lit, recadrés à droite) ; restent `sommet`, `pause` et les `ax_*` de la montre.
 
 **Fiche exercice (design 10K « Fiche exercice », process-routine-exercise, oct. 2026)** : `ExerciceSheet` refaite (paquet vérifié, 406 empreintes ;
 ses médias sont ceux d'une autre app, non repris) : illustration en grand 3:4 à fondu sombre avec pastilles (groupe, séries × reps) et nom, « Le mouvement »

@@ -68,7 +68,7 @@ export default function Nuit() {
   return (
     <View style={styles.root}>
       <View style={styles.haut}>
-        <Image source={DECO_IMAGES.nuit} style={StyleSheet.absoluteFill} contentFit="cover" />
+        <Image source={DECO_IMAGES.nuit} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition="right" />
         <LinearGradient colors={[alpha(colors.bg, 0), colors.bg]} locations={[0.55, 1]} style={StyleSheet.absoluteFill} pointerEvents="none" />
       </View>
       <SafeAreaView style={styles.contenu} edges={['bottom']}>
