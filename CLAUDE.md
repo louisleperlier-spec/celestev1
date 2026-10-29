@@ -118,6 +118,15 @@ collés à la section d'avant) ; la carte `plus` de l'ordre personnalisé passe 
 précédente. ») : Séances (barres + tendance en pointillés, dernière barre orange), Temps actif (aire), Sommeil moyen et VFC nocturne (courbe à points),
 Poids (pointillés + axe, « + Ajouter ») ; l'ancienne carte Cœur, la courbe de poids et `StatsHaut` ne sont plus affichées ; cercles et citation gardés.
 
+**Programme (designs 10K « Routine » et « Calendrier », process-routine-page / process-program-calendar, oct. 2026)** : rubrique Programme =
+semaine en cercles de 40 pt (`SemaineJours` : numéro du jour, coche orange = fait, anneau = prévue, toucher → calendrier), programme en barre de traits
+(`CarteProgramme` + `BarreTraits`, 52 pt), séance du jour (`Aujourdhui` : `TitreSection`, carte de la scène + pastilles durée / à la maison, carrousel
+des exercices en grandes cartes 156 × 252 à coins de 22 avec « 3×12 », toucher = `ExerciceSheet`, Lancer la séance), « Tes programmes » en grandes
+cartes (mascotte du coach, pastille « Semaine n/N » orange ou durée / cadenas), Séances prêtes et Bibliothèque en sections de 36 pt ;
+**Calendrier** = mois en grand (« Octobre. »), « PROGRESSION · n jours actifs ce mois », carte du mois (flèches, cercles : fait en orange, prévue en
+anneau, choisi cerclé de blanc ; au-delà de la semaine en cours seules les séances du plan sont prévues), panneau du jour (Faite / Aujourd'hui /
+Prévue / Manquée / Repos, Voir la séance), chiffres Série · Ce mois · Semaine (orange plein), « Ton plan » + Modifier ma semaine.
+
 **Mises à jour annoncées + invitation à noter (designs 10K « Mise à jour d'app » et « Demande d'avis », maquette « Help us grow » de l'utilisateur, oct. 2026)** :
 après chaque mise à jour EAS appliquée, `store/majs.ts` compare `Updates.updateId` à la dernière annoncée (`nea-maj-annoncee`, pas sur la 1re ouverture
 de l'app installée ni avant l'onboarding) → la `TabBar` ouvre **`/nouveautes`** (feuille aux coins de 30 : icône sur lueur, « Nouveau », « NÉA a été mis à jour »,
