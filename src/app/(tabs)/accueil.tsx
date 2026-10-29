@@ -33,8 +33,8 @@ export default function Accueil() {
   const ns = nextSession(sem);
   const s = ns.s;
   const nonLues = p.notifs.some((n) => !n.read);
-  // Note App Store après la 3e activité terminée (fenêtre native d'Apple).
-  useFocusEffect(useCallback(() => void proposerNoteSiBon(), []));
+  // Invitation à noter NÉA après la 3e activité terminée (« Aide NÉA à grandir »).
+  useFocusEffect(useCallback(() => proposerNoteSiBon(), []));
   // Check-in du matin ; la clé remet la feuille à zéro à chaque ouverture.
   const [feuille, setFeuille] = useState(0);
   const ouvrirRessenti = () => setFeuille((n) => (n > 0 ? n + 1 : Math.abs(n) + 1));

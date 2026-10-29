@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Appui, Icon, Text, type IconName } from '@/components/ui';
 import { sportParId } from '@/lib/sports';
+import { useAnnonceMaj } from '@/store/majs';
 import { useSportLive } from '@/store/sportLive';
 
 import { IconeSport } from './IconeSport';
@@ -95,6 +96,17 @@ export function TabBar() {
   const [largeur, setLargeur] = useState(0);
   const case_ = largeur / ONGLETS.length;
   const x = useSharedValue(actif);
+
+  // Nouvelle version installée : annonce des nouveautés une fois les onglets affichés.
+  const annonce = useAnnonceMaj((a) => a.attend);
+  useEffect(() => {
+    if (!annonce) return;
+    const t = setTimeout(() => {
+      useAnnonceMaj.setState({ attend: false });
+      router.push('/nouveautes');
+    }, 900);
+    return () => clearTimeout(t);
+  }, [annonce]);
 
   useEffect(() => {
     x.set(withSpring(actif, RESSORT));

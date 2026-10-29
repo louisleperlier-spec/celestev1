@@ -87,6 +87,8 @@ export default function RootLayout() {
         <Stack.Screen name="respirer" options={{ animation: 'fade_from_bottom' }} />
         <Stack.Screen name="nuit" options={{ animation: 'fade' }} />
         <Stack.Screen name="notes-soir" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="noter" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="nouveautes" options={{ presentation: 'transparentModal', animation: 'fade', contentStyle: { backgroundColor: 'transparent' } }} />
       </Stack>
       <NotifBanniere />
       <FeteHost />

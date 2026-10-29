@@ -117,6 +117,15 @@ collés à la section d'avant) ; la carte `plus` de l'ordre personnalisé passe 
 précédente. ») : Séances (barres + tendance en pointillés, dernière barre orange), Temps actif (aire), Sommeil moyen et VFC nocturne (courbe à points),
 Poids (pointillés + axe, « + Ajouter ») ; l'ancienne carte Cœur, la courbe de poids et `StatsHaut` ne sont plus affichées ; cercles et citation gardés.
 
+**Mises à jour annoncées + invitation à noter (designs 10K « Mise à jour d'app » et « Demande d'avis », maquette « Help us grow » de l'utilisateur, oct. 2026)** :
+après chaque mise à jour EAS appliquée, `store/majs.ts` compare `Updates.updateId` à la dernière annoncée (`nea-maj-annoncee`, pas sur la 1re ouverture
+de l'app installée ni avant l'onboarding) → la `TabBar` ouvre **`/nouveautes`** (feuille aux coins de 30 : icône sur lueur, « Nouveau », « NÉA a été mis à jour »,
+liste `NOUVEAUTES` de `lib/nouveautes.ts` **à tenir à jour à chaque publication**, « C'est parti ») ; à la fermeture `inviterApresMaj` ouvre **`/noter`**
+« Aide NÉA à grandir » (lauriers SVG + 5 étoiles, les 3 coachs, « Ton parcours avec NÉA » = vrais chiffres en cartes qui défilent, jamais de faux avis
+ni de nombre d'utilisateurs, « Pas satisfait ? Écris-nous » (mail), bouton blanc « Noter NÉA » = fenêtre native (build 35+) sinon page « Écrire un avis »,
+croix = plus tard, « Ne plus me demander ») si `!avisFini`, ≥ 1 activité, au plus tous les 3 jours ; aussi après la 3e activité (Accueil, tous les 120 j)
+et depuis Profil → « Noter NÉA ».
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

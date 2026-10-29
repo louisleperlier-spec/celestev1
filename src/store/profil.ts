@@ -94,6 +94,8 @@ type Etat = Profil & {
   ressentis: Ressenti[];
   /** Demandes de note App Store déjà faites (dates en ms, `store/note.ts`). */
   noteDemandes: number[];
+  /** Invitation « Aide NÉA à grandir » terminée : NÉA noté, ou « Ne plus me demander » (`app/noter.tsx`). */
+  avisFini: boolean;
   /** Partie Sommeil (maquettes, oct. 2026) : réveil de l'iPhone, objectif de sommeil (h), notes du soir, début de la nuit en cours. */
   reveil: Reveil;
   objectifSommeil: number;
@@ -204,6 +206,7 @@ const defauts = (): Etat => ({
   journee: null,
   ressentis: [],
   noteDemandes: [],
+  avisFini: false,
   reveil: REVEIL_DEFAUT,
   objectifSommeil: OBJECTIF_SOMMEIL,
   notesSoir: [],
@@ -390,6 +393,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   journee: s.journee,
   ressentis: s.ressentis,
   noteDemandes: s.noteDemandes,
+  avisFini: s.avisFini,
   reveil: s.reveil,
   objectifSommeil: s.objectifSommeil,
   notesSoir: s.notesSoir,

@@ -15,3 +15,16 @@ export function doitDemanderNote(nbActivites: number, demandes: readonly number[
   const derniere = Math.max(0, ...(demandes ?? []));
   return now - derniere >= ECART_NOTE_JOURS * 864e5;
 }
+
+/** Délai minimum entre deux invitations « Aide NÉA à grandir » (après une mise à jour). */
+export const ECART_INVITATION_JOURS = 3;
+
+/**
+ * Invitation à noter (design 10K « Demande d'avis ») après l'annonce d'une mise à jour : tant que la personne n'a pas
+ * noté NÉA ni refusé, dès sa 1re activité, au plus une fois tous les 3 jours.
+ */
+export function doitInviterNote(nbActivites: number, fini: boolean, demandes: readonly number[] | undefined, now: number = Date.now()): boolean {
+  if (fini || nbActivites < 1) return false;
+  const derniere = Math.max(0, ...(demandes ?? []));
+  return now - derniere >= ECART_INVITATION_JOURS * 864e5;
+}

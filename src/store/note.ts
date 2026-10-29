@@ -1,12 +1,15 @@
 /**
- * Demande de note App Store : fenêtre native (`expo-store-review`, build 35 et plus) proposée au retour sur l'Accueil
- * après la 3e activité terminée. Les builds sans le module natif ne demandent rien (le Profil garde le lien « Noter NÉA »).
+ * Demande de note App Store : écran « Aide NÉA à grandir » (`/noter`, design 10K « Demande d'avis ») proposé au retour sur
+ * l'Accueil après la 3e activité terminée et après l'annonce d'une mise à jour ; « Noter NÉA » ouvre la fenêtre native
+ * (`expo-store-review`, build 35 et plus) ou, sans le module natif, la page « Écrire un avis » de l'App Store.
  */
 import { requireOptionalNativeModule } from 'expo';
+import { router } from 'expo-router';
 import { Linking, Platform } from 'react-native';
 
-import { doitDemanderNote, LIEN_AVIS } from '@/lib/note';
+import { doitDemanderNote, doitInviterNote, LIEN_AVIS } from '@/lib/note';
 
+import { useAnnonceMaj } from './majs';
 import { useProfil } from './profil';
 
 type StoreReview = typeof import('expo-store-review');
@@ -26,26 +29,41 @@ function storeReview(): StoreReview | null {
   return module;
 }
 
-let enCours = false;
+/** Ouvre l'invitation et note la date de la demande. */
+function inviter() {
+  const st = useProfil.getState();
+  useProfil.setState({ noteDemandes: [...(st.noteDemandes ?? []), Date.now()].slice(-6) });
+  router.push('/noter');
+}
+
+let attente: ReturnType<typeof setTimeout> | undefined;
 
 /** À appeler quand l'Accueil s'affiche : propose la note si le moment est bon (une seule fois par période). */
-export async function proposerNoteSiBon() {
+export function proposerNoteSiBon() {
   const st = useProfil.getState();
-  if (enCours || !doitDemanderNote(st.logs.length, st.noteDemandes)) return;
+  if (st.avisFini || useAnnonceMaj.getState().attend || !doitDemanderNote(st.logs.length, st.noteDemandes)) return;
+  clearTimeout(attente);
+  // Petite pause : l'invitation arrive une fois l'Accueil affiché, pas en plein changement d'écran.
+  attente = setTimeout(inviter, 1500);
+  return () => clearTimeout(attente);
+}
+
+/** Après l'annonce d'une mise à jour : invitation à noter si la personne n'a pas encore noté NÉA. */
+export function inviterApresMaj() {
+  const st = useProfil.getState();
+  if (doitInviterNote(st.logs.length, st.avisFini, st.noteDemandes)) inviter();
+}
+
+/** « Noter NÉA » de l'invitation : fenêtre native d'Apple si elle existe, sinon la page « Écrire un avis ». */
+export async function noter() {
+  useProfil.setState({ avisFini: true });
   const sr = storeReview();
-  if (!sr) return;
-  enCours = true;
   try {
-    if (!(await sr.isAvailableAsync())) return;
-    // Petite pause : la fenêtre arrive une fois l'Accueil affiché, pas en plein changement d'écran.
-    await new Promise((r) => setTimeout(r, 1500));
-    useProfil.setState({ noteDemandes: [...(st.noteDemandes ?? []), Date.now()].slice(-6) });
-    await sr.requestReview();
+    if (sr && (await sr.isAvailableAsync())) return await sr.requestReview();
   } catch {
-    // Pas de note possible (TestFlight, simulateur…) : on réessaiera à la prochaine période.
-  } finally {
-    enCours = false;
+    // Fenêtre native indisponible (TestFlight…) : la page de l'App Store prend le relais.
   }
+  await Linking.openURL(LIEN_AVIS);
 }
 
 /** « Noter NÉA » du Profil : la page « Écrire un avis » de l'App Store. */
