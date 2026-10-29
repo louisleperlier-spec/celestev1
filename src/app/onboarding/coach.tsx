@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, {
@@ -21,7 +21,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { CoachFace } from '@/components/app/CoachFace';
 import { Sheet } from '@/components/app/Sheet';
-import { TexteTape } from '@/components/onboarding/Discussion';
+import { dureeRevele, OrbeSiri, Reflet, REVELE_DELAI, TexteRevele, TexteScintille } from '@/components/onboarding/ChoixCoach';
 import { ObBar, Retour } from '@/components/onboarding/ObScaffold';
 import { Button, Glow, Icon, Text, toast } from '@/components/ui';
 import { COACHES, COACH_IMAGES } from '@/data';
@@ -61,63 +61,63 @@ function Mascotte({ c, i, pos, taille, souffle }: { c: CoachT; i: number; pos: S
   );
 }
 
-/** Petite orbe qui pulse pendant que le coach « réfléchit ». */
-function Orbe({ couleur }: { couleur: string }) {
-  const t = useSharedValue(0);
-  useEffect(() => {
-    t.value = withRepeat(withTiming(1, { duration: 700, easing: Easing.inOut(Easing.sin) }), -1, true);
-  }, [t]);
-  const style = useAnimatedStyle(() => ({ opacity: 0.55 + 0.45 * t.value, transform: [{ scale: 0.85 + 0.25 * t.value }] }));
-  return <Animated.View style={[styles.orbe, { backgroundColor: couleur, shadowColor: couleur }, style]} />;
-}
-
-/** La bulle de verre à pointe, sous la mascotte : le coach réfléchit, puis sa réplique s'écrit ; trois répliques qui tournent. */
+/**
+ * La bulle à pointe sous la mascotte (panneau Coach 2.0) : l'orbe réfléchit, puis la réplique se dévoile en vague ;
+ * ses trois phrases tournent. À chaque nouveau coach, la bulle se referme puis rebondit (échelle 0,9 → 1).
+ */
 function BulleCoach({ c }: { c: CoachT }) {
   const reduit = useReducedMotion();
   const [etat, setEtat] = useState({ coach: c.id, n: 0, pense: !reduit });
   const lignes = repliques(c);
   const courant = etat.coach === c.id ? etat : { coach: c.id, n: 0, pense: !reduit };
   const ligne = lignes[courant.n % lignes.length];
+  const montre = useSharedValue(0);
+  const premiere = useRef(true);
 
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
     let n = 0;
-    const tour = () => {
+    const tour = (pause: number) => {
       setEtat({ coach: c.id, n, pense: !reduit });
+      montre.set(withSpring(1, { damping: 11, stiffness: 140 }));
       t = setTimeout(
         () => {
           setEtat({ coach: c.id, n, pense: false });
-          // Le temps d'écrire la réplique, puis de la lire.
+          // Le temps de dévoiler la réplique, puis 3,6 s pour la lire.
+          const l = lignes[n % lignes.length];
           t = setTimeout(
             () => {
               n++;
-              tour();
+              tour(900);
             },
-            lignes[n % lignes.length].length * 22 + 3600,
+            REVELE_DELAI + dureeRevele(l) + 3600,
           );
         },
-        reduit ? 0 : 900,
+        reduit ? 0 : pause,
       );
     };
-    t = setTimeout(tour, 250);
+    // La 1re fois, elle arrive avec le bloc du bas ; ensuite elle se referme 260 ms avant le nouveau coach.
+    montre.set(withTiming(0, { duration: 200 }));
+    t = setTimeout(() => tour(1100), premiere.current ? 700 : 260);
+    premiere.current = false;
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [c.id, reduit]);
 
+  const anime = useAnimatedStyle(() => ({ opacity: Math.min(1, montre.value), transform: [{ scale: 0.9 + 0.1 * montre.value }] }));
+
   return (
-    <Animated.View key={c.id} entering={FadeInDown.duration(380)} style={styles.bulle}>
+    <Animated.View style={[styles.bulle, anime]}>
       <Svg width={26} height={12} style={styles.pointe}>
         <Path d="M0 12 Q10 6 13 0 Q16 6 26 12 Z" fill={colors.surface} />
       </Svg>
       {courant.pense ? (
-        <View style={styles.pense}>
-          <Orbe couleur={c.c} />
-          <Text style={styles.penseTxt}>{c.nom} réfléchit…</Text>
-        </View>
-      ) : (
-        <Animated.View key={`${c.id}${courant.n}`} entering={FadeIn.duration(200)}>
-          <TexteTape texte={ligne} style={styles.replique} />
+        <Animated.View entering={FadeIn.duration(200)} style={styles.pense}>
+          <OrbeSiri taille={18} />
+          <TexteScintille texte={`${c.nom} réfléchit…`} style={styles.penseTxt} />
         </Animated.View>
+      ) : (
+        <TexteRevele key={`${c.id}${courant.n}`} texte={ligne} style={styles.replique} />
       )}
     </Animated.View>
   );
@@ -148,37 +148,50 @@ function Ruban({ index, pos, onChoix }: { index: number; pos: SharedValue<number
     };
   });
 
+  // Glisser le doigt le long du ruban balaie les coachs (le plus proche de l'angle du doigt).
+  const balayage = Gesture.Pan()
+    .runOnJS(true)
+    .minDistance(6)
+    .onUpdate((e) => {
+      const a = Math.atan2(e.x - cx, cy - e.y);
+      let k = 0;
+      for (let j = 1; j < N; j++) if (Math.abs(angle(j) - a) < Math.abs(angle(k) - a)) k = j;
+      if (k !== index) onChoix(k);
+    });
+
   return (
-    <View style={{ height: H }}>
-      <Svg width={width} height={H} style={StyleSheet.absoluteFill}>
-        <Path
-          d={`M${p0.x} ${p0.y} Q${sommet.x} ${2 * sommet.y - (p0.y + p3.y) / 2} ${p3.x} ${p3.y}`}
-          stroke={colors.surface}
-          strokeWidth={EP}
-          strokeLinecap="round"
-          fill="none"
-        />
-      </Svg>
-      <Animated.View pointerEvents="none" style={[styles.pastilleArc, { borderColor: alpha(choisi, 0.7), shadowColor: choisi }, pastille]} />
-      {COACHES.map((x, k) => {
-        const a = angle(k);
-        const p = point(a);
-        return (
-          <Pressable
-            key={x.id}
-            accessibilityRole="button"
-            accessibilityLabel={`Coach ${x.nom}`}
-            accessibilityState={{ selected: k === index }}
-            onPress={() => onChoix(k)}
-            style={[styles.case, { left: p.x - 42, top: p.y - 24, transform: [{ rotate: `${a}rad` }] }]}
-          >
-            <View style={[styles.teteArc, k !== index && styles.teteLoin]}>
-              <CoachFace id={x.id} size={36} borderColor={k === index ? x.c : 'transparent'} />
-            </View>
-          </Pressable>
-        );
-      })}
-    </View>
+    <GestureDetector gesture={balayage}>
+      <View style={{ height: H }}>
+        <Svg width={width} height={H} style={StyleSheet.absoluteFill}>
+          <Path
+            d={`M${p0.x} ${p0.y} Q${sommet.x} ${2 * sommet.y - (p0.y + p3.y) / 2} ${p3.x} ${p3.y}`}
+            stroke={colors.surface}
+            strokeWidth={EP}
+            strokeLinecap="round"
+            fill="none"
+          />
+        </Svg>
+        <Animated.View pointerEvents="none" style={[styles.pastilleArc, { borderColor: alpha(choisi, 0.7), shadowColor: choisi }, pastille]} />
+        {COACHES.map((x, k) => {
+          const a = angle(k);
+          const p = point(a);
+          return (
+            <Pressable
+              key={x.id}
+              accessibilityRole="button"
+              accessibilityLabel={`Coach ${x.nom}`}
+              accessibilityState={{ selected: k === index }}
+              onPress={() => onChoix(k)}
+              style={[styles.case, { left: p.x - 42, top: p.y - 24, transform: [{ rotate: `${a}rad` }] }]}
+            >
+              <View style={[styles.teteArc, k !== index && styles.teteLoin]}>
+                <CoachFace id={x.id} size={36} borderColor={k === index ? x.c : 'transparent'} />
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
+    </GestureDetector>
   );
 }
 
@@ -243,7 +256,7 @@ export default function Coach() {
       <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
         {depuisProfil ? <Retour /> : <ObBar step="coach" />}
 
-        <Animated.View entering={FadeInDown.duration(450)} style={styles.tete}>
+        <Animated.View entering={FadeInDown.delay(380).duration(500)} style={styles.tete}>
           <Text weight="medium" style={styles.salut}>
             {name ? `Salut ${name} 👋` : 'Salut 👋'}
           </Text>
@@ -263,7 +276,7 @@ export default function Coach() {
           </View>
         </GestureDetector>
 
-        <View style={styles.bas}>
+        <Animated.View entering={FadeInDown.delay(700).duration(500)} style={styles.bas}>
           <Animated.View key={c.id} entering={FadeIn.duration(260)} style={styles.nomBloc}>
             <Text style={[styles.nom, { color: c.c }]}>{c.nom}</Text>
             <Text weight="medium" style={styles.spec}>
@@ -278,16 +291,18 @@ export default function Coach() {
               </View>
             )}
           </Animated.View>
-          <Button
-            label={depuisProfil ? `Choisir ${c.nom}` : `Continuer avec ${c.nom}`}
-            arrow
-            onPress={() => {
-              if (!depuisProfil) return router.push('/onboarding/engagement');
-              toast('Programme de ' + c.nom + ' créé');
-              router.dismissAll();
-              router.navigate('/programme');
-            }}
-          />
+          <Reflet cle={c.id}>
+            <Button
+              label={depuisProfil ? `Choisir ${c.nom}` : `Continuer avec ${c.nom}`}
+              arrow
+              onPress={() => {
+                if (!depuisProfil) return router.push('/onboarding/engagement');
+                toast('Programme de ' + c.nom + ' créé');
+                router.dismissAll();
+                router.navigate('/programme');
+              }}
+            />
+          </Reflet>
           <View style={styles.aide}>
             <Icon name="swap" size={14} color={colors.textTertiary} />
             <Text style={styles.aideTxt}>Glisse pour choisir</Text>
@@ -296,9 +311,15 @@ export default function Coach() {
               <Text style={[styles.aideTxt, styles.lien]}>Comparer les {N} coachs</Text>
             </Pressable>
           </View>
-        </View>
+        </Animated.View>
 
-        <Ruban index={idx} pos={pos} onChoix={choisir} />
+        <Animated.View
+          entering={FadeInDown.delay(940)
+            .duration(560)
+            .withInitialValues({ transform: [{ translateY: 90 }] })}
+        >
+          <Ruban index={idx} pos={pos} onChoix={choisir} />
+        </Animated.View>
 
         <Sheet visible={comparer} onClose={() => setComparer(false)} title={`Les ${N} coachs`}>
           {COACHES.map((x) => (
@@ -351,7 +372,6 @@ const styles = StyleSheet.create({
   },
   pointe: { position: 'absolute', top: -11, alignSelf: 'center' },
   pense: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  orbe: { width: 16, height: 16, borderRadius: 8, shadowOpacity: 0.9, shadowRadius: 8, shadowOffset: { width: 0, height: 0 } },
   penseTxt: { fontSize: 15, lineHeight: 20, color: colors.textSecondary },
   replique: { fontSize: 17, lineHeight: 24, color: colors.text },
   bas: { paddingHorizontal: 20, paddingTop: 12, gap: 14 },
