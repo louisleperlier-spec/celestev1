@@ -86,6 +86,11 @@ partout : `face` = l'Allié, `motive` = le Capitaine, `fier` = le Scientifique, 
 **Publié en production (EAS Update, 29 oct. 2026)** avec le nouvel onboarding et les correctifs d'achat.
 Montre et widgets : nouvelles images au prochain build ; les scènes illustrées (`ax_*`, `axel_dodo`…, `DECO_IMAGES`) restent à refaire.
 
+**Fiche exercice (design 10K « Fiche exercice », process-routine-exercise, oct. 2026)** : `ExerciceSheet` refaite (paquet vérifié, 406 empreintes ;
+ses médias sont ceux d'une autre app, non repris) : illustration en grand 3:4 à fondu sombre avec pastilles (groupe, séries × reps) et nom, « Le mouvement »
+(3 étapes numérotées dans une carte), « Muscles travaillés » cochés (tirés de `muscles`, pas de « bénéfices » inventés), erreur à éviter, plan du coach
+et charge, « Noter mes séries » ; « Voir la démo guidée » collé en bas (`Sheet` prend un `pied`).
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

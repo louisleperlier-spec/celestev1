@@ -12,12 +12,15 @@ export function Sheet({
   title,
   children,
   maxHeight = '88%',
+  pied,
 }: {
   visible: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
   maxHeight?: `${number}%`;
+  /** Contenu collé en bas de la feuille, hors du défilement (bouton d'action). */
+  pied?: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -30,6 +33,7 @@ export function Sheet({
             {title ? <Text style={styles.h3}>{title}</Text> : null}
             {children}
           </ScrollView>
+          {pied}
         </View>
       </KeyboardAvoidingView>
     </Modal>
