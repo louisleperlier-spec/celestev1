@@ -6,7 +6,7 @@ export type Nouveaute = { icone: 'chart' | 'flame' | 'star' | 'bell' | 'spark' |
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
   { icone: 'chart', titre: 'Tes progrès en graphiques', texte: 'Séances, temps actif, sommeil, VFC et poids, avec leur évolution.' },
-  { icone: 'flame', titre: 'Ta série en flamme', texte: "Ta série du moment s'affiche en haut de l'Accueil." },
+  { icone: 'spark', titre: 'De nouvelles illustrations', texte: 'Tes coachs à la salle, en étirements, en course et au lit.' },
   { icone: 'bell', titre: 'Les nouveautés à chaque mise à jour', texte: 'NÉA te dit ce qui change dès que ta version est mise à jour.' },
 ];
 
