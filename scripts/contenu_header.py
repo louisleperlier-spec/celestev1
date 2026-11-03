@@ -1,0 +1,13 @@
+# En-tête commun des générateurs de fichiers docs/contenu/AAAA-MM-JJ.md (routine du soir).
+P1="Jeune femme de 22 ans, longs cheveux châtain foncé ondulés avec un effet un peu décoiffé, yeux noisette, taches de rousseur légères, peau naturelle sans maquillage marqué, sourire doux en coin. Style décontracté : sweat oversize anthracite, t-shirt blanc, jogging gris, ou tenue de salle noire."
+ST1="Photo verticale 9:16 prise à l'iPhone, rendu brut et naturel, lumière réelle, léger grain, aucune retouche beauté, aucun effet studio. Texte en surimpression : police sans-serif blanche très grasse, fin contour noir, centré horizontalement, placé entre 16 % et 75 % de la hauteur, sans cacher le visage. Petit compteur blanc « X/N » en haut à gauche. Orthographe française exacte, accents compris, aucune autre écriture dans l'image."
+ST2="Photo iPhone spontanée, verticale 9:16, lumière naturelle, léger grain, rendu réaliste, aucun logo, aucune marque. Texte blanc gras avec fine ombre, centré, placé entre 16 % et 75 % de la hauteur (rien dans le haut ni dans le quart du bas). Orthographe française exacte, accents compris."
+P3="Personnage 3D style film d'animation, jeune homme d'environ 25 ans, cheveux bruns bouclés, yeux marron, barbe de trois jours légère, sourire confiant. Casque de chantier blanc avec lampe frontale et petit autocollant du drapeau du Québec, combinaison de travail orange haute visibilité avec bandes réfléchissantes grises, gants et bottes de sécurité."
+ST3="Image verticale 9:16, rendu 3D style film d'animation, couleurs chaudes, éclairage doux. Décor de référence : chevalement de mine en acier la nuit, neige au sol, sapins, petits bâtiments éclairés, flocons qui tombent. Le texte est écrit sur un panneau en bois accroché au chevalement, police grasse noire avec les mots-clés en orange, placé entre 16 % et 75 % de la hauteur. Orthographe française exacte, accents compris, aucune autre écriture dans l'image."
+AX="Le robot coach de l'app NÉA : petite tête-robot ronde et brillante, noir laqué, deux yeux en LED orange en forme d'arcs souriants, bandeau de sport orange en tissu éponge sur le front, gros casque audio noir avec reflets orange, halo de lumière orange autour de lui. Corps de robot noir mat aux formes arrondies. Style 3D d'animation, éclairage doux. Voix masculine chaleureuse et un peu taquine, en français, débit rapide de coach."
+def slides(persona,items,st,counter=True):
+    n=len(items);out=""
+    for i,(txt,scene) in enumerate(items,1):
+        c=f"Compteur en haut à gauche : « {i}/{n} »\n" if counter else ""
+        out+=f"\n**Slide {i}/{n}** : « {txt} »\n\n```\n{persona}Scène : {scene}\n\nTexte en surimpression, exactement : « {txt} »\n{c}\n{st.replace('X/N',f'{i}/{n}')}\n```\n"
+    return out
