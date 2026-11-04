@@ -187,7 +187,12 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
   - stationnaire (résistance 2 à 10), FC simulée, zones, dernière sortie (courbe FC, zones, « Ouvrir dans Plans »), historique ;
     enregistrée dès 30 s, XP 30 + 4/km, quête vélo dès 5 km ou 20 min ; l'horloge continue si on change d'onglet (`store/velo.ts`)
   - les sorties vélo du programme ouvrent l'onglet (`lancerSortie`) ; `lib/velo.ts` (hav, proj) comparé au prototype
-  - reste : suivi GPS en arrière-plan (écran verrouillé) = build natif ; notification VFC post-sortie (étape 8)
+  - **chrono juste écran verrouillé (4 nov. 2026, retour d'une utilisatrice, publié en production)** : vélo, course et rando comptent le temps
+    depuis l'heure de départ (`lib/chrono.ts`, pauses retirées, rattrapage au retour `AppState`) au lieu de +1 s par tic (minuteur suspendu par iOS)
+  - **GPS écran verrouillé codé (build 35, pas encore compilé)** : `store/gpsFond.ts` (`expo-task-manager`, `startLocationUpdatesAsync`, activité
+    Fitness, indicateur bleu, autorisation « Toujours », `isIosBackgroundLocationEnabled` dans `app.json`) ; sans le module natif ou sans « Toujours » :
+    `watchPositionAsync` au premier plan comme avant ; le build demande les identifiants Apple (variables `EXPO_ASC_*` de `scripts/build-ios.sh`)
+  - reste : notification VFC post-sortie (étape 8)
 - [ ] 8. Notifications : **codées, à valider sur iPhone**
   - fidèles au prototype : rappel « VFC post-entraînement » après séance et sortie (délai 6 s à 1 h), « Bilan de ta nuit » /
     « Comment as-tu dormi ? » dans les 4 h après le réveil, « C'est l'heure de te coucher » ; écran `/notifications` (liste, « Tester »),
