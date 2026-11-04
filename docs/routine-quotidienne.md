@@ -83,7 +83,7 @@ Inspirée des carrousels « DOs and DON'Ts » qui font plus de 250 000 j'aime et
 2. **Veille des tendances** (recherche web, 10 minutes maximum) :
    - formats, sons et hashtags qui marchent en ce moment sur TikTok dans le fitness féminin, en France et au Québec (TikTok Creative Center, articles récents, comptes du même type que @fitnessleana et @irsaslaw) ;
    - retiens 3 à 5 tendances **exploitables aujourd'hui**, avec la source et la date. Si une info n'est pas vérifiable, dis-le plutôt que de l'inventer.
-3. **Compte 1 (@axel.coach.nea)** : écris 1 vidéo Google Flow d'Axel (prompt complet avec la fiche d'Axel, réplique de 15 mots max, texte d'accroche à poser au montage) **ou** 1 carrousel de 5 ou 6 slides avec Axel, sur l'angle énergie / fatigue / culpabilité douce. Donne, dans l'ordre :
+3. **Compte 1 (@axel.coach.nea)** : écris 1 vidéo Google Flow d'Axel (prompt complet avec la fiche d'Axel, réplique de 15 mots max, texte d'accroche à poser au montage) **ou** 1 carrousel de 5 ou 6 slides avec Axel, sur l'angle énergie / fatigue / culpabilité douce. Pour le texte de la vidéo, applique le skill `viral-video-writing` (`.claude/skills/viral-video-writing/`) : accroche claire + curiosité en moins de 3 s (`hook-craft.md`), une seule idée, une seule demande à la fin, aucune formule « IA » (`writing.md`) ; propose 2 accroches alternatives. Donne, dans l'ordre :
    - le titre (90 caractères maximum) ;
    - pour chaque slide : le texte exact, puis le prompt GPT Astra complet (fiche persona 1 + scène + texte + compteur + style commun) ;
    - la légende avec « Lien en bio · Image virtuelle » et 5 ou 6 hashtags.
