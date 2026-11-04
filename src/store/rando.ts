@@ -4,9 +4,11 @@
  * Fin : journal (`rando`), XP, Apple Santé (randonnée), rappel VFC, territoires (vrai GPS), carte « Explorateur » du sentier.
  */
 import * as Location from 'expo-location';
+import { AppState, type NativeEventSubscription } from 'react-native';
 import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
+import { chronoBascule, chronoDemarre, chronoSecondes, type Chrono } from '@/lib/chrono';
 import { coeur, hrStats, type StatsFC } from '@/lib/coeur';
 import { badgesRando, caloriesRando, denivele, profilMesure, xpRando, type Badge, type PointAlt, type Sentier } from '@/lib/rando';
 import { enregistrerEntrainement } from '@/lib/sante';
@@ -78,6 +80,9 @@ export function gagnerExplorateur(s: Sentier): boolean {
   return nouvelle;
 }
 let horloge: ReturnType<typeof setInterval> | null = null;
+// Temps compté depuis le départ : juste même si l'écran a été verrouillé (app suspendue).
+let chrono: Chrono = chronoDemarre();
+let retour: NativeEventSubscription | null = null;
 let suivi: Location.LocationSubscription | null = null;
 let attente: ReturnType<typeof setTimeout> | null = null;
 
@@ -128,6 +133,7 @@ export const useRando = create<Rando & Actions>()((set, get) => {
     const v = get();
     const hr = coeur(age());
     if (v.run && !v.paused) {
+      const el = chronoSecondes(chrono);
       if (v.gps === 'sim' && v.sim) {
         // Pas de marche simulé (~4,5 km/h) et altitude qui monte puis redescend.
         const h = v.sim.h + (Math.random() - 0.5) * 0.3;
@@ -146,7 +152,7 @@ export const useRando = create<Rando & Actions>()((set, get) => {
       hr.intensity = Math.min(0.85, Math.max(0.35, 0.45 + pente / 40));
       hr.tick();
       const rrs = [...v.rrs, ...hr.rr.slice(-Math.max(1, Math.round(hr.bpm / 60)))];
-      set({ el: get().el + 1, hr: [...v.hr, hr.bpm], rrs, bpm: Math.round(hr.bpm) });
+      set({ el, hr: [...v.hr, hr.bpm], rrs, bpm: Math.round(hr.bpm) });
     } else {
       hr.intensity = 0.05;
       hr.tick();
@@ -173,16 +179,27 @@ export const useRando = create<Rando & Actions>()((set, get) => {
     demarrer: (id) => {
       set({ run: true, paused: false, el: 0, pts: [], alts: [], dist: 0, dplus: 0, alt: null, gps: null, sim: null, hr: [], rrs: [], sentier: id, debut: new Date().toISOString(), res: null });
       if (horloge) clearInterval(horloge);
+      chrono = chronoDemarre();
       horloge = setInterval(tick, 1000);
+      retour?.remove();
+      retour = AppState.addEventListener('change', (etat) => {
+        if (etat === 'active' && get().run) tick();
+      });
       suivreMontre();
       gps();
     },
-    pause: () => set({ paused: !get().paused }),
+    pause: () => {
+      chrono = chronoBascule(chrono);
+      set({ paused: !get().paused });
+    },
     terminer: () => {
       arreterGps();
       arreterMontre();
       if (horloge) clearInterval(horloge);
       horloge = null;
+      retour?.remove();
+      retour = null;
+      if (!get().paused) set({ el: chronoSecondes(chrono) });
       const v = get();
       set({ run: false, paused: false });
       if (v.el < 60) {

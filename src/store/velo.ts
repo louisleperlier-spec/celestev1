@@ -4,9 +4,11 @@
  * Mode `course` (hors prototype) : course à pied au GPS. Les sorties dehors au vrai GPS conquièrent des territoires.
  */
 import * as Location from 'expo-location';
+import { AppState, type NativeEventSubscription } from 'react-native';
 import { create } from 'zustand';
 
 import { toast } from '@/components/ui/Toast';
+import { chronoBascule, chronoDemarre, chronoSecondes, type Chrono } from '@/lib/chrono';
 import { coeur, hrStats, type SourceFC, type StatsFC } from '@/lib/coeur';
 import { enregistrerEntrainement } from '@/lib/sante';
 import { casesTrace } from '@/lib/territoires';
@@ -82,6 +84,9 @@ type Actions = {
 const age = () => useProfil.getState().age;
 
 let horloge: ReturnType<typeof setInterval> | null = null;
+// Temps compté depuis le départ : juste même si l'écran a été verrouillé (app suspendue).
+let chrono: Chrono = chronoDemarre();
+let retour: NativeEventSubscription | null = null;
 let suivi: Location.LocationSubscription | null = null;
 let attente: ReturnType<typeof setTimeout> | null = null;
 
@@ -124,23 +129,25 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
     }
   };
 
-  /** Une seconde de sortie (bikeTick). */
+  /** Une seconde de sortie (bikeTick) ; au retour d'un écran verrouillé, rattrape les secondes manquées. */
   const tick = () => {
     const v = get();
     const hr = coeur(age());
     if (v.run && !v.paused) {
+      const el = chronoSecondes(chrono);
+      const dt = Math.max(0, el - v.el);
       let { spd, dist, pts, sim } = v;
       if (v.mode === 'int') {
         spd = vitesseStationnaire(v.lvl);
-        dist += spd / 3600;
+        dist += (spd / 3600) * dt;
       } else if (v.gps === 'sim' && sim) {
-        ({ sim, spd, pts, dist } = pasSimule(sim, spd, pts, dist, Math.random, v.mode === 'course'));
+        for (let k = 0; k < Math.min(dt, 3600); k++) ({ sim, spd, pts, dist } = pasSimule(sim, spd, pts, dist, Math.random, v.mode === 'course'));
       }
       hr.intensity = v.mode === 'course' ? Math.min(0.95, Math.max(0.4, spd / 13)) : intensiteVelo(v.mode === 'int' ? 'int' : 'ext', v.lvl, spd);
       hr.tick();
       // Mêmes battements que la séance : les derniers ajoutés par tick() (correction du bug RR du prototype).
       const rrs = [...v.rrs, ...hr.rr.slice(-Math.max(1, Math.round(hr.bpm / 60)))];
-      set({ el: v.el + 1, spd, dist, pts, sim, hr: [...v.hr, hr.bpm], rrs, ...live() });
+      set({ el, spd, dist, pts, sim, hr: [...v.hr, hr.bpm], rrs, ...live() });
     } else {
       hr.intensity = 0.05;
       hr.tick();
@@ -170,11 +177,20 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
     demarrer: () => {
       set({ run: true, paused: false, el: 0, pts: [], dist: 0, spd: 0, hr: [], rrs: [], res: null, gps: null, sim: null });
       if (horloge) clearInterval(horloge);
+      chrono = chronoDemarre();
       horloge = setInterval(tick, 1000);
+      // Retour dans l'app (écran déverrouillé) : le chrono et la distance se remettent à jour tout de suite.
+      retour?.remove();
+      retour = AppState.addEventListener('change', (etat) => {
+        if (etat === 'active' && get().run) tick();
+      });
       suivreMontre();
       if (get().mode !== 'int') gpsExterieur();
     },
-    pause: () => set({ paused: !get().paused }),
+    pause: () => {
+      chrono = chronoBascule(chrono);
+      set({ paused: !get().paused });
+    },
     tickRepos: () => {
       if (!get().run) tick();
     },
@@ -184,6 +200,9 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
       arreterMontre();
       if (horloge) clearInterval(horloge);
       horloge = null;
+      retour?.remove();
+      retour = null;
+      if (!get().paused) set({ el: chronoSecondes(chrono) });
       const v = get();
       const p = useProfil.getState();
       const st = hrStats(v.hr, v.rrs, p.age);
