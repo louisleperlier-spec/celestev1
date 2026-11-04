@@ -49,7 +49,9 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours et calculer ta distance."
+          "locationWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo et tes courses pour tracer ton parcours et calculer ta distance.",
+          "isIosBackgroundLocationEnabled": true,
+          "locationAlwaysAndWhenInUsePermission": "NÉA utilise ta position pendant tes sorties vélo, course et randonnée, même écran verrouillé, pour tracer ton parcours et calculer ta distance. Elle n'est jamais utilisée en dehors d'une sortie."
         }
       ],
       [

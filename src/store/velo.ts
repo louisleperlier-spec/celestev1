@@ -26,6 +26,7 @@ import {
   type Sim,
 } from '@/lib/velo';
 
+import { arreterGpsFond, demarrerGpsFond } from './gpsFond';
 import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
 import { conquerirTrace, type Conquete } from './territoires';
@@ -102,6 +103,7 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
   };
 
   const arreterGps = () => {
+    void arreterGpsFond();
     suivi?.remove();
     suivi = null;
     if (attente) clearTimeout(attente);
@@ -115,13 +117,17 @@ export const useVelo = create<Velo & Actions>()((set, get) => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') return repli();
-      suivi = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 0 }, (p) => {
+      const surPosition = (p: Location.LocationObject) => {
         const v = get();
         if (!v.run || v.paused) return;
         const { pts, dist } = ajouterPoint(v.pts, v.dist, [p.coords.latitude, p.coords.longitude]);
         const spd = p.coords.speed != null && p.coords.speed >= 0 ? p.coords.speed * 3.6 : v.spd;
         set({ gps: 'gps', pts, dist, spd });
-      });
+      };
+      // GPS qui continue écran verrouillé (build 35+, autorisation « Toujours »), sinon suivi au premier plan.
+      if (!(await demarrerGpsFond(surPosition))) {
+        suivi = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 0 }, surPosition);
+      }
       // Arrêté entre-temps (Terminer pendant la demande d'autorisation).
       if (!get().run) arreterGps();
     } catch {

@@ -15,6 +15,7 @@ import { enregistrerEntrainement } from '@/lib/sante';
 import { casesTrace } from '@/lib/territoires';
 import { ajouterPoint, simDepart, type Pt, type Sim } from '@/lib/velo';
 
+import { arreterGpsFond, demarrerGpsFond } from './gpsFond';
 import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
 import { trouverSentier as sentier } from './randosPres';
@@ -87,6 +88,7 @@ let suivi: Location.LocationSubscription | null = null;
 let attente: ReturnType<typeof setTimeout> | null = null;
 
 const arreterGps = () => {
+  void arreterGpsFond();
   suivi?.remove();
   suivi = null;
   if (attente) clearTimeout(attente);
@@ -116,13 +118,17 @@ export const useRando = create<Rando & Actions>()((set, get) => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') return repli();
-      suivi = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 2000, distanceInterval: 0 }, (p) => {
+      const surPosition = (p: Location.LocationObject) => {
         const v = get();
         if (!v.run || v.paused) return;
         if (v.gps !== 'gps') set({ gps: 'gps', sim: null });
         const alt = p.coords.altitude != null && (p.coords.altitudeAccuracy ?? 0) < 30 ? p.coords.altitude : null;
         ajouter([p.coords.latitude, p.coords.longitude], alt);
-      });
+      };
+      // GPS qui continue écran verrouillé (build 35+, autorisation « Toujours »), sinon suivi au premier plan.
+      if (!(await demarrerGpsFond(surPosition))) {
+        suivi = await Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 2000, distanceInterval: 0 }, surPosition);
+      }
       if (!get().run) arreterGps();
     } catch {
       repli();

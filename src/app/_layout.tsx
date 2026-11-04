@@ -15,6 +15,8 @@ import { demarrerMajs } from '@/store/majs';
 import { demarrerJeu } from '@/store/jeu';
 import { demarrerLiaisonMontre } from '@/store/liaisonMontre';
 import { demarrerSante } from '@/store/sante';
+// GPS des sorties écran verrouillé : la tâche de fond doit être déclarée au lancement.
+import '@/store/gpsFond';
 // Territoires : envoie les cases gardées hors ligne dès la connexion au compte.
 import '@/store/territoires';
 import { colors } from '@/theme';
