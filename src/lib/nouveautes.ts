@@ -5,6 +5,7 @@
 export type Nouveaute = { icone: 'chart' | 'flame' | 'star' | 'bell' | 'spark' | 'trophy'; titre: string; texte: string };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'spark', titre: 'Des fiches exercice refaites', texte: 'Ton plan, le mouvement en 3 étapes, puis ce que ça travaille.' },
   { icone: 'star', titre: 'Zoome sur tes exercices', texte: "Touche l'image pour l'agrandir, et « Aa » pour des textes plus grands." },
   { icone: 'bell', titre: "Ton chrono ne s'arrête plus", texte: 'Vélo, course et rando : le temps continue même écran verrouillé.' },
   { icone: 'chart', titre: 'Un Programme et un Profil refaits', texte: "Ta semaine en un coup d'œil, ta séance exercice par exercice." },
