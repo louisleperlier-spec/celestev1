@@ -2,8 +2,9 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle } from 'react-native-svg';
 
 import { CoachFace } from '@/components/app/CoachFace';
 import { DemoSheet } from '@/components/app/DemoSheet';
@@ -11,7 +12,7 @@ import { LivePills } from '@/components/app/LivePills';
 import { Recap } from '@/components/app/Recap';
 import { ZoneBar } from '@/components/app/ZoneBar';
 import { ZoomExercice } from '@/components/app/ZoomExercice';
-import { BigNumber, Button, Card, Glow, Icon, Text } from '@/components/ui';
+import { BigNumber, Glow, Icon, Text, type IconName } from '@/components/ui';
 import { EXERCICE_IMAGES } from '@/data';
 import type { ExerciceId, SeanceId } from '@/data/types';
 import { loadFor, rj } from '@/lib/charges';
@@ -21,14 +22,17 @@ import { catSession, seanceById, sessionForDay, type SeanceJour } from '@/lib/se
 import { taille, useLecture } from '@/store/lecture';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { useSeance } from '@/store/seance';
-import { alpha, colors, fonts, glow, ui } from '@/theme';
+import { alpha, colors, ui } from '@/theme';
 
 /**
- * Séance en cours (vWorkout du prototype), puis récap (vRecap). FC simulée en attendant Apple Santé.
- * Pour ceux qui voient un peu mal : toucher l'illustration (ou « Agrandir ») l'ouvre en plein écran avec zoom, « Aa » agrandit les textes.
+ * Séance en cours (vWorkout du prototype), mise en page du design 10K « Circuit — séance guidée » (process-routine-session, nov. 2026) :
+ * plein écran noir, illustration en grand (toucher = zoom), barre du haut (✕, exercice, « Exercice n/N · Série s/S », pastille ronde du chrono
+ * dont l'anneau suit la séance, ou la série chronométrée), message du coach, puis 3 commandes : Pause · grand bouton blanc (action principale) · Démo.
+ * Le repos reprend le même style (grand anneau qui se vide). Logique inchangée (`store/seance`), puis récap (vRecap). « Aa » = grands caractères.
  */
 export default function SeanceEnCours() {
   const { jour, cat } = useLocalSearchParams<{ jour?: string; cat?: SeanceId }>();
+  const insets = useSafeAreaInsets();
   const profil = useProfil();
   const p = selectProfil(profil);
   const sem = useSemaine();
@@ -61,15 +65,24 @@ export default function SeanceEnCours() {
   const total = w.s.items.reduce((a, x) => a + x.sets, 0);
   const doneN = w.done.flat().length;
   const allDone = w.done[w.ex].length >= it.sets;
+  const chrono = !!it.sec && w.phase === 'work';
   const label = allDone
     ? w.ex < w.s.items.length - 1
       ? 'Exercice suivant'
       : 'Terminer la séance'
     : it.sec
-      ? w.phase === 'work'
+      ? chrono
         ? 'Arrêter la série'
         : 'Lancer le chrono'
-      : 'Terminer la série';
+      : 'Série faite';
+  const iconePrincipale: IconName = allDone ? (w.ex < w.s.items.length - 1 ? 'right' : 'trophy') : it.sec && !chrono ? 'play' : chrono ? 'pause' : 'check';
+  const message = allDone
+    ? `Bravo, ${e.nom.toLowerCase()} est bouclé.`
+    : it.sec
+      ? chrono
+        ? 'Tiens bon, garde le gainage.'
+        : `Tiens ${it.sec} s. Lance le chrono quand tu es en place.`
+      : `Vise ${rj(it.reps!)} reps, ${ld.txt.toLowerCase()}.`;
 
   const quitter = () => {
     if (!doneN) return router.back();
@@ -80,263 +93,296 @@ export default function SeanceEnCours() {
   };
 
   return (
-    <SafeAreaView style={styles.root} edges={['top', 'left', 'right', 'bottom']}>
+    <View style={styles.root}>
       <Stack.Screen options={{ gestureEnabled: false }} />
-      {/* .wh */}
-      <View style={styles.wh}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Quitter" onPress={quitter} style={styles.iconbtn}>
-          <Icon name="left" />
-        </Pressable>
-        <Text weight="semibold" style={styles.whTitle} numberOfLines={1}>
-          {w.s.titre}
-        </Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={w.paused ? 'Reprendre' : 'Pause'} onPress={seance.pause} style={styles.tmBtn}>
-          <Text weight="bold" style={styles.tm}>
-            {(w.paused ? '❚❚ ' : '') + mmss(w.elapsed)}
-          </Text>
-        </Pressable>
-      </View>
-      {/* .pbar */}
-      <View style={styles.pbar}>
-        <LinearGradient colors={[colors.green, '#9BF0B9']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={[styles.pfill, { width: `${(doneN / total) * 100}%` }]} />
-      </View>
-      <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} kcal={w.kc} src={w.src} />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* .exostage */}
-        <View style={styles.stage}>
-          <Glow width={320} height={250} color="#50506E" intensity={0.35} />
-          <Pressable accessibilityRole="imagebutton" accessibilityLabel={`${e.nom}, agrandir l'image`} onPress={() => setZoom(true)} style={styles.stageTouche}>
-            <Image source={EXERCICE_IMAGES[it.id]} style={styles.stageImg} contentFit="contain" />
-          </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="Agrandir l'image" onPress={() => setZoom(true)} style={({ pressed }) => [styles.agrandir, pressed && { transform: [{ scale: 0.96 }] }]}>
-            <Icon name="zoom" size={18} color={colors.bg} />
-            <Text weight="bold" style={styles.agrandirTxt}>
-              Agrandir
-            </Text>
-          </Pressable>
-        </View>
-        <View style={styles.exotitle}>
-          <Text weight="bold" style={[styles.n, taille(grand, 12, 15)]}>
-            {w.ex + 1}/{w.s.items.length}
-          </Text>
-          <Text weight="extrabold" style={[styles.h2, taille(grand, 20, 23)]}>
+      {/* Scène : l'illustration en grand, toucher = image agrandie. */}
+      <View style={[StyleSheet.absoluteFill, styles.scene]}>
+        <Glow width={420} height={420} color="#50506E" intensity={0.3} />
+        <Pressable
+          accessibilityRole="imagebutton"
+          accessibilityLabel={`${e.nom}, agrandir l'image`}
+          onPress={() => setZoom(true)}
+          style={[styles.sceneTouche, { paddingTop: insets.top + 110, paddingBottom: grand ? 380 : 340 }]}
+        >
+          <Image source={EXERCICE_IMAGES[it.id]} style={styles.sceneImg} contentFit="contain" />
+        </Pressable>
+      </View>
+      <LinearGradient pointerEvents="none" colors={[alpha(colors.bg, 0.75), 'transparent', 'transparent', alpha(colors.bg, 0.92), colors.bg]} locations={[0, 0.22, 0.4, 0.62, 1]} style={StyleSheet.absoluteFill} />
+
+      {/* Barre du haut. */}
+      <View style={[styles.haut, { paddingTop: insets.top + 8 }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Quitter la séance" onPress={quitter} hitSlop={6} style={styles.fermer}>
+          <Icon name="x" size={16} />
+        </Pressable>
+        <View style={styles.flex}>
+          <Text weight="bold" style={[styles.hautTitre, taille(grand, 15, 20)]} numberOfLines={1}>
             {e.nom}
           </Text>
-          <Pressable
-            accessibilityRole="switch"
-            accessibilityLabel="Grands caractères"
-            accessibilityState={{ checked: grand }}
-            onPress={basculer}
-            style={[styles.aaBtn, grand && styles.aaOn]}
-          >
-            <Text weight="bold" style={[styles.aaTxt, grand && { color: colors.onPrimary }]}>
-              Aa
-            </Text>
-          </Pressable>
-          <Pressable accessibilityRole="button" onPress={() => setDemo(it.id)} style={styles.howbtn}>
-            <Icon name="play" size={16} color={colors.pinkPale} />
-            <Text style={styles.howTxt}>Démo</Text>
-          </Pressable>
+          <Text style={[styles.hautSous, taille(grand, 12, 16)]} numberOfLines={1}>
+            Exercice {w.ex + 1}/{w.s.items.length} · Série {Math.min(w.set + 1, it.sets)}/{it.sets}
+          </Text>
         </View>
-        <Text style={[styles.meta, taille(grand, 13, 18)]}>
-          <Text style={styles.metaB}>{it.sets} séries</Text> • {it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • {it.rest} s repos •{' '}
-          <Text style={styles.metaB}>≈ {exKcal(it, p.weight)} kcal</Text> cet exercice
-        </Text>
-        <Card style={styles.load}>
-          <View style={styles.lh}>
-            <Text weight="extrabold" style={[styles.lhB, taille(grand, 17, 22)]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={w.paused ? 'Reprendre la séance' : 'Mettre en pause'} onPress={seance.pause}>
+          <Anneau
+            taille={56}
+            trait={4}
+            fraction={chrono ? w.left / it.sec! : doneN / total}
+            couleur={chrono ? colors.pink : colors.text}
+            texte={w.paused ? '❚❚' : mmss(chrono ? w.left : w.elapsed)}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.pastillesHaut}>
+        <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} kcal={w.kc} src={w.src} />
+      </View>
+
+      {/* Bas : charge, compteur, message, séries et commandes. */}
+      <View style={[styles.bas, { paddingBottom: insets.bottom + 14 }]}>
+        <View style={styles.outils}>
+          <Puce icon="zoom" label="Agrandir" onPress={() => setZoom(true)} />
+          <Puce texte="Aa" label="Grands caractères" actif={grand} onPress={basculer} />
+        </View>
+
+        <View style={styles.charge}>
+          <View style={styles.chargeHaut}>
+            <Text weight="bold" style={[styles.chargeTxt, taille(grand, 17, 22)]}>
               {ld.txt}
             </Text>
-            <Text style={[styles.lhSmall, taille(grand, 11.5, 15)]}>{ld.sub}</Text>
+            <Text style={[styles.chargeSous, taille(grand, 12, 16)]}>
+              {it.sets} × {it.sec ? it.sec + ' s' : rj(it.reps!)} · {it.rest} s repos · ≈ {exKcal(it, p.weight)} kcal
+            </Text>
           </View>
           <ZoneBar it={it} cur={it.reps ? w.reps : undefined} />
-        </Card>
-
-        {/* .counter : reps ou minuteur */}
-        <View style={styles.counter}>
-          {it.sec ? (
-            <Card style={styles.timer}>
-              <BigNumber value={mmss(w.phase === 'work' ? w.left : it.sec)} size={grand ? 34 : 26} color={colors.pinkLight} />
-              <Text style={[styles.cSmall, taille(grand, 11, 14)]}>{w.phase === 'work' ? 'effort en cours' : 'durée de la série'}</Text>
-            </Card>
-          ) : (
-            <>
-              <Rb icon="minus" label="Moins" onPress={() => seance.reps(-1)} />
-              <Card style={[styles.cval, grand && styles.cvalGrand]}>
-                <BigNumber value={w.reps} size={grand ? 32 : 22} />
-                <Text style={[styles.cSmall, taille(grand, 11, 14)]}>reps</Text>
-              </Card>
-              <Rb icon="plus" label="Plus" onPress={() => seance.reps(1)} />
-            </>
-          )}
-        </View>
-        <View style={styles.foot}>
-          <BoutonRose label={label} onPress={seance.principal} />
         </View>
 
-        {/* .series */}
-        <Card style={styles.series}>
-          <Text style={styles.seriesLbl}>Série</Text>
+        {it.sec ? (
+          <View style={styles.compteur}>
+            <BigNumber value={mmss(chrono ? w.left : it.sec)} size={grand ? 64 : 52} color={chrono ? colors.pinkLight : colors.text} />
+          </View>
+        ) : (
+          <View style={styles.compteur}>
+            <Rond icon="minus" label="Une rep de moins" onPress={() => seance.reps(-1)} />
+            <View style={styles.repsVal}>
+              <BigNumber value={w.reps} size={grand ? 64 : 52} />
+              <Text style={[styles.repsLbl, taille(grand, 12, 16)]}>reps</Text>
+            </View>
+            <Rond icon="plus" label="Une rep de plus" onPress={() => seance.reps(1)} />
+          </View>
+        )}
+
+        <Text weight="semibold" style={[styles.message, taille(grand, 15, 21)]}>
+          {message}
+        </Text>
+
+        {/* Séries : traits touchables (faite = orange plein, en cours = blanc). */}
+        <View style={styles.series}>
           {[...Array(it.sets)].map((_, i) => {
             const ok = w.done[w.ex].includes(i);
             const on = i === w.set && !allDone;
             return (
-              <Pressable key={i} accessibilityRole="button" accessibilityLabel={`Série ${i + 1}${ok ? ', faite' : ''}`} onPress={() => seance.choisirSerie(i)}>
-                {on ? (
-                  <LinearGradient colors={['#FFC299', '#FF8A47']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sn, styles.snOn, glow('rgba(255,107,26,0.6)', 12)]}>
-                    <Text weight="bold" style={[styles.snTxt, { color: colors.onPrimary }]}>
-                      {ok ? '✓' : i + 1}
-                    </Text>
-                  </LinearGradient>
-                ) : (
-                  <View style={[styles.sn, ok && styles.snOk]}>
-                    <Text weight="bold" style={[styles.snTxt, ok && { color: colors.pinkLight }]}>
-                      {ok ? '✓' : i + 1}
-                    </Text>
-                  </View>
-                )}
+              <Pressable
+                key={i}
+                accessibilityRole="button"
+                accessibilityLabel={`Série ${i + 1}${ok ? ', faite' : on ? ', en cours' : ''}`}
+                onPress={() => seance.choisirSerie(i)}
+                hitSlop={{ top: 12, bottom: 12 }}
+                style={styles.serieTouche}
+              >
+                <View style={[styles.serie, ok && styles.serieOk, on && styles.serieOn]} />
               </Pressable>
             );
           })}
-        </Card>
-      </ScrollView>
+        </View>
 
-      {/* restOverlay */}
+        <View style={styles.commandes}>
+          <Commande icon={w.paused ? 'play' : 'pause'} titre={w.paused ? 'Reprendre' : 'Pause'} onPress={seance.pause} />
+          <View style={styles.principalBloc}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={label}
+              onPress={seance.principal}
+              style={({ pressed }) => [styles.principal, pressed && { transform: [{ scale: 0.95 }] }]}
+            >
+              <Icon name={iconePrincipale} size={28} strokeWidth={2.6} color={colors.bg} />
+            </Pressable>
+            <Text weight="semibold" style={[styles.principalTxt, taille(grand, 12, 16)]} numberOfLines={1}>
+              {label}
+            </Text>
+          </View>
+          <Commande icon="play" titre="Démo" onPress={() => setDemo(it.id)} />
+        </View>
+      </View>
+
+      {/* Repos : même style, grand anneau qui se vide. */}
       {w.phase === 'rest' && (
-        <View style={styles.rest}>
-          <Text style={styles.restP}>{w.nextMsg || 'Repos'}</Text>
-          <View>
-            <Glow width={200} height={120} intensity={0.35} />
-            <BigNumber value={w.left} size={72} color={colors.pink} />
+        <View style={[styles.repos, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
+          <Text weight="bold" style={[styles.reposLbl, taille(grand, 12, 16)]}>
+            REPOS
+          </Text>
+          <Text weight="bold" style={[styles.reposTitre, taille(grand, 22, 28)]}>
+            {w.nextMsg || 'Souffle un peu'}
+          </Text>
+          <View style={styles.reposAnneau}>
+            <Glow width={300} height={300} intensity={0.3} />
+            <Anneau taille={220} trait={10} fraction={w.left / Math.max(1, it.rest)} couleur={colors.pink} />
+            <View style={StyleSheet.absoluteFill} pointerEvents="none">
+              <View style={styles.reposCentre}>
+                <BigNumber value={w.left} size={72} />
+                <Text style={styles.reposS}>secondes</Text>
+              </View>
+            </View>
           </View>
           <LivePills bpm={w.bpm} zone={w.zone} hrv={w.hrv} src={w.src} centre />
-          <View style={styles.tip}>
-            <CoachFace id={c.id} size={54} borderColor={colors.pink} />
-            <Text style={styles.tipTxt}>{w.tip}</Text>
+          <View style={styles.conseil}>
+            <CoachFace id={c.id} size={48} borderColor={colors.pink} />
+            <Text style={[styles.conseilTxt, taille(grand, 14, 20)]}>{w.tip}</Text>
           </View>
-          <Button label="Passer le repos" onPress={seance.passerRepos} style={styles.restBtn} />
+          <Pressable accessibilityRole="button" onPress={seance.passerRepos} style={({ pressed }) => [styles.passer, pressed && { transform: [{ scale: 0.97 }] }]}>
+            <Icon name="right" size={18} color={colors.bg} />
+            <Text weight="bold" style={[styles.passerTxt, taille(grand, 16, 21)]}>
+              Passer le repos
+            </Text>
+          </Pressable>
         </View>
       )}
+
       <DemoSheet id={demo} onClose={() => setDemo(null)} />
-      <ZoomExercice
-        id={zoom ? it.id : null}
-        ligne={`${it.sets} séries • ${it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • ${ld.txt}`}
-        onClose={() => setZoom(false)}
-      />
-    </SafeAreaView>
+      <ZoomExercice id={zoom ? it.id : null} ligne={`${it.sets} séries • ${it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • ${ld.txt}`} onClose={() => setZoom(false)} />
+    </View>
   );
 }
 
-/** Bouton rond + / − (.rb). */
-function Rb({ icon, label, onPress }: { icon: 'plus' | 'minus'; label: string; onPress: () => void }) {
+/** Anneau de progression (pastille du chrono, repos) : `fraction` restante, dessinée dans le sens horaire depuis le haut. */
+function Anneau({ taille: t, trait, fraction, couleur, texte }: { taille: number; trait: number; fraction: number; couleur: string; texte?: string }) {
+  const r = (t - trait) / 2;
+  const tour = 2 * Math.PI * r;
+  const f = Math.max(0.001, Math.min(1, fraction));
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}>
-      <LinearGradient colors={['#FFFFFF', '#FFD9BF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.rb, glow('rgba(255,107,26,0.45)', 16)]}>
-        <Icon name={icon} strokeWidth={2.4} color={colors.onPrimary} />
-      </LinearGradient>
+    <View style={[styles.anneau, { width: t, height: t, borderRadius: t / 2 }]}>
+      <Svg width={t} height={t} style={StyleSheet.absoluteFill}>
+        <Circle cx={t / 2} cy={t / 2} r={r} stroke={alpha(colors.text, 0.22)} strokeWidth={trait} fill="none" />
+        <Circle
+          cx={t / 2}
+          cy={t / 2}
+          r={r}
+          stroke={couleur}
+          strokeWidth={trait}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={`${tour * f} ${tour}`}
+          transform={`rotate(-90 ${t / 2} ${t / 2})`}
+        />
+      </Svg>
+      {texte ? (
+        <Text weight="bold" style={styles.anneauTxt}>
+          {texte}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/** Commande secondaire : icône + légende (Pause, Démo). */
+function Commande({ icon, titre, onPress }: { icon: IconName; titre: string; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={titre} onPress={onPress} style={({ pressed }) => [styles.commande, pressed && { opacity: 0.6 }]}>
+      <View style={styles.commandeRond}>
+        <Icon name={icon} size={20} />
+      </View>
+      <Text weight="semibold" style={styles.commandeTxt}>
+        {titre}
+      </Text>
     </Pressable>
   );
 }
 
-/** Bouton principal rose de la séance (.btn.pink). */
-function BoutonRose({ label, onPress }: { label: string; onPress: () => void }) {
+/** Gros bouton rond − / + du compteur de reps. */
+function Rond({ icon, label, onPress }: { icon: 'plus' | 'minus'; label: string; onPress: () => void }) {
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [pressed && { transform: [{ scale: 0.98 }] }]}>
-      <LinearGradient
-        colors={['#FFC299', '#FF9A52', '#FFA266']}
-        locations={[0, 0.6, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={[styles.pinkBtn, glow('rgba(255,107,26,0.45)', 28)]}
-      >
-        <Text weight="bold" style={styles.pinkTxt}>
-          {label}
-        </Text>
-      </LinearGradient>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} hitSlop={6} style={({ pressed }) => [styles.rond, pressed && { transform: [{ scale: 0.94 }] }]}>
+      <Icon name={icon} size={24} strokeWidth={2.6} />
+    </Pressable>
+  );
+}
+
+/** Petite puce en verre (Agrandir, Aa). */
+function Puce({ icon, texte, label, actif, onPress }: { icon?: IconName; texte?: string; label: string; actif?: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole={texte ? 'switch' : 'button'}
+      accessibilityLabel={label}
+      accessibilityState={texte ? { checked: !!actif } : undefined}
+      onPress={onPress}
+      style={[styles.puce, actif && styles.puceOn]}
+    >
+      {icon ? <Icon name={icon} size={16} color={actif ? colors.bg : colors.text} /> : null}
+      <Text weight="bold" style={[styles.puceTxt, actif && { color: colors.bg }]}>
+        {texte ?? label}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
-  wh: { flexDirection: 'row', alignItems: 'center', height: 48, paddingTop: 6, paddingHorizontal: 14 },
-  iconbtn: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  whTitle: { flex: 1, textAlign: 'center', fontSize: 16, lineHeight: 20 },
-  tmBtn: { width: 60, alignItems: 'flex-end' },
-  tm: { color: colors.pink, fontSize: 15, lineHeight: 19, fontVariant: ['tabular-nums'] },
-  pbar: { height: 4, borderRadius: 4, backgroundColor: colors.border, marginTop: 6, marginHorizontal: 20, overflow: 'hidden' },
-  pfill: { height: '100%', borderRadius: 4 },
-  stage: { height: 250, marginTop: 8, alignItems: 'center', justifyContent: 'center' },
-  stageTouche: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
-  stageImg: { height: 250, width: '88%' },
-  agrandir: {
-    position: 'absolute',
-    right: 20,
-    bottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    height: 40,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: colors.text,
-  },
-  agrandirTxt: { fontSize: 14, lineHeight: 18, color: colors.bg },
-  aaBtn: { height: 34, minWidth: 40, paddingHorizontal: 10, borderRadius: 999, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.border2 },
-  aaOn: { backgroundColor: colors.pink, borderColor: colors.pink },
-  aaTxt: { fontSize: 14, lineHeight: 18, color: colors.text },
-  cvalGrand: { height: 74 },
-  exotitle: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingTop: 6, paddingHorizontal: 20 },
-  n: {
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    overflow: 'hidden',
-    fontSize: 12,
-    lineHeight: 15,
-    backgroundColor: 'rgba(255,107,26,0.18)',
-    color: colors.pinkLight,
-    marginTop: 4,
-  },
-  h2: { flex: 1, fontSize: 20, lineHeight: 23 },
-  howbtn: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 34, paddingHorizontal: 12, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,107,26,0.5)' },
-  howTxt: { fontSize: 12.5, lineHeight: 16, color: colors.pinkPale },
-  meta: { paddingTop: 6, paddingHorizontal: 20, fontSize: 13, lineHeight: 18, color: colors.textSecondary },
-  metaB: { color: colors.pinkLight, ...fonts.medium },
-  load: { marginTop: 12, marginHorizontal: 20, paddingVertical: 12, paddingHorizontal: 14 },
-  lh: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' },
-  lhB: { fontSize: 17, lineHeight: 22 },
-  lhSmall: { fontSize: 11.5, lineHeight: 15, color: colors.textSecondary },
-  counter: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingTop: 18, paddingHorizontal: 20 },
-  rb: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
-  cval: { flex: 1, height: 58, alignItems: 'center', justifyContent: 'center' },
-  timer: { flex: 1, height: 58, alignItems: 'center', justifyContent: 'center' },
-  cSmall: { fontSize: 11, lineHeight: 14, color: colors.textSecondary, marginTop: 1 },
-  foot: { paddingTop: 16, paddingHorizontal: 20, paddingBottom: 18 },
-  pinkBtn: { height: 52, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
-  pinkTxt: { fontSize: 15, lineHeight: 19, color: colors.onPrimary },
-  series: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16, marginHorizontal: 20, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 16, flexWrap: 'wrap' },
-  seriesLbl: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, marginRight: 6 },
-  sn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: ui.iconBg, borderWidth: 1, borderColor: colors.border2 },
-  snOn: { borderWidth: 0 },
-  snOk: { borderColor: 'rgba(255,107,26,0.5)' },
-  snTxt: { fontSize: 14, lineHeight: 18 },
-  rest: {
+  flex: { flex: 1 },
+  scene: { alignItems: 'center', justifyContent: 'flex-start' },
+  sceneTouche: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
+  sceneImg: { width: '96%', height: '100%' },
+  haut: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16 },
+  fermer: { width: 36, height: 36, borderRadius: 18, backgroundColor: alpha(colors.bg, 0.55), borderWidth: 0.5, borderColor: colors.border2, alignItems: 'center', justifyContent: 'center' },
+  hautTitre: { fontSize: 15, lineHeight: 20, color: colors.text },
+  hautSous: { fontSize: 12, lineHeight: 16, color: ui.text3, fontVariant: ['tabular-nums'] },
+  anneau: { alignItems: 'center', justifyContent: 'center', backgroundColor: alpha(colors.bg, 0.45) },
+  anneauTxt: { fontSize: 14, lineHeight: 18, color: colors.text, fontVariant: ['tabular-nums'] },
+  pastillesHaut: { marginTop: 10 },
+  bas: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, gap: 12 },
+  outils: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
+  puce: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 36, paddingHorizontal: 13, borderRadius: 18, backgroundColor: alpha(colors.text, 0.12) },
+  puceOn: { backgroundColor: colors.pink },
+  puceTxt: { fontSize: 13, lineHeight: 17, color: colors.text },
+  charge: { padding: 14, borderRadius: 20, backgroundColor: alpha(colors.surface, 0.92), borderWidth: 0.5, borderColor: colors.border },
+  chargeHaut: { gap: 2 },
+  chargeTxt: { fontSize: 17, lineHeight: 22, color: colors.text },
+  chargeSous: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, fontVariant: ['tabular-nums'] },
+  compteur: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 26 },
+  repsVal: { alignItems: 'center', minWidth: 90 },
+  repsLbl: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
+  rond: { width: 56, height: 56, borderRadius: 28, backgroundColor: alpha(colors.text, 0.12), alignItems: 'center', justifyContent: 'center' },
+  message: { fontSize: 15, lineHeight: 21, color: colors.text, textAlign: 'center', paddingHorizontal: 12 },
+  series: { flexDirection: 'row', gap: 6, paddingHorizontal: 40 },
+  serieTouche: { flex: 1, paddingVertical: 4 },
+  serie: { height: 4, borderRadius: 2, backgroundColor: alpha(colors.text, 0.2) },
+  serieOk: { backgroundColor: colors.pink },
+  serieOn: { backgroundColor: colors.text },
+  commandes: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: 22, marginTop: 4 },
+  commande: { width: 76, alignItems: 'center', gap: 6, paddingTop: 10 },
+  commandeRond: { width: 52, height: 52, borderRadius: 26, backgroundColor: alpha(colors.text, 0.1), alignItems: 'center', justifyContent: 'center' },
+  commandeTxt: { fontSize: 12, lineHeight: 16, color: ui.text3 },
+  principalBloc: { alignItems: 'center', gap: 6, width: 130 },
+  principal: { width: 76, height: 76, borderRadius: 38, backgroundColor: colors.text, alignItems: 'center', justifyContent: 'center' },
+  principalTxt: { fontSize: 12, lineHeight: 16, color: colors.text },
+  repos: {
     position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
     zIndex: 40,
-    backgroundColor: alpha(colors.bg, 0.96),
+    backgroundColor: alpha(colors.bg, 0.97),
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    padding: 30,
+    gap: 18,
+    paddingHorizontal: 24,
   },
-  restP: { color: colors.textSecondary, fontSize: 14, lineHeight: 19, textAlign: 'center' },
-  tip: { flexDirection: 'row', alignItems: 'center', gap: 10, maxWidth: 320 },
-  tipTxt: { flex: 1, fontSize: 13.5, lineHeight: 19, color: ui.text4 },
-  restBtn: { width: 260 },
+  reposLbl: { fontSize: 12, lineHeight: 16, letterSpacing: 1.4, color: colors.pink },
+  reposTitre: { fontSize: 22, lineHeight: 28, color: colors.text, textAlign: 'center' },
+  reposAnneau: { width: 220, height: 220, alignItems: 'center', justifyContent: 'center' },
+  reposCentre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  reposS: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, marginTop: -4 },
+  conseil: { flexDirection: 'row', alignItems: 'center', gap: 12, maxWidth: 340, padding: 14, borderRadius: 20, backgroundColor: colors.surface },
+  conseilTxt: { flex: 1, fontSize: 14, lineHeight: 20, color: ui.text4 },
+  passer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 56, alignSelf: 'stretch', borderRadius: 28, backgroundColor: colors.text },
+  passerTxt: { fontSize: 16, lineHeight: 21, color: colors.bg },
 });

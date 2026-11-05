@@ -100,6 +100,12 @@ la dernière → « Voir la démo guidée » ; remplace la mise en page 10K ci-d
 rappel du plan, le mouvement en grands caractères) ; bouton **« Aa »** = grands caractères (+30 %, `store/lecture.ts`, clé `nea-lecture`, `taille()`)
 sur la fiche (titres, étapes, muscles, erreur, plan, charge) et dans la séance (nom, consignes, charge, compteur de reps / chrono).
 
+**Séance en cours (design 10K « Circuit — séance guidée », process-routine-session, nov. 2026)** : `seance-en-cours.tsx` en plein écran noir,
+illustration en grand (toucher = zoom), barre du haut (✕, exercice, « Exercice n/N · Série s/S », pastille ronde du chrono dont l'anneau suit la séance
+ou la série chronométrée, toucher = pause), FC / VFC / kcal, puces Agrandir et Aa, carte de la charge + zone, compteur de reps à gros − / +, message du coach,
+séries en traits touchables, commandes Pause · grand bouton blanc (action principale + libellé) · Démo ; repos = grand anneau qui se vide, conseil du coach,
+« Passer le repos » blanc ; logique `store/seance` inchangée.
+
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
