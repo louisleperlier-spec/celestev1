@@ -12,6 +12,7 @@ corps ivoire satiné, bandeau orange au logo Impulsion, short et poignets orange
 | `generations.json` | Journal des images produites (id de génération ElevenLabs, modèle, date, statut, remarques de vérification) |
 | `references/` | Planche personnage, planche des 30 mouvements, logo Impulsion recadré de la planche |
 | `brut/<id>.webp` | Image brute générée (fond ivoire), pour pouvoir refaire le détourage |
+| `prompts-chatgpt.md` | Mise en place à coller une fois avec les planches + un prompt par exercice, pour générer dans ChatGPT (`scripts/axel-sport-prompts-chatgpt.ts`) |
 | `planches/` | Catalogue global (2 pages) et une planche par programme, assemblés depuis les visuels intégrés à l'app |
 
 ## Chaîne de production
