@@ -91,6 +91,10 @@ Montre et widgets : nouvelles images au prochain build ; **scènes de l'app refa
 ses médias sont ceux d'une autre app, non repris) : illustration en grand 3:4 à fondu sombre avec pastilles (groupe, séries × reps) et nom, « Le mouvement »
 (3 étapes numérotées dans une carte), « Muscles travaillés » cochés (tirés de `muscles`, pas de « bénéfices » inventés), erreur à éviter, plan du coach
 et charge, « Noter mes séries » ; « Voir la démo guidée » collé en bas (`Sheet` prend un `pied`).
+**Fiche exercice en story (nov. 2026, captures de l'utilisateur, style « De quoi ton corps est fait »)** : `ExerciceSheet` en plein écran,
+illustration en haut fondue dans le noir, traits de progression, petit titre orange en capitales, lignes en cartes (pastille, valeur orange à droite),
+retour rond + « Suivant » ; pages Pour toi (séries, reps, repos, charge + zone) · Le mouvement (3 étapes) · À savoir (muscles, erreur, Noter mes séries),
+la dernière → « Voir la démo guidée » ; remplace la mise en page 10K ci-dessus.
 **Confort de lecture (nov. 2026, demandé par l'utilisateur, pour ceux qui voient un peu mal)** : toucher l'illustration ou « Agrandir »
 (fiche exercice et séance en cours) ouvre **`ZoomExercice`** en plein écran (pincer jusqu'à ×5, glisser, double toucher ×2,5, gros boutons − / + et %,
 rappel du plan, le mouvement en grands caractères) ; bouton **« Aa »** = grands caractères (+30 %, `store/lecture.ts`, clé `nea-lecture`, `taille()`)
