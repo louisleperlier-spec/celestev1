@@ -1,14 +1,21 @@
+import { requireOptionalNativeModule } from 'expo';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import * as Updates from 'expo-updates';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, SlideInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Glow, Icon, Text } from '@/components/ui';
-import { NOUVEAUTES } from '@/lib/nouveautes';
+import { cameraDisponible } from '@/components/app/CameraCoach';
+import { nouveautesDispo } from '@/lib/nouveautes';
 import { inviterApresMaj } from '@/store/note';
 import { alpha, colors, fonts } from '@/theme';
+
+const LISTE = nouveautesDispo({
+  camera: cameraDisponible(),
+  gpsFond: Platform.OS !== 'web' && !!requireOptionalNativeModule('ExpoTaskManager'),
+});
 
 const ICONE = require('@/assets/images/icon.png');
 
@@ -53,7 +60,7 @@ export default function Nouveautes() {
         </View>
 
         <View style={styles.liste}>
-          {NOUVEAUTES.map((n, i) => (
+          {LISTE.map((n, i) => (
             <Animated.View key={n.titre} entering={FadeInDown.delay(180 + i * 90).duration(380)} style={styles.point}>
               <View style={styles.pointIcone}>
                 <Icon name={n.icone} size={18} color={colors.pink} strokeWidth={2} />
