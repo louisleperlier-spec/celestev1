@@ -114,6 +114,9 @@ filmé ni envoyé ; `NSCameraUsageDescription`) ; `lib/mouvement.ts` (pur) : ang
 genoux en dedans, coudes collés, tempo trop rapide) ; `components/app/CameraCoach.tsx` (plein écran : compteur « n / cible », propres / incomplètes,
 jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `ExpoSpeech` existe, caméra avant / arrière, Recommencer, « Valider n reps »
 → `fixerReps` + série validée) ; entrées : puce « Caméra » de la séance en cours et « Filmer mon mouvement » (fiche, Le mouvement), cachées sans le module.
+**Build 1.0.0 (37) compilé et envoyé à TestFlight (5 nov. 2026)** : coach caméra + GPS écran verrouillé + note native ; identifiants refaits via l'API
+(certificat de distribution H5DKUUCSLZ jusqu'au 05/11/2027, profils App Store NA 9C743KCD28, NeaWidgets 8A56RSR6K4, NeaWatch 4FV47ZC9FD, NeaComplications K7VU7339W9),
+`credentials.json` + `credentials/` locaux (ignorés par git), `credentialsSource: local` et clé d'envoi ajoutés à `eas.json` le temps du build puis retirés.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
