@@ -58,7 +58,7 @@ Lueur orange uniquement sur : upper chest, front deltoids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 03. Développé couché barre → `developpe_couche_barre.png`
+### 03. Développé couché barre → `developpe_couche_barre.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Développé couché barre.

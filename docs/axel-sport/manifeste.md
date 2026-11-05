@@ -1,6 +1,6 @@
 # Manifeste Axel Sport : exercice → image → statut
 
-50 exercices uniques · 0 validés · 4 générés à vérifier · 0 à refaire · 46 à générer.
+50 exercices uniques · 0 validés · 5 générés à vérifier · 0 à refaire · 45 à générer.
 
 Les prompts complets et autonomes sont dans `manifeste.json` (champ `prompt`).
 
@@ -8,7 +8,7 @@ Les prompts complets et autonomes sont dans `manifeste.json` (champ `prompt`).
 |---|---|---|---|---|---|---|
 | 1 | `developpe_couche_halteres` | Développé couché haltères | `assets/exercices/axel/developpe_couche_halteres.webp` | Généré · à vérifier | prévues (à générer) | Bonne posture (haltères au-dessus de la poitrine, pieds au sol) ; assise du banc orange au lieu de graphite, comme sur la planche des 30 mouvements. |
 | 2 | `developpe_incline_halteres` | Développé incliné haltères | `assets/exercices/axel/developpe_incline_halteres.webp` | À générer | prévues (à générer) |  |
-| 3 | `developpe_couche_barre` | Développé couché barre | `assets/exercices/axel/developpe_couche_barre.webp` | À générer | prévues (à générer) |  |
+| 3 | `developpe_couche_barre` | Développé couché barre | `assets/exercices/axel/developpe_couche_barre.webp` | Généré · à vérifier | prévues (à générer) | Barre basse au niveau de la poitrine, prise un peu plus large que les épaules, pieds au sol : correct ; banc à assise orange ; buste un peu relevé, à vérifier (doit être allongé à plat). |
 | 4 | `ecarte_halteres` | Écarté couché haltères | `assets/exercices/axel/ecarte_halteres.webp` | À générer | prévues (à générer) |  |
 | 5 | `pompes` | Pompes | `assets/exercices/axel/pompes.webp` | Généré · à vérifier | prévues (à générer) | Position haute (bras tendus) au lieu de la poitrine près du sol ; le tapis disparaît au détourage. |
 | 6 | `pompes_inclinees` | Pompes inclinées | `assets/exercices/axel/pompes_inclinees.webp` | À générer | prévues (à générer) |  |

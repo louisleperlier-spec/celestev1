@@ -124,7 +124,7 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 `docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
 journal des générations, références, planches par programme et catalogue) ; images dans `assets/exercices/axel/<id>.webp` (détourées, transparentes),
 `src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts`, `EXERCICE_IMAGES` = Axel si présent sinon l'ancienne image (repli) ;
-**4 / 50 produites** (pompes, presse à cuisses, tirage vertical via ElevenLabs ; développé couché haltères via ChatGPT ; à vérifier), le reste bloqué par la limite quotidienne d'images du plan gratuit ElevenLabs ;
+**5 / 50 produites** (pompes, presse à cuisses, tirage vertical via ElevenLabs ; développés couchés haltères et barre via ChatGPT ; à vérifier), le reste bloqué par la limite quotidienne d'images du plan gratuit ElevenLabs ;
 ne pas publier tant que la bibliothèque mélange anciennes et nouvelles images.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;

@@ -27,5 +27,12 @@
     "date": "2026-11-05",
     "statut": "genere_a_verifier",
     "remarques": "Bonne posture (haltères au-dessus de la poitrine, pieds au sol) ; assise du banc orange au lieu de graphite, comme sur la planche des 30 mouvements."
+  },
+  "developpe_couche_barre": {
+    "generation": null,
+    "modele": "ChatGPT (image)",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Barre basse au niveau de la poitrine, prise un peu plus large que les épaules, pieds au sol : correct ; banc à assise orange ; buste un peu relevé, à vérifier (doit être allongé à plat)."
   }
 }

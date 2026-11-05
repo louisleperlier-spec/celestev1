@@ -49,4 +49,6 @@ const n = (st: string) => lignes.filter((l) => l.statut === st).length;
 let md = `# Manifeste Axel Sport : exercice → image → statut\n\n${lignes.length} exercices uniques · ${n('valide')} validés · ${n('genere_a_verifier')} générés à vérifier · ${n('a_refaire')} à refaire · ${n('a_generer')} à générer.\n\nLes prompts complets et autonomes sont dans \`manifeste.json\` (champ \`prompt\`).\n\n| # | id | Nom | Fichier | Statut | Vues départ / arrivée | Remarques |\n|---|---|---|---|---|---|---|\n`;
 for (const l of lignes) md += `| ${l.numero} | \`${l.id}\` | ${l.nom} | \`${l.fichier}\` | ${LIB[l.statut]} | ${l.vuesDepartArrivee} | ${l.remarques ?? ''} |\n`;
 writeFileSync('docs/axel-sport/manifeste.md', md);
+// Exercices restants, dans l'ordre (lu par la tâche planifiée quotidienne).
+writeFileSync('docs/axel-sport/a-generer.txt', lignes.filter((l) => l.statut === 'a_generer').map((l) => l.id).join(' ') + '\n');
 console.log(`${lignes.length} exercices : ${n('genere_a_verifier')} générés à vérifier, ${n('a_generer')} à générer`);
