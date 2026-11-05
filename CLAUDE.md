@@ -117,6 +117,8 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 **Build 1.0.0 (37) compilé et envoyé à TestFlight (5 nov. 2026)** : coach caméra + GPS écran verrouillé + note native ; identifiants refaits via l'API
 (certificat de distribution H5DKUUCSLZ jusqu'au 05/11/2027, profils App Store NA 9C743KCD28, NeaWidgets 8A56RSR6K4, NeaWatch 4FV47ZC9FD, NeaComplications K7VU7339W9),
 `credentials.json` + `credentials/` locaux (ignorés par git), `credentialsSource: local` et clé d'envoi ajoutés à `eas.json` le temps du build puis retirés.
+**Version 1.0.1 (5 nov. 2026)** : le build 37 (1.0.0) a été refusé par Apple (ITMS-90186 / 90062 : la 1.0.0 est déjà approuvée) ; `app.json` et les
+`Info.plist` de la montre, des widgets et des complications passent à 1.0.1 (à garder égaux) ; `runtimeVersion` fixe, les mises à jour EAS restent compatibles.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
@@ -313,7 +315,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     le module lance l'app de la montre (`ouvrirSurMontre`, `startWatchApp`) qui ouvre « Ma séance · Liée à l'iPhone »
     (`BlocMaSeance` en haut de l'accueil, Démarrer, Voir les exercices ; `DelegueMontre.handle`) ; Musculation lance cette séance ;
     écran des reps : « Exercice n/N », « 08 / 10 reps », série, charge et FC, Fin de série
-  - reste : `targets/watch/Info.plist` : version 1.0.0 à garder
+  - reste : `targets/watch/Info.plist` : version 1.0.1 à garder
     égale à celle de l'app (EAS remplace le numéro de build)
   - build : identifiant `com.neacoach.app.watchkitapp` (V7BH4BY5RD, HealthKit) + profil App Store S67853B35U (jusqu'au 29/09/2027) créés via l'API ;
     `credentials.json` multi-cibles (`NA` profil CD645KQZ8X avec le groupe, `NeaWatch`, `NeaComplications`, `NeaWidgets` A22Y52K2DH), `credentialsSource: local` temporaire, puis `eas submit` (clé API temporaire dans le profil d'envoi)
