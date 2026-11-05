@@ -92,7 +92,24 @@ export type Profil = {
 };
 
 const coude = (p: Pose) => angleCotes(p, 'epaule', 'coude', 'poignet');
-const genou = (p: Pose) => angleCotes(p, 'hanche', 'genou', 'cheville');
+
+/**
+ * Profondeur du squat, valable de face comme de profil : hauteur hanche → genou rapportée à la longueur du tibia (genou → cheville).
+ * Debout ≈ 1 (cuisse verticale, aussi longue que le tibia), cuisses parallèles au sol ≈ 0. De face, l'angle du genou paraît presque
+ * droit sur l'image (perspective) : il ne descend jamais sous les seuils, d'où cette mesure.
+ */
+export function profondeur(p: Pose): number | null {
+  const vals: { v: number; c: number }[] = [];
+  for (const s of ['G', 'D'] as Cote[]) {
+    const h = p[art('hanche', s)], g = p[art('genou', s)], c = p[art('cheville', s)];
+    if (!h || !g || !c) continue;
+    const tibia = Math.hypot(c.x - g.x, c.y - g.y);
+    if (tibia < 1) continue;
+    vals.push({ v: (g.y - h.y) / tibia, c: Math.min(h.c, g.c, c.c) });
+  }
+  if (!vals.length) return null;
+  return vals.reduce((a, x) => a + x.v, 0) / vals.length;
+}
 
 /** Alignement épaule – hanche – cheville (ou genou) : hanches qui tombent ou fesses trop hautes. */
 function gainage(p: Pose): Correction | null {
@@ -165,9 +182,10 @@ const PROFILS: Record<string, Profil> = {
   },
   squat: {
     cadrage: 'Téléphone de profil (ou de face), à 2–3 m : de la tête aux pieds.',
-    mesure: genou,
-    repos: 160,
-    effort: 100,
+    // Profondeur (1 debout → 0 cuisses parallèles) : marche de face comme de profil.
+    mesure: profondeur,
+    repos: 0.85,
+    effort: 0.45,
     partielle: 'Descends plus bas : cuisses parallèles au sol.',
     forme: (p) => buste(55, 'Garde la poitrine haute.')(p) ?? genouxEnDedans(p),
   },

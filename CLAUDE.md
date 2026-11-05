@@ -111,7 +111,7 @@ séries en traits touchables, commandes Pause · grand bouton blanc (action prin
 lissées, squelette orange dessiné en natif, os en rouge pour les articulations en erreur (`alerte`), points envoyés au JS 15 fois / s `onPose` ; rien n'est
 filmé ni envoyé ; `NSCameraUsageDescription`) ; `lib/mouvement.ts` (pur) : angle suivi par profil (pompes, dips, développés, tirages, tractions, curls,
 élévations, squats, fentes, soulevés, ponts, planche en tenue), rep = repos → effort → repos, rep incomplète non comptée, corrections (gainage, buste,
-genoux en dedans, coudes collés, tempo trop rapide) ; `components/app/CameraCoach.tsx` (plein écran : compteur « n / cible », propres / incomplètes,
+genoux en dedans, coudes collés, tempo trop rapide) ; **squats mesurés par la profondeur** (`profondeur` : hauteur hanche → genou / tibia, 1 debout → 0 cuisses parallèles, seuils 0,85 → 0,45) car de face l'angle du genou paraît presque droit (retour de l'utilisateur : 0 rep comptée de face) ; `components/app/CameraCoach.tsx` (plein écran : compteur « n / cible », propres / incomplètes,
 jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `ExpoSpeech` existe, caméra avant / arrière, Recommencer, « Valider n reps »
 → `fixerReps` + série validée) ; entrées : puce « Caméra » de la séance en cours et « Filmer mon mouvement » (fiche, Le mouvement), cachées sans le module.
 **Build 1.0.0 (37) compilé et envoyé à TestFlight (5 nov. 2026)** : coach caméra + GPS écran verrouillé + note native ; identifiants refaits via l'API
