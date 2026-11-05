@@ -34,7 +34,7 @@ Réponds seulement « Prêt » ; je t'envoie ensuite un exercice par message et 
 
 ## Exercices (50)
 
-### 01. Développé couché haltères → `developpe_couche_halteres.png`
+### 01. Développé couché haltères → `developpe_couche_halteres.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Développé couché haltères.

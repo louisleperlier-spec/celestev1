@@ -1,12 +1,12 @@
 # Manifeste Axel Sport : exercice → image → statut
 
-50 exercices uniques · 0 validés · 3 générés à vérifier · 0 à refaire · 47 à générer.
+50 exercices uniques · 0 validés · 4 générés à vérifier · 0 à refaire · 46 à générer.
 
 Les prompts complets et autonomes sont dans `manifeste.json` (champ `prompt`).
 
 | # | id | Nom | Fichier | Statut | Vues départ / arrivée | Remarques |
 |---|---|---|---|---|---|---|
-| 1 | `developpe_couche_halteres` | Développé couché haltères | `assets/exercices/axel/developpe_couche_halteres.webp` | À générer | prévues (à générer) |  |
+| 1 | `developpe_couche_halteres` | Développé couché haltères | `assets/exercices/axel/developpe_couche_halteres.webp` | Généré · à vérifier | prévues (à générer) | Bonne posture (haltères au-dessus de la poitrine, pieds au sol) ; assise du banc orange au lieu de graphite, comme sur la planche des 30 mouvements. |
 | 2 | `developpe_incline_halteres` | Développé incliné haltères | `assets/exercices/axel/developpe_incline_halteres.webp` | À générer | prévues (à générer) |  |
 | 3 | `developpe_couche_barre` | Développé couché barre | `assets/exercices/axel/developpe_couche_barre.webp` | À générer | prévues (à générer) |  |
 | 4 | `ecarte_halteres` | Écarté couché haltères | `assets/exercices/axel/ecarte_halteres.webp` | À générer | prévues (à générer) |  |

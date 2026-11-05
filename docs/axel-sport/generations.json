@@ -1,6 +1,31 @@
 {
   "_note": "Journal des générations ElevenLabs (flow « NÉA · Axel Sport · exercices » BDRM2rFuELnvurnHQmGF, références : asset zc51MmjFoO1NCwzKC4gt personnage, 1mSjsRGdD5W74mBXBn6t 30 mouvements). statut : genere_a_verifier | valide | a_refaire.",
-  "pompes": { "generation": "qqfgx0Xak9sd8FCUPZRJ", "modele": "gemini-3-pro-image", "date": "2026-11-05", "statut": "genere_a_verifier", "remarques": "Position haute (bras tendus) au lieu de la poitrine près du sol ; le tapis disparaît au détourage." },
-  "presse_cuisses": { "generation": "MKCweN6Xwlcc2gDTemZ3", "modele": "gemini-3-pro-image", "date": "2026-11-05", "statut": "genere_a_verifier", "remarques": "Géométrie de la presse à vérifier (orientation de la plateforme, rail du chariot)." },
-  "tirage_vertical": { "generation": "YiEITz7CZsUSdd59ghuf", "modele": "gemini-3-pro-image", "date": "2026-11-05", "statut": "genere_a_verifier", "remarques": "Position de départ (barre en haut) au lieu de la barre tirée à la poitrine ; posture correcte pour le départ." }
+  "pompes": {
+    "generation": "qqfgx0Xak9sd8FCUPZRJ",
+    "modele": "gemini-3-pro-image",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Position haute (bras tendus) au lieu de la poitrine près du sol ; le tapis disparaît au détourage."
+  },
+  "presse_cuisses": {
+    "generation": "MKCweN6Xwlcc2gDTemZ3",
+    "modele": "gemini-3-pro-image",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Géométrie de la presse à vérifier (orientation de la plateforme, rail du chariot)."
+  },
+  "tirage_vertical": {
+    "generation": "YiEITz7CZsUSdd59ghuf",
+    "modele": "gemini-3-pro-image",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Position de départ (barre en haut) au lieu de la barre tirée à la poitrine ; posture correcte pour le départ."
+  },
+  "developpe_couche_halteres": {
+    "generation": null,
+    "modele": "ChatGPT (image)",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Bonne posture (haltères au-dessus de la poitrine, pieds au sol) ; assise du banc orange au lieu de graphite, comme sur la planche des 30 mouvements."
+  }
 }
