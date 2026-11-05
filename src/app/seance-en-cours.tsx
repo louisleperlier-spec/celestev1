@@ -10,6 +10,7 @@ import { DemoSheet } from '@/components/app/DemoSheet';
 import { LivePills } from '@/components/app/LivePills';
 import { Recap } from '@/components/app/Recap';
 import { ZoneBar } from '@/components/app/ZoneBar';
+import { ZoomExercice } from '@/components/app/ZoomExercice';
 import { BigNumber, Button, Card, Glow, Icon, Text } from '@/components/ui';
 import { EXERCICE_IMAGES } from '@/data';
 import type { ExerciceId, SeanceId } from '@/data/types';
@@ -17,11 +18,15 @@ import { loadFor, rj } from '@/lib/charges';
 import { mmss } from '@/lib/coeur';
 import { coachById, exercice, exKcal } from '@/lib/plan';
 import { catSession, seanceById, sessionForDay, type SeanceJour } from '@/lib/semaine';
+import { taille, useLecture } from '@/store/lecture';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { useSeance } from '@/store/seance';
 import { alpha, colors, fonts, glow, ui } from '@/theme';
 
-/** Séance en cours (vWorkout du prototype), puis récap (vRecap). FC simulée en attendant Apple Santé. */
+/**
+ * Séance en cours (vWorkout du prototype), puis récap (vRecap). FC simulée en attendant Apple Santé.
+ * Pour ceux qui voient un peu mal : toucher l'illustration (ou « Agrandir ») l'ouvre en plein écran avec zoom, « Aa » agrandit les textes.
+ */
 export default function SeanceEnCours() {
   const { jour, cat } = useLocalSearchParams<{ jour?: string; cat?: SeanceId }>();
   const profil = useProfil();
@@ -31,6 +36,8 @@ export default function SeanceEnCours() {
   const seance = useSeance();
   const w = seance.w;
   const [demo, setDemo] = useState<ExerciceId | null>(null);
+  const [zoom, setZoom] = useState(false);
+  const { grand, basculer } = useLecture();
 
   // launchS : la séance est figée au lancement ; l'horloge tourne chaque seconde.
   useEffect(() => {
@@ -99,30 +106,49 @@ export default function SeanceEnCours() {
         {/* .exostage */}
         <View style={styles.stage}>
           <Glow width={320} height={250} color="#50506E" intensity={0.35} />
-          <Image source={EXERCICE_IMAGES[it.id]} style={styles.stageImg} contentFit="contain" accessibilityLabel={e.nom} />
+          <Pressable accessibilityRole="imagebutton" accessibilityLabel={`${e.nom}, agrandir l'image`} onPress={() => setZoom(true)} style={styles.stageTouche}>
+            <Image source={EXERCICE_IMAGES[it.id]} style={styles.stageImg} contentFit="contain" />
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Agrandir l'image" onPress={() => setZoom(true)} style={({ pressed }) => [styles.agrandir, pressed && { transform: [{ scale: 0.96 }] }]}>
+            <Icon name="zoom" size={18} color={colors.bg} />
+            <Text weight="bold" style={styles.agrandirTxt}>
+              Agrandir
+            </Text>
+          </Pressable>
         </View>
         <View style={styles.exotitle}>
-          <Text weight="bold" style={styles.n}>
+          <Text weight="bold" style={[styles.n, taille(grand, 12, 15)]}>
             {w.ex + 1}/{w.s.items.length}
           </Text>
-          <Text weight="extrabold" style={styles.h2}>
+          <Text weight="extrabold" style={[styles.h2, taille(grand, 20, 23)]}>
             {e.nom}
           </Text>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityLabel="Grands caractères"
+            accessibilityState={{ checked: grand }}
+            onPress={basculer}
+            style={[styles.aaBtn, grand && styles.aaOn]}
+          >
+            <Text weight="bold" style={[styles.aaTxt, grand && { color: colors.onPrimary }]}>
+              Aa
+            </Text>
+          </Pressable>
           <Pressable accessibilityRole="button" onPress={() => setDemo(it.id)} style={styles.howbtn}>
             <Icon name="play" size={16} color={colors.pinkPale} />
             <Text style={styles.howTxt}>Démo</Text>
           </Pressable>
         </View>
-        <Text style={styles.meta}>
+        <Text style={[styles.meta, taille(grand, 13, 18)]}>
           <Text style={styles.metaB}>{it.sets} séries</Text> • {it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • {it.rest} s repos •{' '}
           <Text style={styles.metaB}>≈ {exKcal(it, p.weight)} kcal</Text> cet exercice
         </Text>
         <Card style={styles.load}>
           <View style={styles.lh}>
-            <Text weight="extrabold" style={styles.lhB}>
+            <Text weight="extrabold" style={[styles.lhB, taille(grand, 17, 22)]}>
               {ld.txt}
             </Text>
-            <Text style={styles.lhSmall}>{ld.sub}</Text>
+            <Text style={[styles.lhSmall, taille(grand, 11.5, 15)]}>{ld.sub}</Text>
           </View>
           <ZoneBar it={it} cur={it.reps ? w.reps : undefined} />
         </Card>
@@ -131,15 +157,15 @@ export default function SeanceEnCours() {
         <View style={styles.counter}>
           {it.sec ? (
             <Card style={styles.timer}>
-              <BigNumber value={mmss(w.phase === 'work' ? w.left : it.sec)} size={26} color={colors.pinkLight} />
-              <Text style={styles.cSmall}>{w.phase === 'work' ? 'effort en cours' : 'durée de la série'}</Text>
+              <BigNumber value={mmss(w.phase === 'work' ? w.left : it.sec)} size={grand ? 34 : 26} color={colors.pinkLight} />
+              <Text style={[styles.cSmall, taille(grand, 11, 14)]}>{w.phase === 'work' ? 'effort en cours' : 'durée de la série'}</Text>
             </Card>
           ) : (
             <>
               <Rb icon="minus" label="Moins" onPress={() => seance.reps(-1)} />
-              <Card style={styles.cval}>
-                <BigNumber value={w.reps} size={22} />
-                <Text style={styles.cSmall}>reps</Text>
+              <Card style={[styles.cval, grand && styles.cvalGrand]}>
+                <BigNumber value={w.reps} size={grand ? 32 : 22} />
+                <Text style={[styles.cSmall, taille(grand, 11, 14)]}>reps</Text>
               </Card>
               <Rb icon="plus" label="Plus" onPress={() => seance.reps(1)} />
             </>
@@ -193,6 +219,11 @@ export default function SeanceEnCours() {
         </View>
       )}
       <DemoSheet id={demo} onClose={() => setDemo(null)} />
+      <ZoomExercice
+        id={zoom ? it.id : null}
+        ligne={`${it.sets} séries • ${it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • ${ld.txt}`}
+        onClose={() => setZoom(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -237,7 +268,25 @@ const styles = StyleSheet.create({
   pbar: { height: 4, borderRadius: 4, backgroundColor: colors.border, marginTop: 6, marginHorizontal: 20, overflow: 'hidden' },
   pfill: { height: '100%', borderRadius: 4 },
   stage: { height: 250, marginTop: 8, alignItems: 'center', justifyContent: 'center' },
+  stageTouche: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
   stageImg: { height: 250, width: '88%' },
+  agrandir: {
+    position: 'absolute',
+    right: 20,
+    bottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 40,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    backgroundColor: colors.text,
+  },
+  agrandirTxt: { fontSize: 14, lineHeight: 18, color: colors.bg },
+  aaBtn: { height: 34, minWidth: 40, paddingHorizontal: 10, borderRadius: 999, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.border2 },
+  aaOn: { backgroundColor: colors.pink, borderColor: colors.pink },
+  aaTxt: { fontSize: 14, lineHeight: 18, color: colors.text },
+  cvalGrand: { height: 74 },
   exotitle: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingTop: 6, paddingHorizontal: 20 },
   n: {
     paddingVertical: 3,

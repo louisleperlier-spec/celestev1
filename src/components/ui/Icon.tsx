@@ -96,6 +96,13 @@ const ICONS = {
       <Path d="M20 20l-3.5-3.5" />
     </>
   ),
+  /** Loupe avec un + (agrandir une illustration). */
+  zoom: (
+    <>
+      <Circle cx="11" cy="11" r="7" />
+      <Path d="M20 20l-3.5-3.5M11 8v6M8 11h6" />
+    </>
+  ),
   clock: (
     <>
       <Circle cx="12" cy="12" r="9" />

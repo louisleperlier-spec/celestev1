@@ -91,6 +91,10 @@ Montre et widgets : nouvelles images au prochain build ; **scènes de l'app refa
 ses médias sont ceux d'une autre app, non repris) : illustration en grand 3:4 à fondu sombre avec pastilles (groupe, séries × reps) et nom, « Le mouvement »
 (3 étapes numérotées dans une carte), « Muscles travaillés » cochés (tirés de `muscles`, pas de « bénéfices » inventés), erreur à éviter, plan du coach
 et charge, « Noter mes séries » ; « Voir la démo guidée » collé en bas (`Sheet` prend un `pied`).
+**Confort de lecture (nov. 2026, demandé par l'utilisateur, pour ceux qui voient un peu mal)** : toucher l'illustration ou « Agrandir »
+(fiche exercice et séance en cours) ouvre **`ZoomExercice`** en plein écran (pincer jusqu'à ×5, glisser, double toucher ×2,5, gros boutons − / + et %,
+rappel du plan, le mouvement en grands caractères) ; bouton **« Aa »** = grands caractères (+30 %, `store/lecture.ts`, clé `nea-lecture`, `taille()`)
+sur la fiche (titres, étapes, muscles, erreur, plan, charge) et dans la séance (nom, consignes, charge, compteur de reps / chrono).
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
