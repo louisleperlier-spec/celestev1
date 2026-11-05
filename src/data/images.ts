@@ -4,10 +4,11 @@
 import type { ExpressionMascotte } from '@/lib/enrage';
 import type { ImageSourcePropType } from 'react-native';
 
+import { AXEL_EXERCICE_IMAGES } from './exercicesAxel';
 import type { CoachId, ExerciceId } from './types';
 
-/** Illustration de chaque exercice (`assets/exercices/<id>.webp`). */
-export const EXERCICE_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = {
+/** Anciennes illustrations (`assets/exercices/<id>.webp`) : repli tant que l'image Axel Sport de l'exercice n'existe pas. */
+const ANCIENNES_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = {
   developpe_couche_halteres: require('@/assets/exercices/developpe_couche_halteres.webp'),
   developpe_incline_halteres: require('@/assets/exercices/developpe_incline_halteres.webp'),
   developpe_couche_barre: require('@/assets/exercices/developpe_couche_barre.webp'),
@@ -59,6 +60,9 @@ export const EXERCICE_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> 
   mountain_climbers: require('@/assets/exercices/mountain_climbers.webp'),
   velo_stationnaire: require('@/assets/exercices/velo_stationnaire.webp'),
 };
+
+/** Illustration de chaque exercice : Axel Sport (`assets/exercices/axel/<id>.webp`) si elle existe, sinon l'ancienne. */
+export const EXERCICE_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = { ...ANCIENNES_IMAGES, ...AXEL_EXERCICE_IMAGES };
 
 /** Mascotte entière (`corps`, Axel = nouvelle version avec bandeau) et avatar (`tete`) de chaque coach. */
 export const COACH_IMAGES: Readonly<Record<CoachId, { corps: ImageSourcePropType; tete: ImageSourcePropType }>> = {

@@ -56,7 +56,9 @@ for (const id of SEANCES_GRATUITES) verifier(seanceIds.has(id), `Séance gratuit
 // Images : une par exercice, corps + tête par coach, et pas d'image orpheline
 const dossierEx = join(ROOT, 'assets/exercices');
 for (const e of EXERCICES) verifier(existsSync(join(dossierEx, `${e.id}.webp`)), `Image manquante : exercices/${e.id}.webp`);
-for (const f of readdirSync(dossierEx)) verifier(exIds.has(f.replace(/\.webp$/, '')), `Image sans exercice : exercices/${f}`);
+for (const f of readdirSync(dossierEx)) if (f !== 'axel') verifier(exIds.has(f.replace(/\.webp$/, '')), `Image sans exercice : exercices/${f}`);
+// Illustrations Axel Sport (assets/exercices/axel/) : chacune doit correspondre à un exercice.
+for (const f of readdirSync(join(dossierEx, 'axel'))) verifier(exIds.has(f.replace(/\.webp$/, '')), `Image Axel sans exercice : exercices/axel/${f}`);
 for (const c of COACHES) {
   for (const f of [`${c.id}_corps.png`, `${c.id}_tete.webp`]) {
     verifier(existsSync(join(ROOT, 'assets/coachs', f)), `Image manquante : coachs/${f}`);

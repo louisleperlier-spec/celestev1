@@ -1,0 +1,1502 @@
+[
+  {
+    "numero": 1,
+    "id": "developpe_couche_halteres",
+    "nom": "Développé couché haltères",
+    "groupe": "Pectoraux",
+    "materiel": "Haltères",
+    "musclesFiche": "Pectoraux, triceps, épaules avant",
+    "fichier": "assets/exercices/axel/developpe_couche_halteres.webp",
+    "brut": "docs/axel-sport/brut/developpe_couche_halteres.webp",
+    "repli": "assets/exercices/developpe_couche_halteres.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view, slightly elevated",
+    "contacts": "upper back and head on the bench, both feet flat on the floor, one dumbbell in each hand",
+    "surbrillance": "chest (pectorals), triceps, front deltoids",
+    "programmes": 8,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Développé couché haltères. Pose: lying on his back on a flat bench, pressing two dumbbells straight up above the chest, arms almost extended, elbows slightly bent, feet flat on the floor. Equipment: flat weight bench and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, slightly elevated, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: upper back and head on the bench, both feet flat on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), triceps, front deltoids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 2,
+    "id": "developpe_incline_halteres",
+    "nom": "Développé incliné haltères",
+    "groupe": "Pectoraux",
+    "materiel": "Haltères",
+    "musclesFiche": "Haut des pectoraux, épaules avant",
+    "fichier": "assets/exercices/axel/developpe_incline_halteres.webp",
+    "brut": "docs/axel-sport/brut/developpe_incline_halteres.webp",
+    "repli": "assets/exercices/developpe_incline_halteres.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "back against the inclined backrest, seat, both feet flat on the floor, one dumbbell in each hand",
+    "surbrillance": "upper chest, front deltoids",
+    "programmes": 5,
+    "seancesPretes": 1,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Développé incliné haltères. Pose: seated on a bench inclined at 35 degrees, back against the backrest, pressing two dumbbells up above the upper chest. Equipment: adjustable incline bench and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back against the inclined backrest, seat, both feet flat on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the upper chest, front deltoids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 3,
+    "id": "developpe_couche_barre",
+    "nom": "Développé couché barre",
+    "groupe": "Pectoraux",
+    "materiel": "Barre",
+    "musclesFiche": "Pectoraux, triceps, épaules avant",
+    "fichier": "assets/exercices/axel/developpe_couche_barre.webp",
+    "brut": "docs/axel-sport/brut/developpe_couche_barre.webp",
+    "repli": "assets/exercices/developpe_couche_barre.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view, slightly elevated",
+    "contacts": "upper back and head on the bench, feet flat on the floor, both hands gripping the bar",
+    "surbrillance": "chest (pectorals), triceps, front deltoids",
+    "programmes": 2,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Développé couché barre. Pose: lying on a flat bench under a racked barbell, lowering the barbell to the lower chest, hands slightly wider than shoulders. Equipment: flat bench press station with uprights and a barbell with weight plates, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, slightly elevated, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: upper back and head on the bench, feet flat on the floor, both hands gripping the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), triceps, front deltoids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 4,
+    "id": "ecarte_halteres",
+    "nom": "Écarté couché haltères",
+    "groupe": "Pectoraux",
+    "materiel": "Haltères",
+    "musclesFiche": "Pectoraux",
+    "fichier": "assets/exercices/axel/ecarte_halteres.webp",
+    "brut": "docs/axel-sport/brut/ecarte_halteres.webp",
+    "repli": "assets/exercices/ecarte_halteres.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "front three-quarter view, slightly elevated",
+    "contacts": "back and head on the bench, feet flat on the floor",
+    "surbrillance": "chest (pectorals)",
+    "programmes": 4,
+    "seancesPretes": 1,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Écarté couché haltères. Pose: lying on his back on a flat bench, arms opened wide in an arc with a slight elbow bend, a dumbbell in each hand at chest level. Equipment: flat weight bench and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front three-quarter view, slightly elevated, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back and head on the bench, feet flat on the floor. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 5,
+    "id": "pompes",
+    "nom": "Pompes",
+    "groupe": "Pectoraux",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Pectoraux, triceps, gainage",
+    "fichier": "assets/exercices/axel/pompes.webp",
+    "brut": "docs/axel-sport/brut/pompes.webp",
+    "repli": "assets/exercices/pompes.webp",
+    "statut": "genere_a_verifier",
+    "generation": "qqfgx0Xak9sd8FCUPZRJ",
+    "modele": "gemini-3-pro-image",
+    "remarques": "Position haute (bras tendus) au lieu de la poitrine près du sol ; le tapis disparaît au détourage.",
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view at floor level",
+    "contacts": "both hands under the shoulders and toes on the mat",
+    "surbrillance": "chest (pectorals), triceps, core",
+    "programmes": 7,
+    "seancesPretes": 9,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Pompes. Pose: push-up, body perfectly straight from head to heels, chest lowered close to the floor, elbows at 45 degrees. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view at floor level, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both hands under the shoulders and toes on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), triceps, core, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 6,
+    "id": "pompes_inclinees",
+    "nom": "Pompes inclinées",
+    "groupe": "Pectoraux",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Pectoraux, triceps",
+    "fichier": "assets/exercices/axel/pompes_inclinees.webp",
+    "brut": "docs/axel-sport/brut/pompes_inclinees.webp",
+    "repli": "assets/exercices/pompes_inclinees.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "both hands on the bench edge, toes on the floor",
+    "surbrillance": "chest (pectorals), triceps",
+    "programmes": 7,
+    "seancesPretes": 7,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Pompes inclinées. Pose: incline push-up, hands on the edge of a bench, body straight and braced, chest lowered toward the bench edge. Equipment: sturdy flat weight bench, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both hands on the bench edge, toes on the floor. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 7,
+    "id": "dips",
+    "nom": "Dips aux barres parallèles",
+    "groupe": "Triceps",
+    "materiel": "Machine",
+    "musclesFiche": "Triceps, bas des pectoraux",
+    "fichier": "assets/exercices/axel/dips.webp",
+    "brut": "docs/axel-sport/brut/dips.webp",
+    "repli": "assets/exercices/dips.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both hands on the parallel bars, feet off the ground",
+    "surbrillance": "triceps, lower chest",
+    "programmes": 6,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Dips aux barres parallèles. Pose: parallel bar dips, torso slightly leaning forward, elbows bent at 90 degrees, legs bent and crossed behind. Equipment: parallel dip bars station, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both hands on the parallel bars, feet off the ground. Muscle highlight: a soft translucent orange glow under the ivory surface only on the triceps, lower chest, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 8,
+    "id": "presse_pectoraux",
+    "nom": "Presse à pectoraux",
+    "groupe": "Pectoraux",
+    "materiel": "Machine",
+    "musclesFiche": "Pectoraux, triceps",
+    "fichier": "assets/exercices/axel/presse_pectoraux.webp",
+    "brut": "docs/axel-sport/brut/presse_pectoraux.webp",
+    "repli": "assets/exercices/presse_pectoraux.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "back on the backrest pad, seat, feet flat on the floor, both hands on the handles",
+    "surbrillance": "chest (pectorals), triceps",
+    "programmes": 2,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Presse à pectoraux. Pose: seated on a chest press machine, pushing both handles forward at chest height, back against the pad. Equipment: seated chest press machine with weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back on the backrest pad, seat, feet flat on the floor, both hands on the handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the chest (pectorals), triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 9,
+    "id": "rowing_un_bras",
+    "nom": "Rowing un bras haltère",
+    "groupe": "Dos",
+    "materiel": "Haltères",
+    "musclesFiche": "Dorsaux, rhomboïdes, biceps",
+    "fichier": "assets/exercices/axel/rowing_un_bras.webp",
+    "brut": "docs/axel-sport/brut/rowing_un_bras.webp",
+    "repli": "assets/exercices/rowing_un_bras.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "side view",
+    "contacts": "one knee and one hand on the bench, other foot on the floor, dumbbell in the free hand",
+    "surbrillance": "lats, rhomboids, biceps",
+    "programmes": 9,
+    "seancesPretes": 5,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Rowing un bras haltère. Pose: one-arm dumbbell row, one knee and same-side hand on a flat bench, back flat and horizontal, pulling a dumbbell toward the hip with the other arm, elbow close to the body. Equipment: flat weight bench and one hexagonal dumbbell, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: one knee and one hand on the bench, other foot on the floor, dumbbell in the free hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, rhomboids, biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 10,
+    "id": "rowing_barre",
+    "nom": "Rowing buste penché barre",
+    "groupe": "Dos",
+    "materiel": "Barre",
+    "musclesFiche": "Dorsaux, trapèzes, lombaires",
+    "fichier": "assets/exercices/axel/rowing_barre.webp",
+    "brut": "docs/axel-sport/brut/rowing_barre.webp",
+    "repli": "assets/exercices/rowing_barre.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "both feet flat on the floor, both hands on the bar",
+    "surbrillance": "lats, trapezius, lower back",
+    "programmes": 4,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Rowing buste penché barre. Pose: bent-over barbell row, torso leaning forward at 45 degrees, back flat, knees bent, pulling the barbell toward the navel. Equipment: barbell with weight plates, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat on the floor, both hands on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, trapezius, lower back, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 11,
+    "id": "tirage_vertical",
+    "nom": "Tirage vertical poulie",
+    "groupe": "Dos",
+    "materiel": "Poulie",
+    "musclesFiche": "Grand dorsal, biceps",
+    "fichier": "assets/exercices/axel/tirage_vertical.webp",
+    "brut": "docs/axel-sport/brut/tirage_vertical.webp",
+    "repli": "assets/exercices/tirage_vertical.webp",
+    "statut": "genere_a_verifier",
+    "generation": "YiEITz7CZsUSdd59ghuf",
+    "modele": "gemini-3-pro-image",
+    "remarques": "Position de départ (barre en haut) au lieu de la barre tirée à la poitrine ; posture correcte pour le départ.",
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "seated, thighs under the knee pads, feet flat on the floor, both hands wide on the bar",
+    "surbrillance": "lats, biceps",
+    "programmes": 9,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Tirage vertical poulie. Pose: seated lat pulldown, thighs locked under the pads, pulling a wide bar down to the upper chest, shoulders down. Equipment: lat pulldown machine with high pulley, wide bar and weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated, thighs under the knee pads, feet flat on the floor, both hands wide on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 12,
+    "id": "tirage_horizontal",
+    "nom": "Tirage horizontal assis",
+    "groupe": "Dos",
+    "materiel": "Poulie",
+    "musclesFiche": "Dorsaux, rhomboïdes",
+    "fichier": "assets/exercices/axel/tirage_horizontal.webp",
+    "brut": "docs/axel-sport/brut/tirage_horizontal.webp",
+    "repli": "assets/exercices/tirage_horizontal.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "seated on the bench, feet on the platform, both hands on the handle",
+    "surbrillance": "lats, rhomboids",
+    "programmes": 8,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Tirage horizontal assis. Pose: seated cable row, back straight, pulling a close-grip handle to the belly, shoulder blades squeezed. Equipment: seated cable row machine with low pulley, foot platform and V-handle, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated on the bench, feet on the platform, both hands on the handle. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, rhomboids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 13,
+    "id": "tractions",
+    "nom": "Tractions pronation",
+    "groupe": "Dos",
+    "materiel": "Barre",
+    "musclesFiche": "Grand dorsal, biceps, gainage",
+    "fichier": "assets/exercices/axel/tractions.webp",
+    "brut": "docs/axel-sport/brut/tractions.webp",
+    "repli": "assets/exercices/tractions.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "front view",
+    "contacts": "only both hands on the bar, feet off the ground",
+    "surbrillance": "lats, biceps, core",
+    "programmes": 4,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Tractions pronation. Pose: pull-up with overhand grip slightly wider than shoulders, chin above the bar, legs straight and together. Equipment: pull-up bar on a power rack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: only both hands on the bar, feet off the ground. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, biceps, core, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 14,
+    "id": "tractions_assistees",
+    "nom": "Tractions assistées",
+    "groupe": "Dos",
+    "materiel": "Machine",
+    "musclesFiche": "Grand dorsal, biceps",
+    "fichier": "assets/exercices/axel/tractions_assistees.webp",
+    "brut": "docs/axel-sport/brut/tractions_assistees.webp",
+    "repli": "assets/exercices/tractions_assistees.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both knees on the platform, both hands on the upper handles",
+    "surbrillance": "lats, biceps",
+    "programmes": 6,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Tractions assistées. Pose: assisted pull-up, kneeling on the counterweight platform, chin above the handles. Equipment: assisted pull-up machine with knee platform and weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both knees on the platform, both hands on the upper handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lats, biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 15,
+    "id": "face_pull",
+    "nom": "Face pull à la corde",
+    "groupe": "Épaules",
+    "materiel": "Poulie",
+    "musclesFiche": "Arrière d'épaules, trapèzes",
+    "fichier": "assets/exercices/axel/face_pull.webp",
+    "brut": "docs/axel-sport/brut/face_pull.webp",
+    "repli": "assets/exercices/face_pull.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet on the floor, both hands on the rope",
+    "surbrillance": "rear deltoids, trapezius",
+    "programmes": 7,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Face pull à la corde. Pose: standing face pull, pulling a rope toward the forehead, hands apart, elbows high, thumbs toward the face. Equipment: cable machine with high pulley and rope attachment, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, both hands on the rope. Muscle highlight: a soft translucent orange glow under the ivory surface only on the rear deltoids, trapezius, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 16,
+    "id": "souleve_terre",
+    "nom": "Soulevé de terre barre",
+    "groupe": "Ischios",
+    "materiel": "Barre",
+    "musclesFiche": "Chaîne postérieure, dos, fessiers",
+    "fichier": "assets/exercices/axel/souleve_terre.webp",
+    "brut": "docs/axel-sport/brut/souleve_terre.webp",
+    "repli": "assets/exercices/souleve_terre.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "both feet flat under the bar, both hands just outside the legs",
+    "surbrillance": "hamstrings, glutes, lower back",
+    "programmes": 3,
+    "seancesPretes": 1,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Soulevé de terre barre. Pose: barbell deadlift, standing tall at the top with the barbell at mid-thigh, back flat, chest up. Equipment: barbell with large weight plates on the floor area, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat under the bar, both hands just outside the legs. Muscle highlight: a soft translucent orange glow under the ivory surface only on the hamstrings, glutes, lower back, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 17,
+    "id": "developpe_epaules",
+    "nom": "Développé épaules haltères",
+    "groupe": "Épaules",
+    "materiel": "Haltères",
+    "musclesFiche": "Deltoïdes, triceps",
+    "fichier": "assets/exercices/axel/developpe_epaules.webp",
+    "brut": "docs/axel-sport/brut/developpe_epaules.webp",
+    "repli": "assets/exercices/developpe_epaules.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "front view",
+    "contacts": "seated, back on the backrest, feet flat on the floor, one dumbbell in each hand",
+    "surbrillance": "deltoids, triceps",
+    "programmes": 7,
+    "seancesPretes": 6,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Développé épaules haltères. Pose: seated dumbbell shoulder press, dumbbells pressed overhead from ear height, back straight. Equipment: upright bench with backrest and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated, back on the backrest, feet flat on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the deltoids, triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 18,
+    "id": "elevations_laterales",
+    "nom": "Élévations latérales",
+    "groupe": "Épaules",
+    "materiel": "Haltères",
+    "musclesFiche": "Deltoïdes moyens",
+    "fichier": "assets/exercices/axel/elevations_laterales.webp",
+    "brut": "docs/axel-sport/brut/elevations_laterales.webp",
+    "repli": "assets/exercices/elevations_laterales.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "front view",
+    "contacts": "both feet on the floor, one dumbbell in each hand",
+    "surbrillance": "middle deltoids",
+    "programmes": 8,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Élévations latérales. Pose: standing lateral raise, both arms raised sideways to shoulder height, elbows slightly bent. Equipment: two light hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the middle deltoids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 19,
+    "id": "elevations_frontales",
+    "nom": "Élévations frontales",
+    "groupe": "Épaules",
+    "materiel": "Haltères",
+    "musclesFiche": "Deltoïdes avant",
+    "fichier": "assets/exercices/axel/elevations_frontales.webp",
+    "brut": "docs/axel-sport/brut/elevations_frontales.webp",
+    "repli": "assets/exercices/elevations_frontales.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet on the floor, one dumbbell in each hand",
+    "surbrillance": "front deltoids",
+    "programmes": 4,
+    "seancesPretes": 1,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Élévations frontales. Pose: standing front raise, one arm raised straight in front to shoulder height, other arm down with its dumbbell in front of the thigh. Equipment: two light hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the front deltoids, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 20,
+    "id": "oiseau_halteres",
+    "nom": "Oiseau haltères",
+    "groupe": "Épaules",
+    "materiel": "Haltères",
+    "musclesFiche": "Arrière d'épaules, haut du dos",
+    "fichier": "assets/exercices/axel/oiseau_halteres.webp",
+    "brut": "docs/axel-sport/brut/oiseau_halteres.webp",
+    "repli": "assets/exercices/oiseau_halteres.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "both feet on the floor, knees slightly bent, one dumbbell in each hand",
+    "surbrillance": "rear deltoids, upper back",
+    "programmes": 5,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Oiseau haltères. Pose: bent-over rear delt fly, torso leaning forward almost horizontal, back flat, arms opened sideways with a slight elbow bend. Equipment: two light hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, knees slightly bent, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the rear deltoids, upper back, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 21,
+    "id": "presse_epaules",
+    "nom": "Presse à épaules machine",
+    "groupe": "Épaules",
+    "materiel": "Machine",
+    "musclesFiche": "Deltoïdes, triceps",
+    "fichier": "assets/exercices/axel/presse_epaules.webp",
+    "brut": "docs/axel-sport/brut/presse_epaules.webp",
+    "repli": "assets/exercices/presse_epaules.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "seated, back on the pad, feet on the floor, both hands on the handles",
+    "surbrillance": "deltoids, triceps",
+    "programmes": 3,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Presse à épaules machine. Pose: seated machine shoulder press, pushing both handles overhead, back against the pad. Equipment: seated shoulder press machine with weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated, back on the pad, feet on the floor, both hands on the handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the deltoids, triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 22,
+    "id": "curl_biceps",
+    "nom": "Curl biceps haltères",
+    "groupe": "Biceps",
+    "materiel": "Haltères",
+    "musclesFiche": "Biceps",
+    "fichier": "assets/exercices/axel/curl_biceps.webp",
+    "brut": "docs/axel-sport/brut/curl_biceps.webp",
+    "repli": "assets/exercices/curl_biceps.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "front view",
+    "contacts": "both feet on the floor, one dumbbell in each hand",
+    "surbrillance": "biceps",
+    "programmes": 4,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Curl biceps haltères. Pose: standing dumbbell biceps curl, elbows pinned to the sides, palms facing forward, dumbbells curled up to the shoulders. Equipment: two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 23,
+    "id": "curl_marteau",
+    "nom": "Curl marteau",
+    "groupe": "Biceps",
+    "materiel": "Haltères",
+    "musclesFiche": "Biceps, avant-bras",
+    "fichier": "assets/exercices/axel/curl_marteau.webp",
+    "brut": "docs/axel-sport/brut/curl_marteau.webp",
+    "repli": "assets/exercices/curl_marteau.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "both feet on the floor, one dumbbell in each hand",
+    "surbrillance": "biceps, forearms",
+    "programmes": 5,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Curl marteau. Pose: standing hammer curl, palms facing each other (neutral grip), elbows fixed at the sides, dumbbells curled up. Equipment: two hexagonal dumbbells held vertically, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the biceps, forearms, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 24,
+    "id": "curl_pupitre",
+    "nom": "Curl au pupitre",
+    "groupe": "Biceps",
+    "materiel": "Machine",
+    "musclesFiche": "Biceps",
+    "fichier": "assets/exercices/axel/curl_pupitre.webp",
+    "brut": "docs/axel-sport/brut/curl_pupitre.webp",
+    "repli": "assets/exercices/curl_pupitre.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "seated, armpits against the pad, both hands on the bar",
+    "surbrillance": "biceps",
+    "programmes": 3,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Curl au pupitre. Pose: seated preacher curl machine, upper arms resting on the angled pad, curling the bar up. Equipment: preacher curl machine with angled arm pad and EZ bar, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated, armpits against the pad, both hands on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 25,
+    "id": "curl_poulie",
+    "nom": "Curl biceps à la poulie",
+    "groupe": "Biceps",
+    "materiel": "Poulie",
+    "musclesFiche": "Biceps",
+    "fichier": "assets/exercices/axel/curl_poulie.webp",
+    "brut": "docs/axel-sport/brut/curl_poulie.webp",
+    "repli": "assets/exercices/curl_poulie.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet on the floor, both hands on the bar",
+    "surbrillance": "biceps",
+    "programmes": 2,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Curl biceps à la poulie. Pose: standing cable curl facing a low pulley, elbows at the sides, curling a straight bar toward the shoulders. Equipment: cable machine with low pulley and straight bar, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, both hands on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the biceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 26,
+    "id": "extension_triceps_poulie",
+    "nom": "Extension triceps poulie",
+    "groupe": "Triceps",
+    "materiel": "Poulie",
+    "musclesFiche": "Triceps",
+    "fichier": "assets/exercices/axel/extension_triceps_poulie.webp",
+    "brut": "docs/axel-sport/brut/extension_triceps_poulie.webp",
+    "repli": "assets/exercices/extension_triceps_poulie.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet on the floor, both hands on the bar",
+    "surbrillance": "triceps",
+    "programmes": 6,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Extension triceps poulie. Pose: standing triceps pushdown facing a high pulley, elbows pinned at the sides, pushing the bar down to straight arms. Equipment: cable machine with high pulley and straight bar, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, both hands on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 27,
+    "id": "extension_triceps_tete",
+    "nom": "Extension triceps au-dessus de la tête",
+    "groupe": "Triceps",
+    "materiel": "Haltères",
+    "musclesFiche": "Triceps (longue portion)",
+    "fichier": "assets/exercices/axel/extension_triceps_tete.webp",
+    "brut": "docs/axel-sport/brut/extension_triceps_tete.webp",
+    "repli": "assets/exercices/extension_triceps_tete.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet on the floor, both hands around the dumbbell",
+    "surbrillance": "triceps (long head)",
+    "programmes": 6,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Extension triceps au-dessus de la tête. Pose: standing overhead triceps extension, one dumbbell held with both hands lowered behind the head, elbows pointing up. Equipment: one hexagonal dumbbell, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet on the floor, both hands around the dumbbell. Muscle highlight: a soft translucent orange glow under the ivory surface only on the triceps (long head), clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 28,
+    "id": "extension_triceps_couche",
+    "nom": "Extension triceps allongé",
+    "groupe": "Triceps",
+    "materiel": "Haltères",
+    "musclesFiche": "Triceps",
+    "fichier": "assets/exercices/axel/extension_triceps_couche.webp",
+    "brut": "docs/axel-sport/brut/extension_triceps_couche.webp",
+    "repli": "assets/exercices/extension_triceps_couche.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "back and head on the bench, feet flat on the floor, one dumbbell in each hand",
+    "surbrillance": "triceps",
+    "programmes": 6,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Extension triceps allongé. Pose: lying triceps extension on a flat bench, upper arms vertical, elbows bent bringing the dumbbells near the temples. Equipment: flat weight bench and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back and head on the bench, feet flat on the floor, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the triceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 29,
+    "id": "squat_barre",
+    "nom": "Squat arrière à la barre",
+    "groupe": "Cuisses",
+    "materiel": "Barre",
+    "musclesFiche": "Quadriceps, fessiers, gainage",
+    "fichier": "assets/exercices/axel/squat_barre.webp",
+    "brut": "docs/axel-sport/brut/squat_barre.webp",
+    "repli": "assets/exercices/squat_barre.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet flat shoulder-width apart, both hands on the bar",
+    "surbrillance": "quadriceps, glutes, core",
+    "programmes": 4,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Squat arrière à la barre. Pose: barbell back squat, bar resting on the upper back, descending with hips back, thighs parallel to the floor, knees over the toes. Equipment: squat rack with a barbell and weight plates, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat shoulder-width apart, both hands on the bar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, core, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 30,
+    "id": "goblet_squat",
+    "nom": "Goblet squat",
+    "groupe": "Cuisses",
+    "materiel": "Haltères",
+    "musclesFiche": "Quadriceps, fessiers",
+    "fichier": "assets/exercices/axel/goblet_squat.webp",
+    "brut": "docs/axel-sport/brut/goblet_squat.webp",
+    "repli": "assets/exercices/goblet_squat.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter front view",
+    "contacts": "both feet flat, both hands under the top of the dumbbell",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 8,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Goblet squat. Pose: goblet squat at the bottom, one dumbbell held vertically against the chest, elbows down between the knees, back straight. Equipment: one hexagonal dumbbell, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter front view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat, both hands under the top of the dumbbell. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 31,
+    "id": "squat_poids_corps",
+    "nom": "Squat au poids du corps",
+    "groupe": "Cuisses",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Quadriceps, fessiers",
+    "fichier": "assets/exercices/axel/squat_poids_corps.webp",
+    "brut": "docs/axel-sport/brut/squat_poids_corps.webp",
+    "repli": "assets/exercices/squat_poids_corps.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "both feet flat shoulder-width apart",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 9,
+    "seancesPretes": 10,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Squat au poids du corps. Pose: bodyweight squat at the bottom, thighs parallel to the floor, arms extended forward, back straight. Equipment: no equipment, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat shoulder-width apart. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 32,
+    "id": "fentes_arriere",
+    "nom": "Fentes arrière haltères",
+    "groupe": "Cuisses",
+    "materiel": "Haltères",
+    "musclesFiche": "Quadriceps, fessiers",
+    "fichier": "assets/exercices/axel/fentes_arriere.webp",
+    "brut": "docs/axel-sport/brut/fentes_arriere.webp",
+    "repli": "assets/exercices/fentes_arriere.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "front foot flat, back foot on its toes, one dumbbell in each hand",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 9,
+    "seancesPretes": 3,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Fentes arrière haltères. Pose: reverse lunge, one big step back, back knee lowered close to the floor, torso upright, dumbbells along the body. Equipment: two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: front foot flat, back foot on its toes, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 33,
+    "id": "fentes_marche",
+    "nom": "Fentes marchées haltères",
+    "groupe": "Cuisses",
+    "materiel": "Haltères",
+    "musclesFiche": "Quadriceps, fessiers, équilibre",
+    "fichier": "assets/exercices/axel/fentes_marche.webp",
+    "brut": "docs/axel-sport/brut/fentes_marche.webp",
+    "repli": "assets/exercices/fentes_marche.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "front foot flat, back foot on its toes, one dumbbell in each hand",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 8,
+    "seancesPretes": 7,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Fentes marchées haltères. Pose: walking lunge forward, front thigh parallel to the floor, back knee near the floor, torso upright, dumbbells in hands. Equipment: two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: front foot flat, back foot on its toes, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 34,
+    "id": "squat_bulgare",
+    "nom": "Squat bulgare",
+    "groupe": "Cuisses",
+    "materiel": "Haltères",
+    "musclesFiche": "Quadriceps, fessiers",
+    "fichier": "assets/exercices/axel/squat_bulgare.webp",
+    "brut": "docs/axel-sport/brut/squat_bulgare.webp",
+    "repli": "assets/exercices/squat_bulgare.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "front foot flat on the floor, rear foot on the bench, one dumbbell in each hand",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 4,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Squat bulgare. Pose: Bulgarian split squat, rear foot laces-down on a bench behind, descending vertically on the front leg, dumbbells in hands. Equipment: flat weight bench and two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: front foot flat on the floor, rear foot on the bench, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 35,
+    "id": "step_up",
+    "nom": "Montée sur banc",
+    "groupe": "Cuisses",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Quadriceps, fessiers, cardio",
+    "fichier": "assets/exercices/axel/step_up.webp",
+    "brut": "docs/axel-sport/brut/step_up.webp",
+    "repli": "assets/exercices/step_up.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "one foot flat on the bench, other foot leaving the floor",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 7,
+    "seancesPretes": 6,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Montée sur banc. Pose: step-up onto a bench, one foot fully on the bench pushing up, other leg rising, torso upright. Equipment: sturdy flat weight bench used as a box, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: one foot flat on the bench, other foot leaving the floor. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 36,
+    "id": "presse_cuisses",
+    "nom": "Presse à cuisses",
+    "groupe": "Cuisses",
+    "materiel": "Machine",
+    "musclesFiche": "Quadriceps, fessiers",
+    "fichier": "assets/exercices/axel/presse_cuisses.webp",
+    "brut": "docs/axel-sport/brut/presse_cuisses.webp",
+    "repli": "assets/exercices/presse_cuisses.webp",
+    "statut": "genere_a_verifier",
+    "generation": "MKCweN6Xwlcc2gDTemZ3",
+    "modele": "gemini-3-pro-image",
+    "remarques": "Géométrie de la presse à vérifier (orientation de la plateforme, rail du chariot).",
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "back and seat on the pads, both feet shoulder-width on the platform, hands on the side handles",
+    "surbrillance": "quadriceps, glutes",
+    "programmes": 2,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Presse à cuisses. Pose: seated 45-degree leg press, back flat against the backrest, knees bent at 90 degrees, feet on the platform. Equipment: 45-degree leg press machine with sled and weight plates, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back and seat on the pads, both feet shoulder-width on the platform, hands on the side handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 37,
+    "id": "leg_extension",
+    "nom": "Leg extension",
+    "groupe": "Cuisses",
+    "materiel": "Machine",
+    "musclesFiche": "Quadriceps",
+    "fichier": "assets/exercices/axel/leg_extension.webp",
+    "brut": "docs/axel-sport/brut/leg_extension.webp",
+    "repli": "assets/exercices/leg_extension.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "seated, back on the backrest, ankles behind the roller pad, hands on the side handles",
+    "surbrillance": "quadriceps",
+    "programmes": 2,
+    "seancesPretes": 1,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Leg extension. Pose: seated leg extension, knees aligned with the machine pivot, legs extended straight. Equipment: leg extension machine with ankle roller pad and weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated, back on the backrest, ankles behind the roller pad, hands on the side handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 38,
+    "id": "leg_curl",
+    "nom": "Leg curl allongé",
+    "groupe": "Ischios",
+    "materiel": "Machine",
+    "musclesFiche": "Ischio-jambiers",
+    "fichier": "assets/exercices/axel/leg_curl.webp",
+    "brut": "docs/axel-sport/brut/leg_curl.webp",
+    "repli": "assets/exercices/leg_curl.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "lying face down on the bench, roller pad just above the heels, hands on the front handles",
+    "surbrillance": "hamstrings",
+    "programmes": 8,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Leg curl allongé. Pose: lying leg curl face down, heels curled toward the glutes. Equipment: lying leg curl machine with ankle roller pad and weight stack, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: lying face down on the bench, roller pad just above the heels, hands on the front handles. Muscle highlight: a soft translucent orange glow under the ivory surface only on the hamstrings, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 39,
+    "id": "souleve_roumain",
+    "nom": "Soulevé de terre roumain haltères",
+    "groupe": "Ischios",
+    "materiel": "Haltères",
+    "musclesFiche": "Ischio-jambiers, fessiers",
+    "fichier": "assets/exercices/axel/souleve_roumain.webp",
+    "brut": "docs/axel-sport/brut/souleve_roumain.webp",
+    "repli": "assets/exercices/souleve_roumain.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "both feet flat hip-width, one dumbbell in each hand",
+    "surbrillance": "hamstrings, glutes",
+    "programmes": 8,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Soulevé de terre roumain haltères. Pose: Romanian deadlift, hips pushed back, torso hinged forward with a flat back, knees soft, dumbbells sliding down along the legs to mid-shin. Equipment: two hexagonal dumbbells, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both feet flat hip-width, one dumbbell in each hand. Muscle highlight: a soft translucent orange glow under the ivory surface only on the hamstrings, glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 40,
+    "id": "hip_thrust",
+    "nom": "Hip thrust",
+    "groupe": "Fessiers",
+    "materiel": "Barre",
+    "musclesFiche": "Fessiers, ischios",
+    "fichier": "assets/exercices/axel/hip_thrust.webp",
+    "brut": "docs/axel-sport/brut/hip_thrust.webp",
+    "repli": "assets/exercices/hip_thrust.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "upper back on the bench, both feet flat on the floor, both hands holding the bar on the hips",
+    "surbrillance": "glutes, hamstrings",
+    "programmes": 6,
+    "seancesPretes": 2,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Hip thrust. Pose: barbell hip thrust at the top, upper back on a bench, hips raised in line with knees and shoulders, barbell across the hips. Equipment: flat weight bench and padded barbell with weight plates, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: upper back on the bench, both feet flat on the floor, both hands holding the bar on the hips. Muscle highlight: a soft translucent orange glow under the ivory surface only on the glutes, hamstrings, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 41,
+    "id": "pont_fessier",
+    "nom": "Pont fessier au sol",
+    "groupe": "Fessiers",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Fessiers",
+    "fichier": "assets/exercices/axel/pont_fessier.webp",
+    "brut": "docs/axel-sport/brut/pont_fessier.webp",
+    "repli": "assets/exercices/pont_fessier.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "shoulders, both arms and both feet on the mat",
+    "surbrillance": "glutes",
+    "programmes": 9,
+    "seancesPretes": 10,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Pont fessier au sol. Pose: glute bridge on the floor, lying on the back, knees bent, pelvis raised in line with the thighs, arms along the body. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: shoulders, both arms and both feet on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the glutes, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 42,
+    "id": "mollets_debout",
+    "nom": "Élévations mollets debout",
+    "groupe": "Mollets",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Mollets",
+    "fichier": "assets/exercices/axel/mollets_debout.webp",
+    "brut": "docs/axel-sport/brut/mollets_debout.webp",
+    "repli": "assets/exercices/mollets_debout.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "balls of both feet on the step edge, heels in the air",
+    "surbrillance": "calves",
+    "programmes": 6,
+    "seancesPretes": 5,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Élévations mollets debout. Pose: standing calf raise on the edge of a step, up on the balls of the feet as high as possible. Equipment: low step block, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: balls of both feet on the step edge, heels in the air. Muscle highlight: a soft translucent orange glow under the ivory surface only on the calves, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 43,
+    "id": "planche",
+    "nom": "Planche sur les avant-bras",
+    "groupe": "Abdos",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Gainage, abdominaux profonds",
+    "fichier": "assets/exercices/axel/planche.webp",
+    "brut": "docs/axel-sport/brut/planche.webp",
+    "repli": "assets/exercices/planche.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "non nécessaires (tenue ou mouvement continu)",
+    "camera": "strict side view at floor level",
+    "contacts": "both forearms and toes on the mat",
+    "surbrillance": "core (deep abdominals)",
+    "programmes": 8,
+    "seancesPretes": 14,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Planche sur les avant-bras. Pose: forearm plank, elbows under the shoulders, body perfectly aligned from head to heels. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view at floor level, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both forearms and toes on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the core (deep abdominals), clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 44,
+    "id": "planche_laterale",
+    "nom": "Planche latérale",
+    "groupe": "Abdos",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Obliques, gainage",
+    "fichier": "assets/exercices/axel/planche_laterale.webp",
+    "brut": "docs/axel-sport/brut/planche_laterale.webp",
+    "repli": "assets/exercices/planche_laterale.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "non nécessaires (tenue ou mouvement continu)",
+    "camera": "front view facing the torso",
+    "contacts": "one forearm and the side of the lower foot on the mat",
+    "surbrillance": "obliques, core",
+    "programmes": 7,
+    "seancesPretes": 6,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Planche latérale. Pose: side plank on one forearm, elbow under the shoulder, legs straight and stacked, hips raised in line, free hand on the hip. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: front view facing the torso, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: one forearm and the side of the lower foot on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the obliques, core, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 45,
+    "id": "dead_bug",
+    "nom": "Dead bug",
+    "groupe": "Abdos",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Abdominaux profonds, coordination",
+    "fichier": "assets/exercices/axel/dead_bug.webp",
+    "brut": "docs/axel-sport/brut/dead_bug.webp",
+    "repli": "assets/exercices/dead_bug.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view, slightly elevated",
+    "contacts": "back and head on the mat",
+    "surbrillance": "deep abdominals",
+    "programmes": 6,
+    "seancesPretes": 7,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Dead bug. Pose: dead bug on the back, lower back flat, one arm extended overhead and the opposite leg extended low, the other arm up and other knee bent at 90 degrees. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, slightly elevated, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: back and head on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the deep abdominals, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 46,
+    "id": "bird_dog",
+    "nom": "Bird dog",
+    "groupe": "Abdos",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Lombaires, gainage, équilibre",
+    "fichier": "assets/exercices/axel/bird_dog.webp",
+    "brut": "docs/axel-sport/brut/bird_dog.webp",
+    "repli": "assets/exercices/bird_dog.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "one hand and the opposite knee on the mat",
+    "surbrillance": "lower back, core",
+    "programmes": 9,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Bird dog. Pose: bird dog on all fours, one arm extended forward and the opposite leg extended back, both horizontal, back flat. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: one hand and the opposite knee on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the lower back, core, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 47,
+    "id": "crunch",
+    "nom": "Crunch contrôlé",
+    "groupe": "Abdos",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Grand droit de l'abdomen",
+    "fichier": "assets/exercices/axel/crunch.webp",
+    "brut": "docs/axel-sport/brut/crunch.webp",
+    "repli": "assets/exercices/crunch.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "lower back and both feet on the mat",
+    "surbrillance": "abdominals (rectus abdominis)",
+    "programmes": 9,
+    "seancesPretes": 5,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Crunch contrôlé. Pose: controlled crunch on the back, knees bent, hands lightly near the temples, upper back curled off the floor. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: lower back and both feet on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the abdominals (rectus abdominis), clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 48,
+    "id": "releve_genoux",
+    "nom": "Relevé de genoux suspendu",
+    "groupe": "Abdos",
+    "materiel": "Machine",
+    "musclesFiche": "Abdominaux, fléchisseurs de hanche",
+    "fichier": "assets/exercices/axel/releve_genoux.webp",
+    "brut": "docs/axel-sport/brut/releve_genoux.webp",
+    "repli": "assets/exercices/releve_genoux.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "three-quarter side view",
+    "contacts": "forearms on the pads, hands on the grips, back against the backrest, feet off the ground",
+    "surbrillance": "abdominals, hip flexors",
+    "programmes": 6,
+    "seancesPretes": 4,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Relevé de genoux suspendu. Pose: hanging knee raise on a captain chair, back against the pad, knees raised to the chest, pelvis curled. Equipment: captain chair (vertical knee raise station) with forearm pads, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: three-quarter side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: forearms on the pads, hands on the grips, back against the backrest, feet off the ground. Muscle highlight: a soft translucent orange glow under the ivory surface only on the abdominals, hip flexors, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 49,
+    "id": "mountain_climbers",
+    "nom": "Mountain climbers",
+    "groupe": "Cardio",
+    "materiel": "Poids du corps",
+    "musclesFiche": "Cardio, gainage, épaules",
+    "fichier": "assets/exercices/axel/mountain_climbers.webp",
+    "brut": "docs/axel-sport/brut/mountain_climbers.webp",
+    "repli": "assets/exercices/mountain_climbers.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "prévues (à générer)",
+    "camera": "strict side view",
+    "contacts": "both hands under the shoulders, toes of the back foot on the mat",
+    "surbrillance": "core, shoulders",
+    "programmes": 9,
+    "seancesPretes": 12,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Mountain climbers. Pose: mountain climber in high plank, arms straight, one knee driven toward the chest, the other leg extended back. Equipment: thin exercise mat, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: both hands under the shoulders, toes of the back foot on the mat. Muscle highlight: a soft translucent orange glow under the ivory surface only on the core, shoulders, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  },
+  {
+    "numero": 50,
+    "id": "velo_stationnaire",
+    "nom": "Vélo stationnaire",
+    "groupe": "Cardio",
+    "materiel": "Vélo",
+    "musclesFiche": "Cardio, jambes",
+    "fichier": "assets/exercices/axel/velo_stationnaire.webp",
+    "brut": "docs/axel-sport/brut/velo_stationnaire.webp",
+    "repli": "assets/exercices/velo_stationnaire.webp",
+    "statut": "a_generer",
+    "generation": null,
+    "modele": "gemini-3-pro-image",
+    "remarques": null,
+    "vuesDepartArrivee": "non nécessaires (tenue ou mouvement continu)",
+    "camera": "strict side view",
+    "contacts": "seated on the saddle, both feet on the pedals, both hands on the handlebar",
+    "surbrillance": "quadriceps, calves",
+    "programmes": 9,
+    "seancesPretes": 6,
+    "parametres": {
+      "references": [
+        "zc51MmjFoO1NCwzKC4gt",
+        "1mSjsRGdD5W74mBXBn6t"
+      ],
+      "modele": "gemini-3-pro-image",
+      "format": "fond ivoire uni, puis détourage ISNet → WebP transparent 900 px"
+    },
+    "prompt": "Use the attached character sheet as the exact character: the NÉA mascot \"Axel Sport\". Keep him identical: stylized athletic body in satin ivory (#F5EFE4) with discreet articulated joints and coherent anatomy, rounded sculpted head, two distinct glowing eyes in graphite sockets, small orange smile, orange headband with the zigzag NÉA logo shape, orange shorts with an ivory side stripe, orange wristbands, ivory and orange sneakers, small orange NÉA symbol on the chest. Same soft 3D render style and studio lighting as the attached 30-movement sheet. Exercise: Vélo stationnaire. Pose: pedaling on a stationary bike, seated upright, back straight, hands on the handlebar. Equipment: stationary exercise bike, in graphite (#242328) with small orange (#FF6B1A) accents, realistic gym proportions, no brand names or logos. Camera: strict side view, the whole character and the whole equipment fully visible, centered, with generous margins. Contact points: seated on the saddle, both feet on the pedals, both hands on the handlebar. Muscle highlight: a soft translucent orange glow under the ivory surface only on the quadriceps, calves, clearly different from the orange clothing. Plain seamless warm ivory background, soft contact shadow, no text, no numbers, no labels, no frame, one single character with exactly two arms and two legs, physically plausible interaction with the equipment. Square 1:1 composition."
+  }
+]

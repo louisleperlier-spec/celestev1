@@ -120,6 +120,13 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 **Version 1.0.1 (5 nov. 2026)** : le build 37 (1.0.0) a été refusé par Apple (ITMS-90186 / 90062 : la 1.0.0 est déjà approuvée) ; `app.json` et les
 `Info.plist` de la montre, des widgets et des complications passent à 1.0.1 (à garder égaux) ; `runtimeVersion` fixe, les mises à jour EAS restent compatibles.
 
+**Bibliothèque Axel Sport (nov. 2026, planches de l'utilisateur, en cours)** : remplacer les 50 illustrations d'exercices par la mascotte Axel Sport ;
+`docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
+journal des générations, références, planches par programme et catalogue) ; images dans `assets/exercices/axel/<id>.webp` (détourées, transparentes),
+`src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts`, `EXERCICE_IMAGES` = Axel si présent sinon l'ancienne image (repli) ;
+**3 / 50 produites** (pompes, presse à cuisses, tirage vertical, à vérifier), le reste bloqué par la limite quotidienne d'images du plan gratuit ElevenLabs ;
+ne pas publier tant que la bibliothèque mélange anciennes et nouvelles images.
+
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
