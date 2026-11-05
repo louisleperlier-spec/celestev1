@@ -19,7 +19,7 @@ corps ivoire satiné, bandeau orange au logo Impulsion, short et poignets orange
 
 **En une commande** : `scripts/axel-sport-ajouter.sh <id> <url_ou_fichier> <modele> [id_generation] [remarques]` fait tout ce qui suit après la
 génération (outils de détourage installés tout seuls par `scripts/axel-sport-preparer.sh` dans /tmp). `a-generer.txt` = exercices restants, dans l'ordre.
-**Automatique** : une tâche planifiée quotidienne génère les images suivantes avec le quota gratuit d'ElevenLabs, les ajoute et pousse sur la branche
+**Automatique** (désactivée depuis le lot complet du 5 nov. 2026) : une tâche planifiée quotidienne génère les images suivantes avec le quota gratuit d'ElevenLabs, les ajoute et pousse sur la branche
 (jamais de publication dans l'app tant que les 50 ne sont pas là).
 
 1. **Générer** (ElevenLabs, flow « NÉA · Axel Sport · exercices » `BDRM2rFuELnvurnHQmGF`, modèle `gemini-3-pro-image`, les deux références

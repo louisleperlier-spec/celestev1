@@ -80,7 +80,7 @@ faites = sum(1 for e in inv['exercices'] if os.path.exists(man[e['id']]['fichier
 
 # Catalogue global (numérotation du manifeste).
 cat = [(man[e['id']]['numero'], e, e['groupe'] + ' · ' + e['materiel']) for e in inv['exercices']]
-sortis = planche('Catalogue des exercices', f'{len(cat)} exercices uniques · {faites} illustrés, les autres à générer', cat, 'catalogue')
+sortis = planche('Catalogue des exercices', f'{len(cat)} exercices uniques · {faites} illustrés' + ('' if faites == len(cat) else ', les autres à générer'), cat, 'catalogue')
 
 # Une planche par programme : exercices dans l'ordre des séances, chacun une fois (le même visuel est réutilisé partout).
 for prog in inv['programmes']:

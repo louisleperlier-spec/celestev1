@@ -128,8 +128,7 @@ lancée par l'utilisateur, indicateur bleu) ; **soumise à la vérification d'Ap
 `docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
 journal des générations, références, planches par programme et catalogue) ; images dans `assets/exercices/axel/<id>.webp` (détourées, transparentes),
 `src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts` ; `EXERCICE_IMAGES` ne prend les images Axel qu'une fois les 50 prêtes (`AXEL_COMPLET`), sinon les anciennes ;
-**5 / 50 produites** (pompes, presse à cuisses, tirage vertical via ElevenLabs ; développés couchés haltères et barre via ChatGPT ; à vérifier), le reste bloqué par la limite quotidienne d'images du plan gratuit ElevenLabs ;
-ne pas publier tant que la bibliothèque mélange anciennes et nouvelles images.
+**50 / 50 intégrées (5 nov. 2026)** : lot complet de l'utilisateur (`axel-sport-50-exercices.zip`, ChatGPT), remplace le pilote ; `AXEL_COMPLET = true` ; détourage = ISNet ∪ écart de couleur au fond (garde barres, montants et tapis) ; à refaire : `squat_poids_corps` (tête différente) ; à vérifier : `curl_marteau` (prise) ; tâche planifiée quotidienne désactivée ; ne pas publier tant que la bibliothèque mélange anciennes et nouvelles images.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),

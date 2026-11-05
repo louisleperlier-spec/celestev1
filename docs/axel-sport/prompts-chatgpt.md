@@ -46,7 +46,7 @@ Lueur orange uniquement sur : chest (pectorals), triceps, front deltoids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 02. Développé incliné haltères → `developpe_incline_halteres.png`
+### 02. Développé incliné haltères → `developpe_incline_halteres.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Développé incliné haltères.
@@ -70,7 +70,7 @@ Lueur orange uniquement sur : chest (pectorals), triceps, front deltoids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 04. Écarté couché haltères → `ecarte_halteres.png`
+### 04. Écarté couché haltères → `ecarte_halteres.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Écarté couché haltères.
@@ -94,7 +94,7 @@ Lueur orange uniquement sur : chest (pectorals), triceps, core.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 06. Pompes inclinées → `pompes_inclinees.png`
+### 06. Pompes inclinées → `pompes_inclinees.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Pompes inclinées.
@@ -106,7 +106,7 @@ Lueur orange uniquement sur : chest (pectorals), triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 07. Dips aux barres parallèles → `dips.png`
+### 07. Dips aux barres parallèles → `dips.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Dips aux barres parallèles.
@@ -118,7 +118,7 @@ Lueur orange uniquement sur : triceps, lower chest.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 08. Presse à pectoraux → `presse_pectoraux.png`
+### 08. Presse à pectoraux → `presse_pectoraux.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Presse à pectoraux.
@@ -130,7 +130,7 @@ Lueur orange uniquement sur : chest (pectorals), triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 09. Rowing un bras haltère → `rowing_un_bras.png`
+### 09. Rowing un bras haltère → `rowing_un_bras.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Rowing un bras haltère.
@@ -142,7 +142,7 @@ Lueur orange uniquement sur : lats, rhomboids, biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 10. Rowing buste penché barre → `rowing_barre.png`
+### 10. Rowing buste penché barre → `rowing_barre.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Rowing buste penché barre.
@@ -166,7 +166,7 @@ Lueur orange uniquement sur : lats, biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 12. Tirage horizontal assis → `tirage_horizontal.png`
+### 12. Tirage horizontal assis → `tirage_horizontal.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Tirage horizontal assis.
@@ -178,7 +178,7 @@ Lueur orange uniquement sur : lats, rhomboids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 13. Tractions pronation → `tractions.png`
+### 13. Tractions pronation → `tractions.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Tractions pronation.
@@ -190,7 +190,7 @@ Lueur orange uniquement sur : lats, biceps, core.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 14. Tractions assistées → `tractions_assistees.png`
+### 14. Tractions assistées → `tractions_assistees.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Tractions assistées.
@@ -202,7 +202,7 @@ Lueur orange uniquement sur : lats, biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 15. Face pull à la corde → `face_pull.png`
+### 15. Face pull à la corde → `face_pull.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Face pull à la corde.
@@ -214,7 +214,7 @@ Lueur orange uniquement sur : rear deltoids, trapezius.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 16. Soulevé de terre barre → `souleve_terre.png`
+### 16. Soulevé de terre barre → `souleve_terre.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Soulevé de terre barre.
@@ -226,7 +226,7 @@ Lueur orange uniquement sur : hamstrings, glutes, lower back.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 17. Développé épaules haltères → `developpe_epaules.png`
+### 17. Développé épaules haltères → `developpe_epaules.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Développé épaules haltères.
@@ -238,7 +238,7 @@ Lueur orange uniquement sur : deltoids, triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 18. Élévations latérales → `elevations_laterales.png`
+### 18. Élévations latérales → `elevations_laterales.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Élévations latérales.
@@ -250,7 +250,7 @@ Lueur orange uniquement sur : middle deltoids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 19. Élévations frontales → `elevations_frontales.png`
+### 19. Élévations frontales → `elevations_frontales.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Élévations frontales.
@@ -262,7 +262,7 @@ Lueur orange uniquement sur : front deltoids.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 20. Oiseau haltères → `oiseau_halteres.png`
+### 20. Oiseau haltères → `oiseau_halteres.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Oiseau haltères.
@@ -274,7 +274,7 @@ Lueur orange uniquement sur : rear deltoids, upper back.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 21. Presse à épaules machine → `presse_epaules.png`
+### 21. Presse à épaules machine → `presse_epaules.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Presse à épaules machine.
@@ -286,7 +286,7 @@ Lueur orange uniquement sur : deltoids, triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 22. Curl biceps haltères → `curl_biceps.png`
+### 22. Curl biceps haltères → `curl_biceps.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Curl biceps haltères.
@@ -298,7 +298,7 @@ Lueur orange uniquement sur : biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 23. Curl marteau → `curl_marteau.png`
+### 23. Curl marteau → `curl_marteau.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Curl marteau.
@@ -310,7 +310,7 @@ Lueur orange uniquement sur : biceps, forearms.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 24. Curl au pupitre → `curl_pupitre.png`
+### 24. Curl au pupitre → `curl_pupitre.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Curl au pupitre.
@@ -322,7 +322,7 @@ Lueur orange uniquement sur : biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 25. Curl biceps à la poulie → `curl_poulie.png`
+### 25. Curl biceps à la poulie → `curl_poulie.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Curl biceps à la poulie.
@@ -334,7 +334,7 @@ Lueur orange uniquement sur : biceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 26. Extension triceps poulie → `extension_triceps_poulie.png`
+### 26. Extension triceps poulie → `extension_triceps_poulie.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Extension triceps poulie.
@@ -346,7 +346,7 @@ Lueur orange uniquement sur : triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 27. Extension triceps au-dessus de la tête → `extension_triceps_tete.png`
+### 27. Extension triceps au-dessus de la tête → `extension_triceps_tete.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Extension triceps au-dessus de la tête.
@@ -358,7 +358,7 @@ Lueur orange uniquement sur : triceps (long head).
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 28. Extension triceps allongé → `extension_triceps_couche.png`
+### 28. Extension triceps allongé → `extension_triceps_couche.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Extension triceps allongé.
@@ -370,7 +370,7 @@ Lueur orange uniquement sur : triceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 29. Squat arrière à la barre → `squat_barre.png`
+### 29. Squat arrière à la barre → `squat_barre.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Squat arrière à la barre.
@@ -382,7 +382,7 @@ Lueur orange uniquement sur : quadriceps, glutes, core.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 30. Goblet squat → `goblet_squat.png`
+### 30. Goblet squat → `goblet_squat.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Goblet squat.
@@ -394,7 +394,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 31. Squat au poids du corps → `squat_poids_corps.png`
+### 31. Squat au poids du corps → `squat_poids_corps.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Squat au poids du corps.
@@ -406,7 +406,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 32. Fentes arrière haltères → `fentes_arriere.png`
+### 32. Fentes arrière haltères → `fentes_arriere.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Fentes arrière haltères.
@@ -418,7 +418,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 33. Fentes marchées haltères → `fentes_marche.png`
+### 33. Fentes marchées haltères → `fentes_marche.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Fentes marchées haltères.
@@ -430,7 +430,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 34. Squat bulgare → `squat_bulgare.png`
+### 34. Squat bulgare → `squat_bulgare.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Squat bulgare.
@@ -442,7 +442,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 35. Montée sur banc → `step_up.png`
+### 35. Montée sur banc → `step_up.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Montée sur banc.
@@ -466,7 +466,7 @@ Lueur orange uniquement sur : quadriceps, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 37. Leg extension → `leg_extension.png`
+### 37. Leg extension → `leg_extension.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Leg extension.
@@ -478,7 +478,7 @@ Lueur orange uniquement sur : quadriceps.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 38. Leg curl allongé → `leg_curl.png`
+### 38. Leg curl allongé → `leg_curl.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Leg curl allongé.
@@ -490,7 +490,7 @@ Lueur orange uniquement sur : hamstrings.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 39. Soulevé de terre roumain haltères → `souleve_roumain.png`
+### 39. Soulevé de terre roumain haltères → `souleve_roumain.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Soulevé de terre roumain haltères.
@@ -502,7 +502,7 @@ Lueur orange uniquement sur : hamstrings, glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 40. Hip thrust → `hip_thrust.png`
+### 40. Hip thrust → `hip_thrust.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Hip thrust.
@@ -514,7 +514,7 @@ Lueur orange uniquement sur : glutes, hamstrings.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 41. Pont fessier au sol → `pont_fessier.png`
+### 41. Pont fessier au sol → `pont_fessier.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Pont fessier au sol.
@@ -526,7 +526,7 @@ Lueur orange uniquement sur : glutes.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 42. Élévations mollets debout → `mollets_debout.png`
+### 42. Élévations mollets debout → `mollets_debout.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Élévations mollets debout.
@@ -538,7 +538,7 @@ Lueur orange uniquement sur : calves.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 43. Planche sur les avant-bras → `planche.png`
+### 43. Planche sur les avant-bras → `planche.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Planche sur les avant-bras.
@@ -550,7 +550,7 @@ Lueur orange uniquement sur : core (deep abdominals).
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 44. Planche latérale → `planche_laterale.png`
+### 44. Planche latérale → `planche_laterale.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Planche latérale.
@@ -562,7 +562,7 @@ Lueur orange uniquement sur : obliques, core.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 45. Dead bug → `dead_bug.png`
+### 45. Dead bug → `dead_bug.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Dead bug.
@@ -574,7 +574,7 @@ Lueur orange uniquement sur : deep abdominals.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 46. Bird dog → `bird_dog.png`
+### 46. Bird dog → `bird_dog.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Bird dog.
@@ -586,7 +586,7 @@ Lueur orange uniquement sur : lower back, core.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 47. Crunch contrôlé → `crunch.png`
+### 47. Crunch contrôlé → `crunch.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Crunch contrôlé.
@@ -598,7 +598,7 @@ Lueur orange uniquement sur : abdominals (rectus abdominis).
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 48. Relevé de genoux suspendu → `releve_genoux.png`
+### 48. Relevé de genoux suspendu → `releve_genoux.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Relevé de genoux suspendu.
@@ -610,7 +610,7 @@ Lueur orange uniquement sur : abdominals, hip flexors.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 49. Mountain climbers → `mountain_climbers.png`
+### 49. Mountain climbers → `mountain_climbers.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Mountain climbers.
@@ -622,7 +622,7 @@ Lueur orange uniquement sur : core, shoulders.
 Respecte toutes les règles de la mise en place (Axel identique à la planche, fond ivoire uni, carré, tout visible, aucun texte).
 ```
 
-### 50. Vélo stationnaire → `velo_stationnaire.png`
+### 50. Vélo stationnaire → `velo_stationnaire.png` · déjà fait (à refaire si la posture ne va pas)
 
 ```
 Exercice : Vélo stationnaire.

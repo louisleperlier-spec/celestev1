@@ -1,38 +1,353 @@
 {
-  "_note": "Journal des générations ElevenLabs (flow « NÉA · Axel Sport · exercices » BDRM2rFuELnvurnHQmGF, références : asset zc51MmjFoO1NCwzKC4gt personnage, 1mSjsRGdD5W74mBXBn6t 30 mouvements). statut : genere_a_verifier | valide | a_refaire.",
-  "pompes": {
-    "generation": "qqfgx0Xak9sd8FCUPZRJ",
-    "modele": "gemini-3-pro-image",
-    "date": "2026-11-05",
-    "statut": "genere_a_verifier",
-    "remarques": "Position haute (bras tendus) au lieu de la poitrine près du sol ; le tapis disparaît au détourage."
-  },
-  "presse_cuisses": {
-    "generation": "MKCweN6Xwlcc2gDTemZ3",
-    "modele": "gemini-3-pro-image",
-    "date": "2026-11-05",
-    "statut": "genere_a_verifier",
-    "remarques": "Géométrie de la presse à vérifier (orientation de la plateforme, rail du chariot)."
-  },
-  "tirage_vertical": {
-    "generation": "YiEITz7CZsUSdd59ghuf",
-    "modele": "gemini-3-pro-image",
-    "date": "2026-11-05",
-    "statut": "genere_a_verifier",
-    "remarques": "Position de départ (barre en haut) au lieu de la barre tirée à la poitrine ; posture correcte pour le départ."
-  },
+  "_note": "Bibliothèque complète fournie par l'utilisateur (axel-sport-50-exercices.zip, générée avec ChatGPT d'après les prompts du manifeste), le 5 nov. 2026 ; remplace les 5 images du pilote. statut : genere_a_verifier | valide | a_refaire.",
   "developpe_couche_halteres": {
     "generation": null,
-    "modele": "ChatGPT (image)",
+    "modele": "ChatGPT (image), lot de l'utilisateur",
     "date": "2026-11-05",
     "statut": "genere_a_verifier",
-    "remarques": "Bonne posture (haltères au-dessus de la poitrine, pieds au sol) ; assise du banc orange au lieu de graphite, comme sur la planche des 30 mouvements."
+    "remarques": null
+  },
+  "developpe_incline_halteres": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
   },
   "developpe_couche_barre": {
     "generation": null,
-    "modele": "ChatGPT (image)",
+    "modele": "ChatGPT (image), lot de l'utilisateur",
     "date": "2026-11-05",
     "statut": "genere_a_verifier",
-    "remarques": "Barre basse au niveau de la poitrine, prise un peu plus large que les épaules, pieds au sol : correct ; banc à assise orange ; buste un peu relevé, à vérifier (doit être allongé à plat)."
+    "remarques": null
+  },
+  "ecarte_halteres": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "pompes": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "pompes_inclinees": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "dips": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "presse_pectoraux": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "rowing_un_bras": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "rowing_barre": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "tirage_vertical": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "tirage_horizontal": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "tractions": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "tractions_assistees": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "face_pull": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "souleve_terre": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "developpe_epaules": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "elevations_laterales": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "elevations_frontales": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "oiseau_halteres": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "presse_epaules": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "curl_biceps": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "curl_marteau": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Prise paumes vers l'avant comme le curl classique, au lieu de paumes face à face : à vérifier."
+  },
+  "curl_pupitre": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "curl_poulie": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "extension_triceps_poulie": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "extension_triceps_tete": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "extension_triceps_couche": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "squat_barre": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "goblet_squat": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "squat_poids_corps": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "a_refaire",
+    "remarques": "Tête différente des autres (visière et bandeau autres que la planche personnage) : à refaire."
+  },
+  "fentes_arriere": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "fentes_marche": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "squat_bulgare": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "step_up": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "presse_cuisses": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "leg_extension": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "leg_curl": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "souleve_roumain": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "hip_thrust": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "pont_fessier": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "mollets_debout": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "planche": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "planche_laterale": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "dead_bug": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "bird_dog": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "crunch": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "releve_genoux": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": "Suspendu à une barre plutôt qu'à la chaise romaine (la fiche autorise les deux)."
+  },
+  "mountain_climbers": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
+  },
+  "velo_stationnaire": {
+    "generation": null,
+    "modele": "ChatGPT (image), lot de l'utilisateur",
+    "date": "2026-11-05",
+    "statut": "genere_a_verifier",
+    "remarques": null
   }
 }
