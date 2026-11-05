@@ -5,9 +5,9 @@
 export type Nouveaute = { icone: 'chart' | 'flame' | 'star' | 'bell' | 'spark' | 'trophy'; titre: string; texte: string };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'star', titre: 'Zoome sur tes exercices', texte: "Touche l'image pour l'agrandir, et « Aa » pour des textes plus grands." },
   { icone: 'bell', titre: "Ton chrono ne s'arrête plus", texte: 'Vélo, course et rando : le temps continue même écran verrouillé.' },
   { icone: 'chart', titre: 'Un Programme et un Profil refaits', texte: "Ta semaine en un coup d'œil, ta séance exercice par exercice." },
-  { icone: 'spark', titre: 'De nouvelles illustrations', texte: 'Tes coachs à la salle, en étirements, en course et au lit.' },
 ];
 
 /** Doit-on annoncer la mise à jour ? `vue` = dernière version annoncée sur l'appareil (null si jamais). */
