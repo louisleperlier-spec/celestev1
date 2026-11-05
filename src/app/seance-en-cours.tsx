@@ -6,6 +6,7 @@ import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
 
+import { CameraCoach, cameraDisponible } from '@/components/app/CameraCoach';
 import { CoachFace } from '@/components/app/CoachFace';
 import { DemoSheet } from '@/components/app/DemoSheet';
 import { LivePills } from '@/components/app/LivePills';
@@ -29,6 +30,7 @@ import { alpha, colors, ui } from '@/theme';
  * plein écran noir, illustration en grand (toucher = zoom), barre du haut (✕, exercice, « Exercice n/N · Série s/S », pastille ronde du chrono
  * dont l'anneau suit la séance, ou la série chronométrée), message du coach, puis 3 commandes : Pause · grand bouton blanc (action principale) · Démo.
  * Le repos reprend le même style (grand anneau qui se vide). Logique inchangée (`store/seance`), puis récap (vRecap). « Aa » = grands caractères.
+ * « Caméra » (build 35+) : coach caméra avec exosquelette (`CameraCoach`), ses reps comptées valident la série.
  */
 export default function SeanceEnCours() {
   const { jour, cat } = useLocalSearchParams<{ jour?: string; cat?: SeanceId }>();
@@ -41,6 +43,7 @@ export default function SeanceEnCours() {
   const w = seance.w;
   const [demo, setDemo] = useState<ExerciceId | null>(null);
   const [zoom, setZoom] = useState(false);
+  const [camera, setCamera] = useState(false);
   const { grand, basculer } = useLecture();
 
   // launchS : la séance est figée au lancement ; l'horloge tourne chaque seconde.
@@ -140,6 +143,7 @@ export default function SeanceEnCours() {
       {/* Bas : charge, compteur, message, séries et commandes. */}
       <View style={[styles.bas, { paddingBottom: insets.bottom + 14 }]}>
         <View style={styles.outils}>
+          {cameraDisponible() && <Puce icon="camera" label="Caméra" onPress={() => setCamera(true)} />}
           <Puce icon="zoom" label="Agrandir" onPress={() => setZoom(true)} />
           <Puce texte="Aa" label="Grands caractères" actif={grand} onPress={basculer} />
         </View>
@@ -248,6 +252,20 @@ export default function SeanceEnCours() {
       )}
 
       <DemoSheet id={demo} onClose={() => setDemo(null)} />
+      <CameraCoach
+        exo={camera ? it.id : null}
+        cible={it.reps ? it.reps[1] : undefined}
+        onValider={
+          it.reps && !allDone
+            ? (n) => {
+                // Reps comptées par la caméra : la série est notée et validée.
+                seance.fixerReps(n);
+                seance.principal();
+              }
+            : undefined
+        }
+        onClose={() => setCamera(false)}
+      />
       <ZoomExercice id={zoom ? it.id : null} ligne={`${it.sets} séries • ${it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'} • ${ld.txt}`} onClose={() => setZoom(false)} />
     </View>
   );

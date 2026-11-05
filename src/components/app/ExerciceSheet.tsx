@@ -15,6 +15,7 @@ import { taille, useLecture } from '@/store/lecture';
 import { selectProfil, useProfil } from '@/store/profil';
 import { alpha, colors, ui } from '@/theme';
 
+import { CameraCoach, cameraDisponible } from './CameraCoach';
 import { DemoSheet } from './DemoSheet';
 import { ZoneBar } from './ZoneBar';
 import { ZoomExercice } from './ZoomExercice';
@@ -29,12 +30,14 @@ import { ZoomExercice } from './ZoomExercice';
 export function ExerciceSheet({ id, it, onClose }: { id: ExerciceId | null; it?: PlanItem; onClose: () => void }) {
   const [demo, setDemo] = useState<ExerciceId | null>(null);
   const [zoom, setZoom] = useState(false);
+  const [camera, setCamera] = useState(false);
   return (
     <>
-      <Modal visible={!!id && !demo && !zoom} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose} statusBarTranslucent>
-        {id && <Contenu key={id} id={id} it={it} onClose={onClose} onZoom={() => setZoom(true)} onDemo={() => setDemo(id)} />}
+      <Modal visible={!!id && !demo && !zoom && !camera} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose} statusBarTranslucent>
+        {id && <Contenu key={id} id={id} it={it} onClose={onClose} onZoom={() => setZoom(true)} onDemo={() => setDemo(id)} onCamera={() => setCamera(true)} />}
       </Modal>
       <DemoSheet id={demo} onClose={() => setDemo(null)} />
+      <CameraCoach exo={camera ? id : null} onClose={() => setCamera(false)} />
       <ZoomExercice id={zoom ? id : null} ligne={it ? `${it.sets} séries • ${it.sec ? it.sec + ' s' : rj(it.reps!) + ' reps'}` : undefined} onClose={() => setZoom(false)} />
     </>
   );
@@ -43,7 +46,21 @@ export function ExerciceSheet({ id, it, onClose }: { id: ExerciceId | null; it?:
 type Ligne = { titre: string; pastille?: string; alerte?: boolean; texte?: string; valeur?: string };
 type Page = { label: string; titre: string; sous: string; lignes: Ligne[]; bas?: ReactNode };
 
-function Contenu({ id, it: it0, onClose, onZoom, onDemo }: { id: ExerciceId; it?: PlanItem; onClose: () => void; onZoom: () => void; onDemo: () => void }) {
+function Contenu({
+  id,
+  it: it0,
+  onClose,
+  onZoom,
+  onDemo,
+  onCamera,
+}: {
+  id: ExerciceId;
+  it?: PlanItem;
+  onClose: () => void;
+  onZoom: () => void;
+  onDemo: () => void;
+  onCamera: () => void;
+}) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const { grand, basculer } = useLecture();
@@ -86,6 +103,18 @@ function Contenu({ id, it: it0, onClose, onZoom, onDemo }: { id: ExerciceId; it?
       titre: 'Comment le faire',
       sous: 'Trois étapes, dans l’ordre. Touche l’image pour la voir en grand.',
       lignes: e.etapes.map((t, i) => ({ titre: `Étape ${i + 1}`, texte: t, valeur: String(i + 1) })),
+      bas: cameraDisponible() ? (
+        <Pressable accessibilityRole="button" onPress={onCamera} style={({ pressed }) => [styles.ligne, styles.noter, pressed && styles.presse]}>
+          <Icon name="camera" size={18} color={colors.pink} />
+          <View style={styles.flex}>
+            <Text weight="semibold" style={taille(grand, 15, 20)}>
+              Filmer mon mouvement
+            </Text>
+            <Text style={[styles.ligneTexte, taille(grand, 13, 18)]}>La caméra suit ton squelette et corrige ta posture en direct.</Text>
+          </View>
+          <Icon name="right" size={16} color={colors.textSecondary} />
+        </Pressable>
+      ) : undefined,
     },
     {
       label: 'À savoir',

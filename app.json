@@ -13,6 +13,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSSupportsLiveActivities": true,
+        "NSCameraUsageDescription": "NÉA utilise la caméra pendant tes exercices pour suivre tes mouvements en direct, compter tes répétitions et corriger ta posture. Rien n'est filmé ni envoyé : tout reste sur ton iPhone.",
         "NSAlarmKitUsageDescription": "NÉA programme ton réveil sur l'iPhone, même en mode silencieux, à l'heure choisie dans ta partie Sommeil."
       },
       "usesAppleSignIn": true,

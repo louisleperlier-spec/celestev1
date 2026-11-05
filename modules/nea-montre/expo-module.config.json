@@ -1,7 +1,14 @@
 {
-  "platforms": ["apple"],
+  "platforms": [
+    "apple"
+  ],
   "apple": {
-    "modules": ["NeaMontreModule"],
-    "appDelegateSubscribers": ["NeaMontreAppDelegate"]
+    "modules": [
+      "NeaMontreModule",
+      "NeaCameraModule"
+    ],
+    "appDelegateSubscribers": [
+      "NeaMontreAppDelegate"
+    ]
   }
 }

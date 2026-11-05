@@ -106,6 +106,15 @@ ou la série chronométrée, toucher = pause), FC / VFC / kcal, puces Agrandir e
 séries en traits touchables, commandes Pause · grand bouton blanc (action principale + libellé) · Démo ; repos = grand anneau qui se vide, conseil du coach,
 « Passer le repos » blanc ; logique `store/seance` inchangée.
 
+**Coach caméra (demandé par l'utilisateur, nov. 2026, build 35+)** : caméra en direct + **exosquelette** : `modules/nea-montre/ios/CameraPose.swift`
+(module `NeaCamera`, vue native `NeaPoseView` : AVCaptureSession avant / arrière, Apple Vision `VNDetectHumanBodyPoseRequest` sur l'iPhone, 15 articulations
+lissées, squelette orange dessiné en natif, os en rouge pour les articulations en erreur (`alerte`), points envoyés au JS 15 fois / s `onPose` ; rien n'est
+filmé ni envoyé ; `NSCameraUsageDescription`) ; `lib/mouvement.ts` (pur) : angle suivi par profil (pompes, dips, développés, tirages, tractions, curls,
+élévations, squats, fentes, soulevés, ponts, planche en tenue), rep = repos → effort → repos, rep incomplète non comptée, corrections (gainage, buste,
+genoux en dedans, coudes collés, tempo trop rapide) ; `components/app/CameraCoach.tsx` (plein écran : compteur « n / cible », propres / incomplètes,
+jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `ExpoSpeech` existe, caméra avant / arrière, Recommencer, « Valider n reps »
+→ `fixerReps` + série validée) ; entrées : puce « Caméra » de la séance en cours et « Filmer mon mouvement » (fiche, Le mouvement), cachées sans le module.
+
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher

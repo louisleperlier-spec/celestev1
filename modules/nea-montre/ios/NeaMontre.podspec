@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.swift_version  = '5.9'
   s.source         = { git: 'https://github.com/louisleperlier-spec/celestev1.git' }
   s.dependency 'ExpoModulesCore'
-  s.frameworks     = 'WatchConnectivity', 'WidgetKit', 'UserNotifications', 'HealthKit', 'ActivityKit'
+  s.frameworks     = 'WatchConnectivity', 'WidgetKit', 'UserNotifications', 'HealthKit', 'ActivityKit', 'AVFoundation', 'Vision'
   # AlarmKit n'existe qu'à partir d'iOS 26 : lien faible pour que l'app démarre sur les iPhone plus anciens.
   s.weak_frameworks = 'AlarmKit'
   s.static_framework = true

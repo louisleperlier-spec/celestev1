@@ -72,6 +72,8 @@ type Store = {
   /** Bouton principal : terminer la série, lancer le chrono, exercice suivant, terminer. */
   principal: () => void;
   reps: (delta: 1 | -1) => void;
+  /** Reps comptées par la caméra (coach caméra). */
+  fixerReps: (n: number) => void;
   choisirSerie: (i: number) => void;
   passerRepos: () => void;
   pause: () => void;
@@ -218,6 +220,7 @@ export const useSeance = create<Store>()((set, get) => {
         return endSet(w);
       }),
     reps: (delta) => maj((w) => ({ ...w, reps: Math.max(1, Math.min(30, w.reps + delta)) })),
+    fixerReps: (n) => maj((w) => ({ ...w, reps: Math.max(1, Math.min(60, Math.round(n))) })),
     choisirSerie: (i) => maj((w) => ({ ...w, set: i, phase: startPhase(w.s.items[w.ex]) })),
     passerRepos: () => maj((w) => ({ ...w, phase: startPhase(w.s.items[w.ex]) })),
     pause: () => maj((w) => ({ ...w, paused: !w.paused })),

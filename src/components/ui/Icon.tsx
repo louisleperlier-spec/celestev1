@@ -96,6 +96,13 @@ const ICONS = {
       <Path d="M20 20l-3.5-3.5" />
     </>
   ),
+  /** Caméra (coach caméra). */
+  camera: (
+    <>
+      <Path d="M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <Circle cx="12" cy="13" r="3.5" />
+    </>
+  ),
   /** Loupe avec un + (agrandir une illustration). */
   zoom: (
     <>
