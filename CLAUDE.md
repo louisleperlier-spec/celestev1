@@ -119,6 +119,10 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 `credentials.json` + `credentials/` locaux (ignorés par git), `credentialsSource: local` et clé d'envoi ajoutés à `eas.json` le temps du build puis retirés.
 **Version 1.0.1 (5 nov. 2026)** : le build 37 (1.0.0) a été refusé par Apple (ITMS-90186 / 90062 : la 1.0.0 est déjà approuvée) ; `app.json` et les
 `Info.plist` de la montre, des widgets et des complications passent à 1.0.1 (à garder égaux) ; `runtimeVersion` fixe, les mises à jour EAS restent compatibles.
+**Version 1.0.1 préparée pour l'App Store (5 nov. 2026)** : build 38 = canal `preview` (TestFlight seulement) ; **build 1.0.1 (39) profil `production`**
+(canal `production`) envoyé et VALID, attaché à la version 1.0.1 (`d57ba29f-…`, sortie après approbation), nouveautés fr-CA (coach caméra, GPS écran
+verrouillé, séance, fiches, zoom, note) et note de vérification (caméra analysée sur l'iPhone, localisation « Toujours » seulement pendant une sortie
+lancée par l'utilisateur, indicateur bleu) ; brouillon de soumission `fd78d953-…` avec la version : **reste à cliquer « Soumettre pour vérification »**.
 
 **Bibliothèque Axel Sport (nov. 2026, planches de l'utilisateur, en cours)** : remplacer les 50 illustrations d'exercices par la mascotte Axel Sport ;
 `docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
