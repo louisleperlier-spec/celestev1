@@ -107,7 +107,9 @@ export function CarteProgramme() {
   );
 }
 
-const badge = (it: PlanItem) => `${it.sets}×${it.reps ? it.reps[1] : `${it.sec} s`}`;
+/** « 1×15 min » plutôt que « 1×900 s » pour les longues tenues (vélo, rameur). */
+const duree = (sec: number) => (sec >= 120 && sec % 60 === 0 ? `${sec / 60} min` : `${sec} s`);
+const badge = (it: PlanItem) => `${it.sets}×${it.reps ? it.reps[1] : duree(it.sec ?? 0)}`;
 
 /**
  * Séance du jour (ou la prochaine) : titre de section, carte d'en-tête (scène du coach, durée, exercices, à la maison),
@@ -178,7 +180,7 @@ export function Aujourdhui() {
             <Appui key={i} accessibilityRole="button" accessibilityLabel={`${exercice(it.id).nom}, ${badge(it)}`} onPress={() => setExo(it)}>
               <View style={styles.carte}>
                 <View style={styles.carteFond}>
-                  <Image source={EXERCICE_IMAGES[it.id]} style={styles.carteImg} contentFit="contain" contentPosition="top" />
+                  <Image source={EXERCICE_IMAGES[it.id]} style={styles.carteImg} contentFit="contain" />
                 </View>
                 <LinearGradient
                   colors={[alpha(colors.bgAlt, 0.06), 'transparent', alpha(colors.bgAlt, 0.35), alpha(colors.bgAlt, 0.88)]}
@@ -267,8 +269,9 @@ const styles = StyleSheet.create({
     borderColor: alpha(colors.text, 0.12),
     boxShadow: `0 5px 9px ${alpha(colors.bgAlt, 0.34)}`,
   },
-  carteFond: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: colors.surface2, paddingTop: 22, paddingHorizontal: 8 },
-  carteImg: { width: '100%', height: CARTE_H * 0.62 },
+  carteFond: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: colors.surface2, paddingTop: 36, paddingHorizontal: 10 },
+  // Image centrée entre la pastille et le nom (les poses à l'horizontale ne restent plus collées en haut).
+  carteImg: { width: '100%', height: CARTE_H - 36 - 78 },
   badge: {
     position: 'absolute',
     top: 10,
