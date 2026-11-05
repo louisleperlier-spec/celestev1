@@ -4,7 +4,7 @@
 import type { ExpressionMascotte } from '@/lib/enrage';
 import type { ImageSourcePropType } from 'react-native';
 
-import { AXEL_EXERCICE_IMAGES } from './exercicesAxel';
+import { AXEL_COMPLET, AXEL_EXERCICE_IMAGES } from './exercicesAxel';
 import type { CoachId, ExerciceId } from './types';
 
 /** Anciennes illustrations (`assets/exercices/<id>.webp`) : repli tant que l'image Axel Sport de l'exercice n'existe pas. */
@@ -61,8 +61,10 @@ const ANCIENNES_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = {
   velo_stationnaire: require('@/assets/exercices/velo_stationnaire.webp'),
 };
 
-/** Illustration de chaque exercice : Axel Sport (`assets/exercices/axel/<id>.webp`) si elle existe, sinon l'ancienne. */
-export const EXERCICE_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = { ...ANCIENNES_IMAGES, ...AXEL_EXERCICE_IMAGES };
+/** Illustration de chaque exercice : Axel Sport (`assets/exercices/axel/<id>.webp`) une fois les 50 prêtes (`AXEL_COMPLET`), sinon l'ancienne. */
+export const EXERCICE_IMAGES: Readonly<Record<ExerciceId, ImageSourcePropType>> = AXEL_COMPLET
+  ? { ...ANCIENNES_IMAGES, ...AXEL_EXERCICE_IMAGES }
+  : ANCIENNES_IMAGES;
 
 /** Mascotte entière (`corps`, Axel = nouvelle version avec bandeau) et avatar (`tete`) de chaque coach. */
 export const COACH_IMAGES: Readonly<Record<CoachId, { corps: ImageSourcePropType; tete: ImageSourcePropType }>> = {

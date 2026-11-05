@@ -123,7 +123,7 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 **Bibliothèque Axel Sport (nov. 2026, planches de l'utilisateur, en cours)** : remplacer les 50 illustrations d'exercices par la mascotte Axel Sport ;
 `docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
 journal des générations, références, planches par programme et catalogue) ; images dans `assets/exercices/axel/<id>.webp` (détourées, transparentes),
-`src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts`, `EXERCICE_IMAGES` = Axel si présent sinon l'ancienne image (repli) ;
+`src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts` ; `EXERCICE_IMAGES` ne prend les images Axel qu'une fois les 50 prêtes (`AXEL_COMPLET`), sinon les anciennes ;
 **5 / 50 produites** (pompes, presse à cuisses, tirage vertical via ElevenLabs ; développés couchés haltères et barre via ChatGPT ; à vérifier), le reste bloqué par la limite quotidienne d'images du plan gratuit ElevenLabs ;
 ne pas publier tant que la bibliothèque mélange anciennes et nouvelles images.
 

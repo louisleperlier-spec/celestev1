@@ -5,10 +5,10 @@
 export type Nouveaute = { icone: 'chart' | 'flame' | 'star' | 'bell' | 'spark' | 'trophy'; titre: string; texte: string };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'spark', titre: 'Le coach caméra', texte: 'Filme-toi : NÉA suit ton squelette, compte tes reps et corrige ta posture.' },
+  { icone: 'bell', titre: 'Ta sortie suit même écran verrouillé', texte: 'Vélo, course et rando : le chrono et le GPS continuent.' },
   { icone: 'flame', titre: 'Une séance en cours refaite', texte: "L'exercice en grand, un gros bouton pour valider ta série." },
-  { icone: 'spark', titre: 'Des fiches exercice refaites', texte: 'Ton plan, le mouvement en 3 étapes, puis ce que ça travaille.' },
   { icone: 'star', titre: 'Zoome sur tes exercices', texte: "Touche l'image pour l'agrandir, et « Aa » pour des textes plus grands." },
-  { icone: 'bell', titre: "Ton chrono ne s'arrête plus", texte: 'Vélo, course et rando : le temps continue même écran verrouillé.' },
 ];
 
 /** Doit-on annoncer la mise à jour ? `vue` = dernière version annoncée sur l'appareil (null si jamais). */

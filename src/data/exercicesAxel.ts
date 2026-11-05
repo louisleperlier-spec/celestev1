@@ -11,3 +11,6 @@ export const AXEL_EXERCICE_IMAGES: Readonly<Partial<Record<ExerciceId, ImageSour
   tirage_vertical: require('@/assets/exercices/axel/tirage_vertical.webp'),
   presse_cuisses: require('@/assets/exercices/axel/presse_cuisses.webp'),
 };
+
+/** Les images Axel ne s'affichent qu'une fois la bibliothèque complète (pas de mélange avec les anciennes dans l'app publiée). */
+export const AXEL_COMPLET = false;

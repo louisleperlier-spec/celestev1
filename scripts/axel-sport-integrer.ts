@@ -24,6 +24,9 @@ import type { ExerciceId } from './types';
 export const AXEL_EXERCICE_IMAGES: Readonly<Partial<Record<ExerciceId, ImageSourcePropType>>> = {
 ${lignes}
 };
+
+/** Les images Axel ne s'affichent qu'une fois la bibliothèque complète (pas de mélange avec les anciennes dans l'app publiée). */
+export const AXEL_COMPLET = ${ordre.length === EXERCICES.length};
 `,
 );
 console.log(`${ordre.length} / ${EXERCICES.length} exercices avec une illustration Axel Sport`);
