@@ -49,3 +49,7 @@ targets/watch-widgets/Assets.xcassets
 
 # Démos du skill d'animation (vidéos et GIF, ~10 Mo) : inutiles au skill
 .agents/skills/rossark-motion-skill/demo/
+
+# Identifiants de build locaux (jamais dans git)
+credentials.json
+credentials/
