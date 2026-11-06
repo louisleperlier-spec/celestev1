@@ -35,6 +35,11 @@ en grand avec reflet au sol, bulle sur le corps sous le visage, nom seul à sa c
 pastille claire du ruban à halo de la couleur du coach ; entrées jouées une seule fois (`useEntree`, les `entering` se rejouaient au changement de coach), nom à sa couleur, ruban en arc avec les 4 têtes, « Comparer les 4 coachs ») → **engagement par appui long** (3 s sur la tête du coach,
 3 engagements qui s'allument) → préparation → prêt ; 7 segments ; `niveau`, `lieu`, `rythme`, `profil` et `Regle.tsx` retirés ; `objectifs` ne
 sert plus qu'au Profil ; pas d'`expo-haptics` (module natif absent du build 34).
+**Onboarding viral (audit du 6 nov. 2026, `docs/audit-onboarding.md`)** : dans la discussion, après les objectifs, **le déclic**
+« qu'est-ce qui t'a fait arrêter, les fois d'avant ? » (`FREINS` de `lib/declic.ts`, `freins` du profil, « première fois » exclusive) → NÉA répond
+« Ce n'est pas un manque de volonté » + ce qui change (fonctions réelles seulement) ; « Ce qu'on règle » dans le résumé ; écran prêt :
+« Cette fois, c'est différent » (freins barrés + solution) et **Ton défi NÉA** (profil tiré du 1er objectif, semaines / séances / heures du vrai plan,
+« Défier un ami » = `Share` avec le lien App Store).
 **Onboarding refait (maquettes, sept. 2026)** : petit titre en capitales (« TON EXPÉRIENCE »…), cartes à pastille de sélection (`Choices.tsx` :
 `BigChoice`, `Coche`, `NombresSegmentes`, `PetitChoix`, `ListeCoches`, `InfoCarte`), niveau en barres, lieu + « Ton matériel » (matériel du lieu
 d'après `GEAR`, pas de choix libre : `buildPlan` inchangé), rythme en bloc 2–7, poids sur une règle (`Regle.tsx`, affichage kg / lb, stocké en kg),

@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Glow, Icon, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data/images';
+import { defiChiffres, FREINS, messageDefi, profilAthlete } from '@/lib/declic';
 import { coachById, LVLN, lvlN, nextSession, prog } from '@/lib/plan';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
@@ -80,6 +81,67 @@ export default function Pret() {
           </View>
         </View>
 
+        {/* Ce que le programme règle (réponses du « déclic » de la discussion). */}
+        {profil.freins.some((f) => f !== 'debut') && (
+          <View style={styles.carte}>
+            <Text weight="semibold" style={styles.h3}>
+              Cette fois, c&apos;est différent
+            </Text>
+            {FREINS.filter(([k]) => k !== 'debut' && profil.freins.includes(k)).map(([k, frein, reponse]) => (
+              <View key={k} style={styles.regle}>
+                <View style={styles.regleCoche}>
+                  <Icon name="check" size={14} color={colors.onPrimary} strokeWidth={2.6} />
+                </View>
+                <View style={styles.flex}>
+                  <Text style={styles.regleFrein}>{frein}</Text>
+                  <Text style={styles.regleTxt}>{reponse}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Le défi à partager : la boucle virale de l'onboarding (on invite ses amis à suivre le même défi). */}
+        <View style={[styles.carte, styles.defi]}>
+          <Text style={styles.defiSur}>TON DÉFI NÉA</Text>
+          <Text style={styles.defiProfil}>Profil {profilAthlete(profil.goals)}</Text>
+          <View style={styles.defiChiffres}>
+            {(() => {
+              const d = defiChiffres(profil.days, profil.dur, pr.sem);
+              return (
+                <>
+                  <Chiffre fort={`${d.semaines}`} sous="semaines" />
+                  <Chiffre fort={`${d.seances}`} sous="séances" />
+                  <Chiffre fort={`${d.heures} h`} sous="d'entraînement" />
+                </>
+              );
+            })()}
+          </View>
+          <Text style={styles.defiTxt}>Lance le défi à un ami : à deux, on lâche moins.</Text>
+          <Pressable
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.partager, pressed && { opacity: 0.8 }]}
+            onPress={() =>
+              void Share.share({
+                message: messageDefi({
+                  prenom: profil.name,
+                  profil: profilAthlete(profil.goals),
+                  programme: pr.nom,
+                  days: profil.days,
+                  dur: profil.dur,
+                  semaines: pr.sem,
+                  coach: c.nom,
+                }),
+              }).catch(() => undefined)
+            }
+          >
+            <Icon name="users" size={18} />
+            <Text weight="semibold" style={styles.partagerTxt}>
+              Défier un ami
+            </Text>
+          </Pressable>
+        </View>
+
         <View style={styles.carte}>
           <Text weight="semibold" style={styles.h3}>
             Ta première séance
@@ -110,6 +172,17 @@ export default function Pret() {
         <Button label="Découvrir mon programme" arrow onPress={() => router.push({ pathname: '/plus', params: { suite: 'compte' } })} />
       </View>
     </SafeAreaView>
+  );
+}
+
+function Chiffre({ fort, sous }: { fort: string; sous: string }) {
+  return (
+    <View style={styles.chiffre}>
+      <Text weight="bold" style={styles.chiffreFort}>
+        {fort}
+      </Text>
+      <Text style={styles.statSous}>{sous}</Text>
+    </View>
   );
 }
 
@@ -167,5 +240,18 @@ const styles = StyleSheet.create({
   premiereSous: { fontSize: 15, lineHeight: 20, color: colors.textSecondary, marginTop: 2 },
   modifier: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 12, paddingVertical: 16, paddingHorizontal: 18, borderRadius: 16, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border },
   modifierTxt: { flex: 1, fontSize: 17, lineHeight: 22 },
+  regle: { flexDirection: 'row', gap: 12, marginTop: 14 },
+  regleCoche: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.pink, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  regleFrein: { fontSize: 14, lineHeight: 18, color: colors.textSecondary, textDecorationLine: 'line-through' },
+  regleTxt: { fontSize: 16, lineHeight: 21, marginTop: 2 },
+  defi: { borderColor: colors.pink },
+  defiSur: { ...fonts.semibold, fontSize: 12, lineHeight: 16, letterSpacing: 1.6, color: colors.pink },
+  defiProfil: { ...fonts.bold, fontSize: 24, lineHeight: 30, marginTop: 4 },
+  defiChiffres: { flexDirection: 'row', marginTop: 14 },
+  chiffre: { flex: 1 },
+  chiffreFort: { fontSize: 26, lineHeight: 32, fontVariant: ['tabular-nums'] },
+  defiTxt: { fontSize: 15, lineHeight: 20, color: colors.textSecondary, marginTop: 14 },
+  partager: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 24, marginTop: 14, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border },
+  partagerTxt: { fontSize: 16, lineHeight: 21 },
   foot: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 12 },
 });

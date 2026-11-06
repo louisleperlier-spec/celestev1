@@ -2,6 +2,7 @@
  * État de l'utilisateur, sauvegardé sur l'appareil.
  * Reprend les champs de l'état `S` du prototype (`DEF`) utiles à l'onboarding et au programme.
  */
+import type { FreinId } from '@/lib/declic';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMemo } from 'react';
 import { create } from 'zustand';
@@ -104,6 +105,8 @@ type Etat = Profil & {
   /** Offre de sortie : fin du compte à rebours de 10 min, et refusée (proposée une seule fois). */
   exitUntil: number;
   exitDeclined: boolean;
+  /** Ce qui a fait arrêter la personne avant (onboarding, « déclic »). */
+  freins: FreinId[];
   /** Le coach recommandé a déjà été appliqué à l'écran « Choisis ton coach » (non sauvegardé). */
   obCoachSet: boolean;
 };
@@ -169,6 +172,7 @@ const defauts = (): Etat => ({
   onboarded: false,
   coach: 'axel',
   goals: [],
+  freins: [],
   level: 'deb',
   gear: 'maison',
   days: 4 as Jours,
@@ -365,6 +369,7 @@ export const etatSauvegarde = (s: Etat): EtatSauvegarde => ({
   ...selectProfil(s),
   onboarded: s.onboarded,
   name: s.name,
+  freins: s.freins ?? [],
   health: s.health,
   wlog: s.wlog,
   logs: s.logs,

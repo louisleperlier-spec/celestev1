@@ -10,6 +10,7 @@ import { ArcRespire, Bulle, CarteResume, FENETRE, Pastille, useDiscussion } from
 import { ObBar } from '@/components/onboarding/ObScaffold';
 import { Button, Text } from '@/components/ui';
 import { COACH_IMAGES, GEAR, GOALS, MATERIEL, type LieuOnboarding } from '@/data';
+import { FREINS, reponseFreins, type FreinId } from '@/lib/declic';
 import { LVLN, lvlN, type Duree, type Jours, type NiveauId } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { alpha, colors } from '@/theme';
@@ -32,8 +33,12 @@ const LIEU_COURT: Record<LieuOnboarding, string> = {
 const JOURS: readonly Jours[] = [2, 3, 4, 5, 6, 7];
 const DUREES: readonly Duree[] = [20, 30, 45, 60];
 
-type Question = 'objectifs' | 'niveau' | 'lieu' | 'jours' | 'duree' | 'resume';
-const QUESTIONS: readonly Question[] = ['objectifs', 'niveau', 'lieu', 'jours', 'duree', 'resume'];
+type Question = 'objectifs' | 'freins' | 'niveau' | 'lieu' | 'jours' | 'duree' | 'resume';
+const QUESTIONS: readonly Question[] = ['objectifs', 'freins', 'niveau', 'lieu', 'jours', 'duree', 'resume'];
+
+/** « C'est ma première fois » exclut les autres réponses (et inversement). */
+const basculerFrein = (l: readonly FreinId[], k: FreinId): FreinId[] =>
+  l.includes(k) ? l.filter((x) => x !== k) : k === 'debut' ? ['debut'] : [...l.filter((x) => x !== 'debut'), k];
 
 const materiel = (g: LieuOnboarding) => GEAR[g].map((m) => MATERIEL[m].toLowerCase()).join(', ');
 const commentaireRythme = (days: number) =>
@@ -53,8 +58,12 @@ function lignes(q: Question): string[] {
         'Quelques questions et je construis ton programme.',
         "Qu'est-ce qui te motive ? Choisis un ou plusieurs objectifs.",
       ];
-    case 'niveau':
-      return ['Bien noté.', 'Quel est ton niveau ?'];
+    case 'freins':
+      return ['Bien noté.', "Une question honnête : qu'est-ce qui t'a fait arrêter, les fois d'avant ?"];
+    case 'niveau': {
+      const r = reponseFreins(s.freins, s.name);
+      return [...(r.length ? r : ['Bien noté.']), 'Quel est ton niveau ?'];
+    }
     case 'lieu':
       return ["Où veux-tu t'entraîner ?"];
     case 'jours':
@@ -154,6 +163,32 @@ export default function Discussion() {
                   />
                 </>
               )}
+              {q === 'freins' && (
+                <>
+                  {FREINS.map(([k, label], i) => (
+                    <Pastille
+                      key={k}
+                      index={i}
+                      label={label}
+                      on={p.freins.includes(k)}
+                      onPress={() => p.set({ freins: basculerFrein(p.freins, k) })}
+                    />
+                  ))}
+                  <Button
+                    label="Valider"
+                    arrow
+                    disabled={!p.freins.length}
+                    style={styles.valider}
+                    onPress={() =>
+                      suivant(
+                        FREINS.filter(([k]) => p.freins.includes(k))
+                          .map(([, l]) => l)
+                          .join(' · '),
+                      )
+                    }
+                  />
+                </>
+              )}
               {q === 'niveau' &&
                 NIVEAUX.map(([k, desc], i) => (
                   <Pastille
@@ -215,6 +250,9 @@ export default function Discussion() {
                       titre: 'Objectifs',
                       valeurs: GOALS.filter(([k]) => p.goals.includes(k)).map(([, l]) => l),
                     },
+                    ...(p.freins.some((f) => f !== 'debut')
+                      ? [{ titre: "Ce qu'on règle", valeurs: FREINS.filter(([k]) => k !== 'debut' && p.freins.includes(k)).map(([, l]) => l) }]
+                      : []),
                     { titre: 'Niveau', valeurs: [LVLN[lvlN(p.level) - 1]] },
                     { titre: 'Lieu', valeurs: [LIEU_COURT[p.gear]] },
                     {
