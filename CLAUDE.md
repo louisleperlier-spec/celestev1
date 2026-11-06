@@ -127,7 +127,7 @@ jauge d'amplitude, message du coach, voix `expo-speech` chargée seulement si `E
 **Version 1.0.1 préparée pour l'App Store (5 nov. 2026)** : build 38 = canal `preview` (TestFlight seulement) ; **build 1.0.1 (39) profil `production`**
 (canal `production`) envoyé et VALID, attaché à la version 1.0.1 (`d57ba29f-…`, sortie après approbation), nouveautés fr-CA (coach caméra, GPS écran
 verrouillé, séance, fiches, zoom, note) et note de vérification (caméra analysée sur l'iPhone, localisation « Toujours » seulement pendant une sortie
-lancée par l'utilisateur, indicateur bleu) ; **soumise à la vérification d'Apple le 5 nov. 2026 à 15 h 51** (soumission `fd78d953-…`, WAITING_FOR_REVIEW) ; après la sortie : publier la mise à jour production (correction des squats).
+lancée par l'utilisateur, indicateur bleu) ; **soumise à la vérification d'Apple le 5 nov. 2026 à 15 h 51** (soumission `fd78d953-…`) ; **approuvée le 6 nov. 2026** (sortie automatique, `AFTER_APPROVAL`) ; après la sortie : publier la mise à jour production (correction des squats).
 
 **Bibliothèque Axel Sport (nov. 2026, planches de l'utilisateur, en cours)** : remplacer les 50 illustrations d'exercices par la mascotte Axel Sport ;
 `docs/axel-sport/` (LISEZMOI, inventaire réel tiré de `buildPlan` sur toutes les combinaisons + 41 séances prêtes, manifeste avec un prompt par exercice,
