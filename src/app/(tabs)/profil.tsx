@@ -20,7 +20,7 @@ import { COACH_IMAGES, GOALS } from '@/data';
 import { MASCOTTE_IMAGES } from '@/data/images';
 import { dec } from '@/lib/charges';
 import { ordreAccueil } from '@/lib/accueil';
-import { expressionEnrage, messageEnrage, NB_MESSAGES_ENRAGE, NIVEAUX_ENRAGE, type NiveauEnrage } from '@/lib/enrage';
+import { enrageActif, expressionEnrage, messageEnrage, NB_MESSAGES_ENRAGE, NIVEAUX_ENRAGE, type NiveauEnrage } from '@/lib/enrage';
 import type { AlertesSante, ReglagesNotifs } from '@/lib/notifs';
 import { testerAlertes } from '@/store/alertes';
 import { annoncer, demanderAutorisation } from '@/store/notifs';
@@ -179,25 +179,25 @@ export default function Profil() {
         <View style={styles.enrageTete}>
           <Glow width={200} height={160} intensity={0.45} />
           <Image
-            source={MASCOTTE_IMAGES[p.nset.enrage ? expressionEnrage('seance', p.nset.enrageNiv ?? 'venere') : 'fatigue']}
+            source={MASCOTTE_IMAGES[enrageActif(p.nset) ? expressionEnrage('seance', p.nset.enrageNiv ?? 'venere') : 'fatigue']}
             style={styles.enrageImg}
             contentFit="contain"
           />
-          <Text style={styles.enrageBulle}>{p.nset.enrage ? 'Je te surveille. 👀' : 'Je dors… pour l’instant. 💤'}</Text>
+          <Text style={styles.enrageBulle}>{enrageActif(p.nset) ? 'Je te surveille. 👀' : 'Je dors… pour l’instant. 💤'}</Text>
         </View>
         <Section titre="Axel Enragé 😤">
           <Bascule
             icon="flame"
             titre="Mode Sans excuses"
             sous={`Axel te relance (19 h 30, 21 h, série en danger, absence) avec ${NB_MESSAGES_ENRAGE} messages. Il se calme si ton cœur demande du repos.`}
-            on={!!p.nset.enrage}
+            on={enrageActif(p.nset)}
             onChange={(v) => {
               alerte({ enrage: v });
               if (v) void demanderAutorisation();
               toast(v ? 'Axel est réveillé. Bonne chance. 😤' : 'Axel retourne se calmer. 😌');
             }}
           />
-          {!!p.nset.enrage && (
+          {enrageActif(p.nset) && (
             <View style={styles.enrage}>
               <Segmente
                 options={(Object.keys(NIVEAUX_ENRAGE) as NiveauEnrage[]).map((k) => [k, NIVEAUX_ENRAGE[k].nom] as [NiveauEnrage, string])}
@@ -207,7 +207,7 @@ export default function Profil() {
               <Text style={styles.enrageDesc}>{NIVEAUX_ENRAGE[p.nset.enrageNiv ?? 'venere'].desc}</Text>
             </View>
           )}
-          {!!p.nset.enrage && (
+          {enrageActif(p.nset) && (
             <Ligne
               icon="flame"
               titre="Me faire secouer maintenant"

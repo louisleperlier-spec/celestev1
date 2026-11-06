@@ -7,6 +7,7 @@ import { Button, Glow, Icon, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data/images';
 import { defiChiffres, FREINS, messageDefi, profilAthlete } from '@/lib/declic';
 import { coachById, LVLN, lvlN, nextSession, prog } from '@/lib/plan';
+import { demanderAutorisation } from '@/store/notifs';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
 
@@ -169,7 +170,15 @@ export default function Pret() {
       </ScrollView>
       <View style={styles.foot}>
         {/* Paywall, puis création de compte (data-obpay du prototype). */}
-        <Button label="Découvrir mon programme" arrow onPress={() => router.push({ pathname: '/plus', params: { suite: 'compte' } })} />
+        <Button
+          label="Découvrir mon programme"
+          arrow
+          onPress={async () => {
+            // Axel te relance dès le premier jour : l'autorisation des notifications est demandée ici, une seule fois.
+            await demanderAutorisation().catch(() => undefined);
+            router.push({ pathname: '/plus', params: { suite: 'compte' } });
+          }}
+        />
       </View>
     </SafeAreaView>
   );

@@ -15,7 +15,7 @@ import { sessionForDay } from '@/lib/semaine';
 import { baseHrv, hm, lastNight, sleepScore } from '@/lib/sommeil';
 import { DAYSPOS } from '@/data/templates';
 import type { JoursParSemaine } from '@/data/types';
-import { expressionEnrage, messageEnrage, type ExpressionMascotte, type MomentEnrage } from '@/lib/enrage';
+import { enrageActif, expressionEnrage, messageEnrage, type ExpressionMascotte, type MomentEnrage } from '@/lib/enrage';
 import { serie as serieDe } from '@/lib/gel';
 import { dayKey } from '@/lib/xp';
 
@@ -171,7 +171,7 @@ export async function reprogrammer(now: Date = new Date()) {
       }
     }
   }
-  if (st.nset.enrage) await programmerEnrage(now);
+  if (enrageActif(st.nset)) await programmerEnrage(now);
   if (st.nset.bed) {
     await planifier('fatigue', {
       content: contenu(notifCoucher(st.nset)),
@@ -186,9 +186,13 @@ export async function reprogrammer(now: Date = new Date()) {
   }
 }
 
+/** Jours d'avance programmés (iOS garde 64 notifications en attente au plus ; tout est reposé à chaque ouverture). */
+const JOURS_ENRAGE = 3;
+
 /**
- * Axel Enragé (opt-in) : relances satiriques les jours de séance (19 h 30 puis 21 h), série en danger (20 h 30) et absence
- * (3 puis 5 jours sans activité, à midi). Rien aujourd'hui si une activité est faite ; se calme si la nuit est en surcharge.
+ * Axel Enragé (actif par défaut, demande de l'utilisateur du 6 nov. 2026 : « tous les jours, tout le temps ») : jours de séance
+ * à 9 h, 12 h 30, 16 h, 19 h 30 et 21 h, série en danger à 20 h 30, jours de repos à 10 h et 17 h 30, absence (3 puis 5 jours, midi).
+ * Rien le jour même une fois une activité faite (tout est reprogrammé quand le journal change) ; se calme si la nuit est en surcharge.
  */
 async function programmerEnrage(now: Date) {
   const st = useProfil.getState();
@@ -208,18 +212,26 @@ async function programmerEnrage(now: Date) {
   const fatigue = !!b && b.etat === 'surcharge' && +now - +new Date(b.d) < 864e5;
   const sem = semaineDe(st);
   const auj = todayIdx();
-  for (let k = 0; k < 7; k++) {
+  for (let k = 0; k < JOURS_ENRAGE; k++) {
     const jour = new Date(now);
     jour.setDate(now.getDate() + k);
     if (k === 0 && bougeAuj) continue;
-    const s = sessionForDay(sem, (auj + k) % 7);
-    if (!s || s.ride || !s.items.length) continue;
     if (k === 0 && fatigue) {
       await poser(a(jour, 19, 30), 'repos', { date: jour }, { act: 'sleep' });
       continue;
     }
+    const s = sessionForDay(sem, (auj + k) % 7);
+    if (!s || s.ride || !s.items.length) {
+      // Jour de repos : il pousse quand même à bouger un peu.
+      await poser(a(jour, 10, 0), 'jourOff', { prenom: st.name, date: jour }, { act: 'accueil' });
+      await poser(a(jour, 17, 30), 'jourOff', { prenom: st.name, date: new Date(+jour + 864e5 * 3) }, { act: 'accueil' });
+      continue;
+    }
     const v = { prenom: st.name, seance: s.titre, n: Math.round(s.min), date: jour };
     const data = { act: 'seance', d: String((auj + k) % 7) };
+    await poser(a(jour, 9, 0), 'matin', v, data);
+    await poser(a(jour, 12, 30), 'midi', v, data);
+    await poser(a(jour, 16, 0), 'aprem', v, data);
     await poser(a(jour, 19, 30), 'seance', v, data);
     await poser(a(jour, 21, 0), 'relance', v, data);
   }
@@ -263,7 +275,7 @@ export function demarrerNotifs() {
   useProfil.subscribe((s, avant) => {
     if (s.nights !== avant.nights) verifierCoeur();
     // Axel Enragé : retour après 3 jours ou plus sans activité.
-    if (s.nset.enrage && s.logs.length > avant.logs.length && avant.logs.length) {
+    if (enrageActif(s.nset) && s.logs.length > avant.logs.length && avant.logs.length) {
       const avantDernier = avant.logs.reduce((m, l) => Math.max(m, +new Date(l.d)), 0);
       if (Date.now() - avantDernier >= 3 * 864e5) {
         annoncer({ type: 'motivation', icon: 'flame', col: COULEURS_NOTIF.post, act: 'accueil', masc: 'motive', ...messageEnrage('retour', s.nset.enrageNiv ?? 'venere', { prenom: s.name }) });
@@ -271,6 +283,12 @@ export function demarrerNotifs() {
     }
   });
   if (!natif) return;
+  // Axel Enragé est actif par défaut : on demande l'autorisation une fois à ceux qui ne l'ont jamais vue (profil déjà fait).
+  setTimeout(() => {
+    void (async () => {
+      if (useProfil.getState().onboarded && (await autorisation()) === 'undetermined') await demanderAutorisation();
+    })();
+  }, 4000);
   // App ouverte : la bannière de NÉA remplace celle du téléphone.
   Notifications.setNotificationHandler({
     handleNotification: async () => ({ shouldPlaySound: false, shouldSetBadge: false, shouldShowBanner: false, shouldShowList: true }),

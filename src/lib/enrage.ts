@@ -1,6 +1,6 @@
 /**
  * Mode « Axel Enragé » (hors cahier des charges, demandé par l'utilisateur, oct. 2026) : notifications satiriques qui poussent à bouger.
- * Désactivé par défaut, 3 niveaux. Le ton vise la paresse et les excuses, jamais le corps ni le poids ; pas de gros mots.
+ * Activé par défaut depuis le 6 nov. 2026 (demande de l'utilisateur : tous les jours, plusieurs fois par jour), 3 niveaux. Le ton vise la paresse et les excuses, jamais le corps ni le poids ; pas de gros mots.
  * Il se calme tout seul quand le cœur demande du repos (bilan de la nuit en surcharge). Fonctions pures.
  * `{p}` = prénom, `{s}` = titre de la séance, `{n}` = nombre (jours de série ou d'absence).
  */
@@ -8,7 +8,10 @@
 export type NiveauEnrage = 'taquin' | 'venere' | 'sanspitie';
 /** Expressions de la mascotte (`MASCOTTE_IMAGES` de @/data). */
 export type ExpressionMascotte = 'face' | 'motive' | 'fatigue' | 'fier' | 'boude';
-export type MomentEnrage = 'seance' | 'relance' | 'serie' | 'absent' | 'repos' | 'retour';
+export type MomentEnrage = 'matin' | 'midi' | 'aprem' | 'seance' | 'relance' | 'serie' | 'absent' | 'repos' | 'retour' | 'jourOff';
+
+/** Axel Enragé est actif tant qu'on ne l'a pas coupé (absent = activé). */
+export const enrageActif = (nset: { enrage?: boolean }) => nset.enrage !== false;
 
 export const NIVEAUX_ENRAGE: Record<NiveauEnrage, { nom: string; desc: string }> = {
   taquin: { nom: 'Taquin 😏', desc: 'Il te charrie gentiment' },
@@ -117,6 +120,96 @@ const ABSENT: Banque = {
 };
 
 /** Quand le cœur demande du repos : Axel se calme, quel que soit le niveau. */
+const MATIN: Banque = {
+  taquin: [
+    'Bonjour {p} ☀️ Aujourd’hui, il y a {s} au programme. Je te laisse ton café d’abord.',
+    'Debout, champion. {s} t’attend ce soir, prépare-toi mentalement. 😏',
+    'Nouvelle journée, nouvelle chance de ne pas m’ignorer. {s} ce soir. 👋',
+    'Petit-déj, douche, {s}. Dans cet ordre. Tu peux le faire.',
+    'Je dis ça comme ça : {s} aujourd’hui. Je te le redirai. Souvent. 😇',
+    'Le soleil est levé. Toi aussi, j’espère. {s} au menu du jour.',
+  ],
+  venere: [
+    'Réveil. {s} aujourd’hui. Je te préviens maintenant pour que tu n’aies AUCUNE excuse ce soir. 😤',
+    'Bonjour {p}. Je vais te parler de {s} toute la journée. Autant la faire tôt.',
+    '{s} aujourd’hui. Je le note. Tu le notes. On le note tous. 📝',
+    'Debout. Ta séance ne va pas se faire toute seule, j’ai vérifié. 😒',
+    'J’ai mis {s} dans ton agenda. Et dans ta tête. Bonne journée. 😤',
+    'Café ? Bien. Maintenant pense à {s}. Toute la journée. Je t’aiderai.',
+  ],
+  sanspitie: [
+    '{p}. {s}. Aujourd’hui. Je ne lâcherai pas. Jamais. 💀',
+    'Tu croyais que la nuit m’avait calmé ? Non. {s} aujourd’hui.',
+    'Bonjour. Je serai là à midi, à 16 h, à 19 h 30 et à 21 h. Fais {s} et je disparais. 👻',
+    'Ta séance du jour : {s}. Ta mission : me faire taire. Bonne chance. 💀',
+    'Je n’ai pas dormi. J’ai pensé à {s} toute la nuit. À toi de jouer.',
+    'Rappel du matin, le premier d’une longue série : {s}. 😈',
+  ],
+};
+
+const MIDI: Banque = {
+  taquin: [
+    'Bonne pause midi ! {s} ce soir, garde un peu d’énergie. 🍽️',
+    'Mange bien, {p}. Tes muscles ont rendez-vous avec {s}. 💪',
+    'Midi pile. Il reste quelques heures avant {s}. Je dis ça… 😏',
+    'Pense à boire de l’eau. Et à {s}. Surtout à {s}.',
+  ],
+  venere: [
+    'Midi. Toujours pas de séance. Je patiente. Mal. 😤',
+    'Tu manges ? Parfait. Ce sera du carburant pour {s}. Pas une excuse.',
+    'La moitié de la journée est passée. {s} non. 😒',
+    '{p}, je te vois scroller pendant ta pause. Tu pourrais lire ta séance à la place. 👀',
+  ],
+  sanspitie: [
+    'Midi. Ma patience fond plus vite que ton excuse de ce soir. 💀',
+    'Je ne dis rien. Je regarde. Je compte. {s}. 👁️',
+    'Une pause déj, c’est bien. Une pause dans ta vie sportive, non.',
+    'Je prépare déjà le message de 21 h. Il est méchant. Évite-le. 😈',
+  ],
+};
+
+const APREM: Banque = {
+  taquin: [
+    'Fin d’aprèm en vue ! Et tu sais ce qu’il y a après ? {s}. 😏',
+    'Tu tiens le coup ? Garde-en un peu pour {s}.',
+    'Petit coup de mou ? 10 squats et ça repart. Et {s} ce soir. 😉',
+    '16 h, l’heure du goûter. Et de penser à {s}.',
+  ],
+  venere: [
+    '16 h. Si tu fais {s} maintenant, ta soirée est libre. Réfléchis. 😤',
+    'Tu as tenu toute la journée sans bouger. Impressionnant. Dans le mauvais sens.',
+    'Je recompte : il te reste quelques heures pour {s}. Le temps file. ⏳',
+    'Ton canapé t’attend. Moi aussi. Choisis bien.',
+  ],
+  sanspitie: [
+    '16 h. Dernier avertissement avant le mode 19 h 30. 💀',
+    'J’ai déjà écrit trois messages pour ce soir. Ils sont tous pires. Fais {s}.',
+    'Le compte à rebours a commencé. {s} ou les représailles. 😈',
+    'Je t’ai à l’œil depuis ce matin. Toujours rien. Intéressant.',
+  ],
+};
+
+const JOUR_OFF: Banque = {
+  taquin: [
+    'Pas de séance aujourd’hui ! Mais une petite marche de 20 min, ça te dit ? 🚶',
+    'Jour de repos, {p}. Repos ne veut pas dire canapé toute la journée. 😏',
+    'Profite du repos. Étire-toi 5 min, ton dos te dira merci.',
+    'Aujourd’hui on récupère. Bois de l’eau, dors bien, bouge un peu.',
+  ],
+  venere: [
+    'C’est ton jour off. Pas ton jour « je ne fais rien de ma vie ». 20 min de marche. 😤',
+    'Repos, oui. Hibernation, non. Va prendre l’air.',
+    'Je te laisse tranquille aujourd’hui. Enfin… presque. Marche un peu. 😒',
+    'Jour sans séance. Mais tes jambes, elles, marchent toujours, non ?',
+  ],
+  sanspitie: [
+    'Jour de repos. Je surveille quand même. Toujours. 💀',
+    'Même au repos, je compte tes pas. Ne me déçois pas.',
+    'Profite. Demain, je reviens. Et je serai d’humeur. 😈',
+    'Repos aujourd’hui. Mais je prépare déjà demain matin. Tu vas adorer.',
+  ],
+};
+
 const REPOS: readonly string[] = [
   'Ton cœur a eu une nuit chargée. Même moi, je te laisse tranquille ce soir. Repos. 😌',
   'Pas de séance forcée aujourd’hui : ton corps récupère. Je range mes menaces. 🛌',
@@ -129,7 +222,7 @@ const RETOUR: Banque = {
   sanspitie: ['Ah. T’es vivant. Bon. Bien joué, je suppose. 😒', 'Je ne pleure pas. C’est la sueur. Bon retour. 🥲'],
 };
 
-const BANQUES: Record<Exclude<MomentEnrage, 'repos'>, Banque> = { seance: SEANCE, relance: RELANCE, serie: SERIE, absent: ABSENT, retour: RETOUR };
+const BANQUES: Record<Exclude<MomentEnrage, 'repos'>, Banque> = { matin: MATIN, midi: MIDI, aprem: APREM, jourOff: JOUR_OFF, seance: SEANCE, relance: RELANCE, serie: SERIE, absent: ABSENT, retour: RETOUR };
 
 /** Index stable pour un jour : un message différent chaque jour, sans tirage au hasard. */
 const numJour = (d: Date) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
@@ -140,7 +233,7 @@ export function messageEnrage(
   v: { prenom?: string; seance?: string; n?: number; date?: Date },
 ): { title: string; body: string } {
   const liste = moment === 'repos' ? REPOS : BANQUES[moment][niveau];
-  const sel = { seance: 1, relance: 3, serie: 5, absent: 7, retour: 11, repos: 13 }[moment];
+  const sel = { matin: 17, midi: 19, aprem: 23, jourOff: 29, seance: 1, relance: 3, serie: 5, absent: 7, retour: 11, repos: 13 }[moment];
   const t = liste[(numJour(v.date ?? new Date()) * 7 + sel) % liste.length];
   const body = t
     .replaceAll('{p}', v.prenom?.trim() || 'toi')
@@ -156,6 +249,7 @@ export const NB_MESSAGES_ENRAGE =
 /** Expression de la mascotte pour un message : fière (Taquin), bras croisés (Vénère, Sans pitié), motivée (série, retour), fatiguée (repos). */
 export function expressionEnrage(moment: MomentEnrage, niveau: NiveauEnrage): ExpressionMascotte {
   if (moment === 'repos') return 'fatigue';
-  if (moment === 'retour' || moment === 'serie') return 'motive';
+  if (moment === 'retour' || moment === 'serie' || moment === 'matin') return 'motive';
+  if (moment === 'jourOff') return 'face';
   return niveau === 'taquin' ? 'fier' : 'boude';
 }
