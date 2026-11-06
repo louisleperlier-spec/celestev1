@@ -518,7 +518,7 @@ qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min),
     par `enrage: false`) ; jours de séance 9 h (`matin`), 12 h 30 (`midi`), 16 h (`aprem`), 19 h 30, 21 h + série en danger 20 h 30 ; jours de repos
     10 h et 17 h 30 (`jourOff`, pousse à marcher) ; 3 jours d'avance (`JOURS_ENRAGE`, limite iOS de 64 notifications), reprogrammé à chaque changement
     du journal donc silence le jour même dès qu'une activité est faite ; autorisation des notifications demandée à la fin de l'onboarding (« Découvrir
-    mon programme ») et une fois au lancement pour les profils qui ne l'ont jamais vue ; 123 messages
+    mon programme ») et une fois au lancement pour les profils qui ne l'ont jamais vue ; 123 messages ; **publié en production (6 nov. 2026)** avec l'onboarding viral et les cartes d'exercices centrées
   - **Axel Enragé** (`lib/enrage.ts`, opt-in, Profil → « Axel Enragé 😤 » → Mode Sans excuses, `nset.enrage` / `enrageNiv`) : 3 niveaux Taquin /
     Vénère / Sans pitié, 69 messages (séance 19 h 30, relance 21 h, série en danger 20 h 30, absence 3 et 5 jours à midi, retour en bannière) ;
     jamais sur le corps ni le poids, pas de gros mots ; rien si une activité est faite le jour même ; nuit en surcharge (`bilanCoeur`) → message
