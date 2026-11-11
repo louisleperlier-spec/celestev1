@@ -142,7 +142,7 @@ dans `modules/nea-montre/ios/Vagues/` (`@available(iOS 17.0, *)`, `ShaderLibrary
 (`sansAnimation()` lu par les options de `_layout`), `reveler` photographie le nouvel écran et lance `DistortionWave` (palette `sunset`, coins 55) ;
 `store/vague.ts` `avecVague(e, type, naviguer)` (source = `e.currentTarget` mesurée, focus = doigt ; sans le module : navigation normale) ;
 branché sur « Lancer la séance » (Programme, détail, séances prêtes), « + » de la barre (anneau), « Commencer » de la bienvenue, « Découvrir mon
-programme » ; **build 1.0.1 (40) preview envoyé à TestFlight**.
+programme » ; build 1.0.1 (40) refusé (1.0.1 déjà approuvée) → **version 1.0.2** (app.json + Info.plist des 3 cibles) ; **build 1.0.2 (41) preview envoyé à TestFlight (11 nov. 2026)**.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
