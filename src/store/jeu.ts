@@ -31,6 +31,8 @@ export type Fete = {
   gains: string[];
   /** Carte succès débloquée : affichée à la place du coach. */
   succes?: SuccesId;
+  /** Niveau atteint : la fête devient le passage de niveau plein écran (`PassageNiveau`). */
+  niveau?: number;
   /** Mascotte NÉA à la place du coach (gel de série). */
   mascotte?: ExpressionMascotte;
 };
@@ -183,7 +185,7 @@ export function demarrerJeu() {
     const nApres = lvlInfo(s.xp).n;
     if (nApres > nAvant && s.xpLog.length === p.xpLog.length + 1) {
       donner(3, 'Niveau ' + nApres, 1);
-      feter({ titre: `Niveau ${nApres} !`, sous: 'Tu montes en puissance, continue comme ça 💪', emoji: '⚡', gains: ['Booster de 3 cartes', '+1 Turbo x2'] });
+      feter({ titre: `Niveau ${nApres} !`, sous: 'Tu montes en puissance, continue comme ça 💪', emoji: '⚡', gains: ['Booster de 3 cartes', '+1 Turbo x2'], niveau: nApres });
     }
     if (s.logs !== p.logs || s.nights !== p.nights || s.hrvChecks !== p.hrvChecks || s.xpLog !== p.xpLog) {
       if (nouvelle) {

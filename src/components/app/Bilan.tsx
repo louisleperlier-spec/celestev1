@@ -8,11 +8,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Sheet } from '@/components/app/Sheet';
 import { Appui, Button, Card, Icon, Text, type IconName } from '@/components/ui';
-import { COACH_IMAGES, DECO_IMAGES, EXERCICES } from '@/data';
+import { DECO_IMAGES, EXERCICES } from '@/data';
 import type { GroupeId } from '@/data/types';
 import {
   activite,
@@ -233,7 +234,11 @@ export function BilanDuJour({ onRessenti }: { onRessenti: () => void }) {
 
 /* ───────────── Coach ───────────── */
 
-/** Message du coach selon le bilan ; ouvre le check-in s'il manque, sinon la conversation. */
+/**
+ * Carte du coach (design Process « v2-coach-home-card », porté de SwiftUI, nov. 2026) : bulle à coins de 34 sur un dégradé
+ * maillé orange / brun, alerte éventuelle (check-in à faire), le mot du jour en un seul texte (toucher : check-in ou coach),
+ * puis la ligne « Demander à … » qui ouvre la discussion et le « + » des questions rapides. Entrée en cascade.
+ */
 export function CarteMessageCoach({ onRessenti }: { onRessenti: () => void }) {
   const { coach, progStart, name, logs } = useProfil(useShallow((s) => ({ coach: s.coach, progStart: s.progStart, name: s.name, logs: s.logs })));
   const r = useRessenti();
@@ -241,23 +246,49 @@ export function CarteMessageCoach({ onRessenti }: { onRessenti: () => void }) {
   const seanceFaite = logs.some((l) => jourLocal(new Date(l.d)) === auj);
   const m = messageCoach({ ressenti: r, seanceFaite, motDuJour: motivationDuJour(progStart, name) });
   const c = coachById(coach);
+  const texte = `${m.titre} ${m.sous}`;
   return (
-    <Appui accessibilityRole="button" accessibilityLabel={m.titre} onPress={() => (m.checkin ? onRessenti() : router.navigate('/coach'))}>
-      <Card style={styles.coach}>
-        <View style={styles.tete}>
-          <Image source={COACH_IMAGES[c.id].tete} style={styles.remplir} contentFit="cover" />
-        </View>
-        <View style={styles.flex}>
-          <Text weight="bold" style={styles.coachTitre}>
-            {m.titre}
-          </Text>
-          <Text style={styles.coachTxt} numberOfLines={3}>
-            {m.sous}
-          </Text>
-        </View>
-        <Icon name="right" size={20} color={colors.textSecondary} />
-      </Card>
-    </Appui>
+    <View style={styles.bulle}>
+      {/* Dégradé maillé : base sombre, nappe orange en haut à gauche, brun en bas à droite. */}
+      <LinearGradient colors={[alpha(colors.pink, 0.32), alpha(colors.mauve, 0.18), alpha(colors.bg, 0)]} start={{ x: 0, y: 0 }} end={{ x: 0.9, y: 0.8 }} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={[alpha(colors.bg, 0), alpha(colors.mauve, 0.3)]} start={{ x: 0.2, y: 0.3 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+      <View style={styles.bulleContenu}>
+        {m.checkin && (
+          <Animated.View entering={FadeInDown.duration(380)} style={styles.alerte}>
+            <Icon name="spark" size={14} color={colors.pink} strokeWidth={2.4} />
+            <Text weight="semibold" style={styles.alerteTxt} numberOfLines={1}>
+              Ton bilan du jour t’attend
+            </Text>
+          </Animated.View>
+        )}
+        <Animated.View entering={FadeInDown.duration(420)}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={texte}
+            accessibilityHint={m.checkin ? 'Ouvre ton check-in du jour' : `Ouvre ${c.nom}, ton coach`}
+            onPress={() => (m.checkin ? onRessenti() : router.navigate('/coach'))}
+            style={({ pressed }) => [pressed && styles.bullePresse]}
+          >
+            <Text style={styles.bulleTexte}>{texte}</Text>
+          </Pressable>
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(60).duration(420)} style={styles.demander}>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/chat')} style={({ pressed }) => [styles.flex, pressed && styles.bullePresse]}>
+            <Text style={styles.demanderTxt} numberOfLines={1}>
+              Demander à {c.nom}…
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Questions rapides"
+            onPress={() => router.navigate('/coach')}
+            style={({ pressed }) => [styles.plus, pressed && styles.bullePresse]}
+          >
+            <Icon name="plus" size={17} color={alpha(colors.text, 0.85)} strokeWidth={2.4} />
+          </Pressable>
+        </Animated.View>
+      </View>
+    </View>
   );
 }
 
@@ -417,6 +448,15 @@ const styles = StyleSheet.create({
   ligneTxt: { fontSize: 17, lineHeight: 22 },
   separateur: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', backgroundColor: colors.border, marginHorizontal: 8 },
   ligneBas: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, textAlign: 'center' },
+  bulle: { borderRadius: 34, overflow: 'hidden', backgroundColor: colors.surface, borderWidth: 1, borderColor: alpha(colors.text, 0.1) },
+  bulleContenu: { paddingHorizontal: 26, paddingVertical: 18, gap: 8 },
+  bullePresse: { opacity: 0.82, transform: [{ scale: 0.98 }] },
+  bulleTexte: { fontSize: 16, lineHeight: 23, color: colors.text },
+  alerte: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingBottom: 2 },
+  alerteTxt: { fontSize: 14, lineHeight: 18, color: colors.pink },
+  demander: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
+  demanderTxt: { fontSize: 20, lineHeight: 26, color: alpha(colors.text, 0.32) },
+  plus: { width: 40, height: 40, borderRadius: 20, backgroundColor: alpha(colors.text, 0.12), alignItems: 'center', justifyContent: 'center' },
   coach: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
   tete: { width: 58, height: 58, borderRadius: 29, overflow: 'hidden', backgroundColor: ui.iconBg },
   coachTitre: { fontSize: 17, lineHeight: 22 },

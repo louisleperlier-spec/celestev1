@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Modal, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { Easing, Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming, type SharedValue } from 'react-native-reanimated';
 
+import { PassageNiveau } from '@/components/app/PassageNiveau';
 import { Button, Glow, Text } from '@/components/ui';
 import { MASCOTTE_IMAGES } from '@/data/images';
 import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
@@ -116,8 +117,8 @@ export function FeteHost() {
   const f = useFetes((s) => s.file[0]);
   if (!f) return null;
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={fermerFete}>
-      <Contenu key={f.id} f={f} />
+    <Modal transparent animationType="fade" visible onRequestClose={fermerFete} statusBarTranslucent>
+      {f.niveau ? <PassageNiveau key={f.id} f={f} niveau={f.niveau} /> : <Contenu key={f.id} f={f} />}
     </Modal>
   );
 }

@@ -144,6 +144,13 @@ dans `modules/nea-montre/ios/Vagues/` (`@available(iOS 17.0, *)`, `ShaderLibrary
 branché sur « Lancer la séance » (Programme, détail, séances prêtes), « + » de la barre (anneau), « Commencer » de la bienvenue, « Découvrir mon
 programme » ; build 1.0.1 (40) refusé (1.0.1 déjà approuvée) → **version 1.0.2** (app.json + Info.plist des 3 cibles) ; **build 1.0.2 (41) preview envoyé à TestFlight (11 nov. 2026)**.
 
+**Designs Process V2 (11 nov. 2026, demandés par l'utilisateur, portés de SwiftUI en RN, sans module natif)** : **passage de niveau** (`v2-level-up` →
+`components/app/PassageNiveau.tsx` : champ d'étoiles, hexagone du rang qui bascule de l'ancien au nouveau niveau (saut, inclinaison, rebond), halo,
+onde, gerbe de 36 étincelles, « Niveau N », « RANG OR », puce « Rang … débloqué » au changement de rang, gains, Continuer en verre / Ouvrir mes cartes ;
+`Fete.niveau` posé par `store/jeu` à la montée de niveau, `FeteHost` l'affiche en plein écran) ; **carte du coach** de l'Accueil (`v2-coach-home-card` →
+`CarteMessageCoach` de `Bilan.tsx` : bulle à coins de 34 sur dégradé orange / brun, alerte « Ton bilan du jour t'attend », mot du jour en un texte,
+« Demander à {coach}… » → `/chat`, « + » → `/coach`, entrée en cascade).
+
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
