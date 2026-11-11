@@ -25,6 +25,7 @@ import { wkLocked } from '@/lib/premium';
 import { catSession, seanceById, type Intensite } from '@/lib/semaine';
 import { selectProfil, useProfil } from '@/store/profil';
 import { alpha, colors, glow, ui } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 /** Icône et libellé du matériel (EQI du prototype). */
 const EQI: Record<MaterielId, [IconName, string]> = {
@@ -142,7 +143,7 @@ export default function SeanceCatalogue() {
             <Button
               label="Commencer"
               small
-              onPress={() => (w.ride ? lancerSortie(w.ride, w.id) : router.push({ pathname: '/seance-en-cours', params: { cat: w.id } }))}
+              onPress={(e) => (w.ride ? lancerSortie(w.ride, w.id) : void avecVague(e, 'vertical', () => router.push({ pathname: '/seance-en-cours', params: { cat: w.id } })))}
               style={styles.flex}
             />
             </View>

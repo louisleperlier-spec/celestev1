@@ -10,6 +10,7 @@ import { coachById, LVLN, lvlN, nextSession, prog } from '@/lib/plan';
 import { demanderAutorisation } from '@/store/notifs';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 const LIEU = { maison: 'À la maison', salle: 'En salle', deux: 'Maison et salle' } as const;
 const JOURS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
@@ -173,10 +174,10 @@ export default function Pret() {
         <Button
           label="Découvrir mon programme"
           arrow
-          onPress={async () => {
+          onPress={async (e) => {
             // Axel te relance dès le premier jour : l'autorisation des notifications est demandée ici, une seule fois.
             await demanderAutorisation().catch(() => undefined);
-            router.push({ pathname: '/plus', params: { suite: 'compte' } });
+            void avecVague(e, 'vertical', () => router.push({ pathname: '/plus', params: { suite: 'compte' } }));
           }}
         />
       </View>

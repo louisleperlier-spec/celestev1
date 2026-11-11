@@ -81,7 +81,8 @@
           "microphonePermission": false,
           "enableBackgroundPlayback": true
         }
-      ]
+      ],
+      "./plugins/withVagues"
     ],
     "experiments": {
       "typedRoutes": true,

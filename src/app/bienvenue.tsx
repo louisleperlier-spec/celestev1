@@ -10,6 +10,7 @@ import { COACHES } from '@/data/coaches';
 import { COACH_IMAGES } from '@/data/images';
 import type { CoachId } from '@/data/types';
 import { colors, fonts } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 /** Fond .wel : halo rose au centre et violet en haut à gauche. */
 const FOND = [
@@ -78,7 +79,7 @@ export default function Bienvenue() {
           </View>
         </ScrollView>
         <View style={styles.foot}>
-          <Button label="Commencer" arrow onPress={() => router.push('/onboarding/prenom')} />
+          <Button label="Commencer" arrow onPress={(e) => void avecVague(e, 'vertical', () => router.push('/onboarding/prenom'))} />
           <Button label="J'ai déjà un compte" variant="dark" onPress={() => router.push({ pathname: '/compte', params: { mode: 'login' } })} style={styles.mt10} />
           <Text style={styles.tag}>Ton meilleur toi, chaque jour.</Text>
         </View>

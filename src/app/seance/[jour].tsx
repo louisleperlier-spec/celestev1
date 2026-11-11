@@ -17,6 +17,7 @@ import { coachById, exercice, exKcal, type PlanItem } from '@/lib/plan';
 import { JOURS, sessionForDay, weekDates, type SeanceJour } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { colors, fonts } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 /** Détail d'une séance de la semaine (vSession du prototype). */
 export default function SeanceDuJour() {
@@ -98,7 +99,7 @@ export default function SeanceDuJour() {
           label="Lancer la séance"
           iconAfter="play"
           // Une sortie vélo se lance depuis l'onglet Vélo (étape 7).
-          onPress={() => (s.ride ? lancerSortie(s.min, s.cat) : router.push({ pathname: '/seance-en-cours', params: { jour: String(day) } }))}
+          onPress={(e) => (s.ride ? lancerSortie(s.min, s.cat) : void avecVague(e, 'vertical', () => router.push({ pathname: '/seance-en-cours', params: { jour: String(day) } })))}
         />
       </View>
       <ExerciceSheet id={exo?.id ?? null} it={exo ?? undefined} onClose={() => setExo(null)} />

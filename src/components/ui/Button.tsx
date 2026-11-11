@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle, type GestureResponderEvent } from 'react-native';
 
 import { colors, fonts, gradients, radius, sizes, spacing, ui } from '@/theme';
 
@@ -8,7 +8,7 @@ import { Text } from './Text';
 
 type Props = {
   label: string;
-  onPress?: () => void;
+  onPress?: (e: GestureResponderEvent) => void;
   /** primary : rose plein ; dark : surface secondaire ; secondary : alias de dark. */
   variant?: 'primary' | 'dark' | 'secondary';
   disabled?: boolean;

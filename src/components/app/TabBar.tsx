@@ -11,6 +11,7 @@ import { useSportLive } from '@/store/sportLive';
 
 import { IconeSport } from './IconeSport';
 import { alpha, colors, ui } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 type Chemin = '/accueil' | '/ligue' | '/programme' | '/velo' | '/rando' | '/yoga' | '/progres' | '/profil' | '/coach';
 type Onglet = { label: string; icon: IconName; href: Chemin; ecrans: Chemin[] };
@@ -149,9 +150,9 @@ export function TabBar() {
           accessibilityRole="button"
           accessibilityLabel="Ajouter une activité"
           accessibilityHint="Ouvre l'ajout d'une séance libre ou d'un autre sport"
-          onPress={() => {
+          onPress={(e) => {
             rouvrir();
-            router.push('/ajouter');
+            void avecVague(e, 'center', () => router.push('/ajouter'));
           }}
           style={({ pressed }) => [styles.rond, pressed && styles.presse]}
         >

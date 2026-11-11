@@ -19,6 +19,7 @@ import { demarrerSante } from '@/store/sante';
 import '@/store/gpsFond';
 // Territoires : envoie les cases gardées hors ligne dès la connexion au compte.
 import '@/store/territoires';
+import { sansAnimation } from '@/store/vague';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -41,6 +42,9 @@ const navTheme = {
 function useHydrated() {
   return useSyncExternalStore(useProfil.persist.onFinishHydration, useProfil.persist.hasHydrated);
 }
+
+/** Animation d'arrivée d'un écran, sauf pendant une vague de transition (elle la remplace). */
+const anim = <A extends string>(a: A): A | 'none' => (sansAnimation() ? 'none' : a);
 
 export default function RootLayout() {
   const ready = useHydrated();
@@ -72,24 +76,24 @@ export default function RootLayout() {
         profondeur et se ferment d'un glissement depuis n'importe où ; les activités et l'achat montent depuis le bas ;
         l'accueil, l'onboarding et les onglets se fondent.
       */}
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'ios_from_right', fullScreenGestureEnabled: true }}>
-        <Stack.Screen name="index" options={{ animation: 'fade' }} />
-        <Stack.Screen name="bienvenue" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-        <Stack.Screen name="seance-en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
-        <Stack.Screen name="yoga/en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false, gestureEnabled: false }} />
-        <Stack.Screen name="randonnee/en-cours" options={{ animation: 'fade_from_bottom', fullScreenGestureEnabled: false }} />
-        <Stack.Screen name="randonnee/recap" options={{ animation: 'fade_from_bottom' }} />
-        <Stack.Screen name="activite" options={{ animation: 'fade_from_bottom' }} />
-        <Stack.Screen name="cartes/ouvrir" options={{ animation: 'fade_from_bottom' }} />
-        <Stack.Screen name="plus" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="ajouter" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="sport-en-cours" options={{ animation: 'fade_from_bottom' }} />
-        <Stack.Screen name="respirer" options={{ animation: 'fade_from_bottom' }} />
-        <Stack.Screen name="nuit" options={{ animation: 'fade' }} />
-        <Stack.Screen name="notes-soir" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="noter" options={{ animation: 'slide_from_bottom' }} />
+      <Stack screenOptions={() => ({ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: anim('ios_from_right'), fullScreenGestureEnabled: true })}>
+        <Stack.Screen name="index" options={() => ({ animation: anim('fade') })} />
+        <Stack.Screen name="bienvenue" options={() => ({ animation: anim('fade') })} />
+        <Stack.Screen name="(tabs)" options={() => ({ animation: anim('fade') })} />
+        <Stack.Screen name="seance-en-cours" options={() => ({ animation: anim('fade_from_bottom'), fullScreenGestureEnabled: false })} />
+        <Stack.Screen name="yoga/en-cours" options={() => ({ animation: anim('fade_from_bottom'), fullScreenGestureEnabled: false, gestureEnabled: false })} />
+        <Stack.Screen name="randonnee/en-cours" options={() => ({ animation: anim('fade_from_bottom'), fullScreenGestureEnabled: false })} />
+        <Stack.Screen name="randonnee/recap" options={() => ({ animation: anim('fade_from_bottom') })} />
+        <Stack.Screen name="activite" options={() => ({ animation: anim('fade_from_bottom') })} />
+        <Stack.Screen name="cartes/ouvrir" options={() => ({ animation: anim('fade_from_bottom') })} />
+        <Stack.Screen name="plus" options={() => ({ animation: anim('slide_from_bottom') })} />
+        <Stack.Screen name="chat" options={() => ({ animation: anim('slide_from_bottom') })} />
+        <Stack.Screen name="ajouter" options={() => ({ animation: anim('slide_from_bottom') })} />
+        <Stack.Screen name="sport-en-cours" options={() => ({ animation: anim('fade_from_bottom') })} />
+        <Stack.Screen name="respirer" options={() => ({ animation: anim('fade_from_bottom') })} />
+        <Stack.Screen name="nuit" options={() => ({ animation: anim('fade') })} />
+        <Stack.Screen name="notes-soir" options={() => ({ animation: anim('slide_from_bottom') })} />
+        <Stack.Screen name="noter" options={() => ({ animation: anim('slide_from_bottom') })} />
         <Stack.Screen name="nouveautes" options={{ presentation: 'transparentModal', animation: 'fade', contentStyle: { backgroundColor: 'transparent' } }} />
       </Stack>
       <NotifBanniere />

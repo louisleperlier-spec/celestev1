@@ -8,7 +8,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import { ScrollView, StyleSheet, View, type GestureResponderEvent, type LayoutChangeEvent } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 
 import { TitreSection } from '@/components/app/AccueilDesign';
@@ -20,6 +20,7 @@ import { exercice, lvlN, LVLN, prog, progWeek, todayIdx, type PlanItem } from '@
 import { nextSession, sessionForDay, weekDates } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { alpha, colors, fonts } from '@/theme';
+import { avecVague } from '@/store/vague';
 
 const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const ouvrirCalendrier = () => router.navigate({ pathname: '/programme', params: { vue: 'calendrier' } });
@@ -122,10 +123,11 @@ export function Aujourdhui() {
   const s = ns.s;
   const [exo, setExo] = useState<PlanItem | null>(null);
   const titre = ns.offset === 0 ? 'Aujourd’hui' : ns.offset === 1 ? 'Demain' : 'Ta prochaine séance';
-  const lancer = () => {
+  const lancer = (e?: GestureResponderEvent) => {
     if (s.ride) return lancerSortie(s.min, s.cat);
     if (s.day == null) return;
-    router.push({ pathname: '/seance-en-cours', params: { jour: String(s.day) } });
+    const jour = String(s.day);
+    void avecVague(e, 'vertical', () => router.push({ pathname: '/seance-en-cours', params: { jour } }));
   };
   const voir = () => (s.day != null ? router.push(`/seance/${s.day}`) : undefined);
   return (
