@@ -135,6 +135,15 @@ journal des générations, références, planches par programme et catalogue) ; 
 `src/data/exercicesAxel.ts` généré par `scripts/axel-sport-integrer.ts` ; `EXERCICE_IMAGES` ne prend les images Axel qu'une fois les 50 prêtes (`AXEL_COMPLET`), sinon les anciennes ;
 **50 / 50 intégrées (5 nov. 2026)** : lot complet de l'utilisateur (`axel-sport-50-exercices.zip`, ChatGPT), remplace le pilote ; `AXEL_COMPLET = true` ; détourage = ISNet ∪ écart de couleur au fond (garde barres, montants et tapis) ; à refaire : `squat_poids_corps` (tête différente) ; à vérifier : `curl_marteau` (prise) ; tâche planifiée quotidienne désactivée ; **publiée en production (5 nov. 2026)** avec la correction des squats ; `NOUVEAUTES` : Axel en tête, la caméra et le GPS en arrière-plan ne sont annoncés que si leur module natif existe (`besoin`, `nouveautesDispo`).
 
+**Vagues de transition (DistortionWavesKit de Libraries.dev, MIT, demandées par l'utilisateur, 11 nov. 2026, build 40+, iOS 17+)** : sources du kit copiées
+dans `modules/nea-montre/ios/Vagues/` (`@available(iOS 17.0, *)`, `ShaderLibrary.default`) ; `DistortionWaveShaders.metal` ajouté à la cible de l'app par
+`plugins/withVagues.js` (type `sourcecode.metal`, compilé dans `default.metallib`, vérifié dans l'ipa du build 40) ; module `NeaVagues` (`NeaVaguesModule.swift`) :
+`ouvrir` photographie l'écran et le fige dans une fenêtre au-dessus de l'app (touchers qui traversent), le JS navigue dessous sans animation
+(`sansAnimation()` lu par les options de `_layout`), `reveler` photographie le nouvel écran et lance `DistortionWave` (palette `sunset`, coins 55) ;
+`store/vague.ts` `avecVague(e, type, naviguer)` (source = `e.currentTarget` mesurée, focus = doigt ; sans le module : navigation normale) ;
+branché sur « Lancer la séance » (Programme, détail, séances prêtes), « + » de la barre (anneau), « Commencer » de la bienvenue, « Découvrir mon
+programme » ; **build 1.0.1 (40) preview envoyé à TestFlight**.
+
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),
 bouton rond « + » à côté → `/ajouter` (à la place du scan de repas), barre réduite jusqu'à 85 % au défilement et rouverte en remontant ou au toucher
