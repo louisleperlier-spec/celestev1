@@ -149,7 +149,7 @@ programme » ; build 1.0.1 (40) refusé (1.0.1 déjà approuvée) → **version 
 onde, gerbe de 36 étincelles, « Niveau N », « RANG OR », puce « Rang … débloqué » au changement de rang, gains, Continuer en verre / Ouvrir mes cartes ;
 `Fete.niveau` posé par `store/jeu` à la montée de niveau, `FeteHost` l'affiche en plein écran) ; **carte du coach** de l'Accueil (`v2-coach-home-card` →
 `CarteMessageCoach` de `Bilan.tsx` : bulle à coins de 34 sur dégradé orange / brun, alerte « Ton bilan du jour t'attend », mot du jour en un texte,
-« Demander à {coach}… » → `/chat`, « + » → `/coach`, entrée en cascade).
+« Demander à {coach}… » → `/chat`, « + » → `/coach`, entrée en cascade) ; **publiés en production (11 nov. 2026)**.
 
 **Navigation principale (design 10K « Navigation principale », process-tab-bar, oct. 2026)** : `TabBar` refaite (paquet vérifié, 406 empreintes ;
 ses icônes de Process non reprises) : capsule de 58 pt d'icônes seules (24 pt), pastille claire qui glisse vers l'onglet ouvert (icône orange),

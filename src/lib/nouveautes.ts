@@ -11,11 +11,10 @@ export type Nouveaute = {
 };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'trophy', titre: 'Un vrai passage de niveau', texte: 'Étoiles, étincelles et ton nouveau rang en grand : chaque niveau se fête.' },
+  { icone: 'spark', titre: 'Ton coach sur l’Accueil', texte: 'Le mot du jour dans une nouvelle bulle, et « Demander à … » pour lui écrire en un geste.' },
   { icone: 'flame', titre: 'Axel ne te lâche plus 😤', texte: "Il te relance dans la journée jusqu'à ta séance. Tu peux le calmer dans Profil." },
-  { icone: 'trophy', titre: 'Axel illustre tes 50 exercices', texte: 'Chaque mouvement montré par Axel, muscles en surbrillance.' },
   { icone: 'spark', titre: 'Le coach caméra', texte: 'Filme-toi : NÉA suit ton squelette, compte tes reps et corrige ta posture.', besoin: 'camera' },
-  { icone: 'bell', titre: 'Ta sortie suit même écran verrouillé', texte: 'Vélo, course et rando : le chrono et le GPS continuent.', besoin: 'gpsFond' },
-  { icone: 'star', titre: 'Zoome sur tes exercices', texte: "Touche l'image pour l'agrandir, et « Aa » pour des textes plus grands." },
 ];
 
 /** Nouveautés disponibles sur ce build (`dispo` = modules natifs présents). */
