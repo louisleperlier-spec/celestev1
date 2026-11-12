@@ -18,6 +18,7 @@ import { isPremium } from '@/lib/premium';
 import { envoyer, ouvrirChat, useCoachEcrit } from '@/store/coach';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts, mix, ui } from '@/theme';
+import { t } from '@/i18n';
 
 /** Séances adaptées proposées par le coach (un toucher lui envoie ton choix). */
 const CHOIX: readonly { min: string; nom: string; sous: string; icone: IconName; phrase: string }[] = [
@@ -163,7 +164,7 @@ export function Conversation({ retour = false }: { retour?: boolean }) {
           style={styles.inp}
           value={saisie}
           onChangeText={setSaisie}
-          placeholder={`Écris à ${c.nom}...`}
+          placeholder={t('Écris à {0}...').replace('{0}', c.nom)}
           placeholderTextColor={colors.textSecondary}
           onSubmitEditing={() => {
             dire(saisie);

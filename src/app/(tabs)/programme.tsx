@@ -21,6 +21,7 @@ import { progLocked, wkLocked } from '@/lib/premium';
 import { nextSession, sessionForDay, weekDates, type SeanceJour } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { alpha, colors, mix, ui } from '@/theme';
+import { LETTRES_JOURS } from '@/i18n';
 
 /** Onglet Programme et sous-onglet Calendrier (vProg / vCal du prototype). */
 export default function Programme() {
@@ -150,7 +151,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
 
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 const JOURS_LONGS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
-const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const LETTRES = LETTRES_JOURS;
 const debutMois = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1);
 const memeJour = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 const idxJour = (d: Date) => (d.getDay() + 6) % 7;

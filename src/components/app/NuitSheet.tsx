@@ -9,6 +9,7 @@ import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
 
 import { Sheet } from './Sheet';
+import { t } from '@/i18n';
 
 const QUALITE = ['😫', '😕', '😐', '🙂', '😴'];
 
@@ -63,8 +64,8 @@ export function NuitSheet({ visible, onClose }: { visible: boolean; onClose: () 
         ))}
       </View>
       <View style={styles.two}>
-        <Champ label="VFC nocturne (ms)" value={hv} onChange={setHv} placeholder="optionnel" clavier="number-pad" />
-        <Champ label="FC au repos" value={rh} onChange={setRh} placeholder="optionnel" clavier="number-pad" />
+        <Champ label="VFC nocturne (ms)" value={hv} onChange={setHv} placeholder={t("optionnel")} clavier="number-pad" />
+        <Champ label="FC au repos" value={rh} onChange={setRh} placeholder={t("optionnel")} clavier="number-pad" />
       </View>
       <View style={styles.espace} />
       <Button label="Enregistrer" onPress={enregistrer} />
@@ -92,7 +93,7 @@ function Champ({
         style={styles.inp}
         value={value}
         onChangeText={onChange}
-        placeholder={placeholder}
+        placeholder={t(placeholder)}
         placeholderTextColor={colors.textSecondary}
         keyboardType={clavier}
         maxLength={5}

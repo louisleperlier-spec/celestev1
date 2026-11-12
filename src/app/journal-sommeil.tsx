@@ -11,8 +11,9 @@ import { TAGS_SOIR } from '@/lib/reveil';
 import { baseHrv, sleepScore } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
+import { locale } from '@/i18n';
 
-const jourLong = (iso: string) => new Date(iso).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
+const jourLong = (iso: string) => new Date(iso).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' });
 
 /** Journal du sommeil : les notes du soir, avec le score de la nuit qui a suivi (pour voir ce qui aide à bien dormir). */
 export default function JournalSommeil() {

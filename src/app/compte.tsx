@@ -11,6 +11,7 @@ import { coachById } from '@/lib/plan';
 import { connecter, connecterApple, emailValide, inscrire, pwScore } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
+import { t } from '@/i18n';
 
 type Mode = 'signup' | 'login';
 
@@ -154,7 +155,7 @@ export default function Compte() {
               style={[styles.inp, styles.mb10]}
               value={prenom}
               onChangeText={setPrenom}
-              placeholder="Prénom"
+              placeholder={t("Prénom")}
               placeholderTextColor={colors.textSecondary}
               autoComplete="given-name"
               accessibilityLabel="Prénom"
@@ -164,7 +165,7 @@ export default function Compte() {
             style={styles.inp}
             value={email}
             onChangeText={setEmail}
-            placeholder="Adresse email"
+            placeholder={t("Adresse email")}
             placeholderTextColor={colors.textSecondary}
             autoComplete="email"
             keyboardType="email-address"
@@ -178,7 +179,7 @@ export default function Compte() {
               style={[styles.inp, styles.pwInp]}
               value={mdp}
               onChangeText={setMdp}
-              placeholder="Mot de passe"
+              placeholder={t("Mot de passe")}
               placeholderTextColor={colors.textSecondary}
               secureTextEntry={!voir}
               autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}

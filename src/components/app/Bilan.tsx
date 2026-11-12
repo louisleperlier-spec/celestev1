@@ -33,8 +33,9 @@ import { coachById } from '@/lib/plan';
 import type { SeanceJour } from '@/lib/semaine';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts, ui } from '@/theme';
+import { LETTRES_JOURS } from '@/i18n';
 
-const JOURS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const;
+const JOURS = LETTRES_JOURS;
 const JOURS_LONGS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] as const;
 
 /** Ressenti du jour, relu à chaque rendu (minuit passé, il redevient vide). */

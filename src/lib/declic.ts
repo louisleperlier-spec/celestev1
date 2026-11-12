@@ -3,6 +3,7 @@
  * la réponse de NÉA à chaque frein (uniquement des fonctions qui existent dans l'app), son profil à partager et le défi
  * qu'elle lance à ses amis. Fonctions pures, sans `@/data`.
  */
+import { enAnglaisLib, tr } from './langue';
 
 export type FreinId = 'temps' | 'quoi' | 'resultats' | 'motivation' | 'fatigue' | 'debut';
 
@@ -53,6 +54,13 @@ export const LIEN_APP = 'https://apps.apple.com/app/id6816691008';
 
 /** Message partagé : un défi lancé aux amis, avec le lien de l'app. */
 export function messageDefi(o: { prenom: string; profil: string; programme: string; days: number; dur: number; semaines: number; coach: string }): string {
+  if (enAnglaisLib())
+    return [
+      `${o.prenom ? o.prenom + ' is taking' : "I'm taking"} the NÉA challenge 💪 ${tr(o.profil)} profile.`,
+      `${tr(o.programme)}: ${o.days} workouts of ${o.dur} min per week for ${o.semaines} weeks, with ${o.coach} as my coach.`,
+      "You in? Let's compare our streaks.",
+      LIEN_APP,
+    ].join('\n');
   return [
     `${o.prenom ? o.prenom + ' relève' : 'Je relève'} le défi NÉA 💪 Profil ${o.profil}.`,
     `${o.programme} : ${o.days} séances de ${o.dur} min par semaine pendant ${o.semaines} semaines, avec ${o.coach} comme coach.`,

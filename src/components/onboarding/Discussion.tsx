@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, useWindowDimensions, View, type StyleProp, type 
 import Animated, { Easing, FadeInDown, useAnimatedStyle, useReducedMotion, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 import { Glow, Icon, Text } from '@/components/ui';
+import { traduire } from '@/i18n';
 import { colors, fonts, ui } from '@/theme';
 
 /**
@@ -43,7 +44,8 @@ export function useDiscussion() {
 
   /** Tape les lignes ; `instant` les affiche d'un coup (retour arrière). Renvoie false si une autre discussion a pris la main. */
   const dire = useCallback(
-    async (lignes: string[], instant = false) => {
+    async (lignesFr: string[], instant = false) => {
+      const lignes = lignesFr.map((l) => traduire(l));
       const j = ++jeton.current;
       finir.current = false;
       if (instant || reduit) {
@@ -85,7 +87,13 @@ export function useDiscussion() {
     [maj, reduit],
   );
 
-  const repondre = useCallback((texte: string) => maj([...liste.current, { id: `m${++compteur.current}`, de: 'moi', texte, vu: texte.length }]), [maj]);
+  const repondre = useCallback(
+    (fr: string) => {
+      const texte = traduire(fr);
+      maj([...liste.current, { id: `m${++compteur.current}`, de: 'moi', texte, vu: texte.length }]);
+    },
+    [maj],
+  );
 
   /** Termine d'un coup les lignes en cours (toucher pendant l'écriture). */
   const completer = useCallback(() => {
@@ -122,7 +130,8 @@ export function useDiscussion() {
 }
 
 /** Texte qui s'écrit lettre à lettre (bulle du coach à l'écran de choix) ; recommence quand le texte change. */
-export function TexteTape({ texte, style }: { texte: string; style: StyleProp<TextStyle> }) {
+export function TexteTape({ texte: texteFr, style }: { texte: string; style: StyleProp<TextStyle> }) {
+  const texte = traduire(texteFr);
   const reduit = useReducedMotion();
   // Lettres déjà écrites, pour quel texte (un autre texte repart de zéro sans effet de bord).
   const [etat, setEtat] = useState({ texte, vu: 0 });

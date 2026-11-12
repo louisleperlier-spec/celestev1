@@ -9,6 +9,7 @@ import { rowStyles } from '@/components/app/Rows';
 import { EXERCICES, GROUPES, MATERIEL } from '@/data';
 import type { ExerciceId } from '@/data/types';
 import { colors } from '@/theme';
+import { t } from '@/i18n';
 
 /** Bibliothèque des 50 exercices : recherche, groupe musculaire, fiche avec démo guidée. */
 export default function Exercices() {
@@ -22,7 +23,7 @@ export default function Exercices() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <EnTetePage titre="Exercices" sous={`${EXERCICES.length} exercices, avec démo guidée`} />
-      <Recherche value={q} onChange={setQ} placeholder="Rechercher un exercice ou un muscle" />
+      <Recherche value={q} onChange={setQ} placeholder={t("Rechercher un exercice ou un muscle")} />
       <View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[cs.filters, styles.filtres]}>
           {FILTRES_GROUPES.map(([key, l]) => (

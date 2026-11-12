@@ -17,6 +17,7 @@ import { enregistrerMuscuLibre, enregistrerSport, type ExoLibre } from '@/store/
 import { useProfil } from '@/store/profil';
 import { useSportLive } from '@/store/sportLive';
 import { alpha, colors, fonts, ui } from '@/theme';
+import { t } from '@/i18n';
 
 type Mode = { kind: 'choix' } | { kind: 'sport'; id: string } | { kind: 'muscu' };
 type Quand = 'auj' | 'hier';
@@ -59,7 +60,7 @@ function Choix({ onSport, onMuscu }: { onSport: (id: string) => void; onMuscu: (
   return (
     <>
       <EnTetePage titre="Ajouter une activité" sous="Note tes séries ou un autre sport" />
-      <Recherche value={q} onChange={setQ} placeholder="Tennis, natation, yoga…" />
+      <Recherche value={q} onChange={setQ} placeholder={t("Tennis, natation, yoga…")} />
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
         {!k && (
           <>
@@ -311,7 +312,7 @@ function ChoixExercice({ visible, onClose, onChoisir }: { visible: boolean; onCl
   const liste = EXERCICES.filter((e) => !k || sansAccents(e.nom + ' ' + GROUPES[e.groupe] + ' ' + e.muscles).includes(k));
   return (
     <Sheet visible={visible} onClose={onClose} title="Choisis un exercice">
-      <Recherche value={q} onChange={setQ} placeholder="Tractions, pompes, squat…" />
+      <Recherche value={q} onChange={setQ} placeholder={t("Tractions, pompes, squat…")} />
       <ScrollView style={styles.liste} keyboardShouldPersistTaps="handled">
         {liste.map((e) => (
           <Appui key={e.id} accessibilityRole="button" accessibilityLabel={e.nom} onPress={() => onChoisir(e.id)} style={styles.ligne}>

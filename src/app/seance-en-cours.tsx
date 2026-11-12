@@ -24,6 +24,7 @@ import { taille, useLecture } from '@/store/lecture';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { useSeance } from '@/store/seance';
 import { alpha, colors, ui } from '@/theme';
+import { t } from '@/i18n';
 
 /**
  * Séance en cours (vWorkout du prototype), mise en page du design 10K « Circuit — séance guidée » (process-routine-session, nov. 2026) :
@@ -89,9 +90,9 @@ export default function SeanceEnCours() {
 
   const quitter = () => {
     if (!doneN) return router.back();
-    Alert.alert('Quitter la séance ?', 'Elle ne sera pas enregistrée.', [
-      { text: 'Continuer', style: 'cancel' },
-      { text: 'Quitter', style: 'destructive', onPress: () => router.back() },
+    Alert.alert(t('Quitter la séance ?'), t('Elle ne sera pas enregistrée.'), [
+      { text: t('Continuer'), style: 'cancel' },
+      { text: t('Quitter'), style: 'destructive', onPress: () => router.back() },
     ]);
   };
 

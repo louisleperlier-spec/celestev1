@@ -3,6 +3,7 @@
  * L'état de l'abonnement vit dans le profil ; il est branché ici au démarrage (`brancherPremium`)
  * pour que les écrans puissent appeler `isPremium()` sans argument, comme le prototype.
  */
+import { localeDates, tr } from './langue';
 import { PROGRAMMES } from '@/data/programmes';
 import { SEANCES_GRATUITES } from '@/data/seances';
 import type { CoachId, ProgrammeId, SeanceId } from '@/data/types';
@@ -53,11 +54,12 @@ export function basculerRenouvellement(p: Premium, now: number = Date.now()): Pr
 
 /** Ligne NÉA Plus du Profil (subRow). */
 export function ligneAbonnement(p: Premium | null, now: number = Date.now()): string {
-  if (!estPremium(p, now) || !p) return "Version gratuite • Découvre l'essai 3 jours";
-  if (enEssai(p, now)) return "Essai gratuit jusqu'au " + new Date(p.trialEnd!).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' }) + (p.renew ? '' : ' • annulé');
+  if (!estPremium(p, now) || !p) return tr("Version gratuite • Découvre l'essai 3 jours");
+  const date = (t: number, o?: Intl.DateTimeFormatOptions) => new Date(t).toLocaleDateString(localeDates(), o);
+  if (enEssai(p, now)) return tr("Essai gratuit jusqu'au") + ' ' + date(p.trialEnd!, { day: 'numeric', month: 'long' }) + (p.renew ? '' : ' • ' + tr('annulé'));
   return (
-    'Abonnement ' +
-    (p.plan === 'an' ? 'annuel' + (p.promo ? ' (39,99 $ la 1re année)' : '') : 'mensuel') +
-    (p.renew ? '' : ' • se termine le ' + new Date(p.until).toLocaleDateString('fr-CA'))
+    tr(p.plan === 'an' ? 'Abonnement annuel' : 'Abonnement mensuel') +
+    (p.plan === 'an' && p.promo ? ' (' + tr('39,99 $ la 1re année') + ')' : '') +
+    (p.renew ? '' : ' • ' + tr('se termine le') + ' ' + date(p.until))
   );
 }

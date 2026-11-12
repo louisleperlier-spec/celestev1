@@ -5,6 +5,7 @@ import { StyleSheet, TextInput } from 'react-native';
 import { ObCentre } from '@/components/onboarding/ObCentre';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
+import { t } from '@/i18n';
 
 /** 1/7 — Prénom (design 10K « Prénom » : grand champ centré, clavier ouvert, Continuer au-dessus du clavier). */
 export default function Prenom() {
@@ -21,7 +22,7 @@ export default function Prenom() {
           setValeur(v);
           set({ name: v.trim() });
         }}
-        placeholder="Ton prénom"
+        placeholder={t("Ton prénom")}
         placeholderTextColor={colors.textTertiary}
         selectionColor={colors.pink}
         autoComplete="given-name"

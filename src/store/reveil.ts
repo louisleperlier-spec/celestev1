@@ -8,6 +8,7 @@ import { FICHIER_SON, prochaineSonnerie, sonValide, type Reveil } from '@/lib/re
 import { hm } from '@/lib/sommeil';
 
 import { NeaMontre } from '../../modules/nea-montre/src';
+import { contenuTraduit } from '@/i18n';
 
 export type ModeReveil = 'alarme' | 'notification' | 'aucun';
 
@@ -25,12 +26,12 @@ async function annulerNotifs() {
 
 async function programmerNotifs(r: Reveil) {
   const min = hm(r.h);
-  const contenu: Notifications.NotificationContentInput = {
+  const contenu: Notifications.NotificationContentInput = contenuTraduit({
     title: "Bonjour, c'est l'heure ☀️",
     body: 'Ton réveil NÉA. Bois un verre d’eau et ouvre les rideaux.',
     sound: fichier(r) || 'default',
     data: { act: 'sleepadd' },
-  };
+  });
   if (!r.jours.length) {
     const d = prochaineSonnerie(r);
     if (d) await Notifications.scheduleNotificationAsync({ identifier: 'nea.reveil.1', content: contenu, trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: d } });

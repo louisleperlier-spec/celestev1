@@ -10,6 +10,7 @@ import type { LieuOnboarding } from '@/data/types';
 import { AGE_MIN, type Jours, type NiveauId } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
+import { t } from '@/i18n';
 
 const NIVEAUX: readonly [NiveauId, string, IconName][] = [
   ['deb', 'Débutant', 'check'],
@@ -78,7 +79,7 @@ export default function Reglages() {
             style={styles.inp}
             value={nom}
             onChangeText={setNom}
-            placeholder="Ton prénom"
+            placeholder={t("Ton prénom")}
             placeholderTextColor={colors.textSecondary}
             autoComplete="given-name"
             maxLength={20}

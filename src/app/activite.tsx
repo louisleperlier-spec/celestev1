@@ -15,9 +15,10 @@ import { allure } from '@/lib/velo';
 import { fcEntre, santeDisponible } from '@/lib/sante';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
+import { locale } from '@/i18n';
 
-const JOUR = new Intl.DateTimeFormat('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
-const HEURE = new Intl.DateTimeFormat('fr-CA', { hour: '2-digit', minute: '2-digit' });
+const JOUR = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' });
+const HEURE = new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit' });
 
 /** Temps (s) passé dans chaque zone (60, 70, 80, 90 % de la FC max), d'après les mesures horodatées d'Apple Santé. */
 function tempsZones(mesures: readonly [number, number][], fcMax: number): number[] {

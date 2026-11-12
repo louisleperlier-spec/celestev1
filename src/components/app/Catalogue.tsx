@@ -12,6 +12,7 @@ import { colors, fonts, glow, ui } from '@/theme';
 
 import { Row, RowText } from './Rows';
 import { Thumb } from './Thumb';
+import { t } from '@/i18n';
 
 /** Morceaux communs à l'onglet Programme et aux pages « Séances prêtes » et « Exercices ». */
 
@@ -113,7 +114,7 @@ export function Recherche({ value, onChange, placeholder }: { value: string; onC
       <TextInput
         value={value}
         onChangeText={onChange}
-        placeholder={placeholder}
+        placeholder={t(placeholder)}
         placeholderTextColor={colors.textSecondary}
         style={styles.srchInput}
         accessibilityLabel="Rechercher"

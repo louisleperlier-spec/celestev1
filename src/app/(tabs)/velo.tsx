@@ -23,6 +23,7 @@ import { useCompte } from '@/store/compte';
 import { useProfil } from '@/store/profil';
 import { useVelo, type ModeVelo } from '@/store/velo';
 import { colors, fonts, heartZones, ui } from '@/theme';
+import { locale } from '@/i18n';
 
 const ZC = [heartZones.z1, heartZones.z2, heartZones.z3, heartZones.z4, heartZones.z5];
 const RESISTANCES = [2, 4, 5, 6, 8, 10];
@@ -193,7 +194,7 @@ export default function Velo() {
                     {dec(l.dist ?? 0)} km • {l.min} min
                   </Text>
                   <Text style={styles.p}>
-                    {new Date(l.d).toLocaleDateString('fr-CA', { weekday: 'short', day: 'numeric', month: 'short' })} • FC {l.hrAvg} bpm • VFC {l.hrv} ms
+                    {new Date(l.d).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' })} • FC {l.hrAvg} bpm • VFC {l.hrv} ms
                   </Text>
                 </View>
               </Card>

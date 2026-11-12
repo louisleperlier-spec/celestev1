@@ -10,6 +10,7 @@ import { MASCOTTE_IMAGES } from '@/data/images';
 import { ouvrirNotif, verifierNotifs } from '@/store/notifs';
 import { useProfil } from '@/store/profil';
 import { colors } from '@/theme';
+import { locale } from '@/i18n';
 
 /** Liste des notifications (vNotifs du prototype) : toutes marquées lues à l'ouverture. */
 export default function Notifications() {
@@ -60,7 +61,7 @@ export default function Notifications() {
                       {n.title}
                     </Text>
                     <Text style={styles.p}>{n.body}</Text>
-                    <Text style={styles.date}>{new Date(n.d).toLocaleString('fr-CA', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</Text>
+                    <Text style={styles.date}>{new Date(n.d).toLocaleString(locale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</Text>
                   </View>
                 </Card>
               </Pressable>

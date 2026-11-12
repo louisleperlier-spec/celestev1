@@ -14,6 +14,7 @@ import { INTENSITES, kcalSport, sportParId, symboleSport, type Intensite } from 
 import { enregistrerSport, type ResultatActivite } from './activites';
 import { arreterMontre, suivreMontre } from './montre';
 import { useProfil } from './profil';
+import { contenuTraduit } from '@/i18n';
 
 type SportLive = {
   run: boolean;
@@ -50,7 +51,7 @@ async function notifier(titre: string, corps: string, identifier = ID_NOTIF, sec
   try {
     await Notifications.scheduleNotificationAsync({
       identifier,
-      content: { title: titre, body: corps, data: { act: 'sport' } },
+      content: contenuTraduit({ title: titre, body: corps, data: { act: 'sport' } }),
       trigger: secondes ? { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: secondes } : null,
     });
   } catch {

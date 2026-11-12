@@ -200,6 +200,17 @@ ni de nombre d'utilisateurs, « Pas satisfait ? Écris-nous » (mail), bouton bl
 croix = plus tard, « Ne plus me demander ») si `!avisFini`, ≥ 1 activité, au plus tous les 3 jours ; aussi après la 3e activité (Accueil, tous les 120 j)
 et depuis Profil → « Noter NÉA ». **Publiés en production (29 oct. 2026)** avec Progrès 10K et les nouvelles scènes.
 
+**Anglais (12 nov. 2026, demandé par l'utilisateur : « traduis tout »)** : le français reste la langue source ; `src/i18n` traduit à l'affichage :
+`Text` (enfants et `accessibilityLabel`) passe chaque texte dans `traduire()`, qui le cherche dans `en.json` (clé = texte français normalisé, ~2 800
+entrées), puis par gabarit (`{0}`… dans l'ordre d'apparition, le texte fixe doit peser ≥ 30 % de la phrase, valeurs de moins de 5 lettres non traduites :
+« Sam » n'est pas samedi), puis morceau par morceau (puce ou nombre en tête, `•`/`·`, `:`, virgules, phrases) ; sans traduction : français.
+Langue = celle de l'appareil (`Intl`) ou le choix de Profil → Mon écran → « Langue · Language » (`nea-langue`, kv-store, l'app redémarre) ;
+`src/lib` traduit par `tr()` de `lib/langue.ts` (branché par `@/i18n`, rien sous Node : `comparer-plan` inchangé) : Axel Enragé et motivation
+(gabarit traduit avant `{p}`/`{s}`/`{n}`), abonnement, défi partagé ; notifications par `contenuTraduit`, alertes, partages, placeholders,
+écriture lettre à lettre de l'onboarding (texte traduit avant découpage), dates (`locale()`), initiales des jours (`LETTRES_JOURS`).
+Nouveau texte : l'ajouter à `en.json` (`scripts/extraire-textes.cjs` liste les textes de `src`, `src/i18n/ajouts.tsv` les ajouts à la main).
+Pas traduits : montre, widgets et Activités en direct (Swift), réponses du coach IA, fiche App Store, pages légales du site.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

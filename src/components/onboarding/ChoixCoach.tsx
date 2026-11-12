@@ -14,6 +14,7 @@ import Animated, {
 
 import { Glow, Text } from '@/components/ui';
 import { alpha } from '@/theme';
+import { traduire } from '@/i18n';
 
 /**
  * Pièces du design 10K « Choix du coach » (v2-onboarding-coach, SwiftUI) portées en React Native :
@@ -122,7 +123,8 @@ function Mot({ mot, debut, total, p, style }: { mot: string; debut: number; tota
 }
 
 /** Réplique révélée en vague, mot à mot (le flou par lettre de l'original n'existe pas en React Native). */
-export function TexteRevele({ texte, style }: { texte: string; style: StyleProp<TextStyle> }) {
+export function TexteRevele({ texte: texteFr, style }: { texte: string; style: StyleProp<TextStyle> }) {
+  const texte = traduire(texteFr);
   const reduit = useReducedMotion();
   const p = useSharedValue(reduit ? 1 : 0);
   useEffect(() => {

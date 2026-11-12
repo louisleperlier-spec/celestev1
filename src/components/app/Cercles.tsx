@@ -11,6 +11,7 @@ import { baseHrv, lastNight, recovStatus, sleepScore } from '@/lib/sommeil';
 import { rafraichirActivite, useCercles } from '@/store/cercles';
 import { useProfil } from '@/store/profil';
 import { alpha, colors } from '@/theme';
+import { LETTRES_JOURS } from '@/i18n';
 
 /** Couleur de chaque cercle (de l'extérieur vers l'intérieur). */
 export const COULEURS_CERCLES: Record<IdCercle, string> = {
@@ -174,7 +175,7 @@ export function BilanDuJour() {
   );
 }
 
-const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const LETTRES = LETTRES_JOURS;
 
 /** Progrès : les cercles des 7 jours de la semaine. */
 export function SemaineCercles() {

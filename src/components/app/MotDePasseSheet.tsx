@@ -6,6 +6,7 @@ import { changerMotDePasse, emailValide, envoyerCodeMotDePasse, pwScore } from '
 import { colors, fonts } from '@/theme';
 
 import { Sheet } from './Sheet';
+import { t } from '@/i18n';
 
 /**
  * « Mot de passe oublié ? » : l'email, puis le code reçu et le nouveau mot de passe.
@@ -50,7 +51,7 @@ export function MotDePasseSheet({ visible, emailInitial, onClose, onConnecte }: 
             style={styles.inp}
             value={email}
             onChangeText={setEmail}
-            placeholder="Adresse email"
+            placeholder={t("Adresse email")}
             placeholderTextColor={colors.textSecondary}
             autoComplete="email"
             keyboardType="email-address"
@@ -67,7 +68,7 @@ export function MotDePasseSheet({ visible, emailInitial, onClose, onConnecte }: 
             style={styles.inp}
             value={code}
             onChangeText={(t) => setCode(t.replace(/\D/g, ''))}
-            placeholder="Code reçu"
+            placeholder={t("Code reçu")}
             placeholderTextColor={colors.textSecondary}
             keyboardType="number-pad"
             autoComplete="one-time-code"
@@ -79,7 +80,7 @@ export function MotDePasseSheet({ visible, emailInitial, onClose, onConnecte }: 
             style={[styles.inp, styles.mt10]}
             value={mdp}
             onChangeText={setMdp}
-            placeholder="Nouveau mot de passe"
+            placeholder={t("Nouveau mot de passe")}
             placeholderTextColor={colors.textSecondary}
             secureTextEntry
             autoComplete="new-password"

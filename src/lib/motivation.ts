@@ -3,6 +3,7 @@
  * Ordre mélangé par personne et par cycle de 123 jours (compté depuis son premier jour) (mélange déterministe), donc jamais deux fois le même avant d'avoir vu les 120.
  * `{p}` est remplacé par le prénom (ou retiré s'il est vide).
  */
+import { tr } from './langue';
 import { hash } from './xp';
 
 export const MOTIVATIONS: readonly string[] = [
@@ -159,6 +160,6 @@ function ordre(graine: string, cycle: number): number[] {
 export function motivationDuJour(graine: string, prenom: string, d: Date = new Date()): string {
   const n = MOTIVATIONS.length;
   const j = Math.max(0, jourIndex(d, graine));
-  const brut = MOTIVATIONS[ordre(graine, Math.floor(j / n))[j % n]];
+  const brut = tr(MOTIVATIONS[ordre(graine, Math.floor(j / n))[j % n]]);
   return prenom ? brut.replace('{p}', prenom) : brut.replace('{p}, ', '').replace(/^./, (c) => c.toUpperCase());
 }

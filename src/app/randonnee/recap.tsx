@@ -16,6 +16,7 @@ import { vibrerFete } from '@/store/jeu';
 import { TERRITOIRES } from '@/lib/fonctions';
 import { useRando } from '@/store/rando';
 import { colors, fonts, ui } from '@/theme';
+import { enAnglais } from '@/i18n';
 
 const km1 = (v: number) => v.toFixed(1).replace('.', ',');
 const hm = (s: number) => `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}`;
@@ -34,7 +35,9 @@ export default function RecapRando() {
 
   const partager = () =>
     Share.share({
-      message: `${r.sommet ? '⛰️ Sommet atteint' : '🥾 Rando terminée'}${s ? ` : ${s.nom}` : ''} ! ${km1(r.km)} km, ${r.dplus} m de D+ en ${hm(r.sec)} avec NÉA 🧡`,
+      message: enAnglais()
+        ? `${r.sommet ? '⛰️ Summit reached' : '🥾 Hike complete'}${s ? `: ${s.nom}` : ''}! ${km1(r.km)} km, ${r.dplus} m of elevation gain in ${hm(r.sec)} with NÉA 🧡`
+        : `${r.sommet ? '⛰️ Sommet atteint' : '🥾 Rando terminée'}${s ? ` : ${s.nom}` : ''} ! ${km1(r.km)} km, ${r.dplus} m de D+ en ${hm(r.sec)} avec NÉA 🧡`,
     });
 
   return (

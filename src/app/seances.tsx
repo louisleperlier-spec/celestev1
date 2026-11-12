@@ -11,6 +11,7 @@ import { GOALF, LIEUX, SEANCES } from '@/data';
 import type { GoalFiltre, LieuId, SeanceId } from '@/data/types';
 import { useProfil } from '@/store/profil';
 import { colors } from '@/theme';
+import { t } from '@/i18n';
 
 /** Toutes les séances prêtes (« Tout voir » de l'onglet Programme) : recherche, lieu, objectif. */
 export default function Seances() {
@@ -29,7 +30,7 @@ export default function Seances() {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <EnTetePage titre="Séances prêtes" sous={`${SEANCES.length} séances guidées, lance et suis`} />
-      <Recherche value={q} onChange={setQ} placeholder="Rechercher une séance" />
+      <Recherche value={q} onChange={setQ} placeholder={t("Rechercher une séance")} />
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
         <Card style={styles.carte}>
           {!k && (

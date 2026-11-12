@@ -8,6 +8,7 @@ import { Appui, Button, Icon, Text, toast } from '@/components/ui';
 import { GROUPES_NOTE, TAGS_SOIR, type GroupeNote } from '@/lib/reveil';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts, ui } from '@/theme';
+import { t } from '@/i18n';
 
 const aujourdhui = () => new Date().toISOString().slice(0, 10);
 
@@ -73,7 +74,7 @@ export default function NotesSoir() {
           <TextInput
             value={note}
             onChangeText={setNote}
-            placeholder="Ajouter une note…"
+            placeholder={t("Ajouter une note…")}
             placeholderTextColor={colors.textSecondary}
             multiline
             style={styles.note}

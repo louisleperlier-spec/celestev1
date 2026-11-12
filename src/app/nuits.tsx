@@ -16,6 +16,7 @@ import { JOURS } from '@/lib/semaine';
 import { baseHrv, conseilNuit, lastNight, recovStatus, sleepScore, type Nuit } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
+import { locale } from '@/i18n';
 
 /** Mes nuits (« Voir mes nuits » de la partie Sommeil) : score de la nuit, 7 dernières nuits, VFC nocturne, mesures de récupération (vSleep du prototype). */
 export default function Nuits() {
@@ -87,7 +88,7 @@ export default function Nuits() {
             .reverse()
             .map((c) => {
               const s = recovStatus(c.hrv, base);
-              const quand = new Date(c.d).toLocaleString('fr-CA', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+              const quand = new Date(c.d).toLocaleString(locale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' });
               return (
                 <Row key={c.d}>
                   <View style={[styles.zone, { backgroundColor: s[1] }]} />

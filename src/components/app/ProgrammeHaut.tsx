@@ -21,8 +21,9 @@ import { nextSession, sessionForDay, weekDates } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
 import { alpha, colors, fonts } from '@/theme';
 import { avecVague } from '@/store/vague';
+import { LETTRES_JOURS } from '@/i18n';
 
-const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const LETTRES = LETTRES_JOURS;
 const ouvrirCalendrier = () => router.navigate({ pathname: '/programme', params: { vue: 'calendrier' } });
 
 /** Jour fait d'après le journal (date locale). */

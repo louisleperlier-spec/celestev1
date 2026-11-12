@@ -24,6 +24,7 @@ import { rafraichirLigue, useCompte } from '@/store/compte';
 import { ajouterAmi, creerEquipe, quitterEquipe, rejoindreEquipe, renommerEquipe, useLigue, type Resultat } from '@/store/ligue';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts, glow, ui } from '@/theme';
+import { t } from '@/i18n';
 
 type Ligne = { key: string; nom: string; coach?: CoachId; equipe?: boolean; moi?: boolean; tot: number; wk: number };
 
@@ -96,7 +97,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
 
   const inviter = () => {
     if (!l.code) return;
-    Share.share({ message: 'Rejoins-moi sur NÉA, le coach sportif IA ! Mon code ami : ' + l.code });
+    Share.share({ message: t('Rejoins-moi sur NÉA, le coach sportif IA ! Mon code ami :') + ' ' + l.code });
   };
 
   const ouvrir = (f: 'ami' | 'nom') => {
@@ -379,7 +380,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
             setSaisie(t);
             setErreur('');
           }}
-          placeholder={feuille === 'ami' ? 'NEA-XXXXXX' : 'Team…'}
+          placeholder={feuille === 'ami' ? 'NEA-XXXXXX' : t('Team…')}
           placeholderTextColor={colors.textSecondary}
           autoCapitalize={feuille === 'ami' ? 'characters' : 'sentences'}
           autoCorrect={false}

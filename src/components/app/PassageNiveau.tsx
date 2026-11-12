@@ -23,6 +23,7 @@ import { rankOf } from '@/lib/xp';
 import { fermerFete, vibrerFete, type Fete } from '@/store/jeu';
 import { useProfil } from '@/store/profil';
 import { alpha, colors, fonts } from '@/theme';
+import { t } from '@/i18n';
 
 /**
  * Passage de niveau (design Process « v2-level-up », porté de SwiftUI, nov. 2026) : champ d'étoiles, hexagone du niveau qui bascule
@@ -203,7 +204,7 @@ export function PassageNiveau({ f, niveau }: { f: Fete; niveau: number }) {
         <Text weight="bold" style={styles.titre}>
           Niveau {niveau}
         </Text>
-        <Animated.Text style={[styles.rang, stEspacement]}>{`RANG ${nom.toUpperCase()}`}</Animated.Text>
+        <Animated.Text style={[styles.rang, stEspacement]}>{t('RANG {0}').replace('{0}', t(nom).toUpperCase())}</Animated.Text>
         {rangChange && (
           <View style={[styles.puce, { backgroundColor: alpha(couleur, 0.16), borderColor: alpha(couleur, 0.38) }]}>
             <Text weight="bold" style={[styles.puceTxt, { color: couleur }]}>

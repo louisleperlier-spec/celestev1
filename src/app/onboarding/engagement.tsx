@@ -22,6 +22,7 @@ import { COACH_IMAGES } from '@/data';
 import { coachById } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
 import { colors, fonts } from '@/theme';
+import { t } from '@/i18n';
 
 /** Durée de l'appui pour s'engager. */
 const APPUI_MS = 3000;
@@ -55,7 +56,7 @@ function Engagement({ texte, i, n, p }: { texte: string; i: number; n: number; p
           <Icon name="check" size={14} color={colors.onPrimary} />
         </Animated.View>
       </View>
-      <Animated.Text style={[styles.engTxt, txt]}>{texte}</Animated.Text>
+      <Animated.Text style={[styles.engTxt, txt]}>{t(texte)}</Animated.Text>
     </View>
   );
 }

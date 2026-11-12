@@ -11,9 +11,10 @@ import { demanderAutorisation } from '@/store/notifs';
 import { usePlan, useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
 import { avecVague } from '@/store/vague';
+import { LETTRES_JOURS } from '@/i18n';
 
 const LIEU = { maison: 'À la maison', salle: 'En salle', deux: 'Maison et salle' } as const;
-const JOURS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const JOURS = LETTRES_JOURS;
 
 /** Fin de l'onboarding : « Ton programme est prêt », résumé, première séance, puis NÉA Plus et le compte. */
 export default function Pret() {

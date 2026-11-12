@@ -22,6 +22,7 @@ import { dayKey } from '@/lib/xp';
 import { MIN_RALENTIR, verifierMoments } from './moments';
 import { pieceJointe } from './pieceJointe';
 import { semaineDe, useProfil } from './profil';
+import { contenuTraduit } from '@/i18n';
 
 /** Bannière affichée en haut de l'écran pendant 7 s (.nbanner). */
 export const useBanniere = create<{ n: Notif | null }>(() => ({ n: null }));
@@ -92,7 +93,8 @@ function prochaine(h: string, now: Date): Date {
 /** Programme une notification avec la mascotte en image. */
 async function planifier(e: ExpressionMascotte, req: Notifications.NotificationRequestInput) {
   const attachments = await pieceJointe(e);
-  return Notifications.scheduleNotificationAsync(attachments.length ? { ...req, content: { ...req.content, attachments } } : req);
+  const content = contenuTraduit(req.content);
+  return Notifications.scheduleNotificationAsync({ ...req, content: attachments.length ? { ...content, attachments } : content });
 }
 
 /**

@@ -13,6 +13,7 @@ import { buildPlan, sesKcal } from '@/lib/plan';
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { autorisation, demanderAutorisation } from './notifs';
 import { selectProfil, useProfil } from './profil';
+import { contenuTraduit, locale } from '@/i18n';
 
 let dernier = '';
 
@@ -45,7 +46,7 @@ export function demarrerAlertes() {
 
 /** Exemples des alertes (mêmes textes que AlertesSante.swift), envoyés à 5 s d'intervalle pour essayer. */
 type Exemple = { title: string; body: string; act: string; cat?: string; nea?: Record<string, string | number> };
-const heureCourte = () => new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
+const heureCourte = () => new Date().toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
 const EXEMPLES: readonly Exemple[] = [
   {
     title: '🙂 VFC 62 ms · Stable · maintenant',
@@ -89,8 +90,7 @@ export async function testerAlertes(): Promise<boolean> {
       Notifications.scheduleNotificationAsync({
         identifier: `nea.test.${i}`,
         content: {
-          title: e.title,
-          body: e.body,
+          ...contenuTraduit({ title: e.title, body: e.body }),
           // Catégorie + données : écran d'Axel sur la montre (iPhone verrouillé).
           categoryIdentifier: e.cat,
           data: { act: e.act, ...(e.nea ? { nea: e.nea.genre === 'vfc' ? { ...e.nea, heure: heureCourte() } : e.nea } : {}) },

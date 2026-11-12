@@ -35,7 +35,7 @@ export const reponseSecours = (texte: string, prenom: string, prochaine: string)
 /** Premier message du coach (nouvelle conversation ou changement de coach). */
 export const accueilCoach = (c: Coach, prenom: string): MessageChat => ({
   r: 'bot',
-  t: `Salut ${prenom} ! Moi c'est ${c.nom}. ${c.quote} Ton programme ${c.style.toLowerCase()} est prêt. Qu'est-ce que je peux faire pour toi ?`,
+  t: `Salut${prenom ? ' ' + prenom : ''} ! Moi c'est ${c.nom}. ${c.quote} Ton programme ${c.style.toLowerCase()} est prêt. Qu'est-ce que je peux faire pour toi ?`,
 });
 
 /** Messages gratuits restants aujourd'hui (chatLeft). */

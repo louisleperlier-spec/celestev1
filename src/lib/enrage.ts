@@ -4,6 +4,7 @@
  * Il se calme tout seul quand le cœur demande du repos (bilan de la nuit en surcharge). Fonctions pures.
  * `{p}` = prénom, `{s}` = titre de la séance, `{n}` = nombre (jours de série ou d'absence).
  */
+import { tr } from './langue';
 
 export type NiveauEnrage = 'taquin' | 'venere' | 'sanspitie';
 /** Expressions de la mascotte (`MASCOTTE_IMAGES` de @/data). */
@@ -235,11 +236,11 @@ export function messageEnrage(
   const liste = moment === 'repos' ? REPOS : BANQUES[moment][niveau];
   const sel = { matin: 17, midi: 19, aprem: 23, jourOff: 29, seance: 1, relance: 3, serie: 5, absent: 7, retour: 11, repos: 13 }[moment];
   const t = liste[(numJour(v.date ?? new Date()) * 7 + sel) % liste.length];
-  const body = t
-    .replaceAll('{p}', v.prenom?.trim() || 'toi')
-    .replaceAll('{s}', v.seance ?? 'Ta séance')
+  const body = tr(t)
+    .replaceAll('{p}', v.prenom?.trim() || tr('toi'))
+    .replaceAll('{s}', tr(v.seance ?? 'Ta séance'))
     .replaceAll('{n}', String(v.n ?? ''));
-  return { title: moment === 'repos' ? 'Axel (calmé) 😌' : TITRES_ENRAGE[niveau], body };
+  return { title: tr(moment === 'repos' ? 'Axel (calmé) 😌' : TITRES_ENRAGE[niveau]), body };
 }
 
 /** Nombre de messages (pour l'écran de réglage). */

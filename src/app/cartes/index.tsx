@@ -10,6 +10,7 @@ import { Button, Card, Segmente, Text } from '@/components/ui';
 import { CARTES, carte, possedees, RARETES, XP_DOUBLE, type CarteId } from '@/lib/jeu';
 import { useProfil } from '@/store/profil';
 import { colors, fonts, ui } from '@/theme';
+import { t } from '@/i18n';
 
 type Filtre = 'tout' | '0' | '1' | '2' | '3';
 
@@ -74,7 +75,7 @@ export default function Collection() {
             'Une carte Explorateur (Légendaire) pour chaque sentier de Randonnée réussi.',
             '1 carte Rare ou mieux à chaque record battu.',
             'Un booster de 3 cartes à chaque niveau et à chaque défi de la semaine.',
-            `Les doubles se recyclent en XP (${XP_DOUBLE.map((x, k) => `${RARETES[k]} +${x}`).join(', ')}).`,
+            `Les doubles se recyclent en XP (${XP_DOUBLE.map((x, k) => `${t(RARETES[k])} +${x}`).join(', ')}).`,
             'Une Légendaire nouvelle te donne un Turbo x2.',
           ].map((t) => (
             <Text key={t} style={styles.p}>

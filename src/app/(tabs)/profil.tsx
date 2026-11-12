@@ -3,7 +3,8 @@ import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import * as Updates from 'expo-updates';
 import { Children, useState } from 'react';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Alert, Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { choisirLangue, choixLangue, langueActive, t, type ChoixLangue } from '@/i18n';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -164,6 +165,7 @@ export default function Profil() {
             sous={montre ? 'NÉA est installée sur ta montre' : 'Installe NÉA depuis l’app Watch de l’iPhone'}
             onPress={ouvrirWatch}
           />
+          <Ligne icon="bulle" titre="Langue · Language" sous={libelleLangue()} onPress={changerLangue} />
         </Section>
 
         <Section titre="Alertes">
@@ -361,6 +363,27 @@ function Section({ titre, children }: { titre: string; children: React.ReactNode
 }
 
 /** Ligne : icône seule dans sa colonne, titre de 16 pt, précision grise, chevron (ou rien). */
+const libelleLangue = () => {
+  const c = choixLangue();
+  return c === 'fr' ? 'Français' : c === 'en' ? 'English' : `${t('Automatique')} · ${langueActive() === 'en' ? 'English' : 'Français'}`;
+};
+
+/** Choix de la langue : l'app redémarre pour tout réafficher (textes, notifications reprogrammées). */
+function changerLangue() {
+  const appliquer = (c: ChoixLangue) => {
+    if (c === choixLangue()) return;
+    choisirLangue(c);
+    if (Platform.OS === 'web') return globalThis.location?.reload();
+    Updates.reloadAsync().catch(() => Alert.alert(t('Changer de langue ?'), t("NÉA va redémarrer pour s'afficher dans la langue choisie.")));
+  };
+  Alert.alert(t('Langue'), undefined, [
+    { text: 'Français', onPress: () => appliquer('fr') },
+    { text: 'English', onPress: () => appliquer('en') },
+    { text: t('Automatique'), onPress: () => appliquer('auto') },
+    { text: t('Annuler'), style: 'cancel' },
+  ]);
+}
+
 function Ligne({
   icon,
   titre,
