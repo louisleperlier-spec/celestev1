@@ -13,6 +13,7 @@ import { supabase } from '@/lib/supabase';
 
 import { useCompte } from './compte';
 import { selectProfil, semaineDe, useProfil } from './profil';
+import { langueActive } from '@/i18n';
 
 /** Le coach écrit (… animé), non sauvegardé. */
 export const useCoachEcrit = create<{ ecrit: boolean }>(() => ({ ecrit: false }));
@@ -27,7 +28,7 @@ async function demanderAuServeur(messages: MessageChat[]): Promise<string | null
   const st = useProfil.getState();
   const c = coachById(st.coach);
   const { data, error } = await supabase.functions.invoke<{ texte?: string; reste?: number }>('coach', {
-    body: { coach: { nom: c.nom, style: c.style, voix: c.voix }, profil: resumeProfil(st, buildPlan(selectProfil(st))), messages: messages.slice(-10) },
+    body: { coach: { nom: c.nom, style: c.style, voix: c.voix }, profil: resumeProfil(st, buildPlan(selectProfil(st))), messages: messages.slice(-10), langue: langueActive() },
   });
   if (error) {
     // Limite du jour atteinte côté serveur (autre appareil…) : le compteur local s'aligne.

@@ -13,7 +13,7 @@ const LIMITE_PLUS = 100;
 const MODELE = 'claude-opus-5';
 
 type Message = { r: 'me' | 'bot'; t: string };
-type Demande = { coach: { nom: string; style: string; voix: string }; profil: string; messages: Message[] };
+type Demande = { coach: { nom: string; style: string; voix: string }; profil: string; messages: Message[]; langue: 'fr' | 'en' };
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -36,7 +36,7 @@ function lire(b: unknown): Demande | null {
         .filter((m) => m.t.trim())
     : [];
   if (!messages.length || messages[messages.length - 1].r !== 'me') return null;
-  return { coach: { nom: texte(c.nom, 30), style: texte(c.style, 80), voix: texte(c.voix, 600) }, profil: texte(o.profil, 3000), messages };
+  return { coach: { nom: texte(c.nom, 30), style: texte(c.style, 80), voix: texte(c.voix, 600) }, profil: texte(o.profil, 3000), messages, langue: o.langue === 'en' ? 'en' : 'fr' };
 }
 
 /** Abonnement NÉA Plus actif : l'identifiant RevenueCat de l'app est l'identifiant du compte Supabase. */
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
   if (reste === -1) return json({ erreur: 'limite', reste: 0, plus }, 429);
 
   // Consigne du prototype (ask) : personnage, tutoiement, 2 à 4 phrases, jamais de conseil médical.
-  const system = `Tu es ${d.coach.nom}, coach sportif IA de l'app NÉA, style ${d.coach.style}. Personnalité : ${d.coach.voix}. Tu tutoies, tu réponds en français, en 2 à 4 phrases, concret. Jamais de conseil médical : en cas de douleur ou de problème de santé, oriente vers un professionnel.
+  const system = `Tu es ${d.coach.nom}, coach sportif IA de l'app NÉA, style ${d.coach.style}. Personnalité : ${d.coach.voix}. ${d.langue === 'en' ? "Tu réponds en anglais (l'app est affichée en anglais), sur un ton familier et chaleureux" : 'Tu tutoies, tu réponds en français'}, en 2 à 4 phrases, concret. Jamais de conseil médical : en cas de douleur ou de problème de santé, oriente vers un professionnel.
 ${d.profil}
 Réponds uniquement au dernier message, sans préfixe.`;
 
