@@ -209,7 +209,10 @@ Langue = celle de l'appareil (`Intl`) ou le choix de Profil → Mon écran → �
 (gabarit traduit avant `{p}`/`{s}`/`{n}`), abonnement, défi partagé ; notifications par `contenuTraduit`, alertes, partages, placeholders,
 écriture lettre à lettre de l'onboarding (texte traduit avant découpage), dates (`locale()`), initiales des jours (`LETTRES_JOURS`).
 Nouveau texte : l'ajouter à `en.json` (`scripts/extraire-textes.cjs` liste les textes de `src`, `src/i18n/ajouts.tsv` les ajouts à la main).
-Pas traduits : montre, widgets et Activités en direct (Swift), réponses du coach IA, fiche App Store, pages légales du site.
+**Publié en production (12 nov. 2026).** Coach IA : l'app envoie `langue` à la fonction `coach`, qui répond en anglais (à redéployer).
+**Fiche en-US** sur le brouillon de la version **1.0.2** (`644ec06a-…`, créé le 12 nov., sans build ni soumission) : sous-titre « AI workout & recovery coach »,
+description, mots-clés, nouveautés, texte promo ; fr-CA : nouveautés 1.0.2 et « 3 coachs » ; captures en-US non faites (celles du fr-CA servent).
+Pas traduits : montre, widgets et Activités en direct (Swift), pages légales du site.
 
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
