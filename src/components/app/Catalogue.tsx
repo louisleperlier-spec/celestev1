@@ -1,0 +1,248 @@
+import { router, type Href } from 'expo-router';
+import { StyleSheet, TextInput, View } from 'react-native';
+
+import { Appui, Icon, Text } from '@/components/ui';
+import { Image } from 'expo-image';
+
+import { EXERCICE_IMAGES, EXERCICES, GROUPES, LIEUX, SEANCES_GRATUITES } from '@/data';
+import type { ExerciceId, GroupeId, LieuId, Seance, SeanceId } from '@/data/types';
+import { LVLN } from '@/lib/plan';
+import { isPremium, wkLocked } from '@/lib/premium';
+import { catSession } from '@/lib/semaine';
+import { useProfil } from '@/store/profil';
+import { colors, fonts, ui } from '@/theme';
+
+import { Row, RowText } from './Rows';
+import { Thumb } from './Thumb';
+import { t } from '@/i18n';
+
+/** Morceaux communs à l'onglet Programme et aux pages « Séances prêtes » et « Exercices ». */
+
+export type FiltreGroupe = 'Tous' | 'pecs' | 'dos' | 'epaules' | 'bras' | 'jambes' | 'abdos' | 'cardio';
+export const FILTRES_GROUPES: readonly [FiltreGroupe, string][] = [
+  ['Tous', 'Tous'],
+  ['pecs', 'Pecs'],
+  ['dos', 'Dos'],
+  ['epaules', 'Épaules'],
+  ['bras', 'Bras'],
+  ['jambes', 'Jambes'],
+  ['abdos', 'Abdos'],
+  ['cardio', 'Cardio'],
+];
+export const filtrerGroupe = (f: FiltreGroupe, g: GroupeId) =>
+  f === 'Tous' ||
+  g === f ||
+  (f === 'bras' && ['biceps', 'triceps'].includes(g)) ||
+  (f === 'jambes' && ['quads', 'ischios', 'fessiers', 'mollets'].includes(g));
+
+/** Recherche sans accents ni majuscules. */
+export const normaliser = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+export const premierExo = (w: Seance) => w.ex[0].split(':')[0] as ExerciceId;
+
+/** Lieu proposé d'abord : celui choisi dans l'onboarding (salle si « les deux »). */
+export const lieuDuProfil = (gear: string): LieuId => (gear === 'maison' ? 'maison' : 'salle');
+
+/**
+ * Carte d'une séance prête pour le carrousel à balayer (design « Transitions au scroll ») : état (Gratuit, NÉA Plus, niveau),
+ * illustration d'Axel du premier exercice en grand, titre, durée et nombre d'exercices, « Ajouter » à ma semaine.
+ * Toucher la carte ouvre la séance.
+ */
+export function CarteSeance({ w, onPlanifier }: { w: Seance; onPlanifier: (id: SeanceId) => void }) {
+  const weight = useProfil((s) => s.weight);
+  const mod = useProfil((s) => s.wkMod[w.id] ?? 0);
+  const s = catSession(w, null, weight, mod);
+  const lk = wkLocked(w.id);
+  const etat = lk ? 'NÉA Plus' : SEANCES_GRATUITES.includes(w.id) && !isPremium() ? 'Gratuit' : LVLN[w.lvl - 1];
+  return (
+    <Appui accessibilityRole="button" accessibilityLabel={`${w.t}, ${s.min} min`} style={styles.carte} onPress={() => router.push(`/catalogue/${w.id}`)}>
+      <View style={styles.carteHaut}>
+        <Text variant="label" style={lk ? styles.carteEtatPlus : undefined}>
+          {etat}
+        </Text>
+        {lk && <Icon name="lock" size={13} color={colors.textTertiary} strokeWidth={2.2} />}
+      </View>
+      <View style={styles.carteImage}>
+        <Image source={EXERCICE_IMAGES[premierExo(w)]} style={styles.carteImg} contentFit="contain" />
+      </View>
+      <Text weight="semibold" style={styles.carteTitre} numberOfLines={2}>
+        {w.t}
+      </Text>
+      <Text style={styles.wp}>
+        {s.min} min • {w.ex.length} exercices • {LVLN[w.lvl - 1]}
+      </Text>
+      <Appui accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.carteAjout} onPress={() => onPlanifier(w.id)}>
+        <Icon name="plus" size={16} color={colors.text} />
+        <Text weight="semibold" style={styles.carteAjoutTxt}>
+          Ajouter à ma semaine
+        </Text>
+      </Appui>
+    </Appui>
+  );
+}
+
+/** Une séance prête : vignette, titre, durée, niveau, et « + » pour la planifier (.wrow du prototype). */
+export function SeanceLigne({ w, onPlanifier }: { w: Seance; onPlanifier: (id: SeanceId) => void }) {
+  const weight = useProfil((s) => s.weight);
+  const mod = useProfil((s) => s.wkMod[w.id] ?? 0);
+  const s = catSession(w, null, weight, mod);
+  const lk = wkLocked(w.id);
+  return (
+    <View style={styles.wrow}>
+      <Appui accessibilityRole="button" style={styles.wmain} onPress={() => router.push(`/catalogue/${w.id}`)}>
+        <Thumb id={premierExo(w)} big locked={lk} />
+        <View style={styles.flex}>
+          <Text weight="bold" style={styles.wh5} numberOfLines={1}>
+            {w.t}
+          </Text>
+          <Text style={styles.wp}>
+            {s.min} min • {LVLN[w.lvl - 1]}
+            {lk ? ' • Plus' : SEANCES_GRATUITES.includes(w.id) && !isPremium() ? ' • Gratuit' : ''}
+          </Text>
+        </View>
+      </Appui>
+      <Appui accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.wadd} onPress={() => onPlanifier(w.id)}>
+        <Icon name="plus" color={colors.textSecondary} />
+      </Appui>
+    </View>
+  );
+}
+
+/** Un exercice de la bibliothèque. */
+export function ExerciceLigne({ e, sous, onPress }: { e: (typeof EXERCICES)[number]; sous: string; onPress: () => void }) {
+  return (
+    <Row onPress={onPress} accessibilityLabel={e.nom}>
+      <Thumb id={e.id} />
+      <RowText title={e.nom} sub={sous} />
+      <Icon name="right" color={colors.textSecondary} />
+    </Row>
+  );
+}
+
+export const sousTitreExo = (e: (typeof EXERCICES)[number], materiel: string) => `${GROUPES[e.groupe]} • ${materiel}`;
+
+/** Onglets À la maison / Salle de sport / En extérieur (.lieux du prototype). */
+export function OngletsLieux({ lieu, onChange }: { lieu: LieuId; onChange: (l: LieuId) => void }) {
+  return (
+    <View style={styles.ltabs} accessibilityRole="tablist">
+      {(Object.entries(LIEUX) as [LieuId, string][]).map(([key, l]) => (
+        <Appui key={key} accessibilityRole="tab" accessibilityState={{ selected: key === lieu }} onPress={() => onChange(key)} style={styles.ltab}>
+          <Text weight="semibold" style={[styles.ltabTxt, key === lieu && styles.ltabOn]}>
+            {l}
+          </Text>
+          {key === lieu && <View style={styles.ltabBar} />}
+        </Appui>
+      ))}
+    </View>
+  );
+}
+
+/** Filtre pilule (.filters button / .gchips button). */
+export function Chip({ label, on, onPress, petit }: { label: string; on: boolean; onPress: () => void; petit?: boolean }) {
+  return (
+    <Appui accessibilityRole="button" accessibilityState={{ selected: on }} onPress={onPress} style={[petit ? styles.gchip : styles.filter, on && styles.chipOn]}>
+      <Text style={[petit ? styles.gchipTxt : styles.filterTxt, on && styles.chipTxtOn]}>{label}</Text>
+    </Appui>
+  );
+}
+
+/** Champ de recherche (.srch). */
+export function Recherche({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+  return (
+    <View style={styles.srch}>
+      <Icon name="search" color={colors.textSecondary} />
+      <TextInput
+        value={value}
+        onChangeText={onChange}
+        placeholder={t(placeholder)}
+        placeholderTextColor={colors.textSecondary}
+        style={styles.srchInput}
+        accessibilityLabel="Rechercher"
+        returnKeyType="search"
+        autoCorrect={false}
+      />
+      {value ? (
+        <Appui accessibilityRole="button" accessibilityLabel="Effacer" onPress={() => onChange('')} hitSlop={8}>
+          <Icon name="x" size={16} color={colors.textSecondary} />
+        </Appui>
+      ) : null}
+    </View>
+  );
+}
+
+/** En-tête d'une page de la bibliothèque : retour + titre. */
+export function EnTetePage({ titre, sous, retour }: { titre: string; sous?: string; retour?: Href }) {
+  return (
+    <View style={styles.head}>
+      <Appui accessibilityRole="button" accessibilityLabel="Retour" onPress={() => (retour ? router.navigate(retour) : router.canGoBack() ? router.back() : router.navigate('/programme'))} style={styles.back}>
+        <Icon name="left" />
+      </Appui>
+      <View style={styles.flex}>
+        <Text style={styles.h1} accessibilityRole="header">
+          {titre}
+        </Text>
+        {sous ? <Text style={styles.sous}>{sous}</Text> : null}
+      </View>
+    </View>
+  );
+}
+
+export const catalogueStyles = StyleSheet.create({
+  note: { fontSize: 12, lineHeight: 17, color: colors.textSecondary },
+  noteVide: { paddingVertical: 12, paddingHorizontal: 4 },
+  wsep: { borderBottomWidth: 1, borderBottomColor: colors.border },
+  gchips: { gap: 6, paddingTop: 2, paddingBottom: 8 },
+  filters: { gap: 8, paddingHorizontal: 20, paddingBottom: 12 },
+});
+
+const styles = StyleSheet.create({
+  flex: { flex: 1, minWidth: 0 },
+  wrow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 4 },
+  wmain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, minWidth: 0 },
+  wh5: { fontSize: 14.5, lineHeight: 19 },
+  wp: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 3 },
+  carte: { flex: 1, borderRadius: 25, backgroundColor: colors.surface, padding: 14, gap: 6 },
+  carteHaut: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  carteEtatPlus: { color: colors.text },
+  carteImage: { flex: 1, borderRadius: 16, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginVertical: 4 },
+  carteImg: { width: '92%', height: '92%' },
+  carteTitre: { fontSize: 17, lineHeight: 21, letterSpacing: -0.3 },
+  carteAjout: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 40, borderRadius: 10, backgroundColor: colors.surface2, marginTop: 4 },
+  carteAjoutTxt: { fontSize: 14, lineHeight: 18 },
+  wadd: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ltabs: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 6 },
+  ltab: { paddingVertical: 10, paddingHorizontal: 4, alignItems: 'center' },
+  ltabTxt: { fontSize: 14, lineHeight: 18, color: colors.textSecondary },
+  ltabOn: { color: colors.text },
+  ltabBar: { position: 'absolute', bottom: 2, left: '30%', right: '30%', height: 2, borderRadius: 1, backgroundColor: colors.text },
+  gchip: { height: 30, paddingHorizontal: 12, borderRadius: 999, backgroundColor: ui.dark, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
+  gchipTxt: { fontSize: 12, lineHeight: 15, color: ui.text3 },
+  filter: { height: 32, paddingHorizontal: 14, borderRadius: 999, backgroundColor: ui.chipBg, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
+  filterTxt: { fontSize: 12.5, lineHeight: 16, color: ui.text3 },
+  chipOn: { borderColor: colors.text, backgroundColor: colors.surface2 },
+  chipTxtOn: { color: colors.text },
+  srch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginHorizontal: 20,
+    height: 46,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  srchInput: { flex: 1, color: colors.text, ...fonts.regular, fontSize: 14.5 },
+  head: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 10 },
+  back: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  h1: { ...fonts.semibold, fontSize: 28, lineHeight: 34, letterSpacing: -0.3 },
+  sous: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary },
+});

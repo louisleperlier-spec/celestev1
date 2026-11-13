@@ -1,0 +1,61 @@
+// Généré par scripts/axel-sport-integrer.ts d'après assets/exercices/axel/ : ne pas modifier à la main.
+import type { ImageSourcePropType } from 'react-native';
+
+import type { ExerciceId } from './types';
+
+/** Illustrations Axel Sport déjà produites (50 / 50) ; les autres exercices gardent l'ancienne image. */
+export const AXEL_EXERCICE_IMAGES: Readonly<Partial<Record<ExerciceId, ImageSourcePropType>>> = {
+  developpe_couche_halteres: require('@/assets/exercices/axel/developpe_couche_halteres.webp'),
+  developpe_incline_halteres: require('@/assets/exercices/axel/developpe_incline_halteres.webp'),
+  developpe_couche_barre: require('@/assets/exercices/axel/developpe_couche_barre.webp'),
+  ecarte_halteres: require('@/assets/exercices/axel/ecarte_halteres.webp'),
+  pompes: require('@/assets/exercices/axel/pompes.webp'),
+  pompes_inclinees: require('@/assets/exercices/axel/pompes_inclinees.webp'),
+  dips: require('@/assets/exercices/axel/dips.webp'),
+  presse_pectoraux: require('@/assets/exercices/axel/presse_pectoraux.webp'),
+  rowing_un_bras: require('@/assets/exercices/axel/rowing_un_bras.webp'),
+  rowing_barre: require('@/assets/exercices/axel/rowing_barre.webp'),
+  tirage_vertical: require('@/assets/exercices/axel/tirage_vertical.webp'),
+  tirage_horizontal: require('@/assets/exercices/axel/tirage_horizontal.webp'),
+  tractions: require('@/assets/exercices/axel/tractions.webp'),
+  tractions_assistees: require('@/assets/exercices/axel/tractions_assistees.webp'),
+  face_pull: require('@/assets/exercices/axel/face_pull.webp'),
+  souleve_terre: require('@/assets/exercices/axel/souleve_terre.webp'),
+  developpe_epaules: require('@/assets/exercices/axel/developpe_epaules.webp'),
+  elevations_laterales: require('@/assets/exercices/axel/elevations_laterales.webp'),
+  elevations_frontales: require('@/assets/exercices/axel/elevations_frontales.webp'),
+  oiseau_halteres: require('@/assets/exercices/axel/oiseau_halteres.webp'),
+  presse_epaules: require('@/assets/exercices/axel/presse_epaules.webp'),
+  curl_biceps: require('@/assets/exercices/axel/curl_biceps.webp'),
+  curl_marteau: require('@/assets/exercices/axel/curl_marteau.webp'),
+  curl_pupitre: require('@/assets/exercices/axel/curl_pupitre.webp'),
+  curl_poulie: require('@/assets/exercices/axel/curl_poulie.webp'),
+  extension_triceps_poulie: require('@/assets/exercices/axel/extension_triceps_poulie.webp'),
+  extension_triceps_tete: require('@/assets/exercices/axel/extension_triceps_tete.webp'),
+  extension_triceps_couche: require('@/assets/exercices/axel/extension_triceps_couche.webp'),
+  squat_barre: require('@/assets/exercices/axel/squat_barre.webp'),
+  goblet_squat: require('@/assets/exercices/axel/goblet_squat.webp'),
+  squat_poids_corps: require('@/assets/exercices/axel/squat_poids_corps.webp'),
+  fentes_arriere: require('@/assets/exercices/axel/fentes_arriere.webp'),
+  fentes_marche: require('@/assets/exercices/axel/fentes_marche.webp'),
+  squat_bulgare: require('@/assets/exercices/axel/squat_bulgare.webp'),
+  step_up: require('@/assets/exercices/axel/step_up.webp'),
+  presse_cuisses: require('@/assets/exercices/axel/presse_cuisses.webp'),
+  leg_extension: require('@/assets/exercices/axel/leg_extension.webp'),
+  leg_curl: require('@/assets/exercices/axel/leg_curl.webp'),
+  souleve_roumain: require('@/assets/exercices/axel/souleve_roumain.webp'),
+  hip_thrust: require('@/assets/exercices/axel/hip_thrust.webp'),
+  pont_fessier: require('@/assets/exercices/axel/pont_fessier.webp'),
+  mollets_debout: require('@/assets/exercices/axel/mollets_debout.webp'),
+  planche: require('@/assets/exercices/axel/planche.webp'),
+  planche_laterale: require('@/assets/exercices/axel/planche_laterale.webp'),
+  dead_bug: require('@/assets/exercices/axel/dead_bug.webp'),
+  bird_dog: require('@/assets/exercices/axel/bird_dog.webp'),
+  crunch: require('@/assets/exercices/axel/crunch.webp'),
+  releve_genoux: require('@/assets/exercices/axel/releve_genoux.webp'),
+  mountain_climbers: require('@/assets/exercices/axel/mountain_climbers.webp'),
+  velo_stationnaire: require('@/assets/exercices/axel/velo_stationnaire.webp'),
+};
+
+/** Les images Axel ne s'affichent qu'une fois la bibliothèque complète (pas de mélange avec les anciennes dans l'app publiée). */
+export const AXEL_COMPLET = true;

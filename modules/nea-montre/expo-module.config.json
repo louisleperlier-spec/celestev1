@@ -1,0 +1,15 @@
+{
+  "platforms": [
+    "apple"
+  ],
+  "apple": {
+    "modules": [
+      "NeaMontreModule",
+      "NeaCameraModule",
+      "NeaVaguesModule"
+    ],
+    "appDelegateSubscribers": [
+      "NeaMontreAppDelegate"
+    ]
+  }
+}
