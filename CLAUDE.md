@@ -214,6 +214,17 @@ Nouveau texte : l'ajouter à `en.json` (`scripts/extraire-textes.cjs` liste les 
 description, mots-clés, nouveautés, texte promo ; fr-CA : nouveautés 1.0.2 et « 3 coachs » ; captures en-US non faites (celles du fr-CA servent).
 Pas traduits : montre, widgets et Activités en direct (Swift), pages légales du site.
 
+**Refonte « sobre » (13 nov. 2026, demandée par l'utilisateur : « moins IA slop, plus UX » ; références réelles : captures App Store de Whoop,
+Bevel, Ladder, Gentler Streak, Strava)** : noir neutre `#0B0B0C`, surfaces `#151516` / `#1D1D1F` **sans liseré ni ombre**, gris chauds ;
+orange réservé à l'action principale, à la sélection et à la séance faite ; couleurs d'état `good` / `warn` / `error` seulement pour un état
+(énergie du check-in) ; `glow()` ne dessine plus rien, `Glow` 3 fois plus discret (fêtes, mascotte), halos orange retirés (sauf paywall et `/noter`) ;
+`Text variant="label"` = petit libellé en capitales espacées (« ÉNERGIE », « EN COURS », date de l'Accueil) ; chiffres serrés (`BigNumber`) ;
+`Segmente` neutre (segment actif gris clair) ; onglet actif en blanc ; cartes radius 18 ; icônes décoratives blanches ou grises (plus orange) ;
+émojis retirés des titres et bandeaux ; Accueil : date + « Salut », carte du coach à plat avec sa tête et « Le mot de … », champ « Demander à … » ;
+Programme : semaine (prévue = anneau gris, aujourd'hui = blanc, faite = orange), `BarreTraits` = rail fin plein (plus de hachures), « Tes
+programmes » en cartes typographiques (semaines en grand, plus la même mascotte sur chaque carte) ; Progrès : tuiles libellé + chiffre, gels
+en chiffre, « Voir mon programme » en bouton gris ; calories en petit texte gris.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

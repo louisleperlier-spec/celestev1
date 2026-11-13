@@ -9,7 +9,7 @@ export function EntreeTerritoires({ style }: { style?: StyleProp<ViewStyle> }) {
   return (
     <Pressable accessibilityRole="button" onPress={() => router.push('/territoires')} style={[styles.carte, style]}>
       <View style={styles.ico}>
-        <Icon name="hexa" color={colors.pink} />
+        <Icon name="hexa" color={colors.text} />
       </View>
       <View style={styles.flex}>
         <Text weight="semibold" style={styles.titre}>

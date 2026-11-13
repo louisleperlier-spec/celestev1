@@ -17,7 +17,9 @@ type Props = {
  * donc sans bord visible. Se place en absolu, centrée derrière son parent,
  * et ne capte pas les touchers.
  */
-export function Glow({ width, height, color = colors.pink, intensity = 0.45 }: Props) {
+export function Glow({ width, height, color = colors.pink, intensity: brute = 0.45 }: Props) {
+  // Refonte sobre : lueurs gardées pour les fêtes et la mascotte, mais trois fois plus discrètes.
+  const intensity = brute * 0.35;
   // useId() contient des « : », invalides dans url(#…) côté SVG.
   const id = 'glow' + useId().replace(/[^a-zA-Z0-9_-]/g, '');
   return (

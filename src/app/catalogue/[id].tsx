@@ -90,7 +90,7 @@ export default function SeanceCatalogue() {
             {eqs.map((e) => (
               <View key={e} style={styles.eq}>
                 <View style={styles.eqIcon}>
-                  <Icon name={EQI[e][0]} size={24} color={colors.pinkLight} />
+                  <Icon name={EQI[e][0]} size={24} color={colors.text} />
                 </View>
                 <Text style={styles.eqTxt}>{EQI[e][1]}</Text>
               </View>

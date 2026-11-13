@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: alpha(colors.pink, 0.12),
-    boxShadow: `0 0 22px ${alpha(colors.pink, 0.35)}`,
   },
   titre: { fontSize: 24, lineHeight: 30 },
   petit: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary },

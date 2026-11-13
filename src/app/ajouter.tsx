@@ -67,7 +67,7 @@ function Choix({ onSport, onMuscu }: { onSport: (id: string) => void; onMuscu: (
             <Appui accessibilityRole="button" accessibilityLabel="Musculation libre" onPress={onMuscu}>
               <Card style={styles.grande}>
                 <View style={styles.pastille}>
-                  <Icon name="dumb" size={24} color={colors.pink} />
+                  <Icon name="dumb" size={24} color={colors.text} />
                 </View>
                 <View style={styles.flex}>
                   <Text weight="bold" style={styles.grandeTitre}>
@@ -81,7 +81,7 @@ function Choix({ onSport, onMuscu }: { onSport: (id: string) => void; onMuscu: (
             <Appui accessibilityRole="button" accessibilityLabel="Séances guidées" onPress={() => router.push('/seances')}>
               <Card style={styles.grande}>
                 <View style={styles.pastille}>
-                  <Icon name="play" size={22} color={colors.pink} />
+                  <Icon name="play" size={22} color={colors.text} />
                 </View>
                 <View style={styles.flex}>
                   <Text weight="bold" style={styles.grandeTitre}>
@@ -272,7 +272,7 @@ function FormMuscu({ exos, setExos, onRetour }: { exos: ExoLibre[]; setExos: (e:
                 </View>
               ))}
               <Appui accessibilityRole="button" onPress={() => ajouterSerie(i)} style={styles.ajoutSerie}>
-                <Icon name="plus" size={16} color={colors.pink} />
+                <Icon name="plus" size={16} color={colors.text} />
                 <Text weight="semibold" style={styles.ajoutTxt}>
                   Ajouter une série
                 </Text>
@@ -323,7 +323,7 @@ function ChoixExercice({ visible, onClose, onChoisir }: { visible: boolean; onCl
               </Text>
               <Text style={styles.petit}>{GROUPES[e.groupe]}</Text>
             </View>
-            <Icon name="plus" size={18} color={colors.pink} />
+            <Icon name="plus" size={18} color={colors.text} />
           </Appui>
         ))}
         {!liste.length && <MascotteVide texte="Aucun exercice trouvé. Essaie un autre mot !" />}
@@ -373,7 +373,6 @@ const styles = StyleSheet.create({
     backgroundColor: alpha(colors.pink, 0.12),
     borderWidth: 1,
     borderColor: alpha(colors.pink, 0.35),
-    boxShadow: `0 0 30px ${alpha(colors.pink, 0.3)}`,
   },
   bloc: { padding: 16, gap: 12 },
   compteur: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

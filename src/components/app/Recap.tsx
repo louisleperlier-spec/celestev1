@@ -76,7 +76,7 @@ export function Recap({ coachId, res: r }: { coachId: CoachId; res: Resultat }) 
 export function Kpi({ icon, label, value, em, emGris }: { icon: IconName; label: string; value: string; em?: string; emGris?: boolean }) {
   return (
     <Card style={styles.kpi}>
-      <Icon name={icon} size={22} color={colors.pink} />
+      <Icon name={icon} size={22} color={colors.text} />
       <View style={styles.flex}>
         <Text style={styles.kSmall}>{label}</Text>
         <Text weight="bold" style={styles.kB} numberOfLines={1}>

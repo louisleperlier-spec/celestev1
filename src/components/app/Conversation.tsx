@@ -107,7 +107,7 @@ export function Conversation({ retour = false }: { retour?: boolean }) {
             <Appui key={x.nom} accessibilityRole="button" accessibilityLabel={`${x.min} ${x.nom}`} onPress={() => dire(x.phrase)} style={styles.flex}>
               <Card style={styles.choixCarte}>
                 <View style={styles.choixIc}>
-                  <Icon name={x.icone} size={22} color={colors.pink} strokeWidth={2.2} />
+                  <Icon name={x.icone} size={22} color={colors.text} strokeWidth={2.2} />
                 </View>
                 <Text weight="bold" style={styles.choixMin}>
                   {x.min}
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
     backgroundColor: ui.iconBg,
     borderWidth: 2,
     borderColor: alpha(colors.pink, 0.6),
-    boxShadow: `0 0 28px ${alpha(colors.pink, 0.45)}`,
   },
   avatarImg: { width: '100%', height: '100%' },
   nom: { fontSize: 19, lineHeight: 24, marginTop: 6 },
@@ -268,5 +267,5 @@ const styles = StyleSheet.create({
     ...fonts.regular,
     fontSize: 15,
   },
-  send: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.pink, alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 16px ${alpha(colors.pink, 0.45)}` },
+  send: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.pink, alignItems: 'center', justifyContent: 'center' },
 });

@@ -27,7 +27,7 @@ const haut = (size: number) => Math.ceil(size * 1.21);
 export function BigNumber({ value, unit, size = 56, unitSize = 18, color = colors.text, style, gap = 4 }: Props) {
   return (
     <View style={[styles.row, { gap }, style]}>
-      <Text style={[styles.value, { fontSize: size, lineHeight: haut(size), color }]}>{value}</Text>
+      <Text style={[styles.value, { fontSize: size, lineHeight: haut(size), color, letterSpacing: size >= 28 ? -size * 0.03 : 0 }]}>{value}</Text>
       {unit ? <Text style={[styles.unit, { fontSize: unitSize, lineHeight: haut(unitSize) }]}>{unit}</Text> : null}
     </View>
   );

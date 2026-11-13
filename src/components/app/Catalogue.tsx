@@ -8,7 +8,7 @@ import { LVLN } from '@/lib/plan';
 import { isPremium, wkLocked } from '@/lib/premium';
 import { catSession } from '@/lib/semaine';
 import { useProfil } from '@/store/profil';
-import { colors, fonts, glow, ui } from '@/theme';
+import { colors, fonts, ui } from '@/theme';
 
 import { Row, RowText } from './Rows';
 import { Thumb } from './Thumb';
@@ -62,7 +62,7 @@ export function SeanceLigne({ w, onPlanifier }: { w: Seance; onPlanifier: (id: S
         </View>
       </Appui>
       <Appui accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.wadd} onPress={() => onPlanifier(w.id)}>
-        <Icon name="plus" color={colors.pinkLight} />
+        <Icon name="plus" color={colors.textSecondary} />
       </Appui>
     </View>
   );
@@ -90,7 +90,7 @@ export function OngletsLieux({ lieu, onChange }: { lieu: LieuId; onChange: (l: L
           <Text weight="semibold" style={[styles.ltabTxt, key === lieu && styles.ltabOn]}>
             {l}
           </Text>
-          {key === lieu && <View style={[styles.ltabBar, glow(colors.pink, 8)]} />}
+          {key === lieu && <View style={styles.ltabBar} />}
         </Appui>
       ))}
     </View>
@@ -164,10 +164,8 @@ const styles = StyleSheet.create({
   wadd: {
     width: 38,
     height: 38,
-    borderRadius: 19,
-    backgroundColor: ui.toast,
-    borderWidth: 1,
-    borderColor: colors.border2,
+    borderRadius: 10,
+    backgroundColor: colors.surface2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -175,12 +173,12 @@ const styles = StyleSheet.create({
   ltab: { paddingVertical: 10, paddingHorizontal: 4, alignItems: 'center' },
   ltabTxt: { fontSize: 14, lineHeight: 18, color: colors.textSecondary },
   ltabOn: { color: colors.text },
-  ltabBar: { position: 'absolute', bottom: 2, left: '30%', right: '30%', height: 3, borderRadius: 3, backgroundColor: colors.pink },
+  ltabBar: { position: 'absolute', bottom: 2, left: '30%', right: '30%', height: 2, borderRadius: 1, backgroundColor: colors.text },
   gchip: { height: 30, paddingHorizontal: 12, borderRadius: 999, backgroundColor: ui.dark, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
   gchipTxt: { fontSize: 12, lineHeight: 15, color: ui.text3 },
   filter: { height: 32, paddingHorizontal: 14, borderRadius: 999, backgroundColor: ui.chipBg, borderWidth: 1, borderColor: colors.border, justifyContent: 'center' },
   filterTxt: { fontSize: 12.5, lineHeight: 16, color: ui.text3 },
-  chipOn: { borderColor: colors.pink, backgroundColor: 'rgba(255,107,26,0.14)' },
+  chipOn: { borderColor: colors.text, backgroundColor: colors.surface2 },
   chipTxtOn: { color: colors.text },
   srch: {
     flexDirection: 'row',

@@ -7,21 +7,23 @@ import { lundiISO } from '@/lib/ligue';
 import { useProfil } from '@/store/profil';
 import { colors, ui } from '@/theme';
 
-/** « 🎁 N cartes à ouvrir » : Accueil et récap de séance (rien s'il n'y a rien à ouvrir). */
+/** « N cartes à ouvrir » : Accueil et récap de séance (rien s'il n'y a rien à ouvrir). */
 export function BandeauCartes({ style }: { style?: object }) {
   const paquets = useProfil((s) => s.jeu.paquets);
   if (!paquets.length) return null;
   const n = paquets.reduce((a, p) => a + p.cartes.length, 0);
   return (
     <Appui onPress={() => router.push('/cartes/ouvrir')} accessibilityRole="button" style={[styles.bandeau, style]}>
-      <Text style={styles.cadeau}>🎁</Text>
+      <View style={styles.cadeauRond}>
+        <Icon name="cadeau" size={20} color={colors.text} strokeWidth={1.8} />
+      </View>
       <View style={styles.flex}>
         <Text weight="semibold" style={styles.h4}>
           {n === 1 ? 'Tu as gagné une carte !' : `Tu as ${n} cartes à ouvrir !`}
         </Text>
         <Text style={styles.p}>Touche pour la découvrir</Text>
       </View>
-      <Icon name="right" size={18} color={colors.pink} />
+      <Icon name="right" size={18} color={colors.textSecondary} />
     </Appui>
   );
 }
@@ -38,14 +40,14 @@ export function DefisSemaine() {
         <Text weight="semibold" style={styles.h3}>
           Défis de la semaine
         </Text>
-        <Text style={styles.p}>🎁 Booster par défi</Text>
+        <Text style={styles.p}>Booster par défi</Text>
       </View>
       {liste.map((d) => {
         const ok = pris.includes(d.id) || d.fait >= d.but;
         return (
           <View key={d.id} style={styles.defi}>
             <View style={[styles.ic, ok && styles.icOk]}>
-              <Icon name={ok ? 'check' : (d.icone as IconName)} size={18} color={ok ? colors.onPrimary : colors.pink} strokeWidth={ok ? 2.6 : 1.9} />
+              <Icon name={ok ? 'check' : (d.icone as IconName)} size={18} color={ok ? colors.onPrimary : colors.textSecondary} strokeWidth={ok ? 2.6 : 1.9} />
             </View>
             <View style={styles.flex}>
               <Text weight="semibold" style={styles.h4}>
@@ -98,7 +100,7 @@ export function MesRecords() {
   return (
     <Card style={styles.carte}>
       <Text weight="semibold" style={styles.h3}>
-        Tes records 🏆
+        Tes records
       </Text>
       <View style={styles.grille}>
         {TEXTES_RECORDS.map(([k, titre, f]) => (
@@ -116,8 +118,8 @@ export function MesRecords() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1, minWidth: 0 },
-  bandeau: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 20, backgroundColor: ui.selFond, borderWidth: 1, borderColor: ui.pinkRing },
-  cadeau: { fontSize: 28, lineHeight: 34 },
+  bandeau: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 18, backgroundColor: colors.surface },
+  cadeauRond: { width: 40, height: 40, borderRadius: 10, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   carte: { padding: 16 },
   tete: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   h3: { fontSize: 17, lineHeight: 22 },
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
   barre: { height: 6, borderRadius: 3, backgroundColor: ui.dark, marginTop: 6, overflow: 'hidden' },
   rempli: { height: 6, borderRadius: 3, backgroundColor: colors.pink },
   compte: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, minWidth: 44, textAlign: 'right' },
-  compteOk: { color: colors.pink },
+  compteOk: { color: colors.text },
   entree: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   cartesIc: { fontSize: 30, lineHeight: 36 },
   point: { width: 9, height: 9, borderRadius: 5, backgroundColor: colors.pink },

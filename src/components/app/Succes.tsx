@@ -27,7 +27,7 @@ export function MesSucces() {
     <Card style={styles.carte}>
       <View style={styles.tete}>
         <Text weight="semibold" style={styles.h3}>
-          Tes succès 🏅
+          Tes succès
         </Text>
         <Text style={styles.p}>
           {faits} / {SUCCES.length} débloqués

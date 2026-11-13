@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -19,7 +18,7 @@ import { Appui, Icon, Segmente, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
 import { coachById } from '@/lib/plan';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, fonts, mix, ui } from '@/theme';
+import { alpha, colors, fonts, ui } from '@/theme';
 
 type Periode = 'Semaine' | 'Mois' | 'Année';
 const RUBRIQUES = ['Parcours', 'Statistiques', 'Collection', 'Ligue'] as const;
@@ -81,17 +80,11 @@ export default function Progres() {
             </View>
             {TERRITOIRES && <EntreeTerritoires />}
             {/* .qcard */}
-            <LinearGradient
-              colors={[colors.surface, colors.surface, mix(colors.mauve, 30, colors.surface)]}
-              locations={[0, 0.4, 1]}
-              start={{ x: 0, y: 0.4 }}
-              end={{ x: 1, y: 0.6 }}
-              style={styles.qcard}
-            >
+            <View style={styles.qcard}>
               <Text style={styles.qText}>« {c.prog} »</Text>
               <Text style={styles.qEm}>— {c.nom}</Text>
               <Image source={COACH_IMAGES[c.id].tete} style={styles.qImg} contentFit="contain" />
-            </LinearGradient>
+            </View>
           </>
         )}
 
@@ -129,8 +122,8 @@ const styles = StyleSheet.create({
   chart: { marginTop: 10, marginHorizontal: 20, paddingTop: 14, paddingHorizontal: 14, paddingBottom: 8 },
   h4: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   h4Txt: { fontSize: 14, lineHeight: 18 },
-  h4Btn: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, ...fonts.medium },
-  voir: { fontSize: 12, lineHeight: 16, color: colors.pinkLight, ...fonts.medium },
+  h4Btn: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, ...fonts.medium },
+  voir: { fontSize: 12, lineHeight: 16, color: colors.textSecondary, ...fonts.medium },
   cplan: { flexDirection: 'row', gap: 8, marginTop: 10 },
   cplanCell: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: ui.dark, alignItems: 'center' },
   cplanSmall: { fontSize: 10.5, lineHeight: 14, color: colors.textSecondary, textAlign: 'center' },

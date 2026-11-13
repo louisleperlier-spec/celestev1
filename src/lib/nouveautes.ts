@@ -11,6 +11,7 @@ export type Nouveaute = {
 };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'spark', titre: 'Une interface plus claire', texte: 'Moins d’effets, des chiffres plus lisibles et l’orange gardé pour ce qui compte.' },
   { icone: 'star', titre: 'NÉA parle anglais', texte: 'Toute l’app en anglais si ton iPhone est en anglais, ou au choix dans Profil → Langue.' },
   { icone: 'trophy', titre: 'Un vrai passage de niveau', texte: 'Étoiles, étincelles et ton nouveau rang en grand : chaque niveau se fête.' },
   { icone: 'spark', titre: 'Ton coach sur l’Accueil', texte: 'Le mot du jour dans une nouvelle bulle, et « Demander à … » pour lui écrire en un geste.' },

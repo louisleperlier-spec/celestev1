@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeOutLeft, LinearTransition } from 'react-native-reanimated';
@@ -58,8 +57,6 @@ function CarteSombre({ c, grand, onFermer }: { c: Carte; grand: boolean; onFerme
   return (
     <View style={styles.carte}>
       {/* Fond : nuit presque noire, halo clair en bas à gauche, reflet en diagonale (PlanHomeUpgradeProCardBackdrop). */}
-      <LinearGradient colors={[colors.bgAlt, colors.surface]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={[alpha(colors.pink, 0.16), 'transparent']} start={{ x: 0.1, y: 1 }} end={{ x: 0.6, y: 0.2 }} style={StyleSheet.absoluteFill} />
       <View style={styles.marque} pointerEvents="none">
         <Image source={COACH_IMAGES[c.coach].corps} style={styles.marqueImg} contentFit="contain" />
       </View>
@@ -141,27 +138,25 @@ const DEPASSE = 11;
 
 const styles = StyleSheet.create({
   titre: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginBottom: ACCUEIL.sousTitre },
-  titreTxt: { fontSize: 17, lineHeight: 22, flexShrink: 1 },
+  titreTxt: { fontSize: 18, lineHeight: 23, flexShrink: 1, letterSpacing: -0.35 },
   titreAction: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   flamme: { flexDirection: 'row', alignItems: 'center', gap: 3, height: 42, paddingHorizontal: 10, borderRadius: 21 },
   flammeTxt: { ...fonts.bold, fontSize: 17, lineHeight: 22 },
   pile: { marginTop: 18 },
   pileAvecDos: { paddingBottom: DEPASSE },
-  dos: { position: 'absolute', left: 0, right: 0, top: DEPASSE, opacity: 0.72, transform: [{ scaleX: 0.945 }] },
+  dos: { position: 'absolute', left: 0, right: 0, top: DEPASSE, opacity: 0.5, transform: [{ scaleX: 0.945 }] },
   carte: {
     height: HAUT_CARTE,
-    borderRadius: 24,
+    borderRadius: 18,
     overflow: 'hidden',
-    borderWidth: 0.6,
-    borderColor: alpha(colors.text, 0.1),
-    boxShadow: `0 3px 8px ${alpha(colors.bgAlt, 0.5)}`,
+    backgroundColor: colors.surface,
   },
   marque: { position: 'absolute', right: 26, top: 20, width: HAUT_CARTE * 0.85, height: HAUT_CARTE * 0.85 },
-  marqueImg: { width: HAUT_CARTE * 0.85, height: HAUT_CARTE * 0.85, opacity: 0.78 },
+  marqueImg: { width: HAUT_CARTE * 0.85, height: HAUT_CARTE * 0.85, opacity: 0.9 },
   carteCorps: { flex: 1, paddingLeft: 16, paddingRight: 92, paddingTop: 16, paddingBottom: 14, gap: 6 },
   carteTitre: { fontSize: 17, lineHeight: 22, letterSpacing: -0.28, color: colors.text },
   carteTitreGrand: { fontSize: 21, lineHeight: 26, letterSpacing: -0.36 },
-  carteSous: { fontSize: 13, lineHeight: 17.5, color: alpha(colors.text, 0.8) },
+  carteSous: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary },
   croix: {
     position: 'absolute',
     top: 10,
@@ -171,9 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: alpha(colors.bgAlt, 0.42),
-    borderWidth: 0.7,
-    borderColor: alpha(colors.text, 0.28),
+    backgroundColor: colors.surface2,
   },
   section: { marginTop: ACCUEIL.entreSections },
   sectionPremiere: { marginTop: 8 },

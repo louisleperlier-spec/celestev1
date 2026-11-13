@@ -40,7 +40,7 @@ export default function RandoEnCours() {
             <Icon name="left" size={22} />
           </Pressable>
           <View style={styles.titre}>
-            <Icon name="rando" size={20} color={colors.pink} />
+            <Icon name="rando" size={20} color={colors.text} />
             <View>
               <Text weight="semibold" style={styles.titreTxt}>
                 {r.paused ? 'Rando en pause' : 'Rando en cours'}
@@ -98,7 +98,7 @@ export default function RandoEnCours() {
 function Grand({ icone, valeur, label }: { icone: IconName; valeur: string; label: string }) {
   return (
     <View style={styles.grand}>
-      <Icon name={icone} size={24} color={colors.pink} />
+      <Icon name={icone} size={24} color={colors.text} />
       <View>
         <Text weight="bold" style={styles.grandVal}>
           {valeur}
@@ -112,7 +112,7 @@ function Grand({ icone, valeur, label }: { icone: IconName; valeur: string; labe
 function Petit({ icone, valeur, label }: { icone: IconName; valeur: string; label: string }) {
   return (
     <View style={styles.petit}>
-      <Icon name={icone} size={18} color={colors.pink} />
+      <Icon name={icone} size={18} color={colors.text} />
       <Text weight="bold" style={styles.petitVal} numberOfLines={1}>
         {valeur}
       </Text>

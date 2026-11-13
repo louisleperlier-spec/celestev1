@@ -1,7 +1,7 @@
-/** Rayons, hauteurs et espacements communs : cartes radius 20, boutons pilule hauteur 52. */
+/** Rayons, hauteurs et espacements communs : cartes radius 18 sans liseré, boutons pilule hauteur 52. */
 export const radius = {
-  card: 20,
-  small: 12,
+  card: 18,
+  small: 10,
   pill: 999,
 } as const;
 

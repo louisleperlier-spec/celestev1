@@ -119,7 +119,7 @@ export default function FicheSentier() {
                 ‐ ‐ ‐ ‐ ›
               </Text>
               <View style={styles.etape}>
-                <Icon name="montagne" size={22} color={colors.pink} strokeWidth={2.2} />
+                <Icon name="montagne" size={22} color={colors.text} strokeWidth={2.2} />
                 <Text style={styles.etapeTxt}>Sommet</Text>
               </View>
               <Text style={styles.fleche} numberOfLines={1}>
@@ -197,7 +197,7 @@ export default function FicheSentier() {
               </Text>
               {conseils(s.dplus, s.min).map(([ic, t]) => (
                 <View key={t} style={styles.conseil}>
-                  <Icon name={ic} size={18} color={colors.pink} />
+                  <Icon name={ic} size={18} color={colors.text} />
                   <Text style={styles.conseilTxt}>{t}</Text>
                 </View>
               ))}
@@ -238,7 +238,7 @@ export default function FicheSentier() {
 function Tuile({ icone, valeur, label }: { icone: IconName; valeur: string; label: string }) {
   return (
     <View style={styles.tuile}>
-      <Icon name={icone} size={18} color={colors.pink} />
+      <Icon name={icone} size={18} color={colors.text} />
       <Text weight="bold" style={styles.tuileVal} numberOfLines={1}>
         {valeur}
       </Text>

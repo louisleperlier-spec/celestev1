@@ -149,7 +149,7 @@ export default function Velo() {
             <ListeZones z={r.st.z} />
             {TERRITOIRES && r.cases ? (
               <Pressable accessibilityRole="button" onPress={() => router.push('/territoires')} style={styles.conq}>
-                <Icon name="hexa" color={colors.pink} />
+                <Icon name="hexa" color={colors.text} />
                 <View style={styles.flex}>
                   <Text weight="semibold" style={styles.h5}>
                     {r.cases} case{r.cases > 1 ? 's' : ''} traversée{r.cases > 1 ? 's' : ''}

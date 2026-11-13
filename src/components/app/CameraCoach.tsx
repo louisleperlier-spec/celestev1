@@ -185,7 +185,7 @@ function Contenu({ exo, cible, onValider, onClose }: { exo: ExerciceId; cible?: 
       {(etat === 'refuse' || etat === 'indisponible') && (
         <View style={styles.centre}>
           <View style={styles.carteEtat}>
-            <Icon name="info" size={26} color={colors.pink} />
+            <Icon name="info" size={26} color={colors.text} />
             <Text weight="bold" style={styles.etatTitre}>
               {etat === 'refuse' ? 'La caméra est bloquée' : 'Caméra indisponible'}
             </Text>

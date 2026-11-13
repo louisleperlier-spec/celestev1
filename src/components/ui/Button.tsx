@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   dark: { backgroundColor: ui.dark },
-  label: { ...fonts.bold, fontSize: 17 },
+  label: { ...fonts.semibold, fontSize: 16, letterSpacing: -0.2 },
   small: { fontSize: 14 },
   smallGap: { gap: 6, paddingHorizontal: spacing.md },
 });

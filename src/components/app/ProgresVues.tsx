@@ -11,7 +11,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { CarteJeu } from '@/components/app/CarteJeu';
 import { Lvl } from '@/components/app/Lvl';
-import { Appui, Card, Icon, Segmente, Text, type IconName } from '@/components/ui';
+import { Appui, BigNumber, Card, Icon, Segmente, Text, type IconName } from '@/components/ui';
 import { DECO_IMAGES } from '@/data';
 import { QUESTS } from '@/data/ligue';
 import { SUCCES_IMAGES, SUCCES_RATIO } from '@/data/succesImages';
@@ -23,7 +23,7 @@ import { avancement, debloque, missionFaite, SUCCES, type SuccesId } from '@/lib
 import { gelsDispo, GEL_PALIER, serieAvecGels } from '@/lib/gel';
 import { lvlInfo, rankOf, todayQuests, type Log } from '@/lib/xp';
 import { useProfil } from '@/store/profil';
-import { alpha, colors, fonts, ui } from '@/theme';
+import { alpha, colors, fonts } from '@/theme';
 
 /* ---------------- Parcours ---------------- */
 
@@ -103,10 +103,12 @@ export function Parcours() {
         <Tuile valeur={`${serie} ${serie > 1 ? 'jours' : 'jour'}`} nom="Meilleure série" icone="flame" />
       </View>
       <Card style={styles.gel}>
-        <Text style={styles.gelEmoji}>🧊</Text>
+        <View style={styles.gelChiffre}>
+          <BigNumber value={gels} size={30} />
+        </View>
         <View style={styles.flex}>
-          <Text weight="bold" style={styles.h3}>
-            {gels} gel{gels > 1 ? 's' : ''} de série · série actuelle {actuelle} j
+          <Text weight="semibold" style={styles.h3}>
+            {gels > 1 ? 'Gels de série' : 'Gel de série'} · série actuelle {actuelle} j
           </Text>
           <Text style={styles.petit}>
             Un jour de séance manqué ne casse pas ta série : un gel est utilisé tout seul. +1 gel tous les {GEL_PALIER} jours de série.
@@ -133,23 +135,21 @@ export function Parcours() {
           <Text weight="semibold" style={styles.ctaTxt}>
             Voir mon programme
           </Text>
-          <Icon name="right" size={18} color={colors.onPrimary} strokeWidth={2.4} />
+          <Icon name="right" size={18} color={colors.text} strokeWidth={2.2} />
         </Appui>
       </Card>
     </View>
   );
 }
 
-function Tuile({ valeur, nom, icone }: { valeur: string; nom: string; icone: IconName }) {
+/** Tuile chiffrée (comme Whoop) : libellé en petites capitales au-dessus, le chiffre en grand, sans icône décorative. */
+function Tuile({ valeur, nom }: { valeur: string; nom: string; icone?: IconName }) {
   return (
     <Card style={[styles.flex, styles.tuile]}>
-      <View style={styles.flex}>
-        <Text weight="bold" style={styles.tuileVal} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
-          {valeur}
-        </Text>
-        <Text style={styles.petit}>{nom}</Text>
-      </View>
-      <Icon name={icone} size={26} color={colors.pink} strokeWidth={2.2} />
+      <Text variant="label">{nom}</Text>
+      <Text weight="semibold" style={styles.tuileVal} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+        {valeur}
+      </Text>
     </Card>
   );
 }
@@ -340,7 +340,7 @@ export function Collection() {
           ] as const
         ).map(([k, l]) => (
           <Appui key={k} accessibilityRole="button" accessibilityState={{ selected: filtre === k }} onPress={() => setFiltre(k)} style={[styles.filtre, filtre === k && styles.filtreOn]} echelle={0.94}>
-            <Text weight="semibold" style={styles.queteTxt}>
+            <Text weight="semibold" style={[styles.queteTxt, filtre === k && { color: colors.bg }]}>
               {l}
             </Text>
           </Appui>
@@ -407,8 +407,8 @@ export function Collection() {
 }
 
 const styles = StyleSheet.create({
-  gel: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
-  gelEmoji: { fontSize: 28, lineHeight: 34 },
+  gel: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
+  gelChiffre: { width: 52, height: 52, borderRadius: 12, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1, minWidth: 0 },
   pile: { gap: 14 },
   h2: { fontSize: 22, lineHeight: 27 },
@@ -421,25 +421,25 @@ const styles = StyleSheet.create({
   niv: { fontSize: 16, lineHeight: 20 },
   rang: { fontSize: 13, lineHeight: 17 },
   repere: { position: 'absolute', width: 30, height: 30, borderRadius: 15, backgroundColor: alpha(colors.bg, 0.85), borderWidth: 2, borderColor: colors.text, alignItems: 'center', justifyContent: 'center' },
-  repereActuel: { backgroundColor: colors.pink, borderColor: colors.pinkLight, boxShadow: `0 0 16px ${colors.pink}` },
+  repereActuel: { backgroundColor: colors.pink, borderColor: colors.pinkLight },
   repereFutur: { borderColor: colors.textTertiary, opacity: 0.8 },
   repereTxt: { fontSize: 14, lineHeight: 18 },
   repereTxtActuel: { color: colors.onPrimary },
   sommet: { position: 'absolute', width: 32, height: 32, borderRadius: 16, backgroundColor: alpha(colors.bg, 0.8), borderWidth: 1, borderColor: colors.border2, alignItems: 'center', justifyContent: 'center' },
-  barre: { height: 8, borderRadius: 4, backgroundColor: ui.dark, overflow: 'hidden' },
-  rempli: { height: 8, borderRadius: 4, backgroundColor: colors.pink },
+  barre: { height: 4, borderRadius: 2, backgroundColor: colors.surface2, overflow: 'hidden' },
+  rempli: { height: 4, borderRadius: 2, backgroundColor: colors.pink },
   mt6: { marginTop: 8 },
   rangee: { flexDirection: 'row', gap: 10 },
-  tuile: { flexDirection: 'row', alignItems: 'center', padding: 14 },
-  tuileVal: { fontSize: 24, lineHeight: 30 },
+  tuile: { padding: 14, gap: 6 },
+  tuileVal: { fontSize: 28, lineHeight: 34, letterSpacing: -0.9, fontVariant: ['tabular-nums'] },
   etape: { padding: 16, gap: 12 },
   ligneQuete: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   rond: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: colors.textSecondary, alignItems: 'center', justifyContent: 'center' },
   rondFait: { backgroundColor: colors.pink, borderColor: colors.pink },
   queteTxt: { fontSize: 15, lineHeight: 20 },
-  xpOrange: { fontSize: 16, lineHeight: 21, color: colors.pink },
-  cta: { height: 52, borderRadius: 26, backgroundColor: colors.pink, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 6px 22px ${alpha(colors.pink, 0.4)}` },
-  ctaTxt: { ...fonts.semibold, fontSize: 17, lineHeight: 22, color: colors.onPrimary },
+  xpOrange: { fontSize: 15, lineHeight: 20, color: colors.textSecondary, fontVariant: ['tabular-nums'] },
+  cta: { height: 48, borderRadius: 24, backgroundColor: colors.surface2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  ctaTxt: { ...fonts.semibold, fontSize: 15, lineHeight: 20, color: colors.text },
   ctaTxtClair: { ...fonts.semibold, fontSize: 15, lineHeight: 20 },
   seances: { padding: 16, gap: 2 },
   gros: { fontSize: 30, lineHeight: 36 },
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
   zoneBarres: { flexDirection: 'row', alignItems: 'flex-end' },
   grille: { position: 'absolute', left: 0, right: 0, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },
   col: { flex: 1, alignItems: 'center', justifyContent: 'flex-end' },
-  baton: { width: 18, borderRadius: 5, backgroundColor: colors.pink, boxShadow: `0 0 10px ${alpha(colors.pink, 0.45)}` },
+  baton: { width: 16, borderRadius: 3, backgroundColor: colors.pink },
   libs: { flexDirection: 'row', marginTop: 6 },
   lib: { flex: 1, textAlign: 'center', fontSize: 11.5, lineHeight: 15, color: colors.textSecondary },
   mini: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12 },
@@ -464,8 +464,8 @@ const styles = StyleSheet.create({
   compte: { fontSize: 22, lineHeight: 28 },
   compteSur: { fontSize: 18, color: colors.text },
   filtres: { flexDirection: 'row', gap: 8 },
-  filtre: { flex: 1, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
-  filtreOn: { backgroundColor: colors.pink, borderColor: colors.pink },
+  filtre: { flex: 1, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
+  filtreOn: { backgroundColor: colors.text },
   vedette: { alignSelf: 'center' },
   vedetteImg: { width: 220, height: 220 / SUCCES_RATIO },
   terne: { opacity: 0.45 },

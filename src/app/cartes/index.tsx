@@ -37,7 +37,7 @@ export default function Collection() {
           <Card style={styles.aOuvrir}>
             <View style={styles.flex}>
               <Text weight="semibold" style={styles.h3}>
-                🎁 {jeu.paquets.length === 1 ? '1 paquet à ouvrir' : `${jeu.paquets.length} paquets à ouvrir`}
+                {jeu.paquets.length === 1 ? '1 paquet à ouvrir' : `${jeu.paquets.length} paquets à ouvrir`}
               </Text>
               <Text style={styles.p}>{jeu.paquets.reduce((a, p) => a + p.cartes.length, 0)} cartes t’attendent</Text>
             </View>

@@ -206,7 +206,7 @@ export default function Territoires() {
             ] as const
           ).map(([ic, t]) => (
             <View key={ic} style={styles.regle}>
-              <Icon name={ic} size={18} color={colors.pink} />
+              <Icon name={ic} size={18} color={colors.text} />
               <Text style={[styles.p, styles.flex]}>{t}</Text>
             </View>
           ))}

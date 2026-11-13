@@ -95,7 +95,7 @@ export default function Noter() {
               {parcours.map((c) => (
                 <View key={c.icone} style={styles.carte}>
                   <View style={styles.carteIcone}>
-                    <Icon name={c.icone} size={17} color={colors.pink} strokeWidth={2.1} />
+                    <Icon name={c.icone} size={17} color={colors.text} strokeWidth={2.1} />
                   </View>
                   <BigNumber value={c.valeur} unit={c.unite} size={30} unitSize={14} style={styles.chiffre} />
                   <Text style={styles.carteTxt}>{c.texte}</Text>

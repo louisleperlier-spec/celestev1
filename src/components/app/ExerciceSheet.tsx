@@ -105,7 +105,7 @@ function Contenu({
       lignes: e.etapes.map((t, i) => ({ titre: `Étape ${i + 1}`, texte: t, valeur: String(i + 1) })),
       bas: cameraDisponible() ? (
         <Pressable accessibilityRole="button" onPress={onCamera} style={({ pressed }) => [styles.ligne, styles.noter, pressed && styles.presse]}>
-          <Icon name="camera" size={18} color={colors.pink} />
+          <Icon name="camera" size={18} color={colors.text} />
           <View style={styles.flex}>
             <Text weight="semibold" style={taille(grand, 15, 20)}>
               Filmer mon mouvement

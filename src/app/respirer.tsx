@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: alpha(colors.pink, 0.18),
     borderWidth: 2,
     borderColor: colors.pink,
-    boxShadow: `0 0 40px ${alpha(colors.pink, 0.45)}`,
   },
   interieur: { alignItems: 'center', gap: 6 },
   consigne: { fontSize: 17, lineHeight: 22, color: colors.text },

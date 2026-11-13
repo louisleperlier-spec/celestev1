@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -11,16 +10,16 @@ import { catalogueStyles as cs, lieuDuProfil, OngletsLieux, SeanceLigne } from '
 import { ACCUEIL, TitreSection } from '@/components/app/AccueilDesign';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
-import { Aujourdhui, CarteProgramme, jourFait, SemaineJours } from '@/components/app/ProgrammeHaut';
+import { Aujourdhui, BarreTraits, CarteProgramme, jourFait, SemaineJours } from '@/components/app/ProgrammeHaut';
 import { Appui, BigNumber, Icon, Text } from '@/components/ui';
-import { COACH_IMAGES, EXERCICE_IMAGES, EXERCICES, LIEUX, PROGRAMMES, SEANCES } from '@/data';
+import { EXERCICE_IMAGES, EXERCICES, LIEUX, PROGRAMMES, SEANCES } from '@/data';
 import type { LieuId, Seance, SeanceId } from '@/data/types';
 import { serie } from '@/lib/gel';
 import { coachById, lvlN, prog, progWeek } from '@/lib/plan';
 import { progLocked, wkLocked } from '@/lib/premium';
 import { nextSession, sessionForDay, weekDates, type SeanceJour } from '@/lib/semaine';
 import { selectProfil, useProfil, useSemaine } from '@/store/profil';
-import { alpha, colors, mix, ui } from '@/theme';
+import { alpha, colors, ui } from '@/theme';
 import { LETTRES_JOURS } from '@/i18n';
 
 /** Onglet Programme et sous-onglet Calendrier (vProg / vCal du prototype). */
@@ -81,21 +80,27 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
               return (
                 <Appui key={x.id} accessibilityRole="button" accessibilityLabel={x.nom} onPress={() => router.push(`/plan/${x.id}`)}>
                   <View style={[styles.plan, on && styles.planOn]}>
-                    <LinearGradient colors={[mix(c.c, 30, colors.surface), colors.surface2]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={StyleSheet.absoluteFill} />
-                    <Image source={COACH_IMAGES[c.id].corps} style={styles.planImg} contentFit="contain" contentPosition="top" />
-                    <LinearGradient colors={['transparent', alpha(colors.bgAlt, 0.4), alpha(colors.bgAlt, 0.92)]} locations={[0.3, 0.58, 1]} style={StyleSheet.absoluteFill} />
-                    <View style={[styles.planBadge, on && styles.planBadgeOn]}>
-                      {verrou && <Icon name="lock" size={11} color={colors.text} strokeWidth={2.4} />}
-                      <Text weight="bold" style={[styles.planBadgeTxt, on && styles.planBadgeTxtOn]}>
-                        {on ? `Semaine ${progWeek(p)}/${x.sem}` : `${x.sem} sem.`}
+                    {/* Carte typographique (refonte sobre) : la durée en grand, plus la même mascotte sur chaque carte. */}
+                    <View style={styles.planHaut}>
+                      <Text variant="label" style={on ? styles.planEtatOn : undefined}>
+                        {on ? 'En cours' : verrou ? 'NÉA Plus' : 'Disponible'}
                       </Text>
+                      {verrou && <Icon name="lock" size={13} color={colors.textTertiary} strokeWidth={2.2} />}
                     </View>
+                    <View style={styles.planChiffre}>
+                      <BigNumber value={on ? progWeek(p) : x.sem} unit={on ? `/ ${x.sem} sem.` : 'semaines'} size={44} unitSize={14} />
+                    </View>
+                    {on && (
+                      <View style={styles.planBarre}>
+                        <BarreTraits part={progWeek(p) / x.sem} />
+                      </View>
+                    )}
                     <View style={styles.planBas}>
                       <Text weight="semibold" style={styles.planNom} numberOfLines={2}>
                         {x.nom}
                       </Text>
                       <Text style={styles.planMeta} numberOfLines={1}>
-                        {on ? 'En cours' : verrou ? 'NÉA Plus' : 'Disponible'} · {p.days} séances/sem. · {on ? ns.s.min : sem.plan.sessions[0].min} min
+                        {p.days} séances/sem. · {on ? ns.s.min : sem.plan.sessions[0].min} min
                       </Text>
                     </View>
                   </View>
@@ -119,7 +124,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
                 <Text weight="semibold" style={styles.plusTxt}>
                   {duLieu.length - choix.length} autres séances {LIEUX[lieu].toLowerCase()}
                 </Text>
-                <Icon name="right" size={16} color={colors.pinkLight} />
+                <Icon name="right" size={16} color={colors.textSecondary} />
               </Appui>
             )}
           </View>
@@ -313,7 +318,7 @@ function Calendrier() {
               <Text weight="semibold" style={styles.voirTxt}>
                 Voir la séance
               </Text>
-              <Icon name="right" size={15} color={colors.pink} />
+              <Icon name="right" size={15} color={colors.text} />
             </Appui>
           )}
         </View>
@@ -363,38 +368,23 @@ const styles = StyleSheet.create({
   plan: {
     width: PLAN_L,
     height: 236,
-    borderRadius: 22,
-    overflow: 'hidden',
-    borderWidth: 0.5,
-    borderColor: alpha(colors.text, 0.12),
-    boxShadow: `0 5px 9px ${alpha(colors.bgAlt, 0.34)}`,
+    borderRadius: 18,
+    backgroundColor: colors.surface,
+    padding: 14,
+    gap: 10,
   },
-  planOn: { borderWidth: 1.5, borderColor: colors.pink },
-  planImg: { position: 'absolute', top: 14, left: 10, right: 10, height: 150 },
-  planBadge: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: alpha(colors.bgAlt, 0.45),
-    borderWidth: 0.5,
-    borderColor: alpha(colors.text, 0.12),
-  },
-  planBadgeOn: { backgroundColor: colors.pink, borderColor: colors.pink },
-  planBadgeTxt: { fontSize: 11, lineHeight: 14, color: colors.text, fontVariant: ['tabular-nums'] },
-  planBadgeTxtOn: { color: colors.onPrimary },
-  planBas: { position: 'absolute', left: 12, right: 12, bottom: 14, gap: 3 },
-  planNom: { fontSize: 16, lineHeight: 20 },
-  planMeta: { fontSize: 11.5, lineHeight: 15, color: alpha(colors.text, 0.75) },
-  liste: { borderRadius: 20, backgroundColor: colors.surface, borderWidth: 0.6, borderColor: alpha(colors.text, 0.08), paddingTop: 6, paddingHorizontal: 12, paddingBottom: 8 },
+  planOn: { borderWidth: 1.5, borderColor: colors.pink, padding: 12.5 },
+  planHaut: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  planEtatOn: { color: colors.pink },
+  planChiffre: { flex: 1, alignItems: 'flex-start', justifyContent: 'center' },
+  planBas: { gap: 3 },
+  planBarre: { flexDirection: 'row', height: 4 },
+  planNom: { fontSize: 16, lineHeight: 20, letterSpacing: -0.2 },
+  planMeta: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
+  liste: { borderRadius: 18, backgroundColor: colors.surface, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 8 },
   plus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.border },
-  plusTxt: { fontSize: 13, lineHeight: 17, color: colors.pinkLight },
-  biblio: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 20, backgroundColor: colors.surface, borderWidth: 0.6, borderColor: alpha(colors.text, 0.08) },
+  plusTxt: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
+  biblio: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 18, backgroundColor: colors.surface },
   biblioImgs: { width: 104, height: 56 },
   biblioImg: { position: 'absolute', top: 0, width: 56, height: 56, borderRadius: 14, backgroundColor: ui.iconBg },
   biblioH: { fontSize: 16, lineHeight: 21 },

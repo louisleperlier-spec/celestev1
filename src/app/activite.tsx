@@ -77,7 +77,7 @@ export default function Activite() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.tete}>
           <View style={styles.tuile}>
-            <Icon name={rando ? 'rando' : course ? 'run' : velo ? 'bike' : 'dumb'} size={26} color={colors.pink} />
+            <Icon name={rando ? 'rando' : course ? 'run' : velo ? 'bike' : 'dumb'} size={26} color={colors.text} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.h1} numberOfLines={2}>

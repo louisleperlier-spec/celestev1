@@ -244,7 +244,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
                     </Text>
                     {r.equipe ? (
                       <View style={styles.tav}>
-                        <Icon name="usercheck" color={colors.pinkLight} />
+                        <Icon name="usercheck" color={colors.text} />
                       </View>
                     ) : (
                       <CoachFace id={r.coach!} size={38} borderWidth={1} />
@@ -316,7 +316,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
               {l.equipesAmies.map((e) => (
                 <View key={e.id} style={styles.rejoindre}>
                   <View style={styles.tav}>
-                    <Icon name="usercheck" color={colors.pinkLight} />
+                    <Icon name="usercheck" color={colors.text} />
                   </View>
                   <View style={styles.flex}>
                     <Text weight="semibold" style={styles.h5} numberOfLines={1}>
@@ -343,7 +343,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
             {/* .invite */}
             <Card style={styles.carteAction}>
               <View style={styles.carteG}>
-                <Icon name="usercheck" color={colors.pink} />
+                <Icon name="usercheck" color={colors.text} />
                 <View style={styles.flex}>
                   <Text weight="bold" style={styles.b14}>
                     Invite tes amis
@@ -357,7 +357,7 @@ export function Ligue({ integree = false }: { integree?: boolean }) {
             </Card>
             <Card style={styles.carteAction}>
               <View style={styles.carteG}>
-                <Icon name="plus" color={colors.pink} />
+                <Icon name="plus" color={colors.text} />
                 <View style={styles.flex}>
                   <Text weight="bold" style={styles.b14}>
                     Ajouter un ami

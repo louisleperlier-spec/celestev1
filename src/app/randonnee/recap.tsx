@@ -115,7 +115,7 @@ export default function RecapRando() {
             <View style={styles.badges}>
               {r.badges.map((b) => (
                 <View key={b.id} style={styles.badge}>
-                  <Icon name={b.icone} size={26} color={colors.pink} />
+                  <Icon name={b.icone} size={26} color={colors.text} />
                   <Text weight="semibold" style={styles.badgeTxt}>
                     {b.titre}
                   </Text>
@@ -136,7 +136,7 @@ export default function RecapRando() {
 function Stat({ icone, valeur, label }: { icone: IconName; valeur: string; label: string }) {
   return (
     <View style={styles.stat}>
-      <Icon name={icone} size={22} color={colors.pink} />
+      <Icon name={icone} size={22} color={colors.text} />
       <View style={styles.flex}>
         <Text weight="bold" style={styles.statVal} numberOfLines={1}>
           {valeur}

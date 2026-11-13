@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { alpha, colors, ui } from '@/theme';
+import { colors, ui } from '@/theme';
 
 import { Text } from './Text';
 
@@ -11,7 +11,7 @@ type Props<T extends string> = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Contrôle segmenté (Semaine / Mois / Année, Amis / Équipes…) : rail sombre, segment actif en pilule orange (direction « nuit »). */
+/** Contrôle segmenté (Semaine / Mois / Année…) : rail gris, segment actif gris clair et texte blanc, comme iOS (refonte sobre). */
 export function Segmente<T extends string>({ options, value, onChange, style }: Props<T>) {
   return (
     <View style={[styles.rail, style]} accessibilityRole="tablist">
@@ -31,9 +31,9 @@ export function Segmente<T extends string>({ options, value, onChange, style }: 
 }
 
 const styles = StyleSheet.create({
-  rail: { flexDirection: 'row', padding: 4, borderRadius: 20, backgroundColor: ui.segBg, gap: 2, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
-  seg: { flex: 1, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
-  on: { backgroundColor: colors.pink, boxShadow: `0 2px 12px ${alpha(colors.pink, 0.35)}` },
+  rail: { flexDirection: 'row', padding: 3, borderRadius: 12, backgroundColor: ui.segBg, gap: 2 },
+  seg: { flex: 1, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
+  on: { backgroundColor: ui.segOn },
   txt: { fontSize: 13.5, lineHeight: 18, color: ui.segTxt },
   txtOn: { color: colors.text },
 });

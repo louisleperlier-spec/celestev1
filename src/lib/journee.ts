@@ -81,7 +81,7 @@ export function tachesDuJour(e: DonneesJournee, now: Date = new Date()): Tache[]
 export function phraseJournee(faites: number, total: number): string {
   if (faites >= total) return 'Journée parfaite ! Tu as tout coché 🎉';
   const reste = total - faites;
-  if (faites === 0) return 'Six petites choses pour une journée au top ☀️';
+  if (faites === 0) return 'Six petites choses pour une journée au top';
   if (reste === 1) return 'Plus qu’une chose et c’est la journée parfaite 🔥';
   return `Encore ${reste} choses pour une journée au top 💪`;
 }

@@ -141,7 +141,7 @@ export function TabBar() {
                 style={styles.tab}
                 onPress={() => router.navigate(o.href)}
               >
-                <Icon name={o.icon} size={24} color={on ? colors.pink : colors.textSecondary} strokeWidth={on ? 2.3 : 1.9} />
+                <Icon name={o.icon} size={24} color={on ? colors.text : colors.textTertiary} strokeWidth={on ? 2.2 : 1.9} />
               </Pressable>
             );
           })}

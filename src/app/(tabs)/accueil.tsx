@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useDefilementOnglets } from '@/components/app/TabBar';
@@ -20,7 +20,11 @@ import { estPremium } from '@/lib/premium';
 import { nextSession } from '@/lib/semaine';
 import { proposerNoteSiBon } from '@/store/note';
 import { useProfil, useSemaine } from '@/store/profil';
+import { locale } from '@/i18n';
 import { colors } from '@/theme';
+
+/** « Jeudi 13 novembre » (dans la langue de l'app). */
+const dateDuJour = () => new Date().toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' });
 
 /**
  * Onglet Accueil (maquette de l'utilisateur, oct. 2026) : bilan du jour utile même sans Apple Watch (Énergie et
@@ -100,9 +104,12 @@ export default function Accueil() {
       <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* En-tête (design 10K) : « Salut {prénom} » à gauche, la série en flamme, la cloche et le profil à droite. */}
         <View style={styles.top}>
-          <Text weight="bold" style={styles.h1} numberOfLines={1} accessibilityRole="header">
-            Salut {p.name}
-          </Text>
+          <View style={styles.flex}>
+            <Text variant="label">{dateDuJour()}</Text>
+            <Text weight="bold" style={styles.h1} numberOfLines={1} accessibilityRole="header">
+              Salut {p.name}
+            </Text>
+          </View>
           <FlammeSerie jours={jours} onPress={() => router.navigate('/progres')} />
           <Appui accessibilityRole="button" accessibilityLabel="Notifications" style={styles.rond} onPress={() => router.push('/notifications')}>
             <Icon name="bell" size={20} />
@@ -118,15 +125,8 @@ export default function Accueil() {
         {visibles.map((x, i) => {
           const c = cartes[x.id]!;
           return (
-            // Les sections arrivent l'une après l'autre (glissé du bas + ressort).
-            <Animated.View
-              key={x.id}
-              entering={FadeInDown.delay(60 + i * 70)
-                .duration(450)
-                .springify()
-                .damping(18)}
-              style={c.colle ? styles.colle : styles.section}
-            >
+            // Fondu court des premières sections seulement (plus de glissé sur chaque bloc).
+            <Animated.View key={x.id} entering={i < 3 ? FadeIn.delay(40 + i * 40).duration(240) : undefined} style={c.colle ? styles.colle : styles.section}>
               {c.titre ? <TitreSection titre={c.titre} action={c.action} onAction={c.onAction} /> : null}
               {c.contenu}
             </Animated.View>
@@ -145,7 +145,8 @@ const styles = StyleSheet.create({
   section: { marginTop: ACCUEIL.entreSections },
   colle: { marginTop: 14 },
   top: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 10 },
-  h1: { flex: 1, fontSize: 28, lineHeight: 34, letterSpacing: -0.4 },
+  flex: { flex: 1, minWidth: 0, gap: 2 },
+  h1: { fontSize: 30, lineHeight: 36, letterSpacing: -0.9 },
   rond: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
   // Pastille orange tant qu'une notification n'est pas lue
   bellDot: { position: 'absolute', top: 10, right: 11, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.pink },

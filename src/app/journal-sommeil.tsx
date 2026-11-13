@@ -48,7 +48,7 @@ export default function JournalSommeil() {
               <View style={styles.tags}>
                 {n.tags.map((id) => (
                   <View key={id} style={styles.tag}>
-                    <IconeNote id={id} size={16} color={colors.pink} />
+                    <IconeNote id={id} size={16} color={colors.text} />
                     <Text style={styles.tagTxt}>{TAGS_SOIR.find((t) => t.id === id)?.nom ?? id}</Text>
                   </View>
                 ))}

@@ -8,7 +8,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View, type GestureResponderEvent, type LayoutChangeEvent } from 'react-native';
+import { ScrollView, StyleSheet, View, type GestureResponderEvent } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 
 import { TitreSection } from '@/components/app/AccueilDesign';
@@ -49,11 +49,11 @@ export function SemaineJours() {
             <Text weight="semibold" style={[styles.lettre, estAuj && styles.lettreAuj]}>
               {LETTRES[i]}
             </Text>
-            <View style={[styles.cercle, estAuj && styles.cercleAuj, prevu && !fait && styles.cerclePrevu, fait && styles.cercleFait]}>
+            <View style={[styles.cercle, prevu && !fait && styles.cerclePrevu, estAuj && !fait && styles.cercleAuj, fait && styles.cercleFait]}>
               {fait ? (
                 <Icon name="check" size={15} strokeWidth={3} color={colors.onPrimary} />
               ) : (
-                <Text weight={estAuj ? 'bold' : 'medium'} style={[styles.num, estAuj && styles.numAuj]}>
+                <Text weight={estAuj ? 'semibold' : 'medium'} style={[styles.num, estAuj && styles.numAuj]}>
                   {d.getDate()}
                 </Text>
               )}
@@ -65,16 +65,15 @@ export function SemaineJours() {
   );
 }
 
-const TRAIT = 2.75;
-
-/** Barre de traits (PlanLymphCircuitStepsBar) : autant de traits que la largeur en permet, les premiers allumés en orange. */
+/**
+ * Barre de progression (refonte sobre, 13 nov. 2026) : un rail fin et sa part remplie en orange. Remplace la barre de traits
+ * hachurée, décorative. Le nom est gardé pour les appels existants.
+ */
 export function BarreTraits({ part }: { part: number }) {
-  const [w, setW] = useState(0);
-  const n = Math.max(8, Math.floor((w + TRAIT) / (TRAIT * 2)));
-  const allumes = part > 0 ? Math.min(n, Math.max(1, Math.floor(n * part))) : 0;
+  const p = Math.max(0, Math.min(1, part));
   return (
-    <View style={styles.traits} onLayout={(e: LayoutChangeEvent) => setW(e.nativeEvent.layout.width)}>
-      {w > 0 && Array.from({ length: n }, (_, i) => <View key={i} style={[styles.trait, i < allumes && styles.traitOn]} />)}
+    <View style={styles.rail}>
+      <View style={[styles.railPlein, { width: `${p > 0 ? Math.max(2, p * 100) : 0}%` }]} />
     </View>
   );
 }
@@ -98,7 +97,6 @@ export function CarteProgramme() {
           <Icon name="right" size={15} color={colors.textTertiary} />
         </View>
         <View style={styles.barreLigne}>
-          <Icon name="chart" size={17} color={colors.pink} strokeWidth={2.2} />
           <BarreTraits part={pc / 100} />
           <Text weight="semibold" style={styles.pc}>
             {pc} %
@@ -226,20 +224,20 @@ const styles = StyleSheet.create({
   jour: { alignItems: 'center', gap: 8 },
   lettre: { fontSize: 12, lineHeight: 15, color: alpha(colors.textSecondary, 0.8) },
   lettreAuj: { color: colors.text },
-  cercle: { width: 40, height: 40, borderRadius: 20, backgroundColor: alpha(colors.text, 0.07), alignItems: 'center', justifyContent: 'center' },
-  cercleAuj: { backgroundColor: alpha(colors.text, 0.14) },
-  cerclePrevu: { borderWidth: 2, borderColor: colors.pink },
-  cercleFait: { backgroundColor: colors.pink, boxShadow: `0 0 12px ${alpha(colors.pink, 0.45)}` },
+  cercle: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  // Prévue : anneau gris fin ; aujourd'hui : plein blanc ; faite : plein orange cochée (seule couleur de la semaine).
+  cerclePrevu: { borderWidth: 1.5, borderColor: alpha(colors.text, 0.32) },
+  cercleAuj: { backgroundColor: colors.text, borderWidth: 0 },
+  cercleFait: { backgroundColor: colors.pink },
   num: { fontSize: 15, lineHeight: 19, color: alpha(colors.text, 0.82), fontVariant: ['tabular-nums'] },
-  numAuj: { color: colors.text },
-  prog: { borderRadius: 18, backgroundColor: colors.surface, borderWidth: 0.6, borderColor: alpha(colors.text, 0.08), paddingHorizontal: 16, paddingTop: 14, paddingBottom: 6 },
+  numAuj: { color: colors.bg },
+  prog: { borderRadius: 18, backgroundColor: colors.surface, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 6 },
   progHaut: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   progNom: { flex: 1, fontSize: 16, lineHeight: 21 },
   progSem: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   barreLigne: { flexDirection: 'row', alignItems: 'center', gap: 12, height: 44 },
-  traits: { flex: 1, height: 14, flexDirection: 'row', justifyContent: 'space-between' },
-  trait: { width: TRAIT, height: 14, borderRadius: TRAIT / 2, backgroundColor: alpha(colors.text, 0.13) },
-  traitOn: { backgroundColor: colors.pink },
+  rail: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.surface2, overflow: 'hidden' },
+  railPlein: { height: 4, borderRadius: 2, backgroundColor: colors.pink },
   pc: { fontSize: 15, lineHeight: 19, minWidth: 40, textAlign: 'right', fontVariant: ['tabular-nums'] },
   tete: { height: 176, borderRadius: 22, overflow: 'hidden', justifyContent: 'space-between', backgroundColor: colors.surface },
   pastilles: { flexDirection: 'row', justifyContent: 'space-between', padding: 10 },
@@ -299,7 +297,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    boxShadow: `0 6px 22px ${alpha(colors.pink, 0.4)}`,
   },
   lancerTxt: { ...fonts.semibold, fontSize: 17, lineHeight: 22, color: colors.onPrimary },
 });

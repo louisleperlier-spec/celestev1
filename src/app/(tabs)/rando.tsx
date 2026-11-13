@@ -91,11 +91,11 @@ export default function Randonnee() {
 
         {enCours && (
           <Appui onPress={() => router.push('/randonnee/en-cours')} style={styles.enCours} accessibilityRole="button">
-            <Icon name="rando" color={colors.pink} />
+            <Icon name="rando" color={colors.text} />
             <Text weight="semibold" style={[styles.flex, styles.enCoursTxt]}>
               Rando en cours : reprendre
             </Text>
-            <Icon name="right" size={18} color={colors.pink} />
+            <Icon name="right" size={18} color={colors.text} />
           </Appui>
         )}
 
@@ -129,7 +129,7 @@ export default function Randonnee() {
           <View style={styles.erreur}>
             <Text style={styles.vide}>Les serveurs des sentiers ne répondent pas pour l’instant.</Text>
             <Appui onPress={() => chercherRandosPres(true)} accessibilityRole="button" style={styles.reessayer}>
-              <Icon name="refresh" size={16} color={colors.pink} />
+              <Icon name="refresh" size={16} color={colors.text} />
               <Text weight="semibold" style={styles.reessayerTxt}>
                 Réessayer
               </Text>
@@ -164,7 +164,7 @@ export default function Randonnee() {
         {autour.map((s) => (
           <Appui key={s.id} onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: s.id } })} style={styles.item} accessibilityRole="button" accessibilityLabel={s.nom}>
             <View style={styles.vignetteOsm}>
-              <Icon name="montagne" size={28} color={colors.pink} />
+              <Icon name="montagne" size={28} color={colors.text} />
             </View>
             <View style={styles.flex}>
               <Text weight="bold" style={styles.itemNom} numberOfLines={1}>

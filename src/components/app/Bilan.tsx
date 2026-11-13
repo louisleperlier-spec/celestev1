@@ -13,7 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { Sheet } from '@/components/app/Sheet';
 import { Appui, Button, Card, Icon, Text, type IconName } from '@/components/ui';
-import { DECO_IMAGES, EXERCICES } from '@/data';
+import { COACH_IMAGES, DECO_IMAGES, EXERCICES } from '@/data';
 import type { GroupeId } from '@/data/types';
 import {
   activite,
@@ -37,6 +37,9 @@ import { LETTRES_JOURS } from '@/i18n';
 
 const JOURS = LETTRES_JOURS;
 const JOURS_LONGS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] as const;
+
+/** Couleur d'état de l'énergie (1 à 5) : rouge, ambre, puis vert, comme les états de Whoop. */
+const couleurEnergie = (e: number) => (e <= 2 ? colors.error : e === 3 ? colors.warn : colors.good);
 
 /** Ressenti du jour, relu à chaque rendu (minuit passé, il redevient vide). */
 function useRessenti() {
@@ -116,12 +119,9 @@ function CarteEnergie({ onRessenti }: { onRessenti: () => void }) {
       style={styles.flex}
     >
       <Card style={styles.demi}>
-        <View style={styles.enTete}>
-          <Icon name="sun" size={24} color={colors.pink} />
-          <Text weight="semibold" style={styles.enTeteTxt}>
-            Énergie
-          </Text>
-        </View>
+        <Text variant="label" style={styles.enTete}>
+          Énergie
+        </Text>
         <Text weight="bold" style={styles.valeurMot} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
           {r ? ENERGIE[r.energie] : 'À noter'}
         </Text>
@@ -130,7 +130,7 @@ function CarteEnergie({ onRessenti }: { onRessenti: () => void }) {
         </Text>
         <View style={styles.segments}>
           {[1, 2, 3, 4, 5].map((i) => (
-            <View key={i} style={[styles.segment, r && i <= r.energie && styles.segmentOn]} />
+            <View key={i} style={[styles.segment, r && i <= r.energie && { backgroundColor: couleurEnergie(r.energie) }]} />
           ))}
         </View>
         <View style={styles.flex} />
@@ -138,7 +138,7 @@ function CarteEnergie({ onRessenti }: { onRessenti: () => void }) {
           <Text weight="semibold" style={styles.lienTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {r ? 'Modifier mon ressenti' : 'Donner mon ressenti'}
           </Text>
-          <Icon name="diag" size={16} color={colors.pink} strokeWidth={2} />
+          <Icon name="right" size={15} color={colors.textSecondary} strokeWidth={2} />
         </View>
       </Card>
     </Appui>
@@ -155,12 +155,9 @@ function CarteActivite() {
   return (
     <Appui accessibilityRole="button" accessibilityLabel={`Activité : ${a.min} minutes aujourd’hui, ${phraseActivite(a, types)}`} onPress={() => router.navigate('/progres')} style={styles.flex}>
       <Card style={styles.demi}>
-        <View style={styles.enTete}>
-          <Icon name="run" size={24} color={colors.pink} />
-          <Text weight="semibold" style={styles.enTeteTxt}>
-            Activité
-          </Text>
-        </View>
+        <Text variant="label" style={styles.enTete}>
+          Activité
+        </Text>
         <View style={styles.minutes}>
           <Text weight="bold" style={styles.gros}>
             {a.min}
@@ -174,7 +171,7 @@ function CarteActivite() {
           {a.semaine.map((m, i) => (
             <View key={i} style={styles.barreCol}>
               <View style={styles.barreZone}>
-                <View style={[styles.barre, m > 0 ? { height: `${Math.max(28, (m / max) * 100)}%`, backgroundColor: colors.pink } : null, i === a.auj && !m && styles.barreAuj]} />
+                <View style={[styles.barre, m > 0 ? { height: `${Math.max(28, (m / max) * 100)}%`, backgroundColor: i === a.auj ? colors.pink : colors.text } : null, i === a.auj && !m && styles.barreAuj]} />
               </View>
               <Text style={[styles.jour, i === a.auj && styles.jourAuj]}>{JOURS[i]}</Text>
             </View>
@@ -195,7 +192,7 @@ function LigneReponses({ onRessenti }: { onRessenti: () => void }) {
       <Card style={styles.ligne}>
         <View style={styles.ligneHaut}>
           <View style={styles.ligneMoitie}>
-            <Icon name="moon" size={24} color={ui.tuileSommeil} fill={ui.tuileSommeil} />
+            <Icon name="moon" size={20} color={colors.textSecondary} />
             <View style={styles.flex}>
               <Text style={styles.ligneNom}>Sommeil</Text>
               <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
@@ -205,7 +202,7 @@ function LigneReponses({ onRessenti }: { onRessenti: () => void }) {
           </View>
           <View style={styles.separateur} />
           <View style={styles.ligneMoitie}>
-            <Icon name="biceps" size={24} color={colors.pink} />
+            <Icon name="biceps" size={20} color={colors.textSecondary} />
             <View style={styles.flex}>
               <Text style={styles.ligneNom}>Courbatures</Text>
               <Text weight="semibold" style={styles.ligneTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
@@ -250,13 +247,16 @@ export function CarteMessageCoach({ onRessenti }: { onRessenti: () => void }) {
   const texte = `${m.titre} ${m.sous}`;
   return (
     <View style={styles.bulle}>
-      {/* Dégradé maillé : base sombre, nappe orange en haut à gauche, brun en bas à droite. */}
-      <LinearGradient colors={[alpha(colors.pink, 0.32), alpha(colors.mauve, 0.18), alpha(colors.bg, 0)]} start={{ x: 0, y: 0 }} end={{ x: 0.9, y: 0.8 }} style={StyleSheet.absoluteFill} />
-      <LinearGradient colors={[alpha(colors.bg, 0), alpha(colors.mauve, 0.3)]} start={{ x: 0.2, y: 0.3 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
       <View style={styles.bulleContenu}>
+        <View style={styles.bulleTete}>
+          <View style={styles.teteMini}>
+            <Image source={COACH_IMAGES[coach].tete} style={styles.remplir} contentFit="cover" />
+          </View>
+          <Text variant="label">Le mot de {c.nom}</Text>
+        </View>
         {m.checkin && (
           <Animated.View entering={FadeInDown.duration(380)} style={styles.alerte}>
-            <Icon name="spark" size={14} color={colors.pink} strokeWidth={2.4} />
+            <View style={styles.point} />
             <Text weight="semibold" style={styles.alerteTxt} numberOfLines={1}>
               Ton bilan du jour t’attend
             </Text>
@@ -402,7 +402,9 @@ export function CarteCollection() {
   return (
     <Appui accessibilityRole="button" accessibilityLabel={`${titre}. ${sous}`} onPress={() => router.push(lien)}>
       <Card style={styles.collection}>
-        <Icon name={icone} size={34} color={colors.pink} strokeWidth={1.6} />
+        <View style={styles.collectionIcone}>
+          <Icon name={icone} size={20} color={colors.text} strokeWidth={1.8} />
+        </View>
         <View style={styles.flex}>
           <Text weight="semibold" style={styles.collectionTitre}>
             {titre}
@@ -421,24 +423,22 @@ const styles = StyleSheet.create({
   bilan: { gap: 12 },
   rangee: { flexDirection: 'row', gap: 12 },
   demi: { flex: 1, padding: 16, gap: 6, minHeight: 210 },
-  enTete: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 },
-  enTeteTxt: { fontSize: 16, lineHeight: 21 },
-  valeurMot: { fontSize: 28, lineHeight: 34, letterSpacing: -0.6 },
+  enTete: { marginBottom: 8 },
+  valeurMot: { fontSize: 26, lineHeight: 32, letterSpacing: -0.8 },
   minutes: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
-  gros: { fontSize: 40, lineHeight: 46, letterSpacing: -1, fontVariant: ['tabular-nums'] },
+  gros: { fontSize: 40, lineHeight: 46, letterSpacing: -1.4, fontVariant: ['tabular-nums'] },
   unite: { fontSize: 18, lineHeight: 24, color: colors.textSecondary },
   petit: { fontSize: 13.5, lineHeight: 18, color: colors.textSecondary },
   petitClair: { fontSize: 14, lineHeight: 19, color: colors.text },
   segments: { flexDirection: 'row', gap: 5, marginTop: 14 },
-  segment: { flex: 1, height: 9, borderRadius: 5, backgroundColor: ui.dark },
-  segmentOn: { backgroundColor: colors.pink },
+  segment: { flex: 1, height: 6, borderRadius: 3, backgroundColor: colors.surface2 },
   lien: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 14 },
-  lienTxt: { flexShrink: 1, fontSize: 14, lineHeight: 19, color: colors.pink },
+  lienTxt: { flexShrink: 1, fontSize: 14, lineHeight: 19, color: colors.textSecondary },
   barres: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
   barreCol: { alignItems: 'center', gap: 4, flex: 1 },
   barreZone: { height: 34, justifyContent: 'flex-end' },
-  barre: { width: 9, height: '100%', borderRadius: 5, backgroundColor: ui.dark },
-  barreAuj: { borderWidth: 1, borderColor: alpha(colors.pink, 0.6) },
+  barre: { width: 8, height: '100%', borderRadius: 2, backgroundColor: colors.surface2 },
+  barreAuj: { borderWidth: 1, borderColor: colors.textTertiary },
   jour: { fontSize: 11, lineHeight: 14, color: colors.textSecondary },
   jourAuj: { color: colors.text, ...fonts.semibold },
   source: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 6 },
@@ -449,15 +449,18 @@ const styles = StyleSheet.create({
   ligneTxt: { fontSize: 17, lineHeight: 22 },
   separateur: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', backgroundColor: colors.border, marginHorizontal: 8 },
   ligneBas: { fontSize: 13, lineHeight: 17, color: colors.textSecondary, textAlign: 'center' },
-  bulle: { borderRadius: 34, overflow: 'hidden', backgroundColor: colors.surface, borderWidth: 1, borderColor: alpha(colors.text, 0.1) },
-  bulleContenu: { paddingHorizontal: 26, paddingVertical: 18, gap: 8 },
+  bulle: { borderRadius: 18, overflow: 'hidden', backgroundColor: colors.surface },
+  bulleContenu: { padding: 18, gap: 10 },
+  bulleTete: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  teteMini: { width: 22, height: 22, borderRadius: 11, overflow: 'hidden', backgroundColor: colors.surface2 },
+  point: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.pink },
   bullePresse: { opacity: 0.82, transform: [{ scale: 0.98 }] },
-  bulleTexte: { fontSize: 16, lineHeight: 23, color: colors.text },
+  bulleTexte: { fontSize: 17, lineHeight: 24, color: colors.text, letterSpacing: -0.2 },
   alerte: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingBottom: 2 },
-  alerteTxt: { fontSize: 14, lineHeight: 18, color: colors.pink },
-  demander: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
-  demanderTxt: { fontSize: 20, lineHeight: 26, color: alpha(colors.text, 0.32) },
-  plus: { width: 40, height: 40, borderRadius: 20, backgroundColor: alpha(colors.text, 0.12), alignItems: 'center', justifyContent: 'center' },
+  alerteTxt: { fontSize: 13, lineHeight: 17, color: colors.text },
+  demander: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6, backgroundColor: colors.surface2, borderRadius: 12, paddingLeft: 14, paddingRight: 5, height: 46 },
+  demanderTxt: { fontSize: 15, lineHeight: 20, color: colors.textTertiary },
+  plus: { width: 36, height: 36, borderRadius: 9, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' },
   coach: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
   tete: { width: 58, height: 58, borderRadius: 29, overflow: 'hidden', backgroundColor: ui.iconBg },
   coachTitre: { fontSize: 17, lineHeight: 22 },
@@ -484,14 +487,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
   },
   voirTxt: { ...fonts.semibold, fontSize: 16, lineHeight: 20, color: colors.onPrimary },
-  collection: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 16 },
+  collection: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14 },
+  collectionIcone: { width: 40, height: 40, borderRadius: 10, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' },
   collectionTitre: { fontSize: 17, lineHeight: 22 },
   sheetSous: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, marginTop: -6, marginBottom: 6 },
   question: { fontSize: 15, lineHeight: 20, marginTop: 14, marginBottom: 8 },
   choix: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pastille: { borderRadius: 100, borderWidth: 1.5, borderColor: colors.border, paddingHorizontal: 14, paddingVertical: 9 },
-  pastilleOn: { backgroundColor: colors.pink, borderColor: colors.pink },
+  pastille: { borderRadius: 10, backgroundColor: colors.surface2, paddingHorizontal: 14, paddingVertical: 10 },
+  pastilleOn: { backgroundColor: colors.text },
   pastilleTxt: { fontSize: 14, lineHeight: 18 },
-  pastilleTxtOn: { color: colors.onPrimary },
+  pastilleTxtOn: { color: colors.bg },
   enregistrer: { marginTop: 22 },
 });

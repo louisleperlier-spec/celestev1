@@ -63,7 +63,7 @@ export default function Nouveautes() {
           {LISTE.map((n, i) => (
             <Animated.View key={n.titre} entering={FadeInDown.delay(180 + i * 90).duration(380)} style={styles.point}>
               <View style={styles.pointIcone}>
-                <Icon name={n.icone} size={18} color={colors.pink} strokeWidth={2} />
+                <Icon name={n.icone} size={18} color={colors.text} strokeWidth={2} />
               </View>
               <View style={styles.pointTextes}>
                 <Text weight="semibold" style={styles.pointTitre}>

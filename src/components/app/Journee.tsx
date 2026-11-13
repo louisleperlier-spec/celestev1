@@ -114,7 +114,7 @@ export function Journee() {
                 <Icon name="check" size={17} strokeWidth={3} color={colors.onPrimary} />
               </Animated.View>
             ) : (
-              <Icon name={t.icone} size={18} color={colors.pink} />
+              <Icon name={t.icone} size={18} color={colors.text} />
             )}
           </View>
           <View style={styles.flex}>

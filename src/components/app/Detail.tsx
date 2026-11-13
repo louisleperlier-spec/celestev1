@@ -75,7 +75,7 @@ export function KStat({ items }: { items: [IconName, string][] }) {
     <View style={styles.kstat}>
       {items.map(([ic, t], i) => (
         <View key={i} style={styles.kstatItem}>
-          <Icon name={ic} size={17} color={colors.pinkLight} />
+          <Icon name={ic} size={17} color={colors.text} />
           <Text style={styles.kstatTxt}>{t}</Text>
         </View>
       ))}

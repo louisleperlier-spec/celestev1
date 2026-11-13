@@ -5,7 +5,7 @@ import { traduire } from '@/i18n';
 
 import { colors, fonts, type FontWeightName } from '@/theme';
 
-type Variant = 'display' | 'title' | 'heading' | 'body' | 'caption';
+type Variant = 'display' | 'title' | 'heading' | 'body' | 'caption' | 'label';
 
 export type TextProps = RNTextProps & {
   variant?: Variant;
@@ -40,9 +40,11 @@ export function traduireEnfants(c: ReactNode): ReactNode {
 }
 
 const variants = StyleSheet.create({
-  display: { ...fonts.bold, fontSize: 34, lineHeight: 41, color: colors.text, letterSpacing: -0.4 },
-  title: { ...fonts.semibold, fontSize: 30, lineHeight: 36, color: colors.text, letterSpacing: -0.3 },
-  heading: { ...fonts.semibold, fontSize: 19, lineHeight: 24, color: colors.text },
+  display: { ...fonts.bold, fontSize: 34, lineHeight: 41, color: colors.text, letterSpacing: -0.9 },
+  title: { ...fonts.semibold, fontSize: 30, lineHeight: 36, color: colors.text, letterSpacing: -0.7 },
+  heading: { ...fonts.semibold, fontSize: 19, lineHeight: 24, color: colors.text, letterSpacing: -0.3 },
   body: { ...fonts.regular, fontSize: 16, lineHeight: 22, color: colors.text },
   caption: { ...fonts.regular, fontSize: 13, lineHeight: 18, color: colors.textSecondary },
+  /** Petit libellé de section en capitales espacées (comme Whoop) : « AUJOURD'HUI », « VFC NOCTURNE ». */
+  label: { ...fonts.semibold, fontSize: 11, lineHeight: 14, color: colors.textTertiary, letterSpacing: 1.1, textTransform: 'uppercase' },
 });
