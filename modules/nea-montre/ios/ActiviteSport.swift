@@ -13,6 +13,9 @@ struct NeaSportAttributes: ActivityAttributes {
     var ecoule: Int
     var kcal: Int
     var fini: Bool
+    /// FC des dernières minutes (24 points au plus) et FC max (âge) : courbe et anneau d'intensité (build 42+, facultatifs).
+    var fc: [Int]? = nil
+    var fcMax: Int? = nil
   }
 
   var sport: String
@@ -24,6 +27,8 @@ struct NeaSportAttributes: ActivityAttributes {
 final class ActiviteSport {
   static let partagee = ActiviteSport()
   private var activite: Activity<NeaSportAttributes>?
+  /// Dernier état envoyé : la courbe et la FC max restent sur l'état final (« Terminé »).
+  private var dernier: NeaSportAttributes.ContentState?
 
   func demarrer(sport: String, symbole: String, debut: Date) -> Bool {
     guard ActivityAuthorizationInfo().areActivitiesEnabled else { return false }
@@ -46,13 +51,18 @@ final class ActiviteSport {
 
   func maj(_ etat: NeaSportAttributes.ContentState) {
     guard let a = activite else { return }
+    dernier = etat
     Task { await a.update(ActivityContent(state: etat, staleDate: nil)) }
   }
 
   /// Fin : l'état final (« terminé ») reste visible 4 min sur l'écran verrouillé.
-  func terminer(_ etat: NeaSportAttributes.ContentState?) {
+  func terminer(_ fin: NeaSportAttributes.ContentState?) {
     let a = activite
     activite = nil
+    var complet = fin
+    if complet != nil, complet?.fc == nil { complet?.fc = dernier?.fc; complet?.fcMax = dernier?.fcMax }
+    dernier = nil
+    let etat = complet
     Task {
       if let a {
         if let etat {

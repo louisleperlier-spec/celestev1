@@ -8,6 +8,7 @@ import { AppState, type NativeEventSubscription } from 'react-native';
 import { create } from 'zustand';
 
 import { coeur, hrStats, type SourceFC } from '@/lib/coeur';
+import { hrMax } from '@/lib/plan';
 import { NeaMontre } from '../../modules/nea-montre/src';
 import { INTENSITES, kcalSport, sportParId, symboleSport, type Intensite } from '@/lib/sports';
 
@@ -43,6 +44,8 @@ const ID_NOTIF = 'nea.sport';
 const RAPPELS = [10, 20, 30, 45, 60, 90, 120];
 let horloge: ReturnType<typeof setInterval> | null = null;
 let ecoute: NativeEventSubscription | null = null;
+/** FC échantillonnée pour la courbe de l'Activité en direct. */
+let courbeFC: number[] = [];
 
 const age = () => useProfil.getState().age;
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -98,12 +101,17 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
       set({ bpm: hr.bpm, zone: hr.zone(), src: hr.src });
     }
   };
-  /** Activité en direct (écran verrouillé) : BPM, chrono, calories. */
+  /** Activité en direct (écran verrouillé) : BPM, chrono, calories, et sur les builds 42+ la courbe de FC et la FC max. */
   const majDirect = () => {
     const v = get();
     if (!v.run) return;
     try {
-      NeaMontre?.majActivite?.(Math.round(v.bpm), v.debut, v.paused, v.el, kcalEnDirect(v.sport, v.el, v.intensite));
+      const kcal = kcalEnDirect(v.sport, v.el, v.intensite);
+      // Un point de courbe toutes les 15 s (6 dernières minutes), le BPM en cours en dernier.
+      if (!v.paused && v.el % 15 === 0 && v.bpm > 0) courbeFC = [...courbeFC, Math.round(v.bpm)].slice(-24);
+      const courbe = v.bpm > 0 ? [...courbeFC.slice(-23), Math.round(v.bpm)] : courbeFC;
+      if (NeaMontre?.majActiviteFc) NeaMontre.majActiviteFc(Math.round(v.bpm), v.debut, v.paused, v.el, kcal, courbe, hrMax(age()));
+      else NeaMontre?.majActivite?.(Math.round(v.bpm), v.debut, v.paused, v.el, kcal);
     } catch {
       // build sans Activité en direct
     }
@@ -141,6 +149,7 @@ export const useSportLive = create<SportLive & Actions>()((set, get) => {
     demarrer: (id, intensite) => {
       const sp = sportParId(id);
       if (!sp || get().run) return;
+      courbeFC = [];
       set({ run: true, sport: id, intensite, paused: false, el: 0, debut: Date.now(), hr: [], rrs: [] });
       horloge = setInterval(tick, 1000);
       suivreMontre();

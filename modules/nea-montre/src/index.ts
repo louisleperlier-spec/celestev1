@@ -15,6 +15,8 @@ type Module = {
   /** Activité en direct d'un sport (build 24+) : écran verrouillé et Dynamic Island. */
   demarrerActivite?(sport: string, symbole: string, debutMs: number): boolean;
   majActivite?(bpm: number, debutMs: number, pause: boolean, ecoule: number, kcal: number): void;
+  /** Même chose avec la courbe de FC (24 points au plus) et la FC max : build 42+. */
+  majActiviteFc?(bpm: number, debutMs: number, pause: boolean, ecoule: number, kcal: number, fc: number[], fcMax: number): void;
   finActivite?(bpm: number, ecoule: number, kcal: number, garder: boolean): void;
   /** Réveil de l'iPhone (build 26+) : AlarmKit sur iOS 26, sinon repli en notifications. */
   reveilDisponible?(): boolean;

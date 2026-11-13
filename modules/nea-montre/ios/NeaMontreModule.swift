@@ -66,6 +66,11 @@ public final class NeaMontreModule: Module {
       ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false))
     }
 
+    /// Même mise à jour avec la courbe de FC et la FC max (design « Activité en direct », build 42+). Le JS l'utilise si elle existe.
+    Function("majActiviteFc") { (bpm: Int, debutMs: Double, pause: Bool, ecoule: Int, kcal: Int, fc: [Int], fcMax: Int) in
+      ActiviteSport.partagee.maj(.init(bpm: bpm, debut: Date(timeIntervalSince1970: debutMs / 1000), pause: pause, ecoule: ecoule, kcal: kcal, fini: false, fc: fc, fcMax: fcMax))
+    }
+
     /// Réveil de l'iPhone (AlarmKit, iOS 26+) : voir ReveilAlarme.
     Function("reveilDisponible") { () -> Bool in
       ReveilAlarme.disponible

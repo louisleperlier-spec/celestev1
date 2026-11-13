@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useDefilementOnglets } from '@/components/app/TabBar';
 import { MascotteVide } from '@/components/app/Mascotte';
+import { CarrouselEmpile, CarteEmpilee } from '@/components/app/CarrouselEmpile';
 import { ENTRAINEMENT, Rubriques } from '@/components/app/EnTete';
 import { PastilleDifficulte } from '@/components/app/Rando';
 import { Appui, Button, Icon, Text } from '@/components/ui';
@@ -183,30 +184,43 @@ export default function Randonnee() {
         ))}
         {pres.liste.length > 0 && <Text style={styles.note}>Sentiers et tracés © contributeurs OpenStreetMap · dénivelé calculé avec l’altitude du terrain.</Text>}
 
-        {/* Rando de la semaine */}
+        {/* Incontournables : carrousel en pile (design « Transitions au scroll »), la rando de la semaine en premier. */}
         <Text style={styles.h2}>Incontournables</Text>
-        <Appui onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.semaine} accessibilityRole="button">
-          <Image source={photoGrande(semaine.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
-          <LinearGradient colors={ui.voilePhoto} locations={[0.25, 0.6, 1]} style={StyleSheet.absoluteFill} />
-          <View style={styles.badgeSemaine}>
-            <Text weight="bold" style={styles.badgeTxt}>
-              RANDO DE LA SEMAINE
-            </Text>
-          </View>
-          <View style={styles.semaineBas}>
-            <Text weight="bold" style={styles.semaineNom} numberOfLines={1}>
-              {semaine.nom}
-            </Text>
-            <Text style={styles.semaineLieu}>{semaine.lieu}</Text>
-            <View style={styles.ligne}>
-              <View style={styles.flex}>
-                <Chiffres s={semaine} clair />
-              </View>
-              <PastilleDifficulte d={semaine.difficulte} />
-            </View>
-            <Button label="Voir le sentier" iconAfter="right" small onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: semaine.id } })} style={styles.btn} />
-          </View>
-        </Appui>
+        <CarrouselEmpile
+          donnees={[semaine, ...SENTIERS.filter((x) => x.id !== semaine.id)]}
+          cle={(x) => x.id}
+          bord={20}
+          rendu={(x) => (
+            <Appui
+              onPress={() => router.push({ pathname: '/randonnee/[id]', params: { id: x.id } })}
+              style={styles.plein}
+              accessibilityRole="button"
+              accessibilityLabel={x.id === semaine.id ? `Rando de la semaine : ${x.nom}` : x.nom}
+            >
+              <CarteEmpilee>
+                <Image source={photoGrande(x.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
+                <LinearGradient colors={ui.voilePhoto} locations={[0.35, 0.65, 1]} style={StyleSheet.absoluteFill} />
+                {x.id === semaine.id && (
+                  <View style={styles.badgeSemaine}>
+                    <Text weight="semibold" style={styles.badgeTxt}>
+                      Rando de la semaine
+                    </Text>
+                  </View>
+                )}
+                <View style={styles.semaineBas}>
+                  <PastilleDifficulte d={x.difficulte} />
+                  <Text weight="semibold" style={styles.semaineNom} numberOfLines={2}>
+                    {x.nom}
+                  </Text>
+                  <Text style={styles.semaineLieu} numberOfLines={1}>
+                    {x.region}
+                  </Text>
+                  <Chiffres s={x} clair />
+                </View>
+              </CarteEmpilee>
+            </Appui>
+          )}
+        />
 
         <Text style={styles.h2}>À explorer</Text>
         {liste.length === 0 && <MascotteVide texte="Aucun sentier pour ce filtre pour l’instant." />}
@@ -272,16 +286,16 @@ const styles = StyleSheet.create({
   filtreOn: { backgroundColor: colors.pink, borderColor: colors.pink },
   filtreTxt: { fontSize: 14, lineHeight: 18 },
   filtreTxtOn: { color: colors.onPrimary },
-  semaine: { height: 300, borderRadius: 22, overflow: 'hidden', marginTop: 10, backgroundColor: colors.surface },
+  plein: { flex: 1 },
   titreLigne: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   suggestion: { borderRadius: 22, padding: 16, marginTop: 6, backgroundColor: ui.selFond, borderWidth: 1, borderColor: ui.pinkRing },
   mtSugg: { marginTop: 34 },
   pourquoi: { fontSize: 13.5, lineHeight: 19, color: colors.text, marginTop: 10 },
   vignetteOsm: { width: 92, height: 62, borderRadius: 12, backgroundColor: ui.selFond, alignItems: 'center', justifyContent: 'center' },
-  badgeSemaine: { position: 'absolute', top: 14, left: 14, backgroundColor: colors.pink, borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5 },
-  badgeTxt: { fontSize: 11.5, lineHeight: 15, color: colors.onPrimary, letterSpacing: 0.5 },
-  semaineBas: { position: 'absolute', left: 16, right: 16, bottom: 14 },
-  semaineNom: { fontSize: 24, lineHeight: 29 },
+  badgeSemaine: { position: 'absolute', top: 12, left: 12, backgroundColor: colors.pink, borderRadius: 8, paddingHorizontal: 9, paddingVertical: 4 },
+  badgeTxt: { fontSize: 11.5, lineHeight: 15, color: colors.onPrimary },
+  semaineBas: { position: 'absolute', left: 14, right: 14, bottom: 14, gap: 4, alignItems: 'flex-start' },
+  semaineNom: { fontSize: 20, lineHeight: 24, letterSpacing: -0.4, marginTop: 4 },
   semaineLieu: { fontSize: 14, lineHeight: 19, color: colors.textSecondary, marginTop: 1 },
   ligne: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   btn: { marginTop: 12 },

@@ -225,6 +225,20 @@ Programme : semaine (prévue = anneau gris, aujourd'hui = blanc, faite = orange)
 programmes » en cartes typographiques (semaines en grand, plus la même mascotte sur chaque carte) ; Progrès : tuiles libellé + chiffre, gels
 en chiffre, « Voir mon programme » en bouton gris ; calories en petit texte gris.
 
+**Designs Process « Activité en direct » et « Transitions au scroll » (13 nov. 2026, demandés par l'utilisateur)** : ZIP téléchargés (HTTP 200),
+empreintes vérifiées, pas d'AGENTS.md dans les paquets. **Activité en direct** (`moneymaker-live-activity`, démonstration simulée) : paquet installé
+tel quel par son `INSTALL.sh` dans `targets/widgets/Process/moneymaker-live-activity` (6 fichiers, compilés dans l'extension des widgets, dossier
+synchronisé) ; l'Activité en direct du sport (`targets/widgets/SportActivite.swift`) reprend sa mise en page : libellé du sport en capitales, chrono en
+chiffres fins `MMFont.number` + anneau d'intensité (part de la FC max, `NeaAnneau`), BPM, **courbe de FC** des 6 dernières minutes (`NeaLigneFC`,
+`targets/widgets/NeaActiviteStyle.swift`, mécanique de `MMWLine` en orange sans lueur), filet, ligne du bas (zone, kcal, heure de départ), `MMWDots` ;
+Dynamic Island « DURÉE » / « BPM » + courbe ; `ContentState` + `fc` et `fcMax` facultatifs (identiques des deux côtés), fonction native
+`majActiviteFc` (le JS s'en sert si elle existe, sinon `majActivite`), courbe échantillonnée toutes les 15 s dans `store/sportLive.ts` ;
+**build 42+ nécessaire** (Swift non compilé ici). **Transitions au scroll** (ScrollInteraction, SwiftUI « Type 3 ») : pas de projet Xcode (CNG),
+portée en React Native sans module natif : `components/app/CarrouselEmpile.tsx` (cartes 220 × 330, aimantation, pile derrière la carte du centre,
+sortie à 1,5 ×, échelle 0,9 depuis le bas, −10 pt, rotation 5° × phase autour du coin bas droit, premières cartes devant ; flou de 2 pt omis ;
+mouvement réduit = carrousel simple) ; branché sur « Incontournables » de la Randonnée (14 sentiers, rando de la semaine en premier, vraies photos ;
+les 6 photos Pexels du paquet ne sont pas reprises).
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 
