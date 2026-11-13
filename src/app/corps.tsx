@@ -31,7 +31,7 @@ export default function Corps() {
   const plusFatigue = entrees.reduce((a, e) => (e.pourcent < a.pourcent ? e : a));
   const conseil = suggestion(entrees);
   const avis = alertes(entrees, logs, groupeExercice, now);
-  const larg = Math.min(150, (width - 32 - 24) / 2);
+  const larg = Math.min(170, (width - 32 - 24) / 2);
   const detail = ouvert ? par.get(ouvert) : undefined;
 
   return (

@@ -250,8 +250,9 @@ pas de 5 min) ; remplace la roue de `/reveil` (colonnes « COUCHER » / « RÉVE
 
 **« Ton corps » (design Process « Corps », v2-flow-body, 13 nov. 2026, demandé par l'utilisateur)** : ZIP HTTP 200, 294 empreintes OK, pas d'AGENTS.md ;
 le paquet est un kit d'app complet (Firebase, Strava…) dont le **jumeau 3D n'est pas repris** : ses modèles 3D (avatar `.glb` généré par un serveur, `DemoBodyAvatar.glb`)
-ne sont pas fournis (README). Repris : **carte musculaire** de face et de dos (`src/data/carteMuscles.ts`, 66 polygones de `MuscleMapData.swift`, react-body-highlighter,
-MIT, crédit gardé), **moteur de récupération** (`lib/corps.ts`, portage de `MuscleLoadEngine` + `MuscleAdvisor` : 15 muscles, dose par exercice (séries, reps,
+ne sont pas fournis (README). Repris : **carte musculaire** de face et de dos, d'abord en polygones (react-body-highlighter), **remplacée le 13 nov. par la planche « couleurs codées »
+de l'utilisateur (Nano Banana)** découpée en masques transparents (`scripts/decouper-corps.py` : teinte normalisée, brun / orange séparés par la luminosité,
+miettes < 900 px écartées ; `assets/corps/<vue>_<muscle>.png` + `silhouette` + `lignes`, `src/data/corpsImages.ts`), teintés par `tintColor` dans `CarteMuscles`, **moteur de récupération** (`lib/corps.ts`, portage de `MuscleLoadEngine` + `MuscleAdvisor` : 15 muscles, dose par exercice (séries, reps,
 nouveauté) sinon sport × durée × intensité (FC moyenne), décroissance τ = 36 h adaptée à l'habitude, seuils 55 % / 30 %, repos minimum, vert ≥ 50 / jaune
 34–49 / rouge, séance conseillée, alertes surcharge et retravaillé fatigué ; groupes et sports de NÉA mis en correspondance) ; écran **`/corps`** (silhouettes,
 légende, anneau moyen, séance conseillée, alertes, muscles par région, détail : délais et séances qui pèsent encore) ; entrées `EntreeCorps` dans Programme

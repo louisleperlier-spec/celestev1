@@ -1,21 +1,21 @@
 import { StyleSheet, View } from 'react-native';
-import Svg, { Polygon } from 'react-native-svg';
+import { Image } from 'expo-image';
 
 import { Appui, Icon, Text } from '@/components/ui';
 import { EXERCICES } from '@/data';
-import { CARTE_MUSCLES } from '@/data/carteMuscles';
+import { CORPS_IMAGES } from '@/data/corpsImages';
 import { niveauPourcent, type Entree, type Muscle } from '@/lib/corps';
-import { alpha, colors } from '@/theme';
+import { colors, mix } from '@/theme';
 
 /** Groupe NÉA d'un exercice (pour la dose par muscle des séances détaillées). */
 export const groupeExercice = (id: string) => EXERCICES.find((e) => e.id === id)?.groupe;
 
 /** Couleur d'un muscle : gris s'il n'a pas travaillé, sinon vert / jaune / rouge selon sa récupération, plus dense s'il est chargé. */
 export function couleurMuscle(e: Entree | undefined): string {
-  if (!e || e.charge < 0.05) return colors.surface2;
+  if (!e || e.charge < 0.05) return colors.border2;
   const n = niveauPourcent(e.pourcent);
   const c = n === 'bon' ? colors.good : n === 'moyen' ? colors.warn : colors.error;
-  return alpha(c, 0.45 + 0.55 * Math.min(1, e.charge / 0.85));
+  return mix(c, Math.round(45 + 55 * Math.min(1, e.charge / 0.85)), colors.border2);
 }
 
 export const couleurPourcent = (p: number) => {
@@ -24,25 +24,22 @@ export const couleurPourcent = (p: number) => {
 };
 
 /**
- * Silhouette musculaire de face ou de dos (polygones du paquet Process « Corps », react-body-highlighter, MIT), repère 100 × 200 ;
- * chaque muscle prend la couleur de sa récupération. `choisi` : muscle mis en avant (liseré blanc).
+ * Silhouette musculaire de face ou de dos (planche de l'utilisateur, `data/corpsImages.ts`) : silhouette grise, chaque muscle teinté
+ * selon sa récupération, contours par-dessus. `choisi` : muscle mis en avant (éclairci).
  */
 export function CarteMuscles({ vue, entrees, largeur, choisi }: { vue: 'face' | 'dos'; entrees: readonly Entree[]; largeur: number; choisi?: Muscle | null }) {
   const par = new Map(entrees.map((e) => [e.muscle, e]));
+  const v = CORPS_IMAGES[vue];
+  const taille = { width: largeur, height: Math.round(largeur * v.ratio) };
+  const calque = [StyleSheet.absoluteFill, taille];
   return (
-    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <Svg width={largeur} height={largeur * 2} viewBox="0 0 100 200">
-        {CARTE_MUSCLES.filter((p) => p.vue === vue).map((p, i) => (
-          <Polygon
-            key={i}
-            points={p.points}
-            fill={p.muscle ? couleurMuscle(par.get(p.muscle)) : colors.border}
-            stroke={p.muscle && p.muscle === choisi ? colors.text : colors.bg}
-            strokeWidth={p.muscle && p.muscle === choisi ? 0.9 : 0.5}
-            strokeLinejoin="round"
-          />
-        ))}
-      </Svg>
+    <View style={taille} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <Image source={v.silhouette} style={calque} tintColor={colors.border} contentFit="contain" />
+      {(Object.keys(v.muscles) as Muscle[]).map((m) => (
+        <Image key={m} source={v.muscles[m]} style={calque} tintColor={couleurMuscle(par.get(m))} contentFit="contain" />
+      ))}
+      {choisi && v.muscles[choisi] ? <Image source={v.muscles[choisi]} style={[calque, styles.choisi]} tintColor={colors.text} contentFit="contain" /> : null}
+      <Image source={v.lignes} style={[calque, styles.lignes]} tintColor={colors.bg} contentFit="contain" />
     </View>
   );
 }
@@ -74,6 +71,8 @@ export function EntreeCorps({ entrees, onPress }: { entrees: readonly Entree[]; 
 }
 
 const styles = StyleSheet.create({
+  choisi: { opacity: 0.35 },
+  lignes: { opacity: 0.55 },
   entree: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 18, backgroundColor: colors.surface },
   mini: { flexDirection: 'row', gap: 4 },
   flex: { flex: 1, minWidth: 0, gap: 2 },
