@@ -2,7 +2,9 @@ import { router, type Href } from 'expo-router';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { Appui, Icon, Text } from '@/components/ui';
-import { EXERCICES, GROUPES, LIEUX, SEANCES_GRATUITES } from '@/data';
+import { Image } from 'expo-image';
+
+import { EXERCICE_IMAGES, EXERCICES, GROUPES, LIEUX, SEANCES_GRATUITES } from '@/data';
 import type { ExerciceId, GroupeId, LieuId, Seance, SeanceId } from '@/data/types';
 import { LVLN } from '@/lib/plan';
 import { isPremium, wkLocked } from '@/lib/premium';
@@ -40,6 +42,44 @@ export const premierExo = (w: Seance) => w.ex[0].split(':')[0] as ExerciceId;
 
 /** Lieu proposé d'abord : celui choisi dans l'onboarding (salle si « les deux »). */
 export const lieuDuProfil = (gear: string): LieuId => (gear === 'maison' ? 'maison' : 'salle');
+
+/**
+ * Carte d'une séance prête pour le carrousel à balayer (design « Transitions au scroll ») : état (Gratuit, NÉA Plus, niveau),
+ * illustration d'Axel du premier exercice en grand, titre, durée et nombre d'exercices, « Ajouter » à ma semaine.
+ * Toucher la carte ouvre la séance.
+ */
+export function CarteSeance({ w, onPlanifier }: { w: Seance; onPlanifier: (id: SeanceId) => void }) {
+  const weight = useProfil((s) => s.weight);
+  const mod = useProfil((s) => s.wkMod[w.id] ?? 0);
+  const s = catSession(w, null, weight, mod);
+  const lk = wkLocked(w.id);
+  const etat = lk ? 'NÉA Plus' : SEANCES_GRATUITES.includes(w.id) && !isPremium() ? 'Gratuit' : LVLN[w.lvl - 1];
+  return (
+    <Appui accessibilityRole="button" accessibilityLabel={`${w.t}, ${s.min} min`} style={styles.carte} onPress={() => router.push(`/catalogue/${w.id}`)}>
+      <View style={styles.carteHaut}>
+        <Text variant="label" style={lk ? styles.carteEtatPlus : undefined}>
+          {etat}
+        </Text>
+        {lk && <Icon name="lock" size={13} color={colors.textTertiary} strokeWidth={2.2} />}
+      </View>
+      <View style={styles.carteImage}>
+        <Image source={EXERCICE_IMAGES[premierExo(w)]} style={styles.carteImg} contentFit="contain" />
+      </View>
+      <Text weight="semibold" style={styles.carteTitre} numberOfLines={2}>
+        {w.t}
+      </Text>
+      <Text style={styles.wp}>
+        {s.min} min • {w.ex.length} exercices • {LVLN[w.lvl - 1]}
+      </Text>
+      <Appui accessibilityRole="button" accessibilityLabel={`Ajouter ${w.t} à ma semaine`} style={styles.carteAjout} onPress={() => onPlanifier(w.id)}>
+        <Icon name="plus" size={16} color={colors.text} />
+        <Text weight="semibold" style={styles.carteAjoutTxt}>
+          Ajouter à ma semaine
+        </Text>
+      </Appui>
+    </Appui>
+  );
+}
 
 /** Une séance prête : vignette, titre, durée, niveau, et « + » pour la planifier (.wrow du prototype). */
 export function SeanceLigne({ w, onPlanifier }: { w: Seance; onPlanifier: (id: SeanceId) => void }) {
@@ -161,6 +201,14 @@ const styles = StyleSheet.create({
   wmain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, minWidth: 0 },
   wh5: { fontSize: 14.5, lineHeight: 19 },
   wp: { fontSize: 12.5, lineHeight: 17, color: colors.textSecondary, marginTop: 3 },
+  carte: { flex: 1, borderRadius: 25, backgroundColor: colors.surface, padding: 14, gap: 6 },
+  carteHaut: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  carteEtatPlus: { color: colors.text },
+  carteImage: { flex: 1, borderRadius: 16, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginVertical: 4 },
+  carteImg: { width: '92%', height: '92%' },
+  carteTitre: { fontSize: 17, lineHeight: 21, letterSpacing: -0.3 },
+  carteAjout: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 40, borderRadius: 10, backgroundColor: colors.surface2, marginTop: 4 },
+  carteAjoutTxt: { fontSize: 14, lineHeight: 18 },
   wadd: {
     width: 38,
     height: 38,

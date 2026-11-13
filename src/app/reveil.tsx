@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Switch, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Switch, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShallow } from 'zustand/react/shallow';
 
+import { CadranSommeil, versFraction, versMinutes } from '@/components/app/CadranSommeil';
 import { Sheet } from '@/components/app/Sheet';
 import { Appui, Button, Card, Icon, Text, toast, type IconName } from '@/components/ui';
-import { coucherPour, heuresAuLit, JOURS_COURTS, libelleJours, SONS, SONS_DESC, sonValide, type Reveil, type SonReveil } from '@/lib/reveil';
+import { coucherPour, heuresAuLit, hhmm, JOURS_COURTS, libelleJours, SONS, SONS_DESC, sonValide, type Reveil, type SonReveil } from '@/lib/reveil';
 import { hm } from '@/lib/sommeil';
 import { useProfil } from '@/store/profil';
 import { programmerReveil, reveilEnAlarme } from '@/store/reveil';
@@ -14,42 +15,7 @@ import { arreterApercu, ecouterSonnerie } from '@/store/sons';
 import { alpha, colors, fonts, ui } from '@/theme';
 
 const HAUT = 62;
-const HEURES = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 const OBJECTIFS = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
-
-/** Colonne de la roue (3 valeurs visibles, celle du milieu choisie), aimantée à chaque valeur. */
-function Roue({ valeurs, valeur, onChange, label }: { valeurs: number[]; valeur: number; onChange: (v: number) => void; label: string }) {
-  const [depart] = useState(() => Math.max(0, valeurs.indexOf(valeur)));
-  const ref = useRef<ScrollView>(null);
-  const fin = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = Math.max(0, Math.min(valeurs.length - 1, Math.round(e.nativeEvent.contentOffset.y / HAUT)));
-    if (valeurs[i] !== valeur) onChange(valeurs[i]);
-  };
-  return (
-    <ScrollView
-      accessibilityLabel={label}
-      style={styles.roue}
-      showsVerticalScrollIndicator={false}
-      snapToInterval={HAUT}
-      decelerationRate="fast"
-      ref={ref}
-      contentOffset={{ x: 0, y: depart * HAUT }}
-      onLayout={() => ref.current?.scrollTo({ y: depart * HAUT, animated: false })}
-      contentContainerStyle={{ paddingVertical: HAUT }}
-      onMomentumScrollEnd={fin}
-      onScrollEndDrag={fin}
-    >
-      {valeurs.map((v) => (
-        <View key={v} style={styles.cran}>
-          <Text weight={v === valeur ? 'bold' : 'medium'} style={[styles.chiffre, v !== valeur && styles.chiffreLoin]}>
-            {label === 'Minutes' ? String(v).padStart(2, '0') : String(v)}
-          </Text>
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
 
 function Ligne({ icone, titre, sous, droite, onPress }: { icone: IconName; titre: string; sous?: string; droite?: React.ReactNode; onPress?: () => void }) {
   const corps = (
@@ -73,20 +39,23 @@ function Ligne({ icone, titre, sous, droite, onPress }: { icone: IconName; titre
   );
 }
 
-/** « Ton réveil » (maquette de l'utilisateur) : heure sur une roue, jours, son, vibration, nuit prévue ; réveil de l'iPhone à l'enregistrement. */
+/** « Ton réveil » (maquette de l'utilisateur) : coucher et réveil sur le cadran de sommeil (design Process), jours, son, vibration, nuit prévue ; réveil de l'iPhone à l'enregistrement. */
 export default function ReveilEcran() {
   const p = useProfil(useShallow((s) => ({ reveil: s.reveil, objectif: s.objectifSommeil })));
-  const [h, setH] = useState(Math.floor(hm(p.reveil.h) / 60));
-  const [m, setM] = useState(Math.round((hm(p.reveil.h) % 60) / 5) * 5 % 60);
+  // Cadran de sommeil : réveil et coucher en minutes de la journée (pas de 5 min) ; l'objectif en découle.
+  const [reveilMin, setReveilMin] = useState(() => (Math.round(hm(p.reveil.h) / 5) * 5) % 1440);
+  const [coucherMin, setCoucherMin] = useState(() => (Math.round(hm(coucherPour(p.reveil.h, p.objectif)) / 5) * 5) % 1440);
   const [jours, setJours] = useState(p.reveil.jours);
   const [son, setSon] = useState<SonReveil>(sonValide(p.reveil.son));
   const [ecoute, setEcoute] = useState<SonReveil | null>(null);
   const [vibration, setVibration] = useState(p.reveil.vibration);
-  const [objectif, setObjectif] = useState(p.objectif);
   const [feuille, setFeuille] = useState<'jours' | 'son' | 'objectif' | null>(null);
 
-  const heure = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  const coucher = coucherPour(heure, objectif);
+  const heure = hhmm(reveilMin);
+  const coucher = hhmm(coucherMin);
+  const objectif = ((reveilMin - coucherMin + 1440) % 1440) / 60;
+  const setObjectif = (o: number) => setCoucherMin((reveilMin - o * 60 + 1440) % 1440);
+  const { width } = useWindowDimensions();
 
   const choisirSon = (s: SonReveil) => {
     setSon(s);
@@ -126,16 +95,39 @@ export default function ReveilEcran() {
         <View style={styles.rond} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <Text style={styles.question}>À quelle heure demain ?</Text>
-        <View style={styles.roues}>
-          <View style={styles.selection} pointerEvents="none" />
-          <Roue valeurs={HEURES} valeur={h} onChange={setH} label="Heures" />
-          <Text weight="bold" style={styles.deuxPoints}>
-            :
-          </Text>
-          <Roue valeurs={MINUTES} valeur={m} onChange={setM} label="Minutes" />
+        {/* Cadran de sommeil (design Process) : glisse la lune pour le coucher, la cloche pour le réveil. */}
+        <View style={styles.colonnes}>
+          <View style={styles.colonne}>
+            <View style={styles.colonneTete}>
+              <Icon name="moon" size={14} color={colors.textSecondary} />
+              <Text variant="label">Coucher</Text>
+            </View>
+            <Text weight="bold" style={styles.colonneHeure}>
+              {coucher}
+            </Text>
+          </View>
+          <View style={styles.colonne}>
+            <View style={styles.colonneTete}>
+              <Icon name="bell" size={14} color={colors.pink} />
+              <Text variant="label">Réveil</Text>
+            </View>
+            <Text weight="bold" style={styles.colonneHeure}>
+              {heure}
+            </Text>
+          </View>
         </View>
-        <Text style={[styles.petit, styles.centre]}>Heure de réveil</Text>
+        <View style={styles.cadran}>
+          <CadranSommeil
+            taille={Math.min(320, width - 48)}
+            coucher={versFraction(coucherMin)}
+            reveil={versFraction(reveilMin)}
+            onChange={(c, r) => {
+              setCoucherMin(versMinutes(c));
+              setReveilMin(versMinutes(r));
+            }}
+          />
+        </View>
+        <Text style={[styles.petit, styles.centre]}>Glisse la lune et la cloche le long du cadran</Text>
 
         <Card style={styles.groupe}>
           <Ligne icone="refresh" titre="Répéter" sous={libelleJours(jours)} onPress={() => setFeuille('jours')} />
@@ -223,6 +215,11 @@ export default function ReveilEcran() {
 }
 
 const styles = StyleSheet.create({
+  colonnes: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 8 },
+  colonne: { alignItems: 'center', gap: 4 },
+  colonneTete: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  colonneHeure: { fontSize: 28, lineHeight: 34, letterSpacing: -0.8, fontVariant: ['tabular-nums'] },
+  cadran: { alignItems: 'center', marginVertical: 12 },
   root: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1, minWidth: 0 },
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 6 },

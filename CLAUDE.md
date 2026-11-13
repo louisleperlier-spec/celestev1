@@ -239,6 +239,15 @@ sortie à 1,5 ×, échelle 0,9 depuis le bas, −10 pt, rotation 5° × phase au
 mouvement réduit = carrousel simple) ; branché sur « Incontournables » de la Randonnée (14 sentiers, rando de la semaine en premier, vraies photos ;
 les 6 photos Pexels du paquet ne sont pas reprises).
 
+**Carrousel à balayer pour choisir sa séance + Cadran de sommeil (13 nov. 2026, demandés par l'utilisateur)** : Programme → **Séances prêtes** =
+`CarrouselEmpile` de toutes les séances du lieu (triées comme avant), carte `CarteSeance` (`Catalogue.tsx` : état Gratuit / NÉA Plus / niveau,
+illustration d'Axel du 1er exercice, titre, durée · exercices · niveau, « Ajouter à ma semaine » → planifier ; toucher → `/catalogue/[id]`), « Tout voir »
+gardé. **Cadran de sommeil** (paquet Process `design-circular-sleep-slider`, ZIP HTTP 200, empreintes OK, pas d'AGENTS.md, SwiftUI iOS 26 sans
+ressource) porté en React Native pour tous les iPhone : `components/app/CadranSommeil.tsx` (SVG + `Gesture.Pan` : horloge 24 h, chiffres toutes les 2 h,
+60 traits, lune / soleil, anneau, arc avec crans, poignées lune (coucher) et cloche orange (réveil), écart minimum 0,1 tour = la plage tourne,
+pas de 5 min) ; remplace la roue de `/reveil` (colonnes « COUCHER » / « RÉVEIL » en 24 h) ; l'objectif de sommeil = durée entre les deux poignées
+(la feuille d'objectif déplace le coucher) ; `reglerReveil` inchangé.
+
 **Bug du prototype corrigé** : pendant une séance, le prototype récupère les nouveaux intervalles RR avec `rr.slice(longueur avant)`,
 qui ne renvoie plus rien quand sa mémoire de 300 RR est pleine (après ~4 min), donc VFC de séance à 0. L'app prend les derniers battements ajoutés.
 

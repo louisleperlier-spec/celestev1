@@ -6,13 +6,14 @@ import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useDefilementOnglets } from '@/components/app/TabBar';
-import { catalogueStyles as cs, lieuDuProfil, OngletsLieux, SeanceLigne } from '@/components/app/Catalogue';
+import { CarteSeance, lieuDuProfil, OngletsLieux } from '@/components/app/Catalogue';
+import { CarrouselEmpile } from '@/components/app/CarrouselEmpile';
 import { ACCUEIL, TitreSection } from '@/components/app/AccueilDesign';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
 import { Aujourdhui, BarreTraits, CarteProgramme, jourFait, SemaineJours } from '@/components/app/ProgrammeHaut';
 import { Appui, BigNumber, Icon, Text } from '@/components/ui';
-import { EXERCICE_IMAGES, EXERCICES, LIEUX, PROGRAMMES, SEANCES } from '@/data';
+import { EXERCICE_IMAGES, EXERCICES, PROGRAMMES, SEANCES } from '@/data';
 import type { LieuId, Seance, SeanceId } from '@/data/types';
 import { serie } from '@/lib/gel';
 import { coachById, lvlN, prog, progWeek } from '@/lib/plan';
@@ -55,7 +56,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
   const niveau = lvlN(p.level);
   const duLieu = SEANCES.filter((w) => w.lieu === lieu);
   const rang = (w: Seance) => (wkLocked(w.id) ? 10 : 0) + Math.abs(w.lvl - niveau);
-  const choix = [...duLieu].sort((x, y) => rang(x) - rang(y)).slice(0, 4);
+  const choix = [...duLieu].sort((x, y) => rang(x) - rang(y));
 
   return (
     <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={styles.bas}>
@@ -112,22 +113,10 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
 
         <View style={styles.section}>
           <TitreSection titre="Séances prêtes" action={`Tout voir (${SEANCES.length})`} onAction={() => router.push({ pathname: '/seances', params: { lieu } })} />
-          <View style={styles.liste}>
-            <OngletsLieux lieu={lieu} onChange={setLieu} />
-            {choix.map((w, i) => (
-              <View key={w.id} style={i < choix.length - 1 && cs.wsep}>
-                <SeanceLigne w={w} onPlanifier={onPlanifier} />
-              </View>
-            ))}
-            {duLieu.length > choix.length && (
-              <Appui accessibilityRole="button" onPress={() => router.push({ pathname: '/seances', params: { lieu } })} style={styles.plus}>
-                <Text weight="semibold" style={styles.plusTxt}>
-                  {duLieu.length - choix.length} autres séances {LIEUX[lieu].toLowerCase()}
-                </Text>
-                <Icon name="right" size={16} color={colors.textSecondary} />
-              </Appui>
-            )}
-          </View>
+          {/* Choisir sa séance en balayant (carrousel en pile, design « Transitions au scroll ») : toutes les séances du lieu. */}
+          <OngletsLieux lieu={lieu} onChange={setLieu} />
+          <Text style={styles.astuce}>Balaie pour trouver ta séance · touche pour la voir</Text>
+          <CarrouselEmpile key={lieu} donnees={choix} cle={(w) => w.id} rendu={(w) => <CarteSeance w={w} onPlanifier={onPlanifier} />} />
         </View>
 
         <View style={styles.section}>
@@ -382,6 +371,7 @@ const styles = StyleSheet.create({
   planNom: { fontSize: 16, lineHeight: 20, letterSpacing: -0.2 },
   planMeta: { fontSize: 12, lineHeight: 16, color: colors.textSecondary },
   liste: { borderRadius: 18, backgroundColor: colors.surface, paddingTop: 6, paddingHorizontal: 12, paddingBottom: 8 },
+  astuce: { fontSize: 12.5, lineHeight: 17, color: colors.textTertiary, textAlign: 'center', marginTop: 2 },
   plus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.border },
   plusTxt: { fontSize: 13, lineHeight: 17, color: colors.textSecondary },
   biblio: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 18, backgroundColor: colors.surface },
