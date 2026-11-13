@@ -28,6 +28,8 @@ export type Log = {
   rando?: string;
   /** Randonnée : sommet atteint (carte succès « Explorateur »). */
   sommet?: boolean;
+  /** Musculation : exercices faits (séries, répétitions moyennes), pour la récupération par muscle (`lib/corps.ts`). */
+  exos?: { id: string; series: number; reps: number }[];
 };
 
 /** Jours consécutifs avec une activité ; un jour de repos prévu ne casse pas la série. */

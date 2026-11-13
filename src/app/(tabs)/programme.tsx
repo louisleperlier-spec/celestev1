@@ -8,6 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDefilementOnglets } from '@/components/app/TabBar';
 import { CarteSeance, lieuDuProfil, OngletsLieux } from '@/components/app/Catalogue';
 import { CarrouselEmpile } from '@/components/app/CarrouselEmpile';
+import { EntreeCorps, groupeExercice } from '@/components/app/CarteMuscles';
+import { recuperationMuscles } from '@/lib/corps';
 import { ACCUEIL, TitreSection } from '@/components/app/AccueilDesign';
 import { EnTete, ENTRAINEMENT } from '@/components/app/EnTete';
 import { PlanifierSheet } from '@/components/app/PlanifierSheet';
@@ -51,6 +53,7 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
   const pr = prog(p);
   const ns = nextSession(sem);
   const [lieu, setLieu] = useState<LieuId>(lieuDuProfil(p.gear));
+  const [maintenant] = useState(() => Date.now());
 
   // Les séances du lieu : celles que je peux ouvrir d'abord, puis les plus proches de mon niveau (ordre du catalogue sinon).
   const niveau = lvlN(p.level);
@@ -109,6 +112,10 @@ function Catalogue({ onPlanifier }: { onPlanifier: (id: SeanceId) => void }) {
               );
             })}
           </ScrollView>
+        </View>
+
+        <View style={styles.section}>
+          <EntreeCorps entrees={recuperationMuscles(profil.logs, groupeExercice, maintenant)} onPress={() => router.push('/corps')} />
         </View>
 
         <View style={styles.section}>

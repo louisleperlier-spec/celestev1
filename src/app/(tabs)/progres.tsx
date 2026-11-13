@@ -13,6 +13,8 @@ import { Ligue } from '@/components/app/Ligue';
 import { SemaineCercles } from '@/components/app/Cercles';
 import { PeseeSheet as Pesee } from '@/components/app/PeseeSheet';
 import { Metriques } from '@/components/app/Metriques';
+import { EntreeCorps, groupeExercice } from '@/components/app/CarteMuscles';
+import { recuperationMuscles } from '@/lib/corps';
 import { Collection, Parcours } from '@/components/app/ProgresVues';
 import { Appui, Icon, Segmente, Text } from '@/components/ui';
 import { COACH_IMAGES } from '@/data';
@@ -33,6 +35,7 @@ export default function Progres() {
   const [p, setP] = useState<Periode>('Semaine');
   const [rub, setRub] = useState<Rubrique>('Parcours');
   const [pesee, setPesee] = useState(false);
+  const [maintenant] = useState(() => Date.now());
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <Animated.ScrollView onScroll={defile} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
@@ -71,6 +74,7 @@ export default function Progres() {
 
         {rub === 'Statistiques' && (
           <>
+            <EntreeCorps entrees={recuperationMuscles(profil.logs, groupeExercice, maintenant)} onPress={() => router.push('/corps')} />
             <View style={styles.vue}>
               <Segmente options={['Semaine', 'Mois', 'Année'] as const} value={p} onChange={setP} />
               <Metriques periode={p} onPesee={() => setPesee(true)} />

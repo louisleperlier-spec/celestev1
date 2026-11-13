@@ -11,6 +11,7 @@ export type Nouveaute = {
 };
 
 export const NOUVEAUTES: readonly Nouveaute[] = [
+  { icone: 'chart', titre: 'Ta récupération muscle par muscle', texte: 'Une silhouette qui montre quels muscles ont récupéré, et la séance conseillée du jour (Programme et Progrès).' },
   { icone: 'spark', titre: 'Une interface plus claire', texte: 'Moins d’effets, des chiffres plus lisibles et l’orange gardé pour ce qui compte.' },
   { icone: 'star', titre: 'NÉA parle anglais', texte: 'Toute l’app en anglais si ton iPhone est en anglais, ou au choix dans Profil → Langue.' },
   { icone: 'trophy', titre: 'Un vrai passage de niveau', texte: 'Étoiles, étincelles et ton nouveau rang en grand : chaque niveau se fête.' },

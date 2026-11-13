@@ -106,7 +106,11 @@ function finish(w: Seance): Seance {
   const st = hrStats(w.hr, w.rrs, p.age);
   const cal = Math.round(c.int * 9 * p.weight * (Math.max(sec, 60) / 3600));
   const res: Resultat = { min, sec, cal: w.kc > 0 ? Math.round(w.kc) : cal, vol: Math.round(w.vol), st, sets: w.done.flat().length, m: 1, xp: 0, hr: w.hr, montre: w.montre };
-  st0.addLog({ d: new Date().toISOString(), type: 'muscu', title: w.s.titre, min, cal: res.cal, vol: res.vol, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv });
+  // Exercices faits (séries validées, répétitions prévues ; tenue chronométrée ≈ 12) : récupération par muscle de « Ton corps ».
+  const exos = w.s.items
+    .map((it, i) => ({ id: it.id, series: w.done[i]?.length ?? 0, reps: it.reps ? Math.round((it.reps[0] + it.reps[1]) / 2) : 12 }))
+    .filter((e) => e.series > 0);
+  st0.addLog({ d: new Date().toISOString(), type: 'muscu', title: w.s.titre, min, cal: res.cal, vol: res.vol, hrAvg: st.avg, hrMax: st.max, hrv: st.hrv, ...(exos.length ? { exos } : {}) });
   const apres = useProfil.getState();
   const serie = serieDe(apres);
   res.m = mult(boosts(serie, apres.boostUntil, actifsEquipe(autresActifs(), apres.logs)));

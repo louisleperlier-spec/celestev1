@@ -47,7 +47,7 @@ export function enregistrerMuscuLibre(exos: readonly ExoLibre[], min: number, hi
   const series = faits.flatMap((e) => e.series);
   const cal = Math.round(MET_MUSCU_LIBRE * INTENSITES.moderee.facteur * st.weight * (min / 60));
   const titre = faits.length === 1 ? exercice(faits[0].id).nom : 'Séance libre';
-  st.addLog({ d: fin.toISOString(), debut: debut.toISOString(), type: 'muscu', libre: true, title: titre, min, cal, vol: volumeLibre(series), ex: faits.length });
+  st.addLog({ d: fin.toISOString(), debut: debut.toISOString(), type: 'muscu', libre: true, title: titre, min, cal, vol: volumeLibre(series), ex: faits.length, exos: faits.map((e) => ({ id: e.id, series: e.series.length, reps: Math.round(e.series.reduce((a, x) => a + x.reps, 0) / e.series.length) })) });
   const xp = useProfil.getState().addXp(xpMuscuLibre(series.length), 'Séance libre');
   if (!hier) {
     useProfil.getState().quest('seance');
