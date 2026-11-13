@@ -224,6 +224,7 @@ orange réservé à l'action principale, à la sélection et à la séance faite
 Programme : semaine (prévue = anneau gris, aujourd'hui = blanc, faite = orange), `BarreTraits` = rail fin plein (plus de hachures), « Tes
 programmes » en cartes typographiques (semaines en grand, plus la même mascotte sur chaque carte) ; Progrès : tuiles libellé + chiffre, gels
 en chiffre, « Voir mon programme » en bouton gris ; calories en petit texte gris.
+**Publiés en production (13 nov. 2026)** : refonte sobre, « Ton corps », séances à balayer, cadran de sommeil (l'Activité en direct attend le build 42).
 
 **Designs Process « Activité en direct » et « Transitions au scroll » (13 nov. 2026, demandés par l'utilisateur)** : ZIP téléchargés (HTTP 200),
 empreintes vérifiées, pas d'AGENTS.md dans les paquets. **Activité en direct** (`moneymaker-live-activity`, démonstration simulée) : paquet installé
