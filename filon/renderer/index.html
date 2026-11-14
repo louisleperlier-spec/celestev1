@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>Filon</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <aside class="side">
+    <div class="brand"><span class="dot"></span>Filon</div>
+    <button id="newCampaign" class="btn primary block">+ Nouvelle campagne</button>
+    <div class="side-label">Campagnes</div>
+    <nav id="campaigns" class="campaigns"></nav>
+    <div class="side-foot">
+      <div id="agentBadge" class="agent-badge">Agent : …</div>
+      <button id="openSettings" class="btn ghost block">Réglages</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top" id="top" hidden>
+      <div>
+        <div class="eyebrow" id="areaName"></div>
+        <h1 id="cityTitle"></h1>
+      </div>
+      <ol class="steps" id="steps">
+        <li data-step="scout"><b>1</b>Repérer</li>
+        <li data-step="audit"><b>2</b>Noter</li>
+        <li data-step="mockup"><b>3</b>Maquetter</li>
+        <li data-step="write"><b>4</b>Écrire</li>
+        <li data-step="call"><b>5</b>Appeler</li>
+      </ol>
+    </header>
+    <section id="view" class="view"></section>
+  </main>
+
+  <dialog id="settings" class="modal">
+    <form method="dialog" id="settingsForm">
+      <h2>Réglages</h2>
+      <p class="muted">Tes coordonnées servent à signer les courriels et le pitch d'appel.</p>
+      <div class="grid2">
+        <label>Ton nom<input name="name" /></label>
+        <label>Ton téléphone<input name="phone" /></label>
+        <label>Ton courriel<input name="email" /></label>
+        <label>Ta ville<input name="city" /></label>
+        <label class="span2">Ton site / portfolio<input name="site" placeholder="https://" /></label>
+      </div>
+      <h3>Agent de maquette</h3>
+      <p class="muted">Filon n'a aucune clé d'API : c'est ton abonnement qui travaille, sur ta machine.</p>
+      <div id="agentChoices" class="agent-choices"></div>
+      <label>Tours de correction max<input name="maxRounds" type="number" min="1" max="6" /></label>
+      <div class="row end">
+        <button value="cancel" class="btn ghost">Annuler</button>
+        <button value="save" class="btn primary">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

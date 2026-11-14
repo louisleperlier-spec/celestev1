@@ -1,0 +1,26 @@
+{
+  "name": "filon",
+  "productName": "Filon",
+  "version": "0.1.0",
+  "description": "Prospection de commerces locaux : repérer, noter, maquetter, écrire, appeler.",
+  "main": "main.js",
+  "author": "Louis",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "electron-builder --mac --arm64",
+    "dist:win": "electron-builder --win --x64",
+    "check": "node --check main.js && node --check preload.js && node --check src/lib/geo.js && node --check src/lib/audit.js && node --check src/lib/mockup.js && node --check src/lib/store.js && node --check src/lib/outreach.js && node --check src/lib/shellpath.js && node --check renderer/app.js"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "app.filon.desktop",
+    "productName": "Filon",
+    "files": ["main.js", "preload.js", "src/**/*", "renderer/**/*"],
+    "mac": { "target": "dmg", "category": "public.app-category.business" },
+    "win": { "target": "nsis" }
+  }
+}
